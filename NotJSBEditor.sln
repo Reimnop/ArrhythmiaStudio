@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotJSBEditor", "NotJSBEditor\NotJSBEditor.csproj", "{E76681D9-295E-4070-BCCB-B144E3B9EC45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotJSBEditor", "NotJSBEditor\NotJSBEditor.csproj", "{E76681D9-295E-4070-BCCB-B144E3B9EC45}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImGui.NET", "ImGui.NET\src\ImGui.NET\ImGui.NET.csproj", "{5DBDA5AC-BB12-421A-ABB6-872C15BB37B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{E76681D9-295E-4070-BCCB-B144E3B9EC45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E76681D9-295E-4070-BCCB-B144E3B9EC45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E76681D9-295E-4070-BCCB-B144E3B9EC45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DBDA5AC-BB12-421A-ABB6-872C15BB37B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DBDA5AC-BB12-421A-ABB6-872C15BB37B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DBDA5AC-BB12-421A-ABB6-872C15BB37B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DBDA5AC-BB12-421A-ABB6-872C15BB37B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -325,7 +325,7 @@ void main()
             io.MouseDown[1] = mouseState.IsButtonDown(MouseButton.Right);
             io.MouseDown[2] = mouseState.IsButtonDown(MouseButton.Middle);
 
-            var point = mouseState.Position;
+            Vector2 point = mouseState.Position;
             io.MousePos = new Vector2(point.X, point.Y);
 
             io.MouseWheel = mouseState.ScrollDelta.Y;

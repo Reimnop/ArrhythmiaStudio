@@ -7,7 +7,8 @@ namespace NotJSBEditor
 {
     public class MainWindow : GameWindow
     {
-        private ImGuiController ImGuiController;
+        // Handles graphics
+        private Renderer renderer;
 
         public MainWindow(GameWindowSettings gws, NativeWindowSettings nws) : base(gws, nws)
         {
@@ -17,21 +18,16 @@ namespace NotJSBEditor
         {
             base.OnLoad();
 
-            ImGuiController = new ImGuiController(this, "Assets/Inconsolata.ttf");
-
-            ImGuiController.OnLayout += ImGuiController_OnLayout;
-        }
-
-        private void ImGuiController_OnLayout()
-        {
-            ImGuiNET.ImGui.ShowDemoWindow();
+            // Initialize modules
+            renderer = new Renderer(this);
         }
 
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
             base.OnUpdateFrame(args);
 
-            ImGuiController.Update((float)args.Time);
+            // Updates everything
+            float deltaTime = (float)args.Time;
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)
@@ -40,8 +36,6 @@ namespace NotJSBEditor
 
             GL.Viewport(0, 0, ClientSize.X, ClientSize.Y);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            
-            ImGuiController.RenderImGui();
 
             SwapBuffers();
         }

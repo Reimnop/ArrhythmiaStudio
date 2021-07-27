@@ -10,11 +10,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ImGui.NET\src\ImGui.NET\ImGui.NET.csproj" />
+    <Reference Include="ImGui.NET">
+      <HintPath>ImGui.NET.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
     <None Update="Assets\Inconsolata.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Shaders\basic.frag">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Shaders\basic.vert">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="cimgui.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

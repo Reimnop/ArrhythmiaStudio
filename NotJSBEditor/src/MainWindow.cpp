@@ -94,10 +94,10 @@ void MainWindow::run() {
 		deltaTime = currentTime - time;
 		time = currentTime;
 
+		glfwPollEvents();
+
 		onUpdateFrame();
 		onRenderFrame();
-
-		glfwPollEvents();
 	}
 }
 

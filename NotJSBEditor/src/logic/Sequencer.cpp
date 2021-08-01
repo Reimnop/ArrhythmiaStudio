@@ -10,6 +10,8 @@ Sequencer::Sequencer(LevelManager* levelManager) {
 	ImGuiController::onLayout.push_back(std::bind(&Sequencer::onLayout, this));
 }
 
+#include <string>
+
 void Sequencer::onLayout() {
     // Open a sequence window
     if (ImGui::Begin("Sequencer"))
@@ -34,10 +36,14 @@ void Sequencer::onLayout() {
 
         for (int i = 0; i < binCount; i++)
         {
-            ImU32 binCol = ImGui::GetColorU32(ImVec4(0.180f, 0.180f, 0.180f, 1.000f));
+            ImU32 binCol;
             if (i % 2 == 0)
             {
                 binCol = ImGui::GetColorU32(ImVec4(0.120f, 0.120f, 0.120f, 1.000f));
+            }
+            else 
+            {
+                binCol = ImGui::GetColorU32(ImVec4(0.180f, 0.180f, 0.180f, 1.000f));
             }
 
             drawList->AddRectFilled(
@@ -49,64 +55,85 @@ void Sequencer::onLayout() {
         // Draw editor strips
         ImU32 textCol = ImGui::GetColorU32(ImVec4(0.120f, 0.120f, 0.120f, 1.000f));
 
+        bool atLeastOneStripClicked = false;
         for (int i = 0; i < levelManager->levelObjects.size(); i++)
         {
+            const ImU32 inactiveCol = ImGui::GetColorU32(ImVec4(0.729f, 0.729f, 0.729f, 1.000f));
+            const ImU32 activeCol = ImGui::GetColorU32(ImVec4(0.384f, 0.384f, 0.384f, 1.000f));
+
             LevelObject* levelObject = &levelManager->levelObjects[i];
 
             // Calculate start and end position in pixel
             float startPos = (levelObject->startTime - startTime) / (endTime - startTime) * availRegion.x;
             float endPos = (levelObject->endTime - startTime) / (endTime - startTime) * availRegion.x;
 
+            // Calculate strip params
             ImVec2 stripMin = ImVec2(cursorPos.x + startPos, cursorPos.y + levelObject->editorBinIndex * binHeight);
             ImVec2 stripMax = ImVec2(cursorPos.x + endPos, cursorPos.y + (levelObject->editorBinIndex + 1) * binHeight);
 
-            ImU32 stripCol = ImGui::GetColorU32(ImVec4(0.729f, 0.729f, 0.729f, 1.000f));
+            ImVec2 stripSize = ImVec2(stripMax.x - stripMin.x, stripMax.y - stripMin.y);
 
-            if (intersectPointRect(stripMin, stripMax, io.MousePos))
+            int id = i + 1;
+
+            ImGui::PushID(id);
+
+            ImGui::SetCursorScreenPos(stripMin);
+            if (ImGui::InvisibleButton("##Strip", stripSize)) 
             {
-                stripCol = ImGui::GetColorU32(ImVec4(0.384f, 0.384f, 0.384f, 1.000f));
+                atLeastOneStripClicked = true;
+                levelManager->selectedObjectIndex = i;
             }
 
-            if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && intersectPointRect(stripMin, stripMax, io.MouseClickedPos[(int)ImGuiMouseButton_Left]))
+            bool stripActive = false;
+
+            if (ImGui::IsItemHovered())
             {
-                StripDragData newDragData;
-
-                newDragData.currentStrip = i;
-                newDragData.currentBin = levelObject->editorBinIndex;
-                newDragData.verticalDrag = ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT);
-
-                dragData = newDragData;
+                stripActive = true;
             }
 
-            if (dragData.has_value() && dragData.value().currentStrip == i)
+            if (ImGui::IsItemActive())
             {
-                if (!ImGui::IsMouseDown(ImGuiMouseButton_Left))
-                {
-                    dragData.reset();
-                }
-                else
-                {
-                    stripCol = ImGui::GetColorU32(ImVec4(0.384f, 0.384f, 0.384f, 1.000f));
+                stripActive = true;
 
-                    if (!dragData.value().verticalDrag)
-                    {
-                        // Horizontal drag
-                        float timeDelta = (io.MouseDelta.x / availRegion.x) * (endTime - startTime);
-                        levelObject->startTime += timeDelta;
-                        levelObject->endTime += timeDelta;
-                    }
-                    else
-                    {
-                        // Vertical drag
-                        dragData.value().currentBin += io.MouseDelta.y / binHeight;
-                        levelObject->editorBinIndex = (int)dragData.value().currentBin;
-                    }
+                // Dragging
+                if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+                {
+                    ImVec2 delta = io.MouseDelta;
+                    float timeDelta = (delta.x / availRegion.x) * (endTime - startTime);
+
+                    levelObject->startTime += timeDelta;
+                    levelObject->endTime += timeDelta;
                 }
             }
 
-            // Draw the strip a bit shorter than the bin
-            drawList->AddRectFilled(stripMin, stripMax, stripCol);
-            drawList->AddText(ImVec2(cursorPos.x + startPos + 1.0f, cursorPos.y + levelObject->editorBinIndex * binHeight), textCol, levelObject->name.c_str());
+            if (levelManager->selectedObjectIndex == i) 
+            {
+                stripActive = true;
+
+                // Changing editor bins
+                if (ImGui::IsWindowFocused()) 
+                {
+                    if (ImGui::IsKeyPressed(GLFW_KEY_DOWN)) 
+                    {
+                        levelObject->editorBinIndex++;
+                    }
+                    if (ImGui::IsKeyPressed(GLFW_KEY_UP)) 
+                    {
+                        levelObject->editorBinIndex--;
+                    }
+                }
+            }
+
+            ImGui::PopID();
+
+            // Draw the strip
+            drawList->AddRectFilled(stripMin, stripMax, stripActive ? activeCol : inactiveCol, 2.5f);
+            drawList->AddText(ImVec2(cursorPos.x + startPos + 2.5f, cursorPos.y + levelObject->editorBinIndex * binHeight), textCol, levelObject->name.c_str());
+        }
+
+        if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !atLeastOneStripClicked) 
+        {
+            levelManager->selectedObjectIndex = -1;
         }
 
         drawList->PopClipRect();
@@ -117,12 +144,4 @@ void Sequencer::onLayout() {
 
         ImGui::End();
     }
-}
-
-bool Sequencer::intersectPointRect(ImVec2 min, ImVec2 max, ImVec2 pos) {
-    if (pos.x > min.x && pos.y > min.y &&
-        pos.x < max.x && pos.y < max.y)
-        return true;
-
-    return false;
 }

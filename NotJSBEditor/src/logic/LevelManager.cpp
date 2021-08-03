@@ -45,6 +45,24 @@ LevelManager::LevelManager() {
         levelObjects.push_back(obj);
     }
 
+    for (LevelObject* obj : levelObjects) {
+        int channelCount = (int)(randomFloat() * 6.0f);
+
+        for (int i = 0; i < channelCount; i++) {
+            AnimationChannel* channel = new AnimationChannel((AnimationChannelType)(int)(randomFloat() * 5.99f), 0, nullptr);
+
+            for (int i = 0; i < 10; i++) {
+                Keyframe kf = Keyframe();
+                kf.time = i;
+                kf.value = channel->type != AnimationChannelType_Rotation ? (randomFloat() * 2.0f - 1.0f) * 8.0f : (randomFloat() * 2.0f - 1.0f) * 90.0f;
+
+                channel->insertKeyframe(kf);
+            }
+
+            obj->animationChannels.push_back(channel);
+        }
+    }
+
     sequencer = new Sequencer(this);
 
     updateAllObjectActions();
@@ -57,9 +75,11 @@ void LevelManager::update(float time) {
             switch (objectActions[actionIndex].type) {
             case ObjectActionType_Spawn:
                 objectActions[actionIndex].levelObject->node->active = true;
+                aliveObjects.insert(objectActions[actionIndex].levelObject);
                 break;
             case ObjectActionType_Kill:
                 objectActions[actionIndex].levelObject->node->active = false;
+                aliveObjects.erase(objectActions[actionIndex].levelObject);
                 break;
             }
             actionIndex++;
@@ -71,9 +91,11 @@ void LevelManager::update(float time) {
             switch (objectActions[actionIndex].type) {
             case ObjectActionType_Spawn:
                 objectActions[actionIndex].levelObject->node->active = false;
+                aliveObjects.erase(objectActions[actionIndex].levelObject);
                 break;
             case ObjectActionType_Kill:
                 objectActions[actionIndex].levelObject->node->active = true;
+                aliveObjects.insert(objectActions[actionIndex].levelObject);
                 break;
             }
             actionIndex--;
@@ -81,9 +103,33 @@ void LevelManager::update(float time) {
     }
 
     lastTime = time;
+
+    // Animate alive objects
+    for (LevelObject* levelObject : aliveObjects) {
+        for (AnimationChannel* channel : levelObject->animationChannels) {
+            switch (channel->type) {
+            case AnimationChannelType_PositionX:
+                levelObject->node->transform->position.x = channel->update(time - levelObject->startTime);
+                break;
+            case AnimationChannelType_PositionY:
+                levelObject->node->transform->position.y = channel->update(time - levelObject->startTime);
+                break;
+            case AnimationChannelType_ScaleX:
+                levelObject->node->transform->scale.x = channel->update(time - levelObject->startTime);
+                break;
+            case AnimationChannelType_ScaleY:
+                levelObject->node->transform->scale.y = channel->update(time - levelObject->startTime);
+                break;
+            case AnimationChannelType_Rotation:
+                levelObject->node->transform->rotation = glm::quat(glm::vec3(0.0f, 0.0f, channel->update(time - levelObject->startTime) / 180.0f * 3.14159265359f));
+                break;
+            }
+        }
+    }
 }
 
-void LevelManager::updateAllObjectActions() {
+void LevelManager::updateAllObjectActions()
+{
     // Clear and re-add object actions
     objectActions.clear();
 
@@ -102,6 +148,29 @@ void LevelManager::updateAllObjectActions() {
 
         insertAction(spawnAction);
         insertAction(killAction);
+    }
+}
+
+void LevelManager::recalculateActionIndex(float time) {
+    // Reset all objects
+    for (LevelObject* levelObject : levelObjects) {
+        levelObject->node->active = false;
+    }
+
+    // Reset action index and recalculate
+    actionIndex = 0;
+    while (actionIndex < objectActions.size() && objectActions[actionIndex].time <= time) {
+        switch (objectActions[actionIndex].type) {
+        case ObjectActionType_Spawn:
+            objectActions[actionIndex].levelObject->node->active = true;
+            aliveObjects.insert(objectActions[actionIndex].levelObject);
+            break;
+        case ObjectActionType_Kill:
+            objectActions[actionIndex].levelObject->node->active = false;
+            aliveObjects.erase(objectActions[actionIndex].levelObject);
+            break;
+        }
+        actionIndex++;
     }
 }
 

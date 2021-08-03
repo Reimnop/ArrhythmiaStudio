@@ -1,5 +1,4 @@
 #include "MeshRenderer.h"
-#include "DrawElementsCommand.h"
 
 MeshRenderer::MeshRenderer() {
 	mesh = nullptr;

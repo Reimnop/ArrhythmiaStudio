@@ -115,7 +115,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLFW_INCLUDE_NONE</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -137,7 +137,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);GLFW_INCLUDE_NONE</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -165,6 +165,8 @@
     <ClCompile Include="include\imgui\imgui_tables.cpp" />
     <ClCompile Include="include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\glad.c" />
+    <ClCompile Include="src\logic\animation\AnimationChannel.cpp" />
+    <ClCompile Include="src\logic\LevelObject.cpp" />
     <ClCompile Include="src\logic\GameManager.cpp" />
     <ClCompile Include="src\logic\LevelManager.cpp" />
     <ClCompile Include="src\logic\Scene.cpp" />
@@ -190,9 +192,14 @@
     <ClInclude Include="include\imgui\imstb_rectpack.h" />
     <ClInclude Include="include\imgui\imstb_textedit.h" />
     <ClInclude Include="include\imgui\imstb_truetype.h" />
+    <ClInclude Include="src\logic\animation\AnimationChannelType.h" />
+    <ClInclude Include="src\logic\animation\AnimationChannel.h" />
+    <ClInclude Include="src\logic\animation\Keyframe.h" />
     <ClInclude Include="src\logic\GameManager.h" />
     <ClInclude Include="src\logic\LevelManager.h" />
     <ClInclude Include="src\logic\LevelObject.h" />
+    <ClInclude Include="src\logic\ObjectAction.h" />
+    <ClInclude Include="src\logic\ObjectActionType.h" />
     <ClInclude Include="src\logic\Scene.h" />
     <ClInclude Include="src\logic\SceneNode.h" />
     <ClInclude Include="src\logic\Sequencer.h" />

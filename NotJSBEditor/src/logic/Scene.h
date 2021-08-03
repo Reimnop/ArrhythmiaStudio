@@ -4,6 +4,8 @@
 
 class Scene {
 public:
+	static Scene* inst;
+
 	SceneNode* rootNode;
 
 	Scene();

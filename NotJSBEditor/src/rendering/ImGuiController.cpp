@@ -8,7 +8,7 @@ ImGuiController::ImGuiController(GLFWwindow* window, const char* fontPath) {
 	ImGui::CreateContext();
 
 	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_ViewportsEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_ViewportsEnable;
 	io.Fonts->AddFontFromFileTTF(fontPath, 16.0f);
 
 	setStyle();

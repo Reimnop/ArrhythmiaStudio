@@ -9,11 +9,10 @@
 class MainWindow;
 class GameManager {
 public:
-    GameManager(GLFWwindow* window, Scene* scene);
+    GameManager(GLFWwindow* window);
 
     // Runs every frame
     void update();
 private:
     GLFWwindow* mainWindow;
-    Scene* mainScene;
 };

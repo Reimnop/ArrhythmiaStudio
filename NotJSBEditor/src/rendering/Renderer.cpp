@@ -1,8 +1,7 @@
 #include "Renderer.h"
 
-Renderer::Renderer(GLFWwindow* window, Scene* scene) {
+Renderer::Renderer(GLFWwindow* window) {
 	mainWindow = window;
-	mainScene = scene;
 
 	camera = new Camera();
 	imGuiController = new ImGuiController(window, "Assets/Inconsolata.ttf");
@@ -19,7 +18,7 @@ void Renderer::render() {
     float aspect = width / (float)height;
     glm::mat4 view, projection;
     camera->calculateViewProjection(aspect, &view, &projection);
-    recursivelyRenderNodes(mainScene->rootNode, glm::mat4(1.0f), view, projection);
+    recursivelyRenderNodes(Scene::inst->rootNode, glm::mat4(1.0f), view, projection);
 
     for (OutputDrawData drawData : queuedDrawData)
     {
@@ -48,11 +47,9 @@ void Renderer::render() {
         case DrawCommandType_DrawElements:
             DrawElementsCommand drawElementsCommand = *(DrawElementsCommand*)drawData.drawCommand;
             glDrawElements(GL_TRIANGLES, drawElementsCommand.count, GL_UNSIGNED_INT, (void*)drawElementsCommand.offset);
+            delete (DrawElementsCommand*)drawData.drawCommand;
             break;
         }
-
-        // Free the draw command
-        delete drawData.drawCommand;
     }
 
     // Clean up
@@ -72,7 +69,7 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
     glm::mat4 nodeTransform = node->transform->getLocalMatrix();
     glm::mat4 globalTransform = parentTransform * nodeTransform;
 
-    if (node->renderer)
+    if (node->renderer && node->active)
     {
         InputDrawData drawData = InputDrawData();
         drawData.model = globalTransform;

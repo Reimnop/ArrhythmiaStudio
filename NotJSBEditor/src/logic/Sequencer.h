@@ -13,6 +13,7 @@ public:
     Sequencer(LevelManager* levelManager);
 private:
 	LevelManager* levelManager;
+    int selectedObjectIndex = -1;
 
     float startTime;
     float endTime;

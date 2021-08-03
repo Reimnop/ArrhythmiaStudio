@@ -1,13 +1,14 @@
 #include "GameManager.h"
 #include "../MainWindow.h"
 
-GameManager::GameManager(GLFWwindow* window, Scene* scene) {
-	mainWindow = window;
-	mainScene = scene;
+LevelManager* levelManager;
 
-	LevelManager* levelManager = new LevelManager();
+GameManager::GameManager(GLFWwindow* window) {
+	mainWindow = window;
+
+	levelManager = new LevelManager();
 }
 
 void GameManager::update() {
-	
+	levelManager->update(MainWindow::inst->time);
 }

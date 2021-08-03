@@ -10,8 +10,6 @@ Sequencer::Sequencer(LevelManager* levelManager) {
 	ImGuiController::onLayout.push_back(std::bind(&Sequencer::onLayout, this));
 }
 
-#include <string>
-
 void Sequencer::onLayout() {
     // Open a sequence window
     if (ImGui::Begin("Sequencer"))
@@ -61,11 +59,16 @@ void Sequencer::onLayout() {
             const ImU32 inactiveCol = ImGui::GetColorU32(ImVec4(0.729f, 0.729f, 0.729f, 1.000f));
             const ImU32 activeCol = ImGui::GetColorU32(ImVec4(0.384f, 0.384f, 0.384f, 1.000f));
 
-            LevelObject* levelObject = &levelManager->levelObjects[i];
+            LevelObject* levelObject = levelManager->levelObjects[i];
+
+            if (levelObject->killTime < startTime || levelObject->startTime > endTime) 
+            {
+                continue;
+            }
 
             // Calculate start and end position in pixel
             float startPos = (levelObject->startTime - startTime) / (endTime - startTime) * availRegion.x;
-            float endPos = (levelObject->endTime - startTime) / (endTime - startTime) * availRegion.x;
+            float endPos = (levelObject->killTime - startTime) / (endTime - startTime) * availRegion.x;
 
             // Calculate strip params
             ImVec2 stripMin = ImVec2(cursorPos.x + startPos, cursorPos.y + levelObject->editorBinIndex * binHeight);
@@ -81,7 +84,7 @@ void Sequencer::onLayout() {
             if (ImGui::InvisibleButton("##Strip", stripSize)) 
             {
                 atLeastOneStripClicked = true;
-                levelManager->selectedObjectIndex = i;
+                selectedObjectIndex = i;
             }
 
             bool stripActive = false;
@@ -101,39 +104,36 @@ void Sequencer::onLayout() {
                     ImVec2 delta = io.MouseDelta;
                     float timeDelta = (delta.x / availRegion.x) * (endTime - startTime);
 
+                    timeDelta = std::clamp(timeDelta, -levelObject->startTime, endTime - levelObject->killTime);
+
                     levelObject->startTime += timeDelta;
-                    levelObject->endTime += timeDelta;
+                    levelObject->killTime += timeDelta;
                 }
             }
 
-            if (levelManager->selectedObjectIndex == i) 
+            if (selectedObjectIndex == i) 
             {
                 stripActive = true;
 
                 // Changing editor bins
                 if (ImGui::IsWindowFocused()) 
                 {
-                    if (ImGui::IsKeyPressed(GLFW_KEY_DOWN)) 
-                    {
-                        levelObject->editorBinIndex++;
-                    }
-                    if (ImGui::IsKeyPressed(GLFW_KEY_UP)) 
-                    {
-                        levelObject->editorBinIndex--;
-                    }
+                    levelObject->editorBinIndex -= io.MouseWheel;
+                    levelObject->editorBinIndex = std::clamp(levelObject->editorBinIndex, 0, binCount - 1);
                 }
             }
 
             ImGui::PopID();
 
             // Draw the strip
-            drawList->AddRectFilled(stripMin, stripMax, stripActive ? activeCol : inactiveCol, 2.5f);
+            drawList->AddRectFilled(stripMin, stripMax, activeCol, 5.0f);
+            drawList->AddRectFilled(ImVec2(stripMin.x + 1.0f, stripMin.y + 1.0f), ImVec2(stripMax.x - 1.0f, stripMax.y - 1.0f), stripActive ? activeCol : inactiveCol, 5.0f);
             drawList->AddText(ImVec2(cursorPos.x + startPos + 2.5f, cursorPos.y + levelObject->editorBinIndex * binHeight), textCol, levelObject->name.c_str());
         }
-
+        
         if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !atLeastOneStripClicked) 
         {
-            levelManager->selectedObjectIndex = -1;
+            selectedObjectIndex = -1;
         }
 
         drawList->PopClipRect();

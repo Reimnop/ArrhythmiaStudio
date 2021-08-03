@@ -7,6 +7,7 @@
 #include "RendererComponent.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "DrawElementsCommand.h"
 #include "DrawCommandType.h"
 
 class MeshRenderer : public RendererComponent {

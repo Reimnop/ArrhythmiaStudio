@@ -1,10 +1,12 @@
 #include "SceneNode.h"
+#include "Scene.h"
 
 SceneNode::SceneNode(std::string name) {
 	this->name = name;
+	active = true;
 	transform = new Transform();
 
-	parent = nullptr;
+	setParent(nullptr);
 }
 
 SceneNode::SceneNode(std::string name, SceneNode* parent) {
@@ -26,21 +28,19 @@ SceneNode::~SceneNode() {
 	for (SceneNode* node : children) {
 		delete node;
 	}
+
+	children.clear();
+	children.shrink_to_fit();
 }
 
 void SceneNode::setParent(SceneNode* newParent) {
 	if (parent) {
-		// Find index in parent's children vector
-		int index;
-		for (int i = 0; i < parent->children.size(); i++) {
-			if (parent->children[i] == this) {
-				index = i;
-				break;
-			}
-		}
+		std::vector<SceneNode*>::iterator it = std::find(parent->children.begin(), parent->children.end(), this);
+		parent->children.erase(it);
+	}
 
-		// Remove from parent
-		parent->children.erase(parent->children.begin() + index);
+	if (!newParent) {
+		newParent = Scene::inst->rootNode;
 	}
 
 	if (newParent) {

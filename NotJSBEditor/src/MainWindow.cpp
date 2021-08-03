@@ -81,10 +81,10 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::onLoad() {
-	Scene* scene = new Scene();
+	new Scene();
 
-	renderer = new Renderer(window, scene);
-	gameManager = new GameManager(window, scene);
+	renderer = new Renderer(window);
+	gameManager = new GameManager(window);
 }
 
 void MainWindow::run() {

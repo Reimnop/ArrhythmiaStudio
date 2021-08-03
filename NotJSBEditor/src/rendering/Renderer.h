@@ -13,7 +13,7 @@
 
 class Renderer {
 public:
-	Renderer(GLFWwindow* window, Scene* scene);
+	Renderer(GLFWwindow* window);
 	void update();
 	void render();
 private:
@@ -23,7 +23,6 @@ private:
 	std::vector<OutputDrawData> queuedDrawData;
 
 	GLFWwindow* mainWindow;
-	Scene* mainScene;
 	ImGuiController* imGuiController;
 
 	Camera* camera;

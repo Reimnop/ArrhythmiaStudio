@@ -1,18 +1,18 @@
-#include "Sequencer.h"
+#include "Timeline.h"
 #include "LevelManager.h"
 
-Sequencer::Sequencer(LevelManager* levelManager) {
+Timeline::Timeline(LevelManager* levelManager) {
 	this->levelManager = levelManager;
 
 	startTime = 0.0f;
 	endTime = 80.0f;
 
-	ImGuiController::onLayout.push_back(std::bind(&Sequencer::onLayout, this));
+	ImGuiController::onLayout.push_back(std::bind(&Timeline::onLayout, this));
 }
 
-void Sequencer::onLayout() {
+void Timeline::onLayout() {
     // Open a sequence window
-    if (ImGui::Begin("Sequencer"))
+    if (ImGui::Begin("Timeline"))
     {
         const int binCount = 10;
         const float binHeight = 20.0f;
@@ -51,8 +51,6 @@ void Sequencer::onLayout() {
         }
 
         // Draw editor strips
-        ImU32 textCol = ImGui::GetColorU32(ImVec4(0.120f, 0.120f, 0.120f, 1.000f));
-
         bool atLeastOneStripClicked = false;
         for (int i = 0; i < levelManager->levelObjects.size(); i++)
         {
@@ -84,7 +82,7 @@ void Sequencer::onLayout() {
             if (ImGui::InvisibleButton("##Strip", stripSize)) 
             {
                 atLeastOneStripClicked = true;
-                selectedObjectIndex = i;
+                levelManager->selectedObjectIndex = i;
             }
 
             bool stripActive = false;
@@ -111,7 +109,7 @@ void Sequencer::onLayout() {
                 }
             }
 
-            if (selectedObjectIndex == i) 
+            if (levelManager->selectedObjectIndex == i)
             {
                 stripActive = true;
 
@@ -126,14 +124,27 @@ void Sequencer::onLayout() {
             ImGui::PopID();
 
             // Draw the strip
-            drawList->AddRectFilled(stripMin, stripMax, activeCol, 5.0f);
-            drawList->AddRectFilled(ImVec2(stripMin.x + 1.0f, stripMin.y + 1.0f), ImVec2(stripMax.x - 1.0f, stripMax.y - 1.0f), stripActive ? activeCol : inactiveCol, 5.0f);
-            drawList->AddText(ImVec2(cursorPos.x + startPos + 2.5f, cursorPos.y + levelObject->editorBinIndex * binHeight), textCol, levelObject->name.c_str());
+            const char* name = levelObject->name.c_str();
+
+            ImVec2 textSize = ImGui::CalcTextSize(name);
+
+            ImU32 stripCol = stripActive ? activeCol : inactiveCol;
+            ImU32 textCol = stripActive ? inactiveCol : activeCol;
+
+            drawList->AddRectFilled(stripMin, stripMax, stripCol);
+
+            const float distFromHead = 8.0f;
+
+            ImVec2 localRectMin = ImVec2(stripMin.x + distFromHead, stripMin.y);
+            ImVec2 localRectMax = ImVec2(stripMin.x + distFromHead + 4.0f + textSize.x, stripMax.y);
+
+            drawList->AddRectFilled(localRectMin, localRectMax, textCol);
+            drawList->AddText(ImVec2(localRectMin.x + 2.0f, localRectMin.y), stripCol, name);
         }
         
         if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !atLeastOneStripClicked) 
         {
-            selectedObjectIndex = -1;
+            levelManager->selectedObjectIndex = -1;
         }
 
         drawList->PopClipRect();

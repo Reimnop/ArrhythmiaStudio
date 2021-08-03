@@ -4,6 +4,7 @@
 #include <string>
 
 #include "animation/AnimationChannel.h"
+#include "ObjectAction.h"
 #include "SceneNode.h"
 
 class LevelObject {
@@ -19,4 +20,6 @@ public:
 
 	LevelObject(std::string name);
 	~LevelObject();
+
+	void genActionPair(ObjectAction* spawnAction, ObjectAction* killAction);
 };

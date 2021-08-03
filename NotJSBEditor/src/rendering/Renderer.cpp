@@ -66,10 +66,15 @@ void Renderer::render() {
 }
 
 void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform, glm::mat4 view, glm::mat4 projection) {
+    if (!node->getActive())
+    {
+        return;
+    }
+
     glm::mat4 nodeTransform = node->transform->getLocalMatrix();
     glm::mat4 globalTransform = parentTransform * nodeTransform;
 
-    if (node->renderer && node->active)
+    if (node->renderer)
     {
         InputDrawData drawData = InputDrawData();
         drawData.model = globalTransform;
@@ -84,7 +89,7 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
         }
     }
 
-    for (SceneNode* child : node->children)
+    for (SceneNode* child : node->activeChildren)
     {
         recursivelyRenderNodes(child, globalTransform, view, projection);
     }

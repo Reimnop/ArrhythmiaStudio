@@ -3,9 +3,9 @@
 
 SceneNode::SceneNode(std::string name) {
 	this->name = name;
-	active = true;
 	transform = new Transform();
 
+	setActive(true);
 	setParent(nullptr);
 }
 
@@ -49,4 +49,24 @@ void SceneNode::setParent(SceneNode* newParent) {
 		// Add to new parent
 		newParent->children.push_back(this);
 	}
+}
+
+void SceneNode::setActive(bool value) {
+	if (parent && active != value) 
+	{
+		if (value) 
+		{
+			parent->activeChildren.insert(this);
+		}
+		else 
+		{
+			parent->activeChildren.erase(this);
+		}
+	}
+
+	active = value;
+}
+
+bool SceneNode::getActive() {
+	return active;
 }

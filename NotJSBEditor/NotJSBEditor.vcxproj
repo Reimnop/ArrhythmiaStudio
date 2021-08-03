@@ -166,12 +166,13 @@
     <ClCompile Include="include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\logic\animation\AnimationChannel.cpp" />
+    <ClCompile Include="src\logic\DopeSheet.cpp" />
     <ClCompile Include="src\logic\LevelObject.cpp" />
     <ClCompile Include="src\logic\GameManager.cpp" />
     <ClCompile Include="src\logic\LevelManager.cpp" />
     <ClCompile Include="src\logic\Scene.cpp" />
     <ClCompile Include="src\logic\SceneNode.cpp" />
-    <ClCompile Include="src\logic\Sequencer.cpp" />
+    <ClCompile Include="src\logic\Timeline.cpp" />
     <ClCompile Include="src\logic\Transform.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\MainWindow.cpp" />
@@ -195,6 +196,7 @@
     <ClInclude Include="src\logic\animation\AnimationChannelType.h" />
     <ClInclude Include="src\logic\animation\AnimationChannel.h" />
     <ClInclude Include="src\logic\animation\Keyframe.h" />
+    <ClInclude Include="src\logic\DopeSheet.h" />
     <ClInclude Include="src\logic\GameManager.h" />
     <ClInclude Include="src\logic\LevelManager.h" />
     <ClInclude Include="src\logic\LevelObject.h" />
@@ -202,7 +204,7 @@
     <ClInclude Include="src\logic\ObjectActionType.h" />
     <ClInclude Include="src\logic\Scene.h" />
     <ClInclude Include="src\logic\SceneNode.h" />
-    <ClInclude Include="src\logic\Sequencer.h" />
+    <ClInclude Include="src\logic\Timeline.h" />
     <ClInclude Include="src\logic\Transform.h" />
     <ClInclude Include="src\MainWindow.h" />
     <ClInclude Include="src\rendering\Camera.h" />

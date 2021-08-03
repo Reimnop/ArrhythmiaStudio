@@ -30,7 +30,7 @@ LevelManager::LevelManager() {
 	std::srand(8);
 
 	// Add random objects
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 0; i++)
     {
         float start = randomFloat() * 60.0f;
         float end = start + 5.0f + randomFloat() * 20.0f;
@@ -46,10 +46,8 @@ LevelManager::LevelManager() {
     }
 
     for (LevelObject* obj : levelObjects) {
-        int channelCount = (int)(randomFloat() * 6.0f);
-
-        for (int i = 0; i < channelCount; i++) {
-            AnimationChannel* channel = new AnimationChannel((AnimationChannelType)(int)(randomFloat() * 5.99f), 0, nullptr);
+        for (int i = 0; i < 6; i++) {
+            AnimationChannel* channel = new AnimationChannel((AnimationChannelType)i, 0, nullptr);
 
             for (int i = 0; i < 10; i++) {
                 Keyframe kf = Keyframe();
@@ -63,7 +61,8 @@ LevelManager::LevelManager() {
         }
     }
 
-    sequencer = new Sequencer(this);
+    timeline = new Timeline(this);
+    dopeSheet = new DopeSheet(this);
 
     updateAllObjectActions();
 }
@@ -74,11 +73,11 @@ void LevelManager::update(float time) {
         while (actionIndex < objectActions.size() && objectActions[actionIndex].time <= time) {
             switch (objectActions[actionIndex].type) {
             case ObjectActionType_Spawn:
-                objectActions[actionIndex].levelObject->node->active = true;
+                objectActions[actionIndex].levelObject->node->setActive(true);
                 aliveObjects.insert(objectActions[actionIndex].levelObject);
                 break;
             case ObjectActionType_Kill:
-                objectActions[actionIndex].levelObject->node->active = false;
+                objectActions[actionIndex].levelObject->node->setActive(false);
                 aliveObjects.erase(objectActions[actionIndex].levelObject);
                 break;
             }
@@ -90,11 +89,11 @@ void LevelManager::update(float time) {
         while (actionIndex >= 0 && objectActions[actionIndex].time > time) {
             switch (objectActions[actionIndex].type) {
             case ObjectActionType_Spawn:
-                objectActions[actionIndex].levelObject->node->active = false;
+                objectActions[actionIndex].levelObject->node->setActive(false);
                 aliveObjects.erase(objectActions[actionIndex].levelObject);
                 break;
             case ObjectActionType_Kill:
-                objectActions[actionIndex].levelObject->node->active = true;
+                objectActions[actionIndex].levelObject->node->setActive(true);
                 aliveObjects.insert(objectActions[actionIndex].levelObject);
                 break;
             }
@@ -134,17 +133,8 @@ void LevelManager::updateAllObjectActions()
     objectActions.clear();
 
     for (int i = 0; i < levelObjects.size(); i++) {
-        const float EPSILON = 0.0001f;
-
-        ObjectAction spawnAction = ObjectAction();
-        spawnAction.time = levelObjects[i]->startTime;
-        spawnAction.type = ObjectActionType_Spawn;
-        spawnAction.levelObject = levelObjects[i];
-
-        ObjectAction killAction = ObjectAction();
-        killAction.time = levelObjects[i]->killTime + EPSILON;
-        killAction.type = ObjectActionType_Kill;
-        killAction.levelObject = levelObjects[i];
+        ObjectAction spawnAction, killAction;
+        levelObjects[i]->genActionPair(&spawnAction, &killAction);
 
         insertAction(spawnAction);
         insertAction(killAction);
@@ -154,7 +144,7 @@ void LevelManager::updateAllObjectActions()
 void LevelManager::recalculateActionIndex(float time) {
     // Reset all objects
     for (LevelObject* levelObject : levelObjects) {
-        levelObject->node->active = false;
+        levelObject->node->setActive(false);
     }
 
     // Reset action index and recalculate
@@ -162,11 +152,11 @@ void LevelManager::recalculateActionIndex(float time) {
     while (actionIndex < objectActions.size() && objectActions[actionIndex].time <= time) {
         switch (objectActions[actionIndex].type) {
         case ObjectActionType_Spawn:
-            objectActions[actionIndex].levelObject->node->active = true;
+            objectActions[actionIndex].levelObject->node->setActive(true);
             aliveObjects.insert(objectActions[actionIndex].levelObject);
             break;
         case ObjectActionType_Kill:
-            objectActions[actionIndex].levelObject->node->active = false;
+            objectActions[actionIndex].levelObject->node->setActive(false);
             aliveObjects.erase(objectActions[actionIndex].levelObject);
             break;
         }
@@ -190,7 +180,7 @@ void LevelManager::insertAction(ObjectAction value) {
 
 void LevelManager::spawnNode(LevelObject* levelObject) {
     SceneNode* node = new SceneNode(levelObject->name);
-    node->active = false;
+    node->setActive(false);
     
     MeshRenderer* renderer = new MeshRenderer();
     renderer->mesh = mesh;

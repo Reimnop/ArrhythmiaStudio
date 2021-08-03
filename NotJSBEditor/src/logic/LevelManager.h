@@ -2,21 +2,20 @@
 
 #include <vector>
 #include <random>
-#include <tuple>
 #include <unordered_set>
 #include <functional>
 
 #include "../rendering/MeshRenderer.h"
 #include "SceneNode.h"
 #include "LevelObject.h"
-#include "Sequencer.h"
+#include "Timeline.h"
+#include "DopeSheet.h"
 #include "ObjectAction.h"
-
-typedef std::tuple<SceneNode, LevelObject> SceneNodeLevelObjectPair;
 
 class LevelManager {
 public:
 	std::vector<LevelObject*> levelObjects;
+	int selectedObjectIndex = -1;
 
 	LevelManager();
 
@@ -24,7 +23,8 @@ public:
 	void updateAllObjectActions();
 	void recalculateActionIndex(float time);
 private:
-	Sequencer* sequencer;
+	Timeline* timeline;
+	DopeSheet* dopeSheet;
 
 	float lastTime = 0.0f;
 

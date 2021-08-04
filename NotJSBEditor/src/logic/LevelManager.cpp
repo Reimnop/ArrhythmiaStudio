@@ -27,38 +27,18 @@ LevelManager::LevelManager() {
     shader = new Shader("Assets/Shaders/basic.vert", "Assets/Shaders/basic.frag");
     material = new Material(shader, 0, nullptr);
 
-	std::srand(8);
+    float start = 5.0f;
+    float end = 25.0f;
 
-	// Add random objects
-    for (int i = 0; i < 20; i++)
     {
-        float start = randomFloat() * 60.0f;
-        float end = start + 25.0f + randomFloat() * 10.0f;
-
-        LevelObject* obj = new LevelObject("Object Index " + std::to_string(i));
+        LevelObject* obj = new LevelObject("Hello world!");
         obj->startTime = start;
         obj->killTime = end;
-        obj->editorBinIndex = (int)(randomFloat() * 10.0f);
+        obj->editorBinIndex = 0;
 
         spawnNode(obj);
 
         levelObjects.push_back(obj);
-    }
-
-    for (LevelObject* obj : levelObjects) {
-        for (int i = 0; i < 6; i++) {
-            AnimationChannel* channel = new AnimationChannel((AnimationChannelType)i, 0, nullptr);
-
-            for (int i = 0; i < 10; i++) {
-                Keyframe kf = Keyframe();
-                kf.time = i;
-                kf.value = channel->type != AnimationChannelType_Rotation ? (randomFloat() * 2.0f - 1.0f) * 8.0f : (randomFloat() * 2.0f - 1.0f) * 90.0f;
-
-                channel->insertKeyframe(kf);
-            }
-
-            obj->animationChannels.push_back(channel);
-        }
     }
 
     timeline = new Timeline(this);
@@ -68,6 +48,8 @@ LevelManager::LevelManager() {
 }
 
 void LevelManager::update(float time) {
+    this->time = time;
+
     if (time >= lastTime) 
     { 
         while (actionIndex < objectActions.size() && objectActions[actionIndex].time <= time) {

@@ -22,4 +22,5 @@ public:
 	~LevelObject();
 
 	void genActionPair(ObjectAction* spawnAction, ObjectAction* killAction);
+	bool hasChannel(AnimationChannelType channelType);
 };

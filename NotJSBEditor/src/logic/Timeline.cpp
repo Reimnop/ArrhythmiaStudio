@@ -5,12 +5,10 @@ Timeline::Timeline(LevelManager* levelManager) {
 	this->levelManager = levelManager;
 
 	startTime = 0.0f;
-	endTime = 160.0f;
+	endTime = 30.0f;
 
 	ImGuiController::onLayout.push_back(std::bind(&Timeline::onLayout, this));
 }
-
-#include "../MainWindow.h"
 
 void Timeline::onLayout() {
     // Open a sequence window
@@ -75,6 +73,8 @@ void Timeline::onLayout() {
 
             ImVec2 stripSize = ImVec2(stripMax.x - stripMin.x, stripMax.y - stripMin.y);
 
+            drawList->PushClipRect(stripMin, stripMax);
+
             int id = i + 1;
 
             ImGui::PushID(id);
@@ -113,7 +113,7 @@ void Timeline::onLayout() {
 
                     // Recalculate object actions
                     levelManager->recalculateObjectAction(levelObject);
-                    levelManager->recalculateActionIndex(MainWindow::inst->time);
+                    levelManager->recalculateActionIndex(levelManager->time);
                 }
             }
 
@@ -148,6 +148,8 @@ void Timeline::onLayout() {
 
             drawList->AddRectFilled(localRectMin, localRectMax, textCol);
             drawList->AddText(ImVec2(localRectMin.x + 2.0f, localRectMin.y), stripCol, name);
+
+            drawList->PopClipRect();
         }
         
         if (ImGui::IsWindowFocused() && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !atLeastOneStripClicked) 
@@ -158,7 +160,7 @@ void Timeline::onLayout() {
         ImU32 borderCol = ImGui::GetColorU32(ImGuiCol_Border);
 
         // Draw time pointer
-        float pointerPos = cursorPos.x + (MainWindow::inst->time - startTime) / (endTime - startTime) * availRegion.x;
+        float pointerPos = cursorPos.x + (levelManager->time - startTime) / (endTime - startTime) * availRegion.x;
         drawList->AddLine(ImVec2(pointerPos, cursorPos.y), ImVec2(pointerPos, cursorPos.y + timelineHeight), borderCol);
 
         // Frames

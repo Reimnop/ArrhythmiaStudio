@@ -17,6 +17,8 @@ public:
 	std::vector<LevelObject*> levelObjects;
 	int selectedObjectIndex = -1;
 
+	float time;
+
 	LevelManager();
 
 	void update(float time);

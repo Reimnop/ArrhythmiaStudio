@@ -17,8 +17,7 @@ LevelObject::~LevelObject() {
 	animationChannels.shrink_to_fit();
 }
 
-void LevelObject::genActionPair(ObjectAction* spawnAction, ObjectAction* killAction)
-{
+void LevelObject::genActionPair(ObjectAction* spawnAction, ObjectAction* killAction) {
 	ObjectAction spawn = ObjectAction();
 	spawn.time = startTime;
 	spawn.type = ObjectActionType_Spawn;
@@ -31,4 +30,14 @@ void LevelObject::genActionPair(ObjectAction* spawnAction, ObjectAction* killAct
 
 	*spawnAction = spawn;
 	*killAction = kill;
+}
+
+bool LevelObject::hasChannel(AnimationChannelType channelType) {
+	for (int i = 0; i < animationChannels.size(); i++) {
+		if (animationChannels[i]->type == channelType) {
+			return true;
+		}
+	}
+
+	return false;
 }

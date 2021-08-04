@@ -9,7 +9,7 @@
 #include "SceneNode.h"
 #include "LevelObject.h"
 #include "Timeline.h"
-#include "DopeSheet.h"
+#include "Properties.h"
 #include "ObjectAction.h"
 
 class LevelManager {
@@ -20,11 +20,12 @@ public:
 	LevelManager();
 
 	void update(float time);
-	void updateAllObjectActions();
+	void recalculateAllObjectActions();
+	void recalculateObjectAction(LevelObject* levelObject);
 	void recalculateActionIndex(float time);
 private:
 	Timeline* timeline;
-	DopeSheet* dopeSheet;
+	Properties* properties;
 
 	float lastTime = 0.0f;
 

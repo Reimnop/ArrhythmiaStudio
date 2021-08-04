@@ -166,7 +166,7 @@
     <ClCompile Include="include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\logic\animation\AnimationChannel.cpp" />
-    <ClCompile Include="src\logic\DopeSheet.cpp" />
+    <ClCompile Include="src\logic\Properties.cpp" />
     <ClCompile Include="src\logic\LevelObject.cpp" />
     <ClCompile Include="src\logic\GameManager.cpp" />
     <ClCompile Include="src\logic\LevelManager.cpp" />
@@ -196,7 +196,7 @@
     <ClInclude Include="src\logic\animation\AnimationChannelType.h" />
     <ClInclude Include="src\logic\animation\AnimationChannel.h" />
     <ClInclude Include="src\logic\animation\Keyframe.h" />
-    <ClInclude Include="src\logic\DopeSheet.h" />
+    <ClInclude Include="src\logic\Properties.h" />
     <ClInclude Include="src\logic\GameManager.h" />
     <ClInclude Include="src\logic\LevelManager.h" />
     <ClInclude Include="src\logic\LevelObject.h" />

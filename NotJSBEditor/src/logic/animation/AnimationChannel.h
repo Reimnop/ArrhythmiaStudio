@@ -9,6 +9,7 @@
 class AnimationChannel {
 public:
 	AnimationChannelType type;
+	std::vector<Keyframe> keyframes;
 
 	AnimationChannel(AnimationChannelType channelType, int count, Keyframe* keyframes);
 	~AnimationChannel();
@@ -16,7 +17,5 @@ public:
 	void insertKeyframe(Keyframe keyframe);
 	float update(float time);
 private:
-	std::vector<Keyframe> keyframes;
-
 	float lastIndex;
 };

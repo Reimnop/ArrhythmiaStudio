@@ -30,10 +30,10 @@ LevelManager::LevelManager() {
 	std::srand(8);
 
 	// Add random objects
-    for (int i = 0; i < 0; i++)
+    for (int i = 0; i < 20; i++)
     {
         float start = randomFloat() * 60.0f;
-        float end = start + 5.0f + randomFloat() * 20.0f;
+        float end = start + 25.0f + randomFloat() * 10.0f;
 
         LevelObject* obj = new LevelObject("Object Index " + std::to_string(i));
         obj->startTime = start;
@@ -62,9 +62,9 @@ LevelManager::LevelManager() {
     }
 
     timeline = new Timeline(this);
-    dopeSheet = new DopeSheet(this);
+    properties = new Properties(this);
 
-    updateAllObjectActions();
+    recalculateAllObjectActions();
 }
 
 void LevelManager::update(float time) {
@@ -127,7 +127,7 @@ void LevelManager::update(float time) {
     }
 }
 
-void LevelManager::updateAllObjectActions()
+void LevelManager::recalculateAllObjectActions()
 {
     // Clear and re-add object actions
     objectActions.clear();
@@ -139,6 +139,22 @@ void LevelManager::updateAllObjectActions()
         insertAction(spawnAction);
         insertAction(killAction);
     }
+}
+
+void LevelManager::recalculateObjectAction(LevelObject* levelObject) {
+    // Find and remove old actions
+    std::vector<ObjectAction>::iterator it = std::remove_if(objectActions.begin(), objectActions.end(),
+        [levelObject](ObjectAction match) {
+            return match.levelObject == levelObject;
+        });
+    objectActions.erase(it, objectActions.end());
+
+    // Create new actions and insert
+    ObjectAction spawnAction, killAction;
+    levelObject->genActionPair(&spawnAction, &killAction);
+
+    insertAction(spawnAction);
+    insertAction(killAction);
 }
 
 void LevelManager::recalculateActionIndex(float time) {
@@ -164,17 +180,16 @@ void LevelManager::recalculateActionIndex(float time) {
     }
 }
 
-bool actionComp(ObjectAction a, ObjectAction b) {
-    return a.time < b.time;
-}
-
 void LevelManager::insertAction(ObjectAction value) {
     if (objectActions.size() == 0) {
         objectActions.push_back(value);
         return;
     }
 
-    std::vector<ObjectAction>::iterator it = std::lower_bound(objectActions.begin(), objectActions.end(), value, actionComp);
+    std::vector<ObjectAction>::iterator it = std::lower_bound(objectActions.begin(), objectActions.end(), value, 
+        [](ObjectAction a, ObjectAction b) {
+            return a.time < b.time;
+        });
     objectActions.insert(it, value);
 }
 

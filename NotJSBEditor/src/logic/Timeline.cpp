@@ -5,10 +5,12 @@ Timeline::Timeline(LevelManager* levelManager) {
 	this->levelManager = levelManager;
 
 	startTime = 0.0f;
-	endTime = 80.0f;
+	endTime = 160.0f;
 
 	ImGuiController::onLayout.push_back(std::bind(&Timeline::onLayout, this));
 }
+
+#include "../MainWindow.h"
 
 void Timeline::onLayout() {
     // Open a sequence window
@@ -24,10 +26,9 @@ void Timeline::onLayout() {
         ImVec2 cursorPos = ImGui::GetCursorScreenPos();
         ImVec2 availRegion = ImGui::GetContentRegionAvail();
 
-        float sequencerHeight = binCount * binHeight;
-        float clippedSequencerHeight = std::min(availRegion.y, sequencerHeight);
+        float timelineHeight = binCount * binHeight;
 
-        ImVec2 clipSize = ImVec2(availRegion.x, clippedSequencerHeight);
+        ImVec2 clipSize = ImVec2(availRegion.x, timelineHeight);
 
         // Draw editor bins
         drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + clipSize.x, cursorPos.y + clipSize.y));
@@ -99,6 +100,9 @@ void Timeline::onLayout() {
                 // Dragging
                 if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
                 {
+                    atLeastOneStripClicked = true;
+                    levelManager->selectedObjectIndex = i;
+
                     ImVec2 delta = io.MouseDelta;
                     float timeDelta = (delta.x / availRegion.x) * (endTime - startTime);
 
@@ -106,6 +110,10 @@ void Timeline::onLayout() {
 
                     levelObject->startTime += timeDelta;
                     levelObject->killTime += timeDelta;
+
+                    // Recalculate object actions
+                    levelManager->recalculateObjectAction(levelObject);
+                    levelManager->recalculateActionIndex(MainWindow::inst->time);
                 }
             }
 
@@ -142,16 +150,21 @@ void Timeline::onLayout() {
             drawList->AddText(ImVec2(localRectMin.x + 2.0f, localRectMin.y), stripCol, name);
         }
         
-        if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !atLeastOneStripClicked) 
+        if (ImGui::IsWindowFocused() && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !atLeastOneStripClicked) 
         {
             levelManager->selectedObjectIndex = -1;
         }
 
-        drawList->PopClipRect();
+        ImU32 borderCol = ImGui::GetColorU32(ImGuiCol_Border);
+
+        // Draw time pointer
+        float pointerPos = cursorPos.x + (MainWindow::inst->time - startTime) / (endTime - startTime) * availRegion.x;
+        drawList->AddLine(ImVec2(pointerPos, cursorPos.y), ImVec2(pointerPos, cursorPos.y + timelineHeight), borderCol);
 
         // Frames
-        ImU32 borderCol = ImGui::GetColorU32(ImGuiCol_Border);
-        drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availRegion.x, cursorPos.y + clippedSequencerHeight), borderCol);
+        drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availRegion.x, cursorPos.y + timelineHeight), borderCol);
+
+        drawList->PopClipRect();
 
         ImGui::End();
     }

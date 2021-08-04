@@ -90,7 +90,7 @@
     <ClCompile Include="src\logic\Timeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\logic\DopeSheet.cpp">
+    <ClCompile Include="src\logic\Properties.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -206,7 +206,7 @@
     <ClInclude Include="src\logic\Timeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\DopeSheet.h">
+    <ClInclude Include="src\logic\Properties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

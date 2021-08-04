@@ -14,10 +14,6 @@ AnimationChannel::~AnimationChannel() {
 	keyframes.shrink_to_fit();
 }
 
-bool keyframeComp(Keyframe a, Keyframe b) {
-	return a.time < b.time;
-}
-
 void AnimationChannel::insertKeyframe(Keyframe keyframe) {
 	if (keyframes.size() == 0) {
 		keyframes.push_back(keyframe);
@@ -29,7 +25,10 @@ void AnimationChannel::insertKeyframe(Keyframe keyframe) {
 		return;
 	}
 
-	std::vector<Keyframe>::iterator it = std::lower_bound(keyframes.begin(), keyframes.end(), keyframe, keyframeComp);
+	std::vector<Keyframe>::iterator it = std::lower_bound(keyframes.begin(), keyframes.end(), keyframe, 
+		[](Keyframe a, Keyframe b) {
+			return a.time < b.time;
+		});
 	keyframes.insert(it, keyframe);
 }
 

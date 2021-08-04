@@ -1,6 +1,7 @@
 #include "LevelObject.h"
 
-LevelObject::LevelObject(std::string name) {
+LevelObject::LevelObject(std::string name)
+{
 	this->name = name;
 	startTime = 0.0f;
 	killTime = 0.0f;
@@ -8,8 +9,10 @@ LevelObject::LevelObject(std::string name) {
 	node = nullptr;
 }
 
-LevelObject::~LevelObject() {
-	for (AnimationChannel* channel : animationChannels) {
+LevelObject::~LevelObject()
+{
+	for (AnimationChannel* channel : animationChannels)
+	{
 		delete channel;
 	}
 
@@ -17,7 +20,8 @@ LevelObject::~LevelObject() {
 	animationChannels.shrink_to_fit();
 }
 
-void LevelObject::genActionPair(ObjectAction* spawnAction, ObjectAction* killAction) {
+void LevelObject::genActionPair(ObjectAction* spawnAction, ObjectAction* killAction)
+{
 	ObjectAction spawn = ObjectAction();
 	spawn.time = startTime;
 	spawn.type = ObjectActionType_Spawn;
@@ -32,22 +36,29 @@ void LevelObject::genActionPair(ObjectAction* spawnAction, ObjectAction* killAct
 	*killAction = kill;
 }
 
-void LevelObject::insertChannel(AnimationChannel* value) {
-	if (animationChannels.size() == 0) {
+void LevelObject::insertChannel(AnimationChannel* value)
+{
+	if (animationChannels.size() == 0)
+	{
 		animationChannels.push_back(value);
 		return;
 	}
 
-	std::vector<AnimationChannel*>::iterator it = std::lower_bound(animationChannels.begin(), animationChannels.end(), value,
-		[](AnimationChannel* a, AnimationChannel* b) {
-			return a->type < b->type;
-		});
+	std::vector<AnimationChannel*>::iterator it = std::lower_bound(animationChannels.begin(), animationChannels.end(),
+	                                                               value,
+	                                                               [](AnimationChannel* a, AnimationChannel* b)
+	                                                               {
+		                                                               return a->type < b->type;
+	                                                               });
 	animationChannels.insert(it, value);
 }
 
-bool LevelObject::hasChannel(AnimationChannelType channelType) {
-	for (int i = 0; i < animationChannels.size(); i++) {
-		if (animationChannels[i]->type == channelType) {
+bool LevelObject::hasChannel(AnimationChannelType channelType)
+{
+	for (int i = 0; i < animationChannels.size(); i++)
+	{
+		if (animationChannels[i]->type == channelType)
+		{
 			return true;
 		}
 	}

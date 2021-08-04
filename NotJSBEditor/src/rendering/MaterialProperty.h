@@ -4,7 +4,8 @@
 
 #include "MaterialPropertyType.h"
 
-struct MaterialProperty {
+struct MaterialProperty
+{
 	const char* name;
 	MaterialPropertyType propertyType;
 	int size;

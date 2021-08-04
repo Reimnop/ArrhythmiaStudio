@@ -6,7 +6,8 @@
 #include "AnimationChannelType.h"
 
 // Contains keyframes and also animates them
-class AnimationChannel {
+class AnimationChannel
+{
 public:
 	AnimationChannelType type;
 	std::vector<Keyframe> keyframes;

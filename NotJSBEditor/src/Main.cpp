@@ -2,8 +2,8 @@
 
 int main()
 {
-    MainWindow* window = new MainWindow();
-    window->run();
+	MainWindow* window = new MainWindow();
+	window->run();
 
-    delete window;
+	delete window;
 }

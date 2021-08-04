@@ -13,7 +13,8 @@
 #define THROW_GL_ERROR
 #endif
 
-class MainWindow {
+class MainWindow
+{
 public:
 	static MainWindow* inst;
 

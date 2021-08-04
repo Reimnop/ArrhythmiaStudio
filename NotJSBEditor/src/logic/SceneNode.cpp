@@ -1,7 +1,8 @@
 #include "SceneNode.h"
 #include "Scene.h"
 
-SceneNode::SceneNode(std::string name) {
+SceneNode::SceneNode(std::string name)
+{
 	this->name = name;
 	transform = new Transform();
 
@@ -9,15 +10,18 @@ SceneNode::SceneNode(std::string name) {
 	setParent(nullptr);
 }
 
-SceneNode::SceneNode(std::string name, SceneNode* parent) {
+SceneNode::SceneNode(std::string name, SceneNode* parent)
+{
 	this->name = name;
 	transform = new Transform();
 
 	setParent(parent);
 }
 
-SceneNode::~SceneNode() {
-	if (renderer) {
+SceneNode::~SceneNode()
+{
+	if (renderer)
+	{
 		delete renderer;
 	}
 
@@ -25,7 +29,8 @@ SceneNode::~SceneNode() {
 	delete transform;
 
 	// Delete children
-	for (SceneNode* node : children) {
+	for (SceneNode* node : children)
+	{
 		delete node;
 	}
 
@@ -33,17 +38,21 @@ SceneNode::~SceneNode() {
 	children.shrink_to_fit();
 }
 
-void SceneNode::setParent(SceneNode* newParent) {
-	if (parent) {
+void SceneNode::setParent(SceneNode* newParent)
+{
+	if (parent)
+	{
 		std::vector<SceneNode*>::iterator it = std::find(parent->children.begin(), parent->children.end(), this);
 		parent->children.erase(it);
 	}
 
-	if (!newParent) {
+	if (!newParent)
+	{
 		newParent = Scene::inst->rootNode;
 	}
 
-	if (newParent) {
+	if (newParent)
+	{
 		parent = newParent;
 
 		// Add to new parent
@@ -51,14 +60,15 @@ void SceneNode::setParent(SceneNode* newParent) {
 	}
 }
 
-void SceneNode::setActive(bool value) {
-	if (parent && active != value) 
+void SceneNode::setActive(bool value)
+{
+	if (parent && active != value)
 	{
-		if (value) 
+		if (value)
 		{
 			parent->activeChildren.insert(this);
 		}
-		else 
+		else
 		{
 			parent->activeChildren.erase(this);
 		}
@@ -67,6 +77,7 @@ void SceneNode::setActive(bool value) {
 	active = value;
 }
 
-bool SceneNode::getActive() {
+bool SceneNode::getActive()
+{
 	return active;
 }

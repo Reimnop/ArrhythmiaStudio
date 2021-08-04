@@ -6,7 +6,8 @@
 
 #include "VertexAttrib.h"
 
-class Mesh {
+class Mesh
+{
 public:
 	glm::vec3* vertices;
 	uint32_t* indices;

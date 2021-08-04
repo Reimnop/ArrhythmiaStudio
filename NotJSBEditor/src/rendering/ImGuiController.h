@@ -7,7 +7,8 @@
 #include <vector>
 #include <functional>
 
-class ImGuiController {
+class ImGuiController
+{
 public:
 	static std::vector<std::function<void()>> onLayout;
 

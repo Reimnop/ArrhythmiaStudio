@@ -2,8 +2,10 @@
 
 Scene* Scene::inst;
 
-Scene::Scene() {
-	if (inst) {
+Scene::Scene()
+{
+	if (inst)
+	{
 		return;
 	}
 
@@ -12,6 +14,7 @@ Scene::Scene() {
 	rootNode = new SceneNode("Root Node");
 }
 
-Scene::~Scene() {
+Scene::~Scene()
+{
 	delete rootNode;
 }

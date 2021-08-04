@@ -2,13 +2,15 @@
 
 std::vector<std::function<void()>> ImGuiController::onLayout;
 
-ImGuiController::ImGuiController(GLFWwindow* window, const char* fontPath) {
+ImGuiController::ImGuiController(GLFWwindow* window, const char* fontPath)
+{
 	const char* glslVersion = "#version 430";
 
 	ImGui::CreateContext();
 
 	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_ViewportsEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable |
+		ImGuiConfigFlags_ViewportsEnable;
 	io.Fonts->AddFontFromFileTTF(fontPath, 16.0f);
 
 	setStyle();
@@ -17,13 +19,15 @@ ImGuiController::ImGuiController(GLFWwindow* window, const char* fontPath) {
 	ImGui_ImplOpenGL3_Init(glslVersion);
 }
 
-ImGuiController::~ImGuiController() {
+ImGuiController::~ImGuiController()
+{
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 }
 
-void ImGuiController::update() {
+void ImGuiController::update()
+{
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
@@ -55,14 +59,16 @@ void ImGuiController::update() {
 	ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), dockspaceFlags);
 
 	// Call all onLayout
-	for (std::function<void()> layoutFunc : onLayout) {
+	for (std::function<void()> layoutFunc : onLayout)
+	{
 		layoutFunc();
 	}
 
 	ImGui::End();
 }
 
-void ImGuiController::renderImGui() {
+void ImGuiController::renderImGui()
+{
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -76,7 +82,8 @@ void ImGuiController::renderImGui() {
 	}
 }
 
-void ImGuiController::setStyle() {
+void ImGuiController::setStyle()
+{
 	ImGuiStyle* style = &ImGui::GetStyle();
 	ImVec4* colors = style->Colors;
 

@@ -11,7 +11,8 @@
 #include "ImGuiController.h"
 #include "DrawElementsCommand.h"
 
-class Renderer {
+class Renderer
+{
 public:
 	Renderer(GLFWwindow* window);
 	void update();

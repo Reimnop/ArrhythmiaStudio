@@ -11,7 +11,8 @@
 #include "Properties.h"
 #include "ObjectAction.h"
 
-class LevelManager {
+class LevelManager
+{
 public:
 	std::vector<LevelObject*> levelObjects;
 	int selectedObjectIndex = -1;

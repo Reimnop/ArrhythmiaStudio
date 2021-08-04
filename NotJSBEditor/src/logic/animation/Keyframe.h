@@ -1,6 +1,7 @@
 #pragma once
 
-struct Keyframe {
+struct Keyframe
+{
 	float time;
 	float value;
 };

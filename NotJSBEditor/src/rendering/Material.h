@@ -12,7 +12,8 @@
 #define MAT_GETTER_TEMP(t_name, type) type get##t_name(const char* name);
 #define MAT_SETTER_TEMP(t_name, type) void set##t_name(const char* name, type value);
 
-class Material {
+class Material
+{
 public:
 	Material(Shader* shader, int propertyCount, MaterialProperty* properties);
 	~Material();

@@ -1,6 +1,7 @@
 #pragma once
 
-enum ObjectActionType {
+enum ObjectActionType
+{
 	ObjectActionType_Spawn,
 	ObjectActionType_Kill
 };

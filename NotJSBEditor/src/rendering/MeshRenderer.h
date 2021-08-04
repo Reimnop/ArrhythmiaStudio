@@ -10,7 +10,8 @@
 #include "DrawElementsCommand.h"
 #include "DrawCommandType.h"
 
-class MeshRenderer : public RendererComponent {
+class MeshRenderer : public RendererComponent
+{
 public:
 	MeshRenderer();
 	~MeshRenderer();

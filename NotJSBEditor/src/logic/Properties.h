@@ -7,15 +7,17 @@
 #include "animation/AnimationChannel.h"
 
 class LevelManager;
-class Properties {
+
+class Properties
+{
 public:
-    Properties(LevelManager* levelManager);
+	Properties(LevelManager* levelManager);
 private:
-    LevelManager* levelManager;
+	LevelManager* levelManager;
 
-    float startTime;
-    float endTime;
+	float startTime;
+	float endTime;
 
-    void onLayout();
-    const char* getChannelName(AnimationChannelType channelType);
+	void onLayout();
+	const char* getChannelName(AnimationChannelType channelType);
 };

@@ -7,7 +7,8 @@
 #include <streambuf>
 #include <string>
 
-class Shader {
+class Shader
+{
 public:
 	Shader(const char* vertPath, const char* fragPath);
 	~Shader();

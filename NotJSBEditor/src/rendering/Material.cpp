@@ -3,21 +3,24 @@
 #define MAT_GETTER(t_name, type) type Material::get##t_name(const char* name) { return *(type*)materialData[propertyIndices[name]]; }
 #define MAT_SETTER(t_name, type) void Material::set##t_name(const char* name, type value) { materialData[propertyIndices[name]] = (void*)&value; }
 
-Material::Material(Shader* shader, int propertyCount, MaterialProperty* properties) {
+Material::Material(Shader* shader, int propertyCount, MaterialProperty* properties)
+{
 	this->shader = shader;
 	this->propertyCount = propertyCount;
 	materialProperties = properties;
-	
+
 	// Calculate buffer size
 	bufferSize = 0;
-	for (int i = 0; i < propertyCount; i++) {
+	for (int i = 0; i < propertyCount; i++)
+	{
 		bufferSize += properties[i].size;
 	}
 
 	// Initialize arrays
-	materialData = new void* [propertyCount];
+	materialData = new void*[propertyCount];
 
-	for (int i = 0; i < propertyCount; i++) {
+	for (int i = 0; i < propertyCount; i++)
+	{
 		propertyIndices[properties[i].name] = i;
 	}
 
@@ -28,22 +31,26 @@ Material::Material(Shader* shader, int propertyCount, MaterialProperty* properti
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-Material::~Material() {
+Material::~Material()
+{
 	glDeleteBuffers(1, &uniformBuffer);
 
 	propertyIndices.clear();
 
-	for (int i = 0; i < propertyCount; i++) {
+	for (int i = 0; i < propertyCount; i++)
+	{
 		delete materialData[i];
 	}
 	delete[] materialData;
 }
 
-Shader* Material::getShader() {
+Shader* Material::getShader()
+{
 	return shader;
 }
 
-int Material::getUniformBuffer() {
+int Material::getUniformBuffer()
+{
 	return uniformBuffer;
 }
 
@@ -65,17 +72,20 @@ MAT_SETTER(Mat2, glm::mat2)
 MAT_SETTER(Mat3, glm::mat3)
 MAT_SETTER(Mat4, glm::mat4)
 
-template<typename T>
-void structureToPointer(T* valuePointer, unsigned char* pointer) {
+template <typename T>
+void structureToPointer(T* valuePointer, unsigned char* pointer)
+{
 	int size = sizeof(T);
 	unsigned char* ptr = (unsigned char*)valuePointer;
 
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < size; i++)
+	{
 		pointer[i] = ptr[i];
 	}
 }
 
-void Material::updateBuffer() {
+void Material::updateBuffer()
+{
 	unsigned char* buffer = new unsigned char[bufferSize];
 	memset(buffer, 0, bufferSize);
 

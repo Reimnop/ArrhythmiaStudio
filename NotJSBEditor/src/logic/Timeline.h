@@ -8,14 +8,16 @@
 #include "../rendering/ImGuiController.h"
 
 class LevelManager;
-class Timeline {
+
+class Timeline
+{
 public:
-    Timeline(LevelManager* levelManager);
+	Timeline(LevelManager* levelManager);
 private:
 	LevelManager* levelManager;
 
-    float startTime;
-    float endTime;
-    
-    void onLayout();
+	float startTime;
+	float endTime;
+
+	void onLayout();
 };

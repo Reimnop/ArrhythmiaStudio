@@ -3,12 +3,14 @@
 
 LevelManager* levelManager;
 
-GameManager::GameManager(GLFWwindow* window) {
+GameManager::GameManager(GLFWwindow* window)
+{
 	mainWindow = window;
 
 	levelManager = new LevelManager();
 }
 
-void GameManager::update() {
+void GameManager::update()
+{
 	levelManager->update(MainWindow::inst->time);
 }

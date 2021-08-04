@@ -10,7 +10,9 @@
 
 // Represents a node in a scene graph
 class Scene;
-class SceneNode {
+
+class SceneNode
+{
 public:
 	std::string name;
 

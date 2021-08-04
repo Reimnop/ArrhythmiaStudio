@@ -7,12 +7,14 @@
 #include "LevelManager.h"
 
 class MainWindow;
-class GameManager {
-public:
-    GameManager(GLFWwindow* window);
 
-    // Runs every frame
-    void update();
+class GameManager
+{
+public:
+	GameManager(GLFWwindow* window);
+
+	// Runs every frame
+	void update();
 private:
-    GLFWwindow* mainWindow;
+	GLFWwindow* mainWindow;
 };

@@ -1,10 +1,13 @@
 #include "MainWindow.h"
 
-void glfwErrorCallback(int error_code, const char* description) {
+void glfwErrorCallback(int error_code, const char* description)
+{
 	Logger::error("GLFW: " + std::string(description));
 }
 
-void APIENTRY glDebugCallback(GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length, const char* message, const void* userParam) {
+void APIENTRY glDebugCallback(GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length,
+                              const char* message, const void* userParam)
+{
 	std::string msgStr = std::string(message);
 
 	switch (severity)
@@ -34,8 +37,10 @@ void APIENTRY glDebugCallback(GLenum source, GLenum type, unsigned int id, GLenu
 
 MainWindow* MainWindow::inst;
 
-MainWindow::MainWindow() {
-	if (MainWindow::inst) {
+MainWindow::MainWindow()
+{
+	if (MainWindow::inst)
+	{
 		return;
 	}
 
@@ -44,7 +49,8 @@ MainWindow::MainWindow() {
 	glfwSetErrorCallback(glfwErrorCallback);
 
 	// Init GLFW
-	if (!glfwInit()) {
+	if (!glfwInit())
+	{
 		EXIT_FATAL("GLFW initialization failed!");
 	}
 
@@ -57,13 +63,15 @@ MainWindow::MainWindow() {
 
 	window = glfwCreateWindow(1600, 900, "Not JSB Editor", NULL, NULL);
 
-	if (!window) {
+	if (!window)
+	{
 		EXIT_FATAL("Window creation failed!");
 	}
 
 	glfwMakeContextCurrent(window);
 
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
 		EXIT_FATAL("GLAD initialization failed!");
 	}
 
@@ -76,19 +84,23 @@ MainWindow::MainWindow() {
 	onLoad();
 }
 
-MainWindow::~MainWindow() {
+MainWindow::~MainWindow()
+{
 	glfwTerminate();
 }
 
-void MainWindow::onLoad() {
+void MainWindow::onLoad()
+{
 	new Scene();
 
 	renderer = new Renderer(window);
 	gameManager = new GameManager(window);
 }
 
-void MainWindow::run() {
-	while (!glfwWindowShouldClose(window)) {
+void MainWindow::run()
+{
+	while (!glfwWindowShouldClose(window))
+	{
 		float currentTime = glfwGetTime();
 
 		deltaTime = currentTime - time;
@@ -101,14 +113,16 @@ void MainWindow::run() {
 	}
 }
 
-void MainWindow::onUpdateFrame() {
+void MainWindow::onUpdateFrame()
+{
 	gameManager->update();
 
 	// Update renderer last
 	renderer->update();
 }
 
-void MainWindow::onRenderFrame() {
+void MainWindow::onRenderFrame()
+{
 	int width, height;
 	glfwGetWindowSize(window, &width, &height);
 

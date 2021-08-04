@@ -1,6 +1,7 @@
 #include "Mesh.h"
 
-Mesh::Mesh(int verticesCount, glm::vec3* vertices, int indicesCount, uint32_t* indices) {
+Mesh::Mesh(int verticesCount, glm::vec3* vertices, int indicesCount, uint32_t* indices)
+{
 	this->verticesCount = verticesCount;
 	this->indicesCount = indicesCount;
 	this->vertices = vertices;
@@ -24,7 +25,8 @@ Mesh::Mesh(int verticesCount, glm::vec3* vertices, int indicesCount, uint32_t* i
 	glVertexAttribPointer(0, 3, GL_FLOAT, false, sizeof(glm::vec3), nullptr);
 }
 
-Mesh::~Mesh() {
+Mesh::~Mesh()
+{
 	delete[] vertices;
 	delete[] indices;
 
@@ -34,7 +36,8 @@ Mesh::~Mesh() {
 	glDeleteBuffers(1, &ebo);
 }
 
-void Mesh::setPerVertexData(int size, void* data, int attribCount, VertexAttrib* attribs) {
+void Mesh::setPerVertexData(int size, void* data, int attribCount, VertexAttrib* attribs)
+{
 	glBindVertexArray(vao);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo1);
@@ -55,6 +58,7 @@ void Mesh::setPerVertexData(int size, void* data, int attribCount, VertexAttrib*
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-uint32_t Mesh::getVao() {
+uint32_t Mesh::getVao()
+{
 	return vao;
 }

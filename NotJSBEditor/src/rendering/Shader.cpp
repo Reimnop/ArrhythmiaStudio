@@ -1,6 +1,7 @@
 #include "Shader.h"
 
-Shader::Shader(const char* vertPath, const char* fragPath) {
+Shader::Shader(const char* vertPath, const char* fragPath)
+{
 	// Read vertex shader source
 	std::ifstream vertStream(vertPath);
 	std::string vertSource((std::istreambuf_iterator<char>(vertStream)), std::istreambuf_iterator<char>());
@@ -27,7 +28,8 @@ Shader::Shader(const char* vertPath, const char* fragPath) {
 	// Detect compilation errors
 	int vertCode;
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vertCode);
-	if (vertCode != GL_TRUE) {
+	if (vertCode != GL_TRUE)
+	{
 		glGetShaderInfoLog(vertexShader, 1024, nullptr, infoLogBuf);
 		throw "Error occurred whilst compiling Shader " + std::to_string(vertexShader) + "\n\n" + infoLogBuf;
 	}
@@ -40,7 +42,8 @@ Shader::Shader(const char* vertPath, const char* fragPath) {
 	// Detect compilation errors
 	int fragCode;
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fragCode);
-	if (fragCode != GL_TRUE) {
+	if (fragCode != GL_TRUE)
+	{
 		glGetShaderInfoLog(fragmentShader, 1024, nullptr, infoLogBuf);
 		throw "Error occurred whilst compiling Shader " + std::to_string(vertexShader) + "\n\n" + infoLogBuf;
 	}
@@ -54,7 +57,8 @@ Shader::Shader(const char* vertPath, const char* fragPath) {
 	// Detect linking error
 	int linkCode;
 	glGetProgramiv(handle, GL_LINK_STATUS, &linkCode);
-	if (linkCode != GL_TRUE) {
+	if (linkCode != GL_TRUE)
+	{
 		throw "Error occurred whilst linking Program " + std::to_string(handle);
 	}
 
@@ -70,7 +74,8 @@ Shader::Shader(const char* vertPath, const char* fragPath) {
 
 	char uniformNameBuf[64];
 
-	for (int i = 0; i < numberOfUniforms; i++) {
+	for (int i = 0; i < numberOfUniforms; i++)
+	{
 		int length;
 		int size;
 		GLenum type;
@@ -80,14 +85,17 @@ Shader::Shader(const char* vertPath, const char* fragPath) {
 	}
 }
 
-Shader::~Shader() {
+Shader::~Shader()
+{
 	glDeleteProgram(handle);
 }
 
-uint32_t Shader::getHandle() {
+uint32_t Shader::getHandle()
+{
 	return handle;
 }
 
-int Shader::getAttribLocation(const char* attribName) {
+int Shader::getAttribLocation(const char* attribName)
+{
 	return uniformLocations[attribName];
 }

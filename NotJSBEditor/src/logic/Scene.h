@@ -2,7 +2,8 @@
 
 #include "SceneNode.h"
 
-class Scene {
+class Scene
+{
 public:
 	static Scene* inst;
 

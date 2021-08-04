@@ -4,7 +4,8 @@
 #include "DrawCommandType.h"
 
 // Data necessary for drawing
-struct OutputDrawData {
+struct OutputDrawData
+{
 	uint32_t vao;
 	uint32_t shader;
 	int uniformBuffersCount;

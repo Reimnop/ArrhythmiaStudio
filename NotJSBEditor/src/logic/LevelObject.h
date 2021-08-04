@@ -8,7 +8,8 @@
 #include "ObjectAction.h"
 #include "SceneNode.h"
 
-class LevelObject {
+class LevelObject
+{
 public:
 	std::string name;
 	float startTime;

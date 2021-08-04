@@ -1,6 +1,7 @@
 #include "MeshRenderer.h"
 
-MeshRenderer::MeshRenderer() {
+MeshRenderer::MeshRenderer()
+{
 	mesh = nullptr;
 	material = nullptr;
 
@@ -11,11 +12,13 @@ MeshRenderer::MeshRenderer() {
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-MeshRenderer::~MeshRenderer() {
+MeshRenderer::~MeshRenderer()
+{
 	glDeleteBuffers(1, uniformBuffers);
 }
 
-bool MeshRenderer::render(InputDrawData input, OutputDrawData* output) {
+bool MeshRenderer::render(InputDrawData input, OutputDrawData* output)
+{
 	if (!canRender())
 		return false;
 

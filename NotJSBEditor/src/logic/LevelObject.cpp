@@ -32,6 +32,19 @@ void LevelObject::genActionPair(ObjectAction* spawnAction, ObjectAction* killAct
 	*killAction = kill;
 }
 
+void LevelObject::insertChannel(AnimationChannel* value) {
+	if (animationChannels.size() == 0) {
+		animationChannels.push_back(value);
+		return;
+	}
+
+	std::vector<AnimationChannel*>::iterator it = std::lower_bound(animationChannels.begin(), animationChannels.end(), value,
+		[](AnimationChannel* a, AnimationChannel* b) {
+			return a->type < b->type;
+		});
+	animationChannels.insert(it, value);
+}
+
 bool LevelObject::hasChannel(AnimationChannelType channelType) {
 	for (int i = 0; i < animationChannels.size(); i++) {
 		if (animationChannels[i]->type == channelType) {

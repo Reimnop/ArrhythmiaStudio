@@ -1,28 +1,22 @@
 #include "LevelManager.h"
 
-#include <string>
-
-glm::vec3 vertices[] = {
-        glm::vec3(0.5f, 0.5f, 0.0f),
-        glm::vec3(-0.5f, 0.5f, 0.0f),
-        glm::vec3(-0.5f, -0.5f, 0.0f),
-        glm::vec3(0.5f, -0.5f, 0.0f)
-};
-
-uint32_t indices[] = {
-    0, 1, 2,
-    0, 2, 3
-};
-
 Mesh* mesh;
 Shader* shader;
 Material* material;
 
-float randomFloat() {
-    return std::rand() / (float)RAND_MAX;
-}
-
 LevelManager::LevelManager() {
+    glm::vec3 vertices[] = {
+        glm::vec3(0.5f, 0.5f, 0.0f),
+        glm::vec3(-0.5f, 0.5f, 0.0f),
+        glm::vec3(-0.5f, -0.5f, 0.0f),
+        glm::vec3(0.5f, -0.5f, 0.0f)
+    };
+
+    uint32_t indices[] = {
+        0, 1, 2,
+        0, 2, 3
+    };
+
     mesh = new Mesh(4, vertices, 6, indices);
     shader = new Shader("Assets/Shaders/basic.vert", "Assets/Shaders/basic.frag");
     material = new Material(shader, 0, nullptr);
@@ -50,7 +44,8 @@ LevelManager::LevelManager() {
 void LevelManager::update(float time) {
     this->time = time;
 
-    if (time >= lastTime) 
+    // Do not process if paused
+    if (time > lastTime) 
     { 
         while (actionIndex < objectActions.size() && objectActions[actionIndex].time <= time) {
             switch (objectActions[actionIndex].type) {
@@ -66,9 +61,9 @@ void LevelManager::update(float time) {
             actionIndex++;
         }
     }
-    else
+    else if (time < lastTime)
     {
-        while (actionIndex >= 0 && objectActions[actionIndex].time > time) {
+        while (actionIndex >= 0 && objectActions[actionIndex].time >= time) {
             switch (objectActions[actionIndex].type) {
             case ObjectActionType_Spawn:
                 objectActions[actionIndex].levelObject->node->setActive(false);
@@ -83,30 +78,33 @@ void LevelManager::update(float time) {
         }
     }
 
-    lastTime = time;
-
     // Animate alive objects
-    for (LevelObject* levelObject : aliveObjects) {
-        for (AnimationChannel* channel : levelObject->animationChannels) {
-            switch (channel->type) {
-            case AnimationChannelType_PositionX:
-                levelObject->node->transform->position.x = channel->update(time - levelObject->startTime);
-                break;
-            case AnimationChannelType_PositionY:
-                levelObject->node->transform->position.y = channel->update(time - levelObject->startTime);
-                break;
-            case AnimationChannelType_ScaleX:
-                levelObject->node->transform->scale.x = channel->update(time - levelObject->startTime);
-                break;
-            case AnimationChannelType_ScaleY:
-                levelObject->node->transform->scale.y = channel->update(time - levelObject->startTime);
-                break;
-            case AnimationChannelType_Rotation:
-                levelObject->node->transform->rotation = glm::quat(glm::vec3(0.0f, 0.0f, channel->update(time - levelObject->startTime) / 180.0f * 3.14159265359f));
-                break;
+    if (lastTime != time) 
+    {
+        for (LevelObject* levelObject : aliveObjects) {
+            for (AnimationChannel* channel : levelObject->animationChannels) {
+                switch (channel->type) {
+                case AnimationChannelType_PositionX:
+                    levelObject->node->transform->position.x = channel->update(time - levelObject->startTime);
+                    break;
+                case AnimationChannelType_PositionY:
+                    levelObject->node->transform->position.y = channel->update(time - levelObject->startTime);
+                    break;
+                case AnimationChannelType_ScaleX:
+                    levelObject->node->transform->scale.x = channel->update(time - levelObject->startTime);
+                    break;
+                case AnimationChannelType_ScaleY:
+                    levelObject->node->transform->scale.y = channel->update(time - levelObject->startTime);
+                    break;
+                case AnimationChannelType_Rotation:
+                    levelObject->node->transform->rotation = glm::angleAxis(channel->update(time - levelObject->startTime) / 180.0f * 3.14159265359f, glm::vec3(0.0f, 0.0f, -1.0f));
+                    break;
+                }
             }
         }
     }
+
+    lastTime = time;
 }
 
 void LevelManager::recalculateAllObjectActions()

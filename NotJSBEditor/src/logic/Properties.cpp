@@ -34,7 +34,7 @@ void Properties::onLayout() {
 
                     AnimationChannel* channel = new AnimationChannel(AnimationChannelType_PositionX, 1, &first);
 
-                    selectedObject->animationChannels.push_back(channel);
+                    selectedObject->insertChannel(channel);
                 }
 
                 if (!selectedObject->hasChannel(AnimationChannelType_PositionY) && ImGui::Selectable("Position Y"))
@@ -45,7 +45,7 @@ void Properties::onLayout() {
 
                     AnimationChannel* channel = new AnimationChannel(AnimationChannelType_PositionY, 1, &first);
 
-                    selectedObject->animationChannels.push_back(channel);
+                    selectedObject->insertChannel(channel);
                 }
 
                 if (!selectedObject->hasChannel(AnimationChannelType_ScaleX) && ImGui::Selectable("Scale X"))
@@ -56,7 +56,7 @@ void Properties::onLayout() {
 
                     AnimationChannel* channel = new AnimationChannel(AnimationChannelType_ScaleX, 1, &first);
 
-                    selectedObject->animationChannels.push_back(channel);
+                    selectedObject->insertChannel(channel);
                 }
 
                 if (!selectedObject->hasChannel(AnimationChannelType_ScaleY) && ImGui::Selectable("Scale Y"))
@@ -67,7 +67,7 @@ void Properties::onLayout() {
 
                     AnimationChannel* channel = new AnimationChannel(AnimationChannelType_ScaleY, 1, &first);
 
-                    selectedObject->animationChannels.push_back(channel);
+                    selectedObject->insertChannel(channel);
                 }
 
                 if (!selectedObject->hasChannel(AnimationChannelType_Rotation) && ImGui::Selectable("Rotation"))
@@ -78,7 +78,7 @@ void Properties::onLayout() {
 
                     AnimationChannel* channel = new AnimationChannel(AnimationChannelType_Rotation, 1, &first);
 
-                    selectedObject->animationChannels.push_back(channel);
+                    selectedObject->insertChannel(channel);
                 }
 
                 ImGui::EndPopup();

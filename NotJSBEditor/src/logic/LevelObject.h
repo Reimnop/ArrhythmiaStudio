@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <algorithm>
 
 #include "animation/AnimationChannel.h"
 #include "ObjectAction.h"
@@ -22,5 +23,6 @@ public:
 	~LevelObject();
 
 	void genActionPair(ObjectAction* spawnAction, ObjectAction* killAction);
+	void insertChannel(AnimationChannel* value);
 	bool hasChannel(AnimationChannelType channelType);
 };

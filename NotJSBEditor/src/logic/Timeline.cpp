@@ -137,17 +137,15 @@ void Timeline::onLayout() {
             ImVec2 textSize = ImGui::CalcTextSize(name);
 
             ImU32 stripCol = stripActive ? activeCol : inactiveCol;
-            ImU32 textCol = stripActive ? inactiveCol : activeCol;
-
-            drawList->AddRectFilled(stripMin, stripMax, stripCol);
 
             const float distFromHead = 8.0f;
 
             ImVec2 localRectMin = ImVec2(stripMin.x + distFromHead, stripMin.y);
             ImVec2 localRectMax = ImVec2(stripMin.x + distFromHead + 4.0f + textSize.x, stripMax.y);
 
-            drawList->AddRectFilled(localRectMin, localRectMax, textCol);
-            drawList->AddText(ImVec2(localRectMin.x + 2.0f, localRectMin.y), stripCol, name);
+            drawList->AddRectFilled(stripMin, stripMax, stripCol);
+            drawList->AddRectFilled(localRectMin, localRectMax, activeCol);
+            drawList->AddText(ImVec2(localRectMin.x + 2.0f, localRectMin.y), inactiveCol, name);
 
             drawList->PopClipRect();
         }

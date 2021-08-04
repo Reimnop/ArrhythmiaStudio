@@ -1,8 +1,6 @@
 #include "GameManager.h"
 #include "../MainWindow.h"
 
-LevelManager* levelManager;
-
 GameManager::GameManager(GLFWwindow* window)
 {
 	mainWindow = window;

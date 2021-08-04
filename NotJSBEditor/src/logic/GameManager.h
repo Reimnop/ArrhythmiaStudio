@@ -17,4 +17,5 @@ public:
 	void update();
 private:
 	GLFWwindow* mainWindow;
+	LevelManager* levelManager;
 };

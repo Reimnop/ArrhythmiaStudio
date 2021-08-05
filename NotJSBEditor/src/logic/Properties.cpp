@@ -134,9 +134,9 @@ void Properties::onLayout()
 				// Draw channel labels
 				for (int i = 0; i < selectedObject->animationChannels.size(); i++)
 				{
-					const ImU32 textCol = ImGui::GetColorU32(ImGuiCol_Text);
+					ImU32 textCol = ImGui::GetColorU32(ImGuiCol_Text);
 
-					ImVec2 labelMin = ImVec2(cursorPos.x, cursorPos.y + binHeight * i);
+					ImVec2 labelMin = ImVec2(cursorPos.x + 2.0f, cursorPos.y + binHeight * i);
 					drawList->AddText(labelMin, textCol, getChannelName(selectedObject->animationChannels[i]->type));
 				}
 

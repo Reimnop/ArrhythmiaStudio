@@ -14,12 +14,12 @@ class MeshRenderer : public RendererComponent
 {
 public:
 	MeshRenderer();
-	~MeshRenderer();
+	~MeshRenderer() override;
 
 	Mesh* mesh;
 	Material* material;
 
-	bool render(InputDrawData input, OutputDrawData* output);
+	bool render(InputDrawData input, OutputDrawData* output) override;
 private:
 	uint32_t uniformBuffers[1];
 

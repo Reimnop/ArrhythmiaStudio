@@ -93,6 +93,10 @@ void Properties::onLayout()
 				const int binCount = 5;
 				const float binHeight = 20.0f;
 
+				const float labelAreaWidth = 85.0f;
+				const float kfSize = binHeight / 2.0f;
+				const float kfOffset = kfSize + labelAreaWidth;
+
 				ImDrawList* drawList = ImGui::GetWindowDrawList();
 				ImGuiStyle& style = ImGui::GetStyle();
 				ImGuiIO& io = ImGui::GetIO();
@@ -127,15 +131,13 @@ void Properties::onLayout()
 
 				ImU32 borderCol = ImGui::GetColorU32(ImGuiCol_Border);
 
-				const float labelAreaWidth = 85.0f;
-				const float kfSize = binHeight / 2.0f;
-				const float kfOffset = kfSize + labelAreaWidth;
-
 				// Draw channel labels
 				for (int i = 0; i < selectedObject->animationChannels.size(); i++)
 				{
+					const ImU32 textCol = ImGui::GetColorU32(ImGuiCol_Text);
+
 					ImVec2 labelMin = ImVec2(cursorPos.x, cursorPos.y + binHeight * i);
-					ImGui::Text(getChannelName(selectedObject->animationChannels[i]->type));
+					drawList->AddText(labelMin, textCol, getChannelName(selectedObject->animationChannels[i]->type));
 				}
 
 				ImVec2 keyframeAreaSize = ImVec2(availRegion.x - labelAreaWidth, availRegion.y);

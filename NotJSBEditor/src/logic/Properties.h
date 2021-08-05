@@ -11,10 +11,10 @@ class LevelManager;
 class Properties
 {
 public:
-	Properties(LevelManager* levelManager);
-private:
-	LevelManager* levelManager;
+	static Properties* inst;
 
+	Properties();
+private:
 	float startTime;
 	float endTime;
 

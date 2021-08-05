@@ -33,38 +33,13 @@ void ImGuiController::update()
 	ImGui::NewFrame();
 
 	// Start global dockspace
-	ImGuiViewport* viewport = ImGui::GetMainViewport();
-
-	ImGui::SetNextWindowPos(viewport->Pos);
-	ImGui::SetNextWindowSize(viewport->Size);
-	ImGui::SetNextWindowViewport(viewport->ID);
-	ImGui::SetNextWindowBgAlpha(0.0f);
-
-	ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoDocking;
-
-	windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse;
-	windowFlags |= ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-	windowFlags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-
-	bool p_open = true;
-	ImGui::Begin("imgui-docking", &p_open, windowFlags);
-	ImGui::PopStyleVar(3);
-
-	ImGuiID dockspaceID = ImGui::GetID("default-dockspace");
-	ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_PassthruCentralNode;
-	ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), dockspaceFlags);
+	ImGui::DockSpaceOverViewport();
 
 	// Call all onLayout
 	for (std::function<void()> layoutFunc : onLayout)
 	{
 		layoutFunc();
 	}
-
-	ImGui::End();
 }
 
 void ImGuiController::renderImGui()

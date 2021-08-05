@@ -1,9 +1,16 @@
 #include "Properties.h"
 #include "LevelManager.h"
 
-Properties::Properties(LevelManager* levelManager)
+Properties* Properties::inst;
+
+Properties::Properties()
 {
-	this->levelManager = levelManager;
+	if (inst)
+	{
+		return;
+	}
+
+	inst = this;
 
 	startTime = 0.0f;
 	endTime = 10.0f;
@@ -13,6 +20,8 @@ Properties::Properties(LevelManager* levelManager)
 
 void Properties::onLayout()
 {
+	LevelManager* levelManager = LevelManager::inst;
+
 	// Open Dope Sheet window
 	if (ImGui::Begin("Properties"))
 	{
@@ -94,7 +103,7 @@ void Properties::onLayout()
 				const float binHeight = 20.0f;
 
 				const float labelAreaWidth = 85.0f;
-				const float kfSize = binHeight / 2.0f;
+				const float kfSize = 12.0f;
 				const float kfOffset = kfSize + labelAreaWidth;
 
 				ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -156,18 +165,46 @@ void Properties::onLayout()
 
 					ImVec2 binMin = ImVec2(cursorPos.x, cursorPos.y + binHeight * i);
 
-					for (Keyframe kf : channel->keyframes)
+					for (int i = 0; i < channel->keyframes.size(); i++)
 					{
+						const ImU32 inactiveCol = ImGui::GetColorU32(ImVec4(0.729f, 0.729f, 0.729f, 1.000f));
+						const ImU32 activeCol = ImGui::GetColorU32(ImVec4(0.384f, 0.384f, 0.384f, 1.000f));
+
+						Keyframe kf = channel->keyframes[i];
+
 						ImVec2 kfPos = ImVec2(
 							kfOffset + binMin.x + (kf.time - startTime) / (endTime - startTime) * keyframeAreaSize.x,
-							binMin.y + (binHeight - kfSize) / 2.0f);
+							binMin.y + binHeight * 0.5f);
+
+						int id = i + 1;
+						ImGui::PushID(id);
+
+						ImVec2 btnMin = ImVec2(kfPos.x - kfSize * 0.5f, binMin.y);
+
+						ImGui::SetCursorScreenPos(btnMin);
+						if (ImGui::InvisibleButton("##Keyframe", ImVec2(kfSize, binHeight)))
+						{
+							
+						}
+
+						ImU32 keyframeColor;
+						if (ImGui::IsItemHovered())
+						{
+							keyframeColor = activeCol;
+						}
+						else
+						{
+							keyframeColor = inactiveCol;
+						}
+
+						ImGui::PopID();
 
 						drawList->AddQuadFilled(
-							kfPos,
-							ImVec2(kfPos.x - kfSize / 2.0f, kfPos.y + kfSize / 2.0f),
-							ImVec2(kfPos.x, kfPos.y + kfSize),
-							ImVec2(kfPos.x + kfSize / 2.0f, kfPos.y + kfSize / 2.0f),
-							ImGui::GetColorU32(ImVec4(0.729f, 0.729f, 0.729f, 1.000f)));
+							ImVec2(kfPos.x, kfPos.y - kfSize * 0.5f),
+							ImVec2(kfPos.x - kfSize * 0.5f, kfPos.y),
+							ImVec2(kfPos.x, kfPos.y + kfSize * 0.5f),
+							ImVec2(kfPos.x + kfSize * 0.5f, kfPos.y),
+							keyframeColor);
 					}
 				}
 
@@ -178,6 +215,10 @@ void Properties::onLayout()
 				                  borderCol);
 
 				drawList->PopClipRect();
+
+				// Reset cursor
+				ImGui::SetCursorScreenPos(cursorPos);
+				ImGui::ItemSize(ImVec2(availRegion.x, timelineHeight));
 			}
 		}
 		else

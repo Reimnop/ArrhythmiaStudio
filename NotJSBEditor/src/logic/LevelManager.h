@@ -14,6 +14,8 @@
 class LevelManager
 {
 public:
+	static LevelManager* inst;
+	
 	std::vector<LevelObject*> levelObjects;
 	int selectedObjectIndex = -1;
 

@@ -4,8 +4,17 @@ Mesh* mesh;
 Shader* shader;
 Material* material;
 
+LevelManager* LevelManager::inst;
+
 LevelManager::LevelManager()
 {
+	if (inst)
+	{
+		return;
+	}
+
+	inst = this;
+
 	glm::vec3 vertices[] = {
 		glm::vec3(0.5f, 0.5f, 0.0f),
 		glm::vec3(-0.5f, 0.5f, 0.0f),
@@ -22,10 +31,10 @@ LevelManager::LevelManager()
 	shader = new Shader("Assets/Shaders/basic.vert", "Assets/Shaders/basic.frag");
 	material = new Material(shader, 0, nullptr);
 
-	float start = 5.0f;
-	float end = 25.0f;
-
 	{
+		float start = 5.0f;
+		float end = 25.0f;
+
 		LevelObject* obj = new LevelObject("Hello world!");
 		obj->startTime = start;
 		obj->killTime = end;
@@ -36,8 +45,10 @@ LevelManager::LevelManager()
 		levelObjects.push_back(obj);
 	}
 
-	timeline = new Timeline(this);
-	properties = new Properties(this);
+	time = 0.0f;
+
+	timeline = new Timeline();
+	properties = new Properties();
 
 	recalculateAllObjectActions();
 }

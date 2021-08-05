@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "logic/GameManager.h"
 
 void glfwErrorCallback(int error_code, const char* description)
 {

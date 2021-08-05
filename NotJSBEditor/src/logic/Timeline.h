@@ -12,10 +12,10 @@ class LevelManager;
 class Timeline
 {
 public:
-	Timeline(LevelManager* levelManager);
-private:
-	LevelManager* levelManager;
+	static Timeline* inst;
 
+	Timeline();
+private:
 	float startTime;
 	float endTime;
 

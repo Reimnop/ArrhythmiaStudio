@@ -6,13 +6,13 @@
 #include <logger.h>
 
 #include "rendering/Renderer.h"
-#include "logic/GameManager.h"
 
 #ifndef NDEBUG
 // #define SHOW_NON_IMPORTANT
 #define THROW_GL_ERROR
 #endif
 
+class GameManager;
 class MainWindow
 {
 public:

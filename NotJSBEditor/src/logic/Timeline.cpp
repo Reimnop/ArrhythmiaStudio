@@ -1,9 +1,16 @@
 #include "Timeline.h"
 #include "LevelManager.h"
 
-Timeline::Timeline(LevelManager* levelManager)
+Timeline* Timeline::inst;
+
+Timeline::Timeline()
 {
-	this->levelManager = levelManager;
+	if (inst)
+	{
+		return;
+	}
+
+	inst = this;
 
 	startTime = 0.0f;
 	endTime = 30.0f;
@@ -13,6 +20,8 @@ Timeline::Timeline(LevelManager* levelManager)
 
 void Timeline::onLayout()
 {
+	LevelManager* levelManager = LevelManager::inst;
+
 	// Open a sequence window
 	if (ImGui::Begin("Timeline"))
 	{
@@ -168,6 +177,10 @@ void Timeline::onLayout()
 		drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availRegion.x, cursorPos.y + timelineHeight), borderCol);
 
 		drawList->PopClipRect();
+
+		// Reset cursor
+		ImGui::SetCursorScreenPos(cursorPos);
+		ImGui::ItemSize(ImVec2(availRegion.x, timelineHeight));
 
 		ImGui::End();
 	}

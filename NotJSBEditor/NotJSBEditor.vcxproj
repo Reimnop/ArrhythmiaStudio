@@ -211,6 +211,7 @@
     <ClInclude Include="src\rendering\DrawCommand.h" />
     <ClInclude Include="src\rendering\DrawCommandType.h" />
     <ClInclude Include="src\rendering\DrawElementsCommand.h" />
+    <ClInclude Include="src\rendering\FramebufferStack.h" />
     <ClInclude Include="src\rendering\ImGuiController.h" />
     <ClInclude Include="src\rendering\InputDrawData.h" />
     <ClInclude Include="src\rendering\Material.h" />

@@ -20,10 +20,7 @@ SceneNode::SceneNode(std::string name, SceneNode* parent)
 
 SceneNode::~SceneNode()
 {
-	if (renderer)
-	{
-		delete renderer;
-	}
+	delete renderer;
 
 	setParent(nullptr);
 	delete transform;

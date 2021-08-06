@@ -234,6 +234,27 @@ void Properties::onLayout()
 							ImVec2(kfPos.x + kfSize * 0.5f, kfPos.y),
 							kfActive ? activeCol : inactiveCol);
 					}
+
+					ImGui::PushID(channel);
+
+					ImGui::SetCursorScreenPos(binMin);
+					ImGui::InvisibleButton("##KeyframeBin", ImVec2(keyframeAreaSize.x, binHeight));
+
+					if (ImGui::IsItemHovered() && ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT) && ImGui::IsKeyPressed(GLFW_KEY_A, false))
+					{
+						float kfTime = levelManager->time - selectedObject->startTime;
+
+						if (kfTime > 0.0f) 
+						{
+							Keyframe kf = Keyframe();
+							kf.time = kfTime;
+							kf.value = 0.0f;
+
+							channel->insertKeyframe(kf);
+						}
+					}
+
+					ImGui::PopID();
 				}
 
 				drawList->PopClipRect();
@@ -279,9 +300,8 @@ void Properties::onLayout()
 		{
 			ImGui::Text("No object selected");
 		}
-
-		ImGui::End();
 	}
+	ImGui::End();
 }
 
 const char* Properties::getChannelName(AnimationChannelType channelType)

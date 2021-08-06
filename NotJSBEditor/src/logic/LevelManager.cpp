@@ -41,23 +41,20 @@ LevelManager::LevelManager()
 		obj->editorBinIndex = 0;
 
 		spawnNode(obj);
-
-		levelObjects.push_back(obj);
 	}
+
+	recalculateAllObjectActions();
 
 	time = 0.0f;
 
 	timeline = new Timeline();
 	properties = new Properties();
-
-	recalculateAllObjectActions();
 }
 
 void LevelManager::update(float time)
 {
 	this->time = time;
 
-	// Do not process if paused
 	if (time > lastTime)
 	{
 		while (actionIndex < objectActions.size() && objectActions[actionIndex].time <= time)
@@ -76,19 +73,19 @@ void LevelManager::update(float time)
 			actionIndex++;
 		}
 	}
-	else if (time < lastTime)
+	else
 	{
-		while (actionIndex >= 0 && objectActions[actionIndex].time >= time)
+		while (actionIndex > 0 && objectActions[actionIndex - 1].time >= time)
 		{
-			switch (objectActions[actionIndex].type)
+			switch (objectActions[actionIndex - 1].type)
 			{
 			case ObjectActionType_Spawn:
-				objectActions[actionIndex].levelObject->node->setActive(false);
-				aliveObjects.erase(objectActions[actionIndex].levelObject);
+				objectActions[actionIndex - 1].levelObject->node->setActive(false);
+				aliveObjects.erase(objectActions[actionIndex - 1].levelObject);
 				break;
 			case ObjectActionType_Kill:
-				objectActions[actionIndex].levelObject->node->setActive(true);
-				aliveObjects.insert(objectActions[actionIndex].levelObject);
+				objectActions[actionIndex - 1].levelObject->node->setActive(true);
+				aliveObjects.insert(objectActions[actionIndex - 1].levelObject);
 				break;
 			}
 			actionIndex--;
@@ -214,4 +211,6 @@ void LevelManager::spawnNode(LevelObject* levelObject)
 	node->renderer = renderer;
 
 	levelObject->node = node;
+
+	levelObjects.push_back(levelObject);
 }

@@ -5,13 +5,14 @@ GameManager::GameManager(GLFWwindow* window)
 	mainWindow = window;
 
 	levelManager = new LevelManager();
+	levelManager->update(10.0f);
 
 	ImGuiController::onLayout.push_back(std::bind(&GameManager::onLayout, this));
 }
 
 void GameManager::update()
 {
-	levelManager->update(10.0f);
+
 }
 
 void GameManager::onLayout()
@@ -36,9 +37,8 @@ void GameManager::onLayout()
 
 		drawList->AddImage((ImTextureID)Renderer::inst->getRenderTexture(), ImVec2(frameMin.x, frameMax.y), ImVec2(frameMax.x, frameMin.y));
 		drawList->AddRect(frameMin, frameMax, ImGui::GetColorU32(ImGuiCol_Border), 0.0f, ImDrawFlags_None, 2.0f);
-
-		ImGui::End();
 	}
+	ImGui::End();
 }
 
 void GameManager::calculateViewportRect(ImVec2 size, float* width, float* height)

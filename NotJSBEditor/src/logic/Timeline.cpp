@@ -145,7 +145,7 @@ void Timeline::onLayout()
 			// Draw the strip
 			const char* name = levelObject->name.c_str();
 
-			ImVec2 textSize = ImGui::CalcTextSize(name);
+			ImVec2 textSize = ImGui::CalcTextSize(name, name + levelObject->name.length());
 
 			ImU32 stripCol = stripActive ? activeCol : inactiveCol;
 
@@ -156,7 +156,7 @@ void Timeline::onLayout()
 
 			drawList->AddRectFilled(stripMin, stripMax, stripCol);
 			drawList->AddRectFilled(localRectMin, localRectMax, activeCol);
-			drawList->AddText(ImVec2(localRectMin.x + 2.0f, localRectMin.y), inactiveCol, name);
+			drawList->AddText(ImVec2(localRectMin.x + 2.0f, localRectMin.y), inactiveCol, name, name + levelObject->name.size());
 
 			drawList->PopClipRect();
 		}

@@ -23,7 +23,7 @@ void APIENTRY glDebugCallback(GLenum source, GLenum type, unsigned int id, GLenu
 		break;
 	case GL_DEBUG_SEVERITY_HIGH:
 #ifdef THROW_GL_ERROR
-		throw msgStr;
+		throw std::runtime_error(msgStr);
 #else
 		Logger::error("OpenGL: " + msgStr);
 #endif

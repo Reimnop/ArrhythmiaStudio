@@ -95,38 +95,35 @@ void LevelManager::update(float time)
 		}
 	}
 
+	lastTime = time;
+
 	// Animate alive objects
-	if (lastTime != time)
+	for (LevelObject* levelObject : aliveObjects)
 	{
-		for (LevelObject* levelObject : aliveObjects)
+		for (AnimationChannel* channel : levelObject->animationChannels)
 		{
-			for (AnimationChannel* channel : levelObject->animationChannels)
+			switch (channel->type)
 			{
-				switch (channel->type)
-				{
-				case AnimationChannelType_PositionX:
-					levelObject->node->transform->position.x = channel->update(time - levelObject->startTime);
-					break;
-				case AnimationChannelType_PositionY:
-					levelObject->node->transform->position.y = channel->update(time - levelObject->startTime);
-					break;
-				case AnimationChannelType_ScaleX:
-					levelObject->node->transform->scale.x = channel->update(time - levelObject->startTime);
-					break;
-				case AnimationChannelType_ScaleY:
-					levelObject->node->transform->scale.y = channel->update(time - levelObject->startTime);
-					break;
-				case AnimationChannelType_Rotation:
-					levelObject->node->transform->rotation = glm::angleAxis(
-						channel->update(time - levelObject->startTime) / 180.0f * 3.14159265359f,
-						glm::vec3(0.0f, 0.0f, -1.0f));
-					break;
-				}
+			case AnimationChannelType_PositionX:
+				levelObject->node->transform->position.x = channel->update(time - levelObject->startTime);
+				break;
+			case AnimationChannelType_PositionY:
+				levelObject->node->transform->position.y = channel->update(time - levelObject->startTime);
+				break;
+			case AnimationChannelType_ScaleX:
+				levelObject->node->transform->scale.x = channel->update(time - levelObject->startTime);
+				break;
+			case AnimationChannelType_ScaleY:
+				levelObject->node->transform->scale.y = channel->update(time - levelObject->startTime);
+				break;
+			case AnimationChannelType_Rotation:
+				levelObject->node->transform->rotation = glm::angleAxis(
+					channel->update(time - levelObject->startTime) / 180.0f * 3.14159265359f,
+					glm::vec3(0.0f, 0.0f, -1.0f));
+				break;
 			}
 		}
 	}
-
-	lastTime = time;
 }
 
 void LevelManager::recalculateAllObjectActions()

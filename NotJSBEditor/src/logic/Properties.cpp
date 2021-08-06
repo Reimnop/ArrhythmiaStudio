@@ -15,7 +15,15 @@ Properties::Properties()
 	startTime = 0.0f;
 	endTime = 10.0f;
 
+	selectedChannel = nullptr;
+
 	ImGuiController::onLayout.push_back(std::bind(&Properties::onLayout, this));
+}
+
+void Properties::reset()
+{
+	selectedKeyframe.reset();
+	selectedChannel = nullptr;
 }
 
 void Properties::onLayout()
@@ -29,8 +37,21 @@ void Properties::onLayout()
 		{
 			LevelObject* selectedObject = levelManager->levelObjects[levelManager->selectedObjectIndex];
 
-			char* nameBuffer = (char*)selectedObject->name.c_str();
-			ImGui::InputText("Object Name", nameBuffer, 256);
+			ImGui::InputText("Object Name", &selectedObject->name);
+
+			bool objTimeRangeChanged = false;
+			ImGui::DragFloat("Start Time", &selectedObject->startTime, 0.1f);
+			objTimeRangeChanged = objTimeRangeChanged || ImGui::IsItemEdited();
+			ImGui::DragFloat("Kill Time", &selectedObject->killTime, 0.1f);
+			objTimeRangeChanged = objTimeRangeChanged || ImGui::IsItemEdited();
+
+			if (objTimeRangeChanged)
+			{
+				levelManager->recalculateObjectAction(selectedObject);
+				levelManager->recalculateActionIndex(levelManager->time);
+			}
+
+			ImGui::SliderInt("Editor bin", &selectedObject->editorBinIndex, 0, 9);
 
 			if (ImGui::Button("Add animation channel"))
 			{
@@ -97,7 +118,7 @@ void Properties::onLayout()
 				ImGui::EndPopup();
 			}
 
-			// Draw keyframe editor
+			// Draw keyframe timelime
 			{
 				const int binCount = 5;
 				const float binHeight = 20.0f;
@@ -159,24 +180,25 @@ void Properties::onLayout()
 				                              cursorPos.y + keyframeAreaSize.y));
 
 				// Draw the keyframes
+				int id = 0;
 				for (int i = 0; i < selectedObject->animationChannels.size(); i++)
 				{
 					AnimationChannel* channel = selectedObject->animationChannels[i];
 
 					ImVec2 binMin = ImVec2(cursorPos.x, cursorPos.y + binHeight * i);
 
-					for (int i = 0; i < channel->keyframes.size(); i++)
+					for (int j = 0; j < channel->keyframes.size(); j++)
 					{
 						const ImU32 inactiveCol = ImGui::GetColorU32(ImVec4(0.729f, 0.729f, 0.729f, 1.000f));
 						const ImU32 activeCol = ImGui::GetColorU32(ImVec4(0.384f, 0.384f, 0.384f, 1.000f));
 
-						Keyframe kf = channel->keyframes[i];
+						Keyframe kf = channel->keyframes[j];
 
 						ImVec2 kfPos = ImVec2(
 							kfOffset + binMin.x + (kf.time - startTime) / (endTime - startTime) * keyframeAreaSize.x,
 							binMin.y + binHeight * 0.5f);
 
-						int id = i + 1;
+						id++;
 						ImGui::PushID(id);
 
 						ImVec2 btnMin = ImVec2(kfPos.x - kfSize * 0.5f, binMin.y);
@@ -184,17 +206,23 @@ void Properties::onLayout()
 						ImGui::SetCursorScreenPos(btnMin);
 						if (ImGui::InvisibleButton("##Keyframe", ImVec2(kfSize, binHeight)))
 						{
-							
+							selectedKeyframe = kf;
+							selectedChannel = channel;
 						}
 
-						ImU32 keyframeColor;
+						bool kfActive;
 						if (ImGui::IsItemHovered())
 						{
-							keyframeColor = activeCol;
+							kfActive = true;
 						}
 						else
 						{
-							keyframeColor = inactiveCol;
+							kfActive = false;
+						}
+
+						if (selectedKeyframe.has_value() && selectedKeyframe.value() == kf && selectedChannel == channel)
+						{
+							kfActive = true;
 						}
 
 						ImGui::PopID();
@@ -204,7 +232,7 @@ void Properties::onLayout()
 							ImVec2(kfPos.x - kfSize * 0.5f, kfPos.y),
 							ImVec2(kfPos.x, kfPos.y + kfSize * 0.5f),
 							ImVec2(kfPos.x + kfSize * 0.5f, kfPos.y),
-							keyframeColor);
+							kfActive ? activeCol : inactiveCol);
 					}
 				}
 
@@ -219,6 +247,32 @@ void Properties::onLayout()
 				// Reset cursor
 				ImGui::SetCursorScreenPos(cursorPos);
 				ImGui::ItemSize(ImVec2(availRegion.x, timelineHeight));
+			}
+
+			// Draw keyframe editor
+			ImGui::Separator();
+			if (selectedKeyframe.has_value() && selectedChannel != nullptr)
+			{
+				Keyframe kf = selectedKeyframe.value();
+
+				bool kfChanged = false;
+				ImGui::DragFloat("Keyframe Time", &kf.time, 0.1f);
+				kfChanged = kfChanged || ImGui::IsItemEdited();
+				ImGui::DragFloat("Keyframe Value", &kf.value, 0.1f);
+				kfChanged = kfChanged || ImGui::IsItemEdited();
+
+				if (kfChanged)
+				{
+					std::vector<Keyframe>::iterator it = std::find(selectedChannel->keyframes.begin(), selectedChannel->keyframes.end(), selectedKeyframe.value());
+					selectedChannel->keyframes.erase(it);
+
+					selectedChannel->insertKeyframe(kf);
+					selectedKeyframe = kf;
+				}
+			}
+			else
+			{
+				ImGui::Text("No keyframe selected");
 			}
 		}
 		else

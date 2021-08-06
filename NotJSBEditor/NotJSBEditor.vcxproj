@@ -164,6 +164,7 @@
     <ClCompile Include="include\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="include\imgui\imgui_tables.cpp" />
     <ClCompile Include="include\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="include\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\logic\animation\AnimationChannel.cpp" />
     <ClCompile Include="src\logic\Properties.cpp" />
@@ -193,6 +194,7 @@
     <ClInclude Include="include\imgui\imstb_rectpack.h" />
     <ClInclude Include="include\imgui\imstb_textedit.h" />
     <ClInclude Include="include\imgui\imstb_truetype.h" />
+    <ClInclude Include="include\imgui\imgui_stdlib.h" />
     <ClInclude Include="src\logic\animation\AnimationChannelType.h" />
     <ClInclude Include="src\logic\animation\AnimationChannel.h" />
     <ClInclude Include="src\logic\animation\Keyframe.h" />

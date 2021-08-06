@@ -11,7 +11,7 @@ GameManager::GameManager(GLFWwindow* window)
 
 void GameManager::update()
 {
-	levelManager->update(MainWindow::inst->time);
+	levelManager->update(10.0f);
 }
 
 void GameManager::onLayout()
@@ -29,13 +29,13 @@ void GameManager::onLayout()
 
 		ImVec2 cursorPos = ImGui::GetCursorScreenPos();
 
-		ImVec2 imageMin = ImVec2(cursorPos.x + (contentRegion.x - width) / 2.0f, cursorPos.y + (contentRegion.y - height) / 2.0f);
-		ImVec2 imageMax = ImVec2(imageMin.x + width, imageMin.y + height);
+		ImVec2 frameMin = ImVec2(cursorPos.x + (contentRegion.x - width) / 2.0f, cursorPos.y + (contentRegion.y - height) / 2.0f);
+		ImVec2 frameMax = ImVec2(frameMin.x + width, frameMin.y + height);
 
 		ImDrawList* drawList = ImGui::GetWindowDrawList();
 
-		drawList->AddImage((ImTextureID)Renderer::inst->getRenderTexture(), imageMin, imageMax);
-		drawList->AddRect(imageMin, imageMax, ImGui::GetColorU32(ImGuiCol_Border), 0.0f, ImDrawFlags_None, 2.0f);
+		drawList->AddImage((ImTextureID)Renderer::inst->getRenderTexture(), ImVec2(frameMin.x, frameMax.y), ImVec2(frameMax.x, frameMin.y));
+		drawList->AddRect(frameMin, frameMax, ImGui::GetColorU32(ImGuiCol_Border), 0.0f, ImDrawFlags_None, 2.0f);
 
 		ImGui::End();
 	}

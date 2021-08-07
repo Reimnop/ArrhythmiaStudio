@@ -176,15 +176,10 @@ void Timeline::onLayout()
 		drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availRegion.x, cursorPos.y + timePointerHeight), borderCol);
 
 		// Draw time pointer
-		const float pointerWidth = 16.0f;
+		const float pointerWidth = 18.0f;
 		const float pointerHeight = 22.0f;
 
 		float pointerPos = cursorPos.x + (levelManager->time - startTime) / (endTime - startTime) * availRegion.x;
-		ImVec2 btnMin = ImVec2(pointerPos - pointerWidth * 0.5f, cursorPos.y);
-
-		ImGui::SetCursorScreenPos(btnMin);
-		ImGui::InvisibleButton("##TimePointer", ImVec2(pointerWidth, timePointerHeight));
-
 		drawList->AddLine(ImVec2(pointerPos, cursorPos.y), ImVec2(pointerPos, cursorPos.y + timelineHeight + timePointerHeight), borderCol);
 
 		drawList->AddRectFilled(
@@ -200,13 +195,21 @@ void Timeline::onLayout()
 
 		drawList->PopClipRect();
 
+		ImGui::SetCursorScreenPos(cursorPos);
+
 		bool pointerBeingDragged = false;
+		if (ImGui::InvisibleButton("##TimePointer", ImVec2(availRegion.x, timePointerHeight)))
+		{
+			float newTime = startTime + (io.MousePos.x - cursorPos.x) / availRegion.x * (endTime - startTime);
+			newTime = std::max(0.0f, newTime);
+
+			levelManager->update(newTime);
+			pointerBeingDragged = true;
+		}
+		
 		if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 		{
-			ImVec2 delta = io.MouseDelta;
-			float timeDelta = (delta.x / availRegion.x) * (endTime - startTime);
-
-			float newTime = levelManager->time + timeDelta;
+			float newTime = startTime + (io.MousePos.x - cursorPos.x) / availRegion.x * (endTime - startTime);
 			newTime = std::max(0.0f, newTime);
 
 			levelManager->update(newTime);

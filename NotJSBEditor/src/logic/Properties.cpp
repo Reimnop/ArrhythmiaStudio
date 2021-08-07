@@ -186,6 +186,7 @@ void Properties::onLayout()
 					AnimationChannel* channel = selectedObject->animationChannels[i];
 
 					ImVec2 binMin = ImVec2(cursorPos.x, cursorPos.y + binHeight * i);
+					ImGui::SetCursorScreenPos(binMin);
 
 					for (int j = 0; j < channel->keyframes.size(); j++)
 					{
@@ -237,12 +238,14 @@ void Properties::onLayout()
 
 					ImGui::PushID(channel);
 
-					ImGui::SetCursorScreenPos(binMin);
+					float btnMinX = kfOffset + binMin.x;
+
+					ImGui::SetCursorScreenPos(ImVec2(btnMinX, binMin.y));
 					ImGui::InvisibleButton("##KeyframeBin", ImVec2(keyframeAreaSize.x, binHeight));
 
-					if (ImGui::IsItemHovered() && ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT) && ImGui::IsKeyPressed(GLFW_KEY_A, false))
+					if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 					{
-						float kfTime = levelManager->time - selectedObject->startTime;
+						float kfTime = startTime + ((io.MousePos.x - btnMinX) / keyframeAreaSize.x) * (endTime - startTime);
 
 						if (kfTime > 0.0f) 
 						{

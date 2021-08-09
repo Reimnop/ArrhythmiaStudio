@@ -1,6 +1,6 @@
 #pragma once
 
-#include <tuple>
+#include <vector>
 #include <unordered_map>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -47,7 +47,7 @@ private:
 
 	int propertyCount;
 
-	MaterialProperty* materialProperties;
+	std::vector<MaterialProperty> materialProperties;
 	std::unordered_map<std::string, int> propertyIndices;
 	void** materialData;
 };

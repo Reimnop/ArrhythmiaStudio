@@ -9,12 +9,18 @@
 #include "LevelObject.h"
 #include "Timeline.h"
 #include "Properties.h"
+#include "Theme.h"
 #include "ObjectAction.h"
+#include "ColorSlot.h"
+#include "animation/ColorChannel.h"
 
+class Theme;
 class LevelManager
 {
 public:
 	static LevelManager* inst;
+
+	std::vector<ColorSlot*> colorSlots;
 	
 	std::vector<LevelObject*> levelObjects;
 	int selectedObjectIndex = -1;
@@ -30,6 +36,7 @@ public:
 private:
 	Timeline* timeline;
 	Properties* properties;
+	Theme* theme;
 
 	float lastTime = 0.0f;
 

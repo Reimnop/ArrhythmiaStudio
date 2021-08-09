@@ -7,6 +7,13 @@
 struct MaterialProperty
 {
 	const char* name;
-	MaterialPropertyType propertyType;
+	MaterialPropertyType type;
 	int size;
+
+	MaterialProperty(const char* name, MaterialPropertyType type, int size)
+	{
+		this->name = name;
+		this->type = type;
+		this->size = size;
+	}
 };

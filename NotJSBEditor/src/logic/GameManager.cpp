@@ -5,7 +5,7 @@ GameManager::GameManager(GLFWwindow* window)
 	mainWindow = window;
 
 	levelManager = new LevelManager();
-	levelManager->update(10.0f);
+	levelManager->update(0.0f);
 
 	ImGuiController::onLayout.push_back(std::bind(&GameManager::onLayout, this));
 }

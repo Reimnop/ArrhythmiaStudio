@@ -1,8 +1,7 @@
 #include "LevelManager.h"
+#include "Theme.h"
 
 Mesh* mesh;
-Shader* shader;
-Material* material;
 
 LevelManager* LevelManager::inst;
 
@@ -28,8 +27,34 @@ LevelManager::LevelManager()
 	};
 
 	mesh = new Mesh(4, vertices, 6, indices);
-	shader = new Shader("Assets/Shaders/basic.vert", "Assets/Shaders/basic.frag");
-	material = new Material(shader, 0, nullptr);
+
+	ColorSlot::init();
+
+	// Intialize 30 color slots
+	for (int i = 0; i < 30; i++)
+	{
+		ColorKeyframe kf = ColorKeyframe();
+		kf.time = 0.0f;
+		kf.color = Color(0.5f, 0.5f, 0.5f);
+
+		ColorSlot* colorSlot = new ColorSlot(1, &kf);
+
+		for (int j = 1; j <= 30; j++)
+		{
+			ColorKeyframe newKf = ColorKeyframe();
+			newKf.time = j;
+			newKf.color = Color(
+				(float)std::rand() / RAND_MAX,
+				(float)std::rand() / RAND_MAX,
+				(float)std::rand() / RAND_MAX);
+
+			colorSlot->channel->insertKeyframe(newKf);
+		}
+
+		colorSlot->update(0.0f);
+
+		colorSlots.push_back(colorSlot);
+	}
 
 	{
 		float start = 5.0f;
@@ -39,6 +64,7 @@ LevelManager::LevelManager()
 		obj->startTime = start;
 		obj->killTime = end;
 		obj->editorBinIndex = 0;
+		obj->colorSlot = colorSlots[0];
 
 		spawnNode(obj);
 	}
@@ -49,6 +75,7 @@ LevelManager::LevelManager()
 
 	timeline = new Timeline();
 	properties = new Properties();
+	theme = new Theme();
 }
 
 void LevelManager::update(float time)
@@ -93,6 +120,12 @@ void LevelManager::update(float time)
 	}
 
 	lastTime = time;
+
+	// Update all color channels
+	for (int i = 0; i < colorSlots.size(); i++)
+	{
+		colorSlots[i]->update(time);
+	}
 
 	// Animate alive objects
 	for (LevelObject* levelObject : aliveObjects)
@@ -206,7 +239,7 @@ void LevelManager::spawnNode(LevelObject* levelObject)
 
 	MeshRenderer* renderer = new MeshRenderer();
 	renderer->mesh = mesh;
-	renderer->material = material;
+	renderer->material = levelObject->colorSlot->material;
 
 	node->renderer = renderer;
 

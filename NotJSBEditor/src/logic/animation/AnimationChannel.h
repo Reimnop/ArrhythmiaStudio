@@ -19,4 +19,6 @@ public:
 	float update(float time);
 private:
 	float lastIndex;
+
+	float lerp(float a, float b, float t);
 };

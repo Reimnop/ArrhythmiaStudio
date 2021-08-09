@@ -7,13 +7,17 @@ Material::Material(Shader* shader, int propertyCount, MaterialProperty* properti
 {
 	this->shader = shader;
 	this->propertyCount = propertyCount;
-	materialProperties = properties;
+
+	for (int i = 0; i < propertyCount; i++)
+	{
+		materialProperties.push_back(properties[i]);
+	}
 
 	// Calculate buffer size
 	bufferSize = 0;
 	for (int i = 0; i < propertyCount; i++)
 	{
-		bufferSize += properties[i].size;
+		bufferSize += materialProperties[i].size;
 	}
 
 	// Initialize arrays
@@ -21,7 +25,7 @@ Material::Material(Shader* shader, int propertyCount, MaterialProperty* properti
 
 	for (int i = 0; i < propertyCount; i++)
 	{
-		propertyIndices[properties[i].name] = i;
+		propertyIndices[materialProperties[i].name] = i;
 	}
 
 	// Create uniform buffer
@@ -37,10 +41,9 @@ Material::~Material()
 
 	propertyIndices.clear();
 
-	for (int i = 0; i < propertyCount; i++)
-	{
-		delete materialData[i];
-	}
+	materialProperties.clear();
+	materialProperties.shrink_to_fit();
+
 	delete[] materialData;
 }
 
@@ -73,10 +76,10 @@ MAT_SETTER(Mat3, glm::mat3)
 MAT_SETTER(Mat4, glm::mat4)
 
 template <typename T>
-void structureToPointer(T* valuePointer, unsigned char* pointer)
+void structureToPointer(T* valuePointer, uint8_t* pointer)
 {
 	int size = sizeof(T);
-	unsigned char* ptr = (unsigned char*)valuePointer;
+	uint8_t* ptr = (uint8_t*)valuePointer;
 
 	for (int i = 0; i < size; i++)
 	{
@@ -86,14 +89,14 @@ void structureToPointer(T* valuePointer, unsigned char* pointer)
 
 void Material::updateBuffer()
 {
-	unsigned char* buffer = new unsigned char[bufferSize];
+	uint8_t* buffer = new uint8_t[bufferSize];
 	memset(buffer, 0, bufferSize);
 
 	int offset = 0;
 	for (int i = 0; i < propertyCount; i++)
 	{
 		MaterialProperty property = materialProperties[i];
-		switch (property.propertyType)
+		switch (property.type)
 		{
 		case MaterialPropertyType_Int:
 			structureToPointer((int*)materialData[i], buffer + offset);

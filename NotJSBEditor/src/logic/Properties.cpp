@@ -132,11 +132,11 @@ void Properties::onLayout()
 				ImGuiIO& io = ImGui::GetIO();
 
 				ImVec2 cursorPos = ImGui::GetCursorScreenPos();
-				ImVec2 availRegion = ImGui::GetContentRegionAvail();
+				float availX = ImGui::GetContentRegionAvailWidth();
 
 				float timelineHeight = binCount * binHeight;
 
-				ImVec2 clipSize = ImVec2(availRegion.x, timelineHeight);
+				ImVec2 clipSize = ImVec2(availX, timelineHeight);
 
 				// Draw editor bins
 				drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + clipSize.x, cursorPos.y + clipSize.y));
@@ -155,7 +155,7 @@ void Properties::onLayout()
 
 					drawList->AddRectFilled(
 						ImVec2(cursorPos.x, cursorPos.y + i * binHeight),
-						ImVec2(cursorPos.x + availRegion.x, cursorPos.y + (i + 1) * binHeight),
+						ImVec2(cursorPos.x + availX, cursorPos.y + (i + 1) * binHeight),
 						binCol);
 				}
 
@@ -170,7 +170,7 @@ void Properties::onLayout()
 					drawList->AddText(labelMin, textCol, getChannelName(selectedObject->animationChannels[i]->type));
 				}
 
-				ImVec2 keyframeAreaSize = ImVec2(availRegion.x - labelAreaWidth, availRegion.y);
+				ImVec2 keyframeAreaSize = ImVec2(availX - labelAreaWidth, binHeight * 5.0f);
 
 				drawList->AddLine(ImVec2(cursorPos.x + labelAreaWidth, cursorPos.y),
 				                  ImVec2(cursorPos.x + labelAreaWidth, cursorPos.y + timelineHeight), borderCol);
@@ -263,14 +263,14 @@ void Properties::onLayout()
 				drawList->PopClipRect();
 
 				// Frames
-				drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availRegion.x, cursorPos.y + timelineHeight),
+				drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + timelineHeight),
 				                  borderCol);
 
 				drawList->PopClipRect();
 
 				// Reset cursor
 				ImGui::SetCursorScreenPos(cursorPos);
-				ImGui::ItemSize(ImVec2(availRegion.x, timelineHeight));
+				ImGui::ItemSize(ImVec2(availX, timelineHeight));
 			}
 
 			// Draw keyframe editor
@@ -292,6 +292,8 @@ void Properties::onLayout()
 
 					selectedChannel->insertKeyframe(kf);
 					selectedKeyframe = kf;
+
+					levelManager->update(levelManager->time);
 				}
 			}
 			else

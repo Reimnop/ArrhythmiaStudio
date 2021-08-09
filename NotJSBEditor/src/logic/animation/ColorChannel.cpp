@@ -1,23 +1,22 @@
-#include "AnimationChannel.h"
+#include "ColorChannel.h"
 
-AnimationChannel::AnimationChannel(AnimationChannelType channelType, int count, Keyframe* keyframes)
+ColorChannel::ColorChannel(int count, ColorKeyframe* keyframes)
 {
 	for (int i = 0; i < count; i++)
 	{
 		insertKeyframe(keyframes[i]);
 	}
 
-	type = channelType;
 	lastIndex = 0;
 }
 
-AnimationChannel::~AnimationChannel()
+ColorChannel::~ColorChannel()
 {
 	keyframes.clear();
 	keyframes.shrink_to_fit();
 }
 
-void AnimationChannel::insertKeyframe(Keyframe keyframe)
+void ColorChannel::insertKeyframe(ColorKeyframe keyframe)
 {
 	if (keyframes.size() == 0)
 	{
@@ -31,39 +30,39 @@ void AnimationChannel::insertKeyframe(Keyframe keyframe)
 		return;
 	}
 
-	std::vector<Keyframe>::iterator it = std::lower_bound(keyframes.begin(), keyframes.end(), keyframe,
-	                                                      [](Keyframe a, Keyframe b)
-	                                                      {
-		                                                      return a.time < b.time;
-	                                                      });
+	std::vector<ColorKeyframe>::iterator it = std::lower_bound(keyframes.begin(), keyframes.end(), keyframe,
+		[](ColorKeyframe a, ColorKeyframe b)
+		{
+			return a.time < b.time;
+		});
 	keyframes.insert(it, keyframe);
 }
 
-float AnimationChannel::update(float time)
+Color ColorChannel::update(float time)
 {
 	// Bounds checking
 	if (keyframes.size() == 0)
 	{
-		return 0.0f;
+		return Color();
 	}
 
 	if (keyframes.size() == 1)
 	{
-		return keyframes.front().value;
+		return keyframes.front().color;
 	}
 
 	if (time < keyframes.front().time)
 	{
-		return keyframes.front().value;
+		return keyframes.front().color;
 	}
 
 	if (time >= keyframes.back().time)
 	{
-		return keyframes.back().value;
+		return keyframes.back().color;
 	}
 
 	// If time is not out of bounds, find left and right keyframes
-	Keyframe left, right;
+	ColorKeyframe left, right;
 	if (time >= keyframes[lastIndex].time && time < keyframes[lastIndex + 1].time)
 	{
 		left = keyframes[lastIndex];
@@ -92,10 +91,13 @@ float AnimationChannel::update(float time)
 
 	// Apply easings
 	float t = (time - left.time) / (right.time - left.time);
-	return lerp(left.value, right.value, t);
+	float r = lerp(left.color.r, right.color.r, t);
+	float g = lerp(left.color.g, right.color.g, t);
+	float b = lerp(left.color.b, right.color.b, t);
+	return Color(r, g, b);
 }
 
-float AnimationChannel::lerp(float a, float b, float t)
+float ColorChannel::lerp(float a, float b, float t)
 {
 	return (a * (1.0f - t)) + (b * t);
 }

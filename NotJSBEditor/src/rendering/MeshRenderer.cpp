@@ -22,6 +22,8 @@ bool MeshRenderer::render(InputDrawData input, OutputDrawData* output)
 	if (!canRender())
 		return false;
 
+	uniformBuffers[1] = material->getUniformBuffer();
+
 	// Update UBO
 	glBindBuffer(GL_UNIFORM_BUFFER, uniformBuffers[0]);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, 256, &input);
@@ -35,7 +37,7 @@ bool MeshRenderer::render(InputDrawData input, OutputDrawData* output)
 	OutputDrawData drawData = OutputDrawData();
 	drawData.vao = mesh->getVao();
 	drawData.shader = material->getShader()->getHandle();
-	drawData.uniformBuffersCount = 1;
+	drawData.uniformBuffersCount = 2;
 	drawData.uniformBuffers = uniformBuffers;
 	drawData.commandType = DrawCommandType_DrawElements;
 	drawData.drawCommand = drawCommand;

@@ -34,12 +34,12 @@ void Timeline::onLayout()
 		ImGuiIO& io = ImGui::GetIO();
 
 		ImVec2 cursorPos = ImGui::GetCursorScreenPos();
-		ImVec2 availRegion = ImGui::GetContentRegionAvail();
+		float availX = ImGui::GetContentRegionAvailWidth();
 
 		ImVec2 timelineMin = ImVec2(cursorPos.x, cursorPos.y + timePointerHeight);
 		float timelineHeight = binCount * binHeight;
 
-		ImVec2 clipSize = ImVec2(availRegion.x, timelineHeight);
+		ImVec2 clipSize = ImVec2(availX, timelineHeight);
 
 		// Draw editor bins
 		drawList->PushClipRect(timelineMin, ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y));
@@ -58,7 +58,7 @@ void Timeline::onLayout()
 
 			drawList->AddRectFilled(
 				ImVec2(timelineMin.x, timelineMin.y + i * binHeight),
-				ImVec2(timelineMin.x + availRegion.x, timelineMin.y + (i + 1) * binHeight),
+				ImVec2(timelineMin.x + availX, timelineMin.y + (i + 1) * binHeight),
 				binCol);
 		}
 
@@ -77,8 +77,8 @@ void Timeline::onLayout()
 			}
 
 			// Calculate start and end position in pixel
-			float startPos = (levelObject->startTime - startTime) / (endTime - startTime) * availRegion.x;
-			float endPos = (levelObject->killTime - startTime) / (endTime - startTime) * availRegion.x;
+			float startPos = (levelObject->startTime - startTime) / (endTime - startTime) * availX;
+			float endPos = (levelObject->killTime - startTime) / (endTime - startTime) * availX;
 
 			// Calculate strip params
 			ImVec2 stripMin = ImVec2(timelineMin.x + startPos, timelineMin.y + levelObject->editorBinIndex * binHeight);
@@ -117,7 +117,7 @@ void Timeline::onLayout()
 					levelManager->selectedObjectIndex = i;
 
 					ImVec2 delta = io.MouseDelta;
-					float timeDelta = (delta.x / availRegion.x) * (endTime - startTime);
+					float timeDelta = (delta.x / availX) * (endTime - startTime);
 
 					timeDelta = std::clamp(timeDelta, -levelObject->startTime, endTime - levelObject->killTime);
 
@@ -133,13 +133,6 @@ void Timeline::onLayout()
 			if (levelManager->selectedObjectIndex == i)
 			{
 				stripActive = true;
-
-				// Changing editor bins
-				if (ImGui::IsWindowFocused())
-				{
-					levelObject->editorBinIndex -= io.MouseWheel;
-					levelObject->editorBinIndex = std::clamp(levelObject->editorBinIndex, 0, binCount - 1);
-				}
 			}
 
 			ImGui::PopID();
@@ -165,21 +158,21 @@ void Timeline::onLayout()
 
 		// Frames
 		ImU32 borderCol = ImGui::GetColorU32(ImGuiCol_Border);
-		drawList->AddRect(timelineMin, ImVec2(timelineMin.x + availRegion.x, timelineMin.y + timelineHeight), borderCol);
+		drawList->AddRect(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + timelineHeight), borderCol);
 
 		drawList->PopClipRect();
 
 		// Time pointer
-		drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availRegion.x, cursorPos.y + timelineHeight + timePointerHeight));
+		drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + timelineHeight + timePointerHeight));
 
 		// Draw frame
-		drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availRegion.x, cursorPos.y + timePointerHeight), borderCol);
+		drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + timePointerHeight), borderCol);
 
 		// Draw time pointer
 		const float pointerWidth = 18.0f;
 		const float pointerHeight = 22.0f;
 
-		float pointerPos = cursorPos.x + (levelManager->time - startTime) / (endTime - startTime) * availRegion.x;
+		float pointerPos = cursorPos.x + (levelManager->time - startTime) / (endTime - startTime) * availX;
 		drawList->AddLine(ImVec2(pointerPos, cursorPos.y), ImVec2(pointerPos, cursorPos.y + timelineHeight + timePointerHeight), borderCol);
 
 		drawList->AddRectFilled(
@@ -195,12 +188,23 @@ void Timeline::onLayout()
 
 		drawList->PopClipRect();
 
+		// Changing editor bins
+		if (levelManager->selectedObjectIndex != -1) 
+		{
+			LevelObject* selectedObject = levelManager->levelObjects[levelManager->selectedObjectIndex];
+			if (ImGui::IsWindowHovered())
+			{
+				selectedObject->editorBinIndex -= io.MouseWheel;
+				selectedObject->editorBinIndex = std::clamp(selectedObject->editorBinIndex, 0, binCount - 1);
+			}
+		}
+
 		ImGui::SetCursorScreenPos(cursorPos);
 
 		bool pointerBeingDragged = false;
-		if (ImGui::InvisibleButton("##TimePointer", ImVec2(availRegion.x, timePointerHeight)))
+		if (ImGui::InvisibleButton("##TimePointer", ImVec2(availX, timePointerHeight)))
 		{
-			float newTime = startTime + (io.MousePos.x - cursorPos.x) / availRegion.x * (endTime - startTime);
+			float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
 			newTime = std::max(0.0f, newTime);
 
 			levelManager->update(newTime);
@@ -209,7 +213,7 @@ void Timeline::onLayout()
 		
 		if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 		{
-			float newTime = startTime + (io.MousePos.x - cursorPos.x) / availRegion.x * (endTime - startTime);
+			float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
 			newTime = std::max(0.0f, newTime);
 
 			levelManager->update(newTime);
@@ -224,7 +228,7 @@ void Timeline::onLayout()
 
 		// Reset cursor
 		ImGui::SetCursorScreenPos(cursorPos);
-		ImGui::ItemSize(ImVec2(availRegion.x, timelineHeight + timePointerHeight));
+		ImGui::ItemSize(ImVec2(availX, timelineHeight + timePointerHeight));
 	}
 	ImGui::End();
 }

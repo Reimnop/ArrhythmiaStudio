@@ -7,6 +7,7 @@
 #include "animation/AnimationChannel.h"
 #include "ObjectAction.h"
 #include "SceneNode.h"
+#include "ColorSlot.h"
 
 class LevelObject
 {
@@ -16,6 +17,7 @@ public:
 	float killTime;
 	int editorBinIndex;
 
+	ColorSlot* colorSlot;
 	std::vector<AnimationChannel*> animationChannels;
 
 	SceneNode* node;

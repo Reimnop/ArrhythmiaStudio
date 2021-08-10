@@ -16,5 +16,5 @@ public:
 
 	void calculateViewProjection(float aspect, glm::mat4* view, glm::mat4* projection);
 private:
-	glm::mat4 calculateModelMatrix();
+	glm::mat4 calculateModelMatrix() const;
 };

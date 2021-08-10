@@ -9,7 +9,7 @@ void Camera::calculateViewProjection(float aspect, glm::mat4* view, glm::mat4* p
 	(*projection) = glm::orthoRH(-leftRight, leftRight, -bottomTop, bottomTop, depthNear, depthFar);
 }
 
-glm::mat4 Camera::calculateModelMatrix()
+glm::mat4 Camera::calculateModelMatrix() const
 {
 	return glm::translate(glm::mat4(1.0f), position) * glm::toMat4(rotation);
 }

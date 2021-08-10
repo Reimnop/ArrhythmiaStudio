@@ -1,6 +1,9 @@
 #include "MainWindow.h"
 #include "logic/GameManager.h"
 
+#include <logger.h>
+#include <helper.h>
+
 void glfwErrorCallback(int error_code, const char* description)
 {
 	Logger::error("GLFW: " + std::string(description));
@@ -114,7 +117,7 @@ void MainWindow::run()
 	}
 }
 
-void MainWindow::onUpdateFrame()
+void MainWindow::onUpdateFrame() const
 {
 	gameManager->update();
 
@@ -122,7 +125,7 @@ void MainWindow::onUpdateFrame()
 	renderer->update();
 }
 
-void MainWindow::onRenderFrame()
+void MainWindow::onRenderFrame() const
 {
 	int width, height;
 	glfwGetWindowSize(window, &width, &height);

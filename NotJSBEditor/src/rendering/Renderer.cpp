@@ -1,5 +1,7 @@
 #include "Renderer.h"
 
+#include "DrawElementsCommand.h"
+
 Renderer* Renderer::inst;
 
 Renderer::Renderer(GLFWwindow* window)
@@ -128,7 +130,7 @@ void Renderer::render()
 	imGuiController->renderImGui();
 }
 
-uint32_t Renderer::getRenderTexture()
+uint32_t Renderer::getRenderTexture() const
 {
 	return renderTexture;
 }

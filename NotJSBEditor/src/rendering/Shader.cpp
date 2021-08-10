@@ -1,5 +1,8 @@
 #include "Shader.h"
 
+#include <fstream>
+#include <glad/glad.h>
+
 Shader::Shader(const char* vertPath, const char* fragPath)
 {
 	// Read vertex shader source
@@ -90,7 +93,7 @@ Shader::~Shader()
 	glDeleteProgram(handle);
 }
 
-uint32_t Shader::getHandle()
+uint32_t Shader::getHandle() const
 {
 	return handle;
 }

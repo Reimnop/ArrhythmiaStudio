@@ -205,6 +205,7 @@
     <ClInclude Include="src\logic\animation\ColorKeyframe.h" />
     <ClInclude Include="src\logic\animation\Keyframe.h" />
     <ClInclude Include="src\logic\ColorSlot.h" />
+    <ClInclude Include="src\logic\GlobalConstants.h" />
     <ClInclude Include="src\logic\Properties.h" />
     <ClInclude Include="src\logic\GameManager.h" />
     <ClInclude Include="src\logic\LevelManager.h" />

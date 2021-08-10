@@ -1,13 +1,5 @@
 #pragma once
 
-#include <functional>
-#include <algorithm>
-#include <optional>
-#include <imgui/imgui.h>
-#include <imgui/imgui_stdlib.h>
-
-#include "../rendering/ImGuiController.h"
-#include "animation/AnimationChannel.h"
 #include "LevelManager.h"
 
 class Theme
@@ -15,6 +7,9 @@ class Theme
 public:
 	Theme();
 private:
+	float startTime;
+	float endTime;
+
 	int selectedSlot = -1;
 
 	void onLayout();

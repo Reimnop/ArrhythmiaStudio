@@ -2,7 +2,6 @@
 
 #include <string>
 #include <vector>
-#include <algorithm>
 #include <unordered_set>
 
 #include "Transform.h"
@@ -34,7 +33,7 @@ public:
 	void setParent(SceneNode* newParent);
 
 	void setActive(bool value);
-	bool getActive();
+	bool getActive() const;
 private:
 	bool active;
 };

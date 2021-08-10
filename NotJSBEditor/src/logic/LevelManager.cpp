@@ -1,6 +1,9 @@
 #include "LevelManager.h"
 #include "Theme.h"
 
+#include "../rendering/Mesh.h"
+#include "../rendering/MeshRenderer.h"
+
 Mesh* mesh;
 
 LevelManager* LevelManager::inst;
@@ -42,7 +45,7 @@ LevelManager::LevelManager()
 		for (int j = 1; j <= 30; j++)
 		{
 			ColorKeyframe newKf = ColorKeyframe();
-			newKf.time = j;
+			newKf.time = (float)std::rand() / RAND_MAX * 30.0f;
 			newKf.color = Color(
 				(float)std::rand() / RAND_MAX,
 				(float)std::rand() / RAND_MAX,

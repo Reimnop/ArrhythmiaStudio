@@ -12,5 +12,5 @@ public:
 
 	Transform();
 
-	glm::mat4 getLocalMatrix();
+	glm::mat4 getLocalMatrix() const;
 };

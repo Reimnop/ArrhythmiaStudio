@@ -74,7 +74,7 @@ void SceneNode::setActive(bool value)
 	active = value;
 }
 
-bool SceneNode::getActive()
+bool SceneNode::getActive() const
 {
 	return active;
 }

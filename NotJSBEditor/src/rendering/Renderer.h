@@ -1,6 +1,5 @@
 #pragma once
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <vector>
@@ -9,7 +8,6 @@
 #include "OutputDrawData.h"
 #include "Camera.h"
 #include "ImGuiController.h"
-#include "DrawElementsCommand.h"
 #include "FramebufferStack.h"
 
 class Renderer
@@ -24,7 +22,7 @@ public:
 	void update();
 	void render();
 
-	uint32_t getRenderTexture();
+	uint32_t getRenderTexture() const;
 private:
 	int lastViewportWidth;
 	int lastViewportHeight;

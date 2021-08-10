@@ -31,10 +31,10 @@ void ColorChannel::insertKeyframe(ColorKeyframe keyframe)
 	}
 
 	std::vector<ColorKeyframe>::iterator it = std::lower_bound(keyframes.begin(), keyframes.end(), keyframe,
-		[](ColorKeyframe a, ColorKeyframe b)
-		{
-			return a.time < b.time;
-		});
+	                                                           [](ColorKeyframe a, ColorKeyframe b)
+	                                                           {
+		                                                           return a.time < b.time;
+	                                                           });
 	keyframes.insert(it, keyframe);
 }
 

@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <unordered_map>
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
@@ -18,8 +17,8 @@ public:
 	Material(Shader* shader, int propertyCount, MaterialProperty* properties);
 	~Material();
 
-	Shader* getShader();
-	int getUniformBuffer();
+	Shader* getShader() const;
+	int getUniformBuffer() const;
 
 	MAT_GETTER_TEMP(Int, int)
 	MAT_GETTER_TEMP(Float, float)

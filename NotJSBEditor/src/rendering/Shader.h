@@ -1,10 +1,6 @@
 #pragma once
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include <unordered_map>
-#include <fstream>
-#include <streambuf>
 #include <string>
 
 class Shader
@@ -13,7 +9,7 @@ public:
 	Shader(const char* vertPath, const char* fragPath);
 	~Shader();
 
-	uint32_t getHandle();
+	uint32_t getHandle() const;
 	int getAttribLocation(const char* attribName);
 private:
 	uint32_t handle;

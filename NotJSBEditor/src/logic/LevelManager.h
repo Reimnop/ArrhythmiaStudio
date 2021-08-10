@@ -2,26 +2,23 @@
 
 #include <vector>
 #include <unordered_set>
-#include <functional>
 
-#include "../rendering/MeshRenderer.h"
-#include "SceneNode.h"
 #include "LevelObject.h"
 #include "Timeline.h"
 #include "Properties.h"
 #include "Theme.h"
 #include "ObjectAction.h"
 #include "ColorSlot.h"
-#include "animation/ColorChannel.h"
 
 class Theme;
+
 class LevelManager
 {
 public:
 	static LevelManager* inst;
 
 	std::vector<ColorSlot*> colorSlots;
-	
+
 	std::vector<LevelObject*> levelObjects;
 	int selectedObjectIndex = -1;
 

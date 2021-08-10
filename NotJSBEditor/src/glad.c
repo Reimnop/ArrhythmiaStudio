@@ -569,18 +569,15 @@ static int has_ext(const char* ext)
 		}
 #ifdef _GLAD_IS_SOME_NEW_VERSION
 	}
-	else
+	int index;
+	if (exts_i == NULL) return 0;
+	for (index = 0; index < num_exts_i; index++)
 	{
-		int index;
-		if (exts_i == NULL) return 0;
-		for (index = 0; index < num_exts_i; index++)
-		{
-			const char* e = exts_i[index];
+		const char* e = exts_i[index];
 
-			if (exts_i[index] != NULL && strcmp(e, ext) == 0)
-			{
-				return 1;
-			}
+		if (exts_i[index] != NULL && strcmp(e, ext) == 0)
+		{
+			return 1;
 		}
 	}
 #endif

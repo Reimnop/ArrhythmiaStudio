@@ -1,5 +1,7 @@
 #include "Material.h"
 
+#include <glad/glad.h>
+
 #define MAT_GETTER(t_name, type) type Material::get##t_name(const char* name) { return *(type*)materialData[propertyIndices[name]]; }
 #define MAT_SETTER(t_name, type) void Material::set##t_name(const char* name, type value) { materialData[propertyIndices[name]] = (void*)&value; }
 
@@ -47,12 +49,12 @@ Material::~Material()
 	delete[] materialData;
 }
 
-Shader* Material::getShader()
+Shader* Material::getShader() const
 {
 	return shader;
 }
 
-int Material::getUniformBuffer()
+int Material::getUniformBuffer() const
 {
 	return uniformBuffer;
 }

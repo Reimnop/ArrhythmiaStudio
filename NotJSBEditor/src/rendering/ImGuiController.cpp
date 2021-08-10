@@ -1,5 +1,9 @@
 #include "ImGuiController.h"
 
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
+
 std::vector<std::function<void()>> ImGuiController::onLayout;
 
 ImGuiController::ImGuiController(GLFWwindow* window, const char* fontPath)

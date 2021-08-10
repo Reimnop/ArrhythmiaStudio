@@ -1,7 +1,5 @@
 #pragma once
 
-#include <glm/glm.hpp>
-
 #include "animation/Color.h"
 #include "animation/ColorChannel.h"
 #include "../rendering/Shader.h"

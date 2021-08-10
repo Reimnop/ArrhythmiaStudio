@@ -1,9 +1,6 @@
 #pragma once
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <helper.h>
-#include <logger.h>
 
 #include "rendering/Renderer.h"
 
@@ -13,6 +10,7 @@
 #endif
 
 class GameManager;
+
 class MainWindow
 {
 public:
@@ -34,6 +32,6 @@ private:
 	GameManager* gameManager;
 
 	void onLoad();
-	void onUpdateFrame();
-	void onRenderFrame();
+	void onUpdateFrame() const;
+	void onRenderFrame() const;
 };

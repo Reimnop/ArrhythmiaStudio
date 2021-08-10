@@ -1,5 +1,7 @@
 #include "MeshRenderer.h"
 
+#include "DrawElementsCommand.h"
+
 MeshRenderer::MeshRenderer()
 {
 	mesh = nullptr;
@@ -47,7 +49,7 @@ bool MeshRenderer::render(InputDrawData input, OutputDrawData* output)
 	return true;
 }
 
-bool MeshRenderer::canRender()
+bool MeshRenderer::canRender() const
 {
 	if (mesh == nullptr || material == nullptr)
 		return false;

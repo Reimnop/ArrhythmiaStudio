@@ -36,7 +36,7 @@ Mesh::~Mesh()
 	glDeleteBuffers(1, &ebo);
 }
 
-void Mesh::setPerVertexData(int size, void* data, int attribCount, VertexAttrib* attribs)
+void Mesh::setPerVertexData(int size, void* data, int attribCount, VertexAttrib* attribs) const
 {
 	glBindVertexArray(vao);
 
@@ -58,7 +58,7 @@ void Mesh::setPerVertexData(int size, void* data, int attribCount, VertexAttrib*
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-uint32_t Mesh::getVao()
+uint32_t Mesh::getVao() const
 {
 	return vao;
 }

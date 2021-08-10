@@ -26,6 +26,7 @@ public:
 			glBindFramebuffer(GL_FRAMEBUFFER, framebufferStack.top());
 		}
 	}
+
 private:
 	static inline std::stack<uint32_t> framebufferStack;
 };

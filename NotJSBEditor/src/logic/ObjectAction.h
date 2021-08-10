@@ -10,5 +10,3 @@ struct ObjectAction
 	ObjectActionType type;
 	LevelObject* levelObject;
 };
-
-#include "LevelObject.h"

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
 #include "VertexAttrib.h"
@@ -18,9 +16,9 @@ public:
 	Mesh(int verticesCount, glm::vec3* vertices, int indicesCount, uint32_t* indices);
 	~Mesh();
 
-	void setPerVertexData(int size, void* data, int attribCount, VertexAttrib* attribs);
+	void setPerVertexData(int size, void* data, int attribCount, VertexAttrib* attribs) const;
 
-	uint32_t getVao();
+	uint32_t getVao() const;
 private:
 	uint32_t vao;
 	uint32_t vbo0;

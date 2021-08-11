@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <any>
 #include <unordered_map>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -47,6 +48,6 @@ private:
 	int propertyCount;
 
 	std::vector<MaterialProperty> materialProperties;
+	std::vector<std::any> materialData;
 	std::unordered_map<std::string, int> propertyIndices;
-	void** materialData;
 };

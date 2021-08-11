@@ -161,17 +161,6 @@ void Properties::onLayout()
 					drawList->AddText(labelMin, textCol, getChannelName(selectedObject->animationChannels[i]->type));
 				}
 
-				ImVec2 keyframeAreaSize = ImVec2(availX - EDITOR_LABEL_AREA_WIDTH,
-				                                 EDITOR_BIN_HEIGHT * EDITOR_PROP_BIN_COUNT);
-
-				drawList->AddLine(ImVec2(cursorPos.x + EDITOR_LABEL_AREA_WIDTH, cursorPos.y),
-				                  ImVec2(cursorPos.x + EDITOR_LABEL_AREA_WIDTH, cursorPos.y + timelineHeight),
-				                  borderCol);
-
-				drawList->PushClipRect(ImVec2(cursorPos.x + EDITOR_LABEL_AREA_WIDTH, cursorPos.y),
-				                       ImVec2(cursorPos.x + EDITOR_LABEL_AREA_WIDTH + keyframeAreaSize.x,
-				                              cursorPos.y + keyframeAreaSize.y));
-
 				// Draw the keyframes
 				int id = 0;
 				for (int i = 0; i < selectedObject->animationChannels.size(); i++)
@@ -186,8 +175,7 @@ void Properties::onLayout()
 						Keyframe kf = channel->keyframes[j];
 
 						ImVec2 kfPos = ImVec2(
-							EDITOR_KEYFRAME_OFFSET + binMin.x + (kf.time - startTime) / (endTime - startTime) *
-							keyframeAreaSize.x,
+							EDITOR_KEYFRAME_OFFSET + binMin.x + (kf.time - startTime) / (endTime - startTime) * availX,
 							binMin.y + EDITOR_BIN_HEIGHT * 0.5f);
 
 						id++;
@@ -212,8 +200,7 @@ void Properties::onLayout()
 							kfActive = false;
 						}
 
-						if (selectedKeyframe.has_value() && selectedKeyframe.value() == kf && selectedChannel ==
-							channel)
+						if (selectedKeyframe.has_value() && selectedKeyframe.value() == kf && selectedChannel == channel)
 						{
 							kfActive = true;
 						}
@@ -233,11 +220,11 @@ void Properties::onLayout()
 					float btnMinX = EDITOR_KEYFRAME_OFFSET + binMin.x;
 
 					ImGui::SetCursorScreenPos(ImVec2(btnMinX, binMin.y));
-					ImGui::InvisibleButton("##KeyframeBin", ImVec2(keyframeAreaSize.x, EDITOR_BIN_HEIGHT));
+					ImGui::InvisibleButton("##KeyframeBin", ImVec2(availX, EDITOR_BIN_HEIGHT));
 
 					if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 					{
-						float kfTime = startTime + ((io.MousePos.x - btnMinX) / keyframeAreaSize.x) * (endTime -
+						float kfTime = startTime + ((io.MousePos.x - btnMinX) / availX) * (endTime -
 							startTime);
 
 						if (kfTime > 0.0f)
@@ -252,8 +239,6 @@ void Properties::onLayout()
 
 					ImGui::PopID();
 				}
-
-				drawList->PopClipRect();
 
 				// Frames
 				drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + timelineHeight),
@@ -270,6 +255,7 @@ void Properties::onLayout()
 			ImGui::Separator();
 			if (selectedKeyframe.has_value() && selectedChannel != nullptr)
 			{
+				LevelObject* currentObject = levelManager->levelObjects[levelManager->selectedObjectIndex];
 				Keyframe kf = selectedKeyframe.value();
 
 				bool kfChanged = false;
@@ -288,7 +274,7 @@ void Properties::onLayout()
 					selectedChannel->insertKeyframe(kf);
 					selectedKeyframe = kf;
 
-					levelManager->update(levelManager->time);
+					levelManager->updateObject(currentObject);
 				}
 			}
 			else

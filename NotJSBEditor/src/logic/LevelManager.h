@@ -22,11 +22,14 @@ public:
 	std::vector<LevelObject*> levelObjects;
 	int selectedObjectIndex = -1;
 
-	float time;
+	float time = 0.0f;
 
 	LevelManager();
 
 	void update(float time);
+	void updateObject(LevelObject* levelObject);
+	void updateColorSlot(ColorSlot* colorSlot);
+
 	void recalculateAllObjectActions();
 	void recalculateObjectAction(LevelObject* levelObject);
 	void recalculateActionIndex(float time);

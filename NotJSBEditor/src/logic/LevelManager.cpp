@@ -67,14 +67,11 @@ LevelManager::LevelManager()
 		obj->startTime = start;
 		obj->killTime = end;
 		obj->editorBinIndex = 0;
-		obj->colorSlot = colorSlots[0];
 
 		spawnNode(obj);
 	}
 
 	recalculateAllObjectActions();
-
-	time = 0.0f;
 
 	timeline = new Timeline();
 	properties = new Properties();
@@ -124,39 +121,49 @@ void LevelManager::update(float time)
 
 	lastTime = time;
 
-	// Update all color channels
-	for (int i = 0; i < colorSlots.size(); i++)
-	{
-		colorSlots[i]->update(time);
-	}
-
 	// Animate alive objects
 	for (LevelObject* levelObject : aliveObjects)
 	{
-		for (AnimationChannel* channel : levelObject->animationChannels)
+		updateObject(levelObject);
+	}
+
+	// Update all color slots
+	for (ColorSlot* colorSlot : colorSlots)
+	{
+		updateColorSlot(colorSlot);
+	}
+}
+
+void LevelManager::updateObject(LevelObject* levelObject)
+{
+	for (AnimationChannel* channel : levelObject->animationChannels)
+	{
+		switch (channel->type)
 		{
-			switch (channel->type)
-			{
-			case AnimationChannelType_PositionX:
-				levelObject->node->transform->position.x = channel->update(time - levelObject->startTime);
-				break;
-			case AnimationChannelType_PositionY:
-				levelObject->node->transform->position.y = channel->update(time - levelObject->startTime);
-				break;
-			case AnimationChannelType_ScaleX:
-				levelObject->node->transform->scale.x = channel->update(time - levelObject->startTime);
-				break;
-			case AnimationChannelType_ScaleY:
-				levelObject->node->transform->scale.y = channel->update(time - levelObject->startTime);
-				break;
-			case AnimationChannelType_Rotation:
-				levelObject->node->transform->rotation = glm::angleAxis(
-					channel->update(time - levelObject->startTime) / 180.0f * 3.14159265359f,
-					glm::vec3(0.0f, 0.0f, -1.0f));
-				break;
-			}
+		case AnimationChannelType_PositionX:
+			levelObject->node->transform->position.x = channel->update(time - levelObject->startTime);
+			break;
+		case AnimationChannelType_PositionY:
+			levelObject->node->transform->position.y = channel->update(time - levelObject->startTime);
+			break;
+		case AnimationChannelType_ScaleX:
+			levelObject->node->transform->scale.x = channel->update(time - levelObject->startTime);
+			break;
+		case AnimationChannelType_ScaleY:
+			levelObject->node->transform->scale.y = channel->update(time - levelObject->startTime);
+			break;
+		case AnimationChannelType_Rotation:
+			levelObject->node->transform->rotation = glm::angleAxis(
+				channel->update(time - levelObject->startTime) / 180.0f * 3.14159265359f,
+				glm::vec3(0.0f, 0.0f, -1.0f));
+			break;
 		}
 	}
+}
+
+void LevelManager::updateColorSlot(ColorSlot* colorSlot)
+{
+	colorSlot->update(time);
 }
 
 void LevelManager::recalculateAllObjectActions()
@@ -242,7 +249,7 @@ void LevelManager::spawnNode(LevelObject* levelObject)
 
 	MeshRenderer* renderer = new MeshRenderer();
 	renderer->mesh = mesh;
-	renderer->material = levelObject->colorSlot->material;
+	renderer->material = colorSlots[levelObject->colorSlotIndex]->material;
 
 	node->renderer = renderer;
 

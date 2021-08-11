@@ -16,7 +16,7 @@ public:
 	float killTime;
 	int editorBinIndex;
 
-	ColorSlot* colorSlot;
+	int colorSlotIndex = 0;
 	std::vector<AnimationChannel*> animationChannels;
 
 	SceneNode* node;

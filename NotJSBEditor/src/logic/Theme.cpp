@@ -1,12 +1,13 @@
 #include "Theme.h"
 
 #include "../rendering/ImGuiController.h"
+#include "animation/ColorChannel.h"
+#include "LevelManager.h"
 #include "GlobalConstants.h"
 
 #include <functional>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
-
 
 Theme::Theme()
 {
@@ -27,10 +28,10 @@ void Theme::onLayout()
 		{
 			for (int i = 0; i < levelManager->colorSlots.size(); i++)
 			{
-				if (colorSlotButton(std::string("Color Slot " + std::to_string(i)),
-				                    levelManager->colorSlots[i]->currentColor, selectedSlot == i))
+				if (colorSlotButton(std::string("Color Slot " + std::to_string(i)), levelManager->colorSlots[i]->currentColor, selectedSlot == i))
 				{
 					selectedSlot = i;
+					selectedKeyframe.reset();
 				}
 			}
 		}
@@ -66,24 +67,80 @@ void Theme::onLayout()
 					EDITOR_KEYFRAME_OFFSET + cursorPos.x + (kf.time - startTime) / (endTime - startTime) * availX,
 					cursorPos.y + EDITOR_BIN_HEIGHT * 0.5f);
 
+				ImGui::PushID(i + 1);
+
+				ImVec2 btnMin = ImVec2(kfPos.x - EDITOR_KEYFRAME_SIZE * 0.5f, cursorPos.y);
+
+				ImGui::SetCursorScreenPos(btnMin);
+				if (ImGui::InvisibleButton("##Keyframe", ImVec2(EDITOR_KEYFRAME_SIZE, EDITOR_BIN_HEIGHT)))
+				{
+					selectedKeyframe = kf;
+				}
+
+				bool kfActive;
+				if (ImGui::IsItemHovered())
+				{
+					kfActive = true;
+				}
+				else
+				{
+					kfActive = false;
+				}
+
+				if (selectedKeyframe.has_value() && selectedKeyframe.value() == kf)
+				{
+					kfActive = true;
+				}
+
+				ImGui::PopID();
+
 				drawList->AddQuadFilled(
 					ImVec2(kfPos.x, kfPos.y - EDITOR_KEYFRAME_SIZE * 0.5f),
 					ImVec2(kfPos.x - EDITOR_KEYFRAME_SIZE * 0.5f, kfPos.y),
 					ImVec2(kfPos.x, kfPos.y + EDITOR_KEYFRAME_SIZE * 0.5f),
 					ImVec2(kfPos.x + EDITOR_KEYFRAME_SIZE * 0.5f, kfPos.y),
-					false ? EDITOR_KEYFRAME_ACTIVE_COL : EDITOR_KEYFRAME_INACTIVE_COL);
+					kfActive ? EDITOR_KEYFRAME_ACTIVE_COL : EDITOR_KEYFRAME_INACTIVE_COL);
 			}
 
 			// Frames
 			ImU32 borderCol = ImGui::GetColorU32(ImGuiCol_Border);
-			drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_BIN_HEIGHT),
-			                  borderCol);
-
+			drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_BIN_HEIGHT), borderCol);
 			drawList->PopClipRect();
 
 			// Reset cursor
 			ImGui::SetCursorScreenPos(cursorPos);
 			ImGui::ItemSize(ImVec2(availX, EDITOR_BIN_HEIGHT));
+
+			ImGui::Separator();
+			if (selectedKeyframe.has_value() && selectedSlot != -1)
+			{
+				ColorSlot* currentSlot = levelManager->colorSlots[selectedSlot];
+				ColorKeyframe kf = selectedKeyframe.value();
+
+				bool kfChanged = false;
+				ImGui::DragFloat("Keyframe Time", &kf.time, 0.1f);
+				kfChanged = kfChanged || ImGui::IsItemEdited();
+				ImGui::ColorEdit3("Keyframe Color", &kf.color.r);
+				kfChanged = kfChanged || ImGui::IsItemEdited();
+
+				if (kfChanged)
+				{
+					std::vector<ColorKeyframe>::iterator it = std::find(
+						currentSlot->channel->keyframes.begin(),
+						currentSlot->channel->keyframes.end(),
+						selectedKeyframe.value());
+					currentSlot->channel->keyframes.erase(it);
+
+					currentSlot->channel->insertKeyframe(kf);
+					selectedKeyframe = kf;
+
+					levelManager->updateColorSlot(currentSlot);
+				}
+			}
+			else
+			{
+				ImGui::Text("No keyframe selected");
+			}
 		}
 	}
 	ImGui::End();

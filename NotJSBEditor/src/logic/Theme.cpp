@@ -102,6 +102,26 @@ void Theme::onLayout()
 					kfActive ? EDITOR_KEYFRAME_ACTIVE_COL : EDITOR_KEYFRAME_INACTIVE_COL);
 			}
 
+			float btnMinX = EDITOR_KEYFRAME_OFFSET + cursorPos.x;
+
+			ImGui::SetCursorScreenPos(ImVec2(btnMinX, cursorPos.y));
+			ImGui::InvisibleButton("##KeyframeBin", ImVec2(availX, EDITOR_BIN_HEIGHT));
+
+			if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+			{
+				float kfTime = startTime + ((io.MousePos.x - btnMinX) / availX) * (endTime -
+					startTime);
+
+				if (kfTime > 0.0f)
+				{
+					ColorKeyframe kf = ColorKeyframe();
+					kf.time = kfTime;
+					kf.color = Color(1.0f, 1.0f, 1.0f);
+
+					channel->insertKeyframe(kf);
+				}
+			}
+
 			// Frames
 			ImU32 borderCol = ImGui::GetColorU32(ImGuiCol_Border);
 			drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_BIN_HEIGHT), borderCol);

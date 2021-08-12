@@ -84,9 +84,7 @@ void Timeline::onLayout() const
 
 			drawList->PushClipRect(stripMin, stripMax);
 
-			int id = i + 1;
-
-			ImGui::PushID(id);
+			ImGui::PushID(i + 1);
 
 			ImGui::SetCursorScreenPos(stripMin);
 			if (ImGui::InvisibleButton("##Strip", stripSize))
@@ -167,22 +165,21 @@ void Timeline::onLayout() const
 		drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT), borderCol);
 
 		// Draw time pointer
-		const float pointerWidth = 18.0f;
-		const float pointerHeight = 22.0f;
+		constexpr float pointerRectHeight = EDITOR_TIME_POINTER_HEIGHT - EDITOR_TIME_POINTER_TRI_HEIGHT;
 
 		float pointerPos = cursorPos.x + (levelManager->time - startTime) / (endTime - startTime) * availX;
 		drawList->AddLine(ImVec2(pointerPos, cursorPos.y),
 		                  ImVec2(pointerPos, cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT), borderCol);
 
 		drawList->AddRectFilled(
-			ImVec2(pointerPos - pointerWidth * 0.5f, cursorPos.y),
-			ImVec2(pointerPos + pointerWidth * 0.5f, cursorPos.y + pointerHeight),
+			ImVec2(pointerPos - EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y),
+			ImVec2(pointerPos + EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y + pointerRectHeight),
 			borderCol);
 
 		drawList->AddTriangleFilled(
-			ImVec2(pointerPos - pointerWidth * 0.5f, cursorPos.y + pointerHeight),
+			ImVec2(pointerPos - EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y + pointerRectHeight),
 			ImVec2(pointerPos, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT),
-			ImVec2(pointerPos + pointerWidth * 0.5f, cursorPos.y + pointerHeight),
+			ImVec2(pointerPos + EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y + pointerRectHeight),
 			borderCol);
 
 		drawList->PopClipRect();
@@ -194,8 +191,7 @@ void Timeline::onLayout() const
 			if (ImGui::IsWindowHovered())
 			{
 				selectedObject->editorBinIndex -= io.MouseWheel;
-				selectedObject->editorBinIndex = std::clamp(selectedObject->editorBinIndex, 0,
-				                                            EDITOR_TIMELINE_BIN_COUNT - 1);
+				selectedObject->editorBinIndex = std::clamp(selectedObject->editorBinIndex, 0, EDITOR_TIMELINE_BIN_COUNT - 1);
 			}
 		}
 

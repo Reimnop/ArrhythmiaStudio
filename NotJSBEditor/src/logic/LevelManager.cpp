@@ -42,18 +42,6 @@ LevelManager::LevelManager()
 
 		ColorSlot* colorSlot = new ColorSlot(1, &kf);
 
-		for (int j = 1; j <= 30; j++)
-		{
-			ColorKeyframe newKf = ColorKeyframe();
-			newKf.time = (float)std::rand() / RAND_MAX * 30.0f;
-			newKf.color = Color(
-				(float)std::rand() / RAND_MAX,
-				(float)std::rand() / RAND_MAX,
-				(float)std::rand() / RAND_MAX);
-
-			colorSlot->channel->insertKeyframe(newKf);
-		}
-
 		colorSlot->update(0.0f);
 
 		colorSlots.push_back(colorSlot);
@@ -84,7 +72,7 @@ void LevelManager::update(float time)
 
 	if (time > lastTime)
 	{
-		while (actionIndex < objectActions.size() && objectActions[actionIndex].time <= time)
+		while (actionIndex < objectActions.size() && objectActions[actionIndex].time < time)
 		{
 			switch (objectActions[actionIndex].type)
 			{
@@ -102,7 +90,7 @@ void LevelManager::update(float time)
 	}
 	else
 	{
-		while (actionIndex > 0 && objectActions[actionIndex - 1].time >= time)
+		while (actionIndex > 0 && objectActions[actionIndex - 1].time > time)
 		{
 			switch (objectActions[actionIndex - 1].type)
 			{

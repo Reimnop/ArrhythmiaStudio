@@ -135,18 +135,20 @@ void Properties::onLayout()
 				ImGuiIO& io = ImGui::GetIO();
 
 				const ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+				ImVec2 timelineMin = ImVec2(cursorPos.x, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT);
+
 				const float availX = ImGui::GetContentRegionAvailWidth();
 
 				const ImVec2 clipSize = ImVec2(availX, timelineHeight);
 
 				// Draw editor bins
-				drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + clipSize.x, cursorPos.y + clipSize.y));
+				drawList->PushClipRect(timelineMin, ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y));
 
 				for (int i = 0; i < EDITOR_PROP_BIN_COUNT; i++)
 				{
 					drawList->AddRectFilled(
-						ImVec2(cursorPos.x, cursorPos.y + i * EDITOR_BIN_HEIGHT),
-						ImVec2(cursorPos.x + availX, cursorPos.y + (i + 1) * EDITOR_BIN_HEIGHT),
+						ImVec2(timelineMin.x, timelineMin.y + i * EDITOR_BIN_HEIGHT),
+						ImVec2(timelineMin.x + availX, timelineMin.y + (i + 1) * EDITOR_BIN_HEIGHT),
 						i % 2 ? EDITOR_BIN_SECONDARY_COL : EDITOR_BIN_PRIMARY_COL);
 				}
 
@@ -157,7 +159,7 @@ void Properties::onLayout()
 				{
 					ImU32 textCol = ImGui::GetColorU32(ImGuiCol_Text);
 
-					ImVec2 labelMin = ImVec2(cursorPos.x + 2.0f, cursorPos.y + EDITOR_BIN_HEIGHT * i);
+					ImVec2 labelMin = ImVec2(timelineMin.x + 2.0f, timelineMin.y + EDITOR_BIN_HEIGHT * i);
 					drawList->AddText(labelMin, textCol, getChannelName(selectedObject->animationChannels[i]->type));
 				}
 
@@ -167,7 +169,7 @@ void Properties::onLayout()
 				{
 					AnimationChannel* channel = selectedObject->animationChannels[i];
 
-					ImVec2 binMin = ImVec2(cursorPos.x, cursorPos.y + EDITOR_BIN_HEIGHT * i);
+					ImVec2 binMin = ImVec2(timelineMin.x, timelineMin.y + EDITOR_BIN_HEIGHT * i);
 					ImGui::SetCursorScreenPos(binMin);
 
 					for (int j = 0; j < channel->keyframes.size(); j++)
@@ -241,14 +243,57 @@ void Properties::onLayout()
 				}
 
 				// Frames
-				drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + timelineHeight),
-				                  borderCol);
+				drawList->AddRect(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + timelineHeight), borderCol);
 
 				drawList->PopClipRect();
 
-				// Reset cursor
+				// Time pointer
+				drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX,
+					cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT));
+
+				// Draw frame
+				drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT), borderCol);
+
+				// Draw time pointer
+				constexpr float pointerRectHeight = EDITOR_TIME_POINTER_HEIGHT - EDITOR_TIME_POINTER_TRI_HEIGHT;
+
+				float relativeTime = std::max(levelManager->time - selectedObject->startTime, 0.0f);
+				float pointerPos = cursorPos.x + (relativeTime - startTime) / (endTime - startTime) * availX;
+
+				drawList->AddLine(ImVec2(pointerPos, cursorPos.y),
+					ImVec2(pointerPos, cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT), borderCol);
+
+				drawList->AddRectFilled(
+					ImVec2(pointerPos - EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y),
+					ImVec2(pointerPos + EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y + pointerRectHeight),
+					borderCol);
+
+				drawList->AddTriangleFilled(
+					ImVec2(pointerPos - EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y + pointerRectHeight),
+					ImVec2(pointerPos, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT),
+					ImVec2(pointerPos + EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y + pointerRectHeight),
+					borderCol);
+
+				drawList->PopClipRect();
+
 				ImGui::SetCursorScreenPos(cursorPos);
-				ImGui::ItemSize(ImVec2(availX, timelineHeight));
+				if (ImGui::InvisibleButton("##TimePointer", ImVec2(availX, EDITOR_TIME_POINTER_HEIGHT)))
+				{
+					float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
+					newTime = std::max(0.0f, newTime);
+
+					levelManager->update(newTime + selectedObject->startTime);
+				}
+
+				if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+				{
+					float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
+					newTime = std::max(0.0f, newTime);
+
+					levelManager->update(newTime + selectedObject->startTime);
+				}
+
+				ImGui::ItemSize(ImVec2(availX, timelineHeight + EDITOR_TIME_POINTER_HEIGHT));
 			}
 
 			// Draw keyframe editor

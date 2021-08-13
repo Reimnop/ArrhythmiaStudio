@@ -14,3 +14,5 @@ constexpr unsigned int EDITOR_BIN_PRIMARY_COL = 0xFF1F1F1F;
 constexpr unsigned int EDITOR_BIN_SECONDARY_COL = 0xFF2E2E2E;
 constexpr unsigned int EDITOR_KEYFRAME_INACTIVE_COL = 0xFFBABABA;
 constexpr unsigned int EDITOR_KEYFRAME_ACTIVE_COL = 0xFF626262;
+constexpr unsigned int EDITOR_STRIP_INACTIVE_COL = 0xFFBABABA;
+constexpr unsigned int EDITOR_STRIP_ACTIVE_COL = 0xFF626262;

@@ -60,11 +60,11 @@ void Theme::onLayout()
 					EDITOR_BIN_PRIMARY_COL);
 
 				// Draw keyframes
-				ColorChannel* channel = levelManager->colorSlots[selectedSlot]->channel;
+				ColorSlot* slot = levelManager->colorSlots[selectedSlot];
 
-				for (int i = 0; i < channel->keyframes.size(); i++)
+				for (int i = 0; i < slot->channel->keyframes.size(); i++)
 				{
-					ColorKeyframe kf = channel->keyframes[i];
+					ColorKeyframe kf = slot->channel->keyframes[i];
 
 					ImVec2 kfPos = ImVec2(
 						EDITOR_KEYFRAME_OFFSET + timelineMin.x + (kf.time - startTime) / (endTime - startTime) * availX,
@@ -88,6 +88,29 @@ void Theme::onLayout()
 					else
 					{
 						kfActive = false;
+					}
+
+					if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+					{
+						selectedKeyframe = kf;
+
+						// Dragging
+						ImVec2 delta = io.MouseDelta;
+						float timeDelta = (delta.x / availX) * (endTime - startTime);
+
+						kf.time += timeDelta;
+						kf.time = std::max(kf.time, 0.0f);
+
+						std::vector<ColorKeyframe>::iterator it = std::find(
+							slot->channel->keyframes.begin(),
+							slot->channel->keyframes.end(),
+							selectedKeyframe.value());
+						slot->channel->keyframes.erase(it);
+
+						slot->channel->insertKeyframe(kf);
+						selectedKeyframe = kf;
+
+						levelManager->updateColorSlot(slot);
 					}
 
 					if (selectedKeyframe.has_value() && selectedKeyframe.value() == kf)
@@ -121,7 +144,7 @@ void Theme::onLayout()
 						kf.time = kfTime;
 						kf.color = Color(1.0f, 1.0f, 1.0f);
 
-						channel->insertKeyframe(kf);
+						slot->channel->insertKeyframe(kf);
 					}
 				}
 

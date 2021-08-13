@@ -202,6 +202,30 @@ void Properties::onLayout()
 							kfActive = false;
 						}
 
+						if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+						{
+							selectedKeyframe = kf;
+							selectedChannel = channel;
+
+							// Dragging
+							ImVec2 delta = io.MouseDelta;
+							float timeDelta = (delta.x / availX) * (endTime - startTime);
+
+							kf.time += timeDelta;
+							kf.time = std::max(kf.time, 0.0f);
+
+							std::vector<Keyframe>::iterator it = std::find(
+								channel->keyframes.begin(),
+								channel->keyframes.end(),
+								selectedKeyframe.value());
+							channel->keyframes.erase(it);
+
+							channel->insertKeyframe(kf);
+							selectedKeyframe = kf;
+
+							levelManager->updateObject(selectedObject);
+						}
+
 						if (selectedKeyframe.has_value() && selectedKeyframe.value() == kf && selectedChannel == channel)
 						{
 							kfActive = true;
@@ -293,6 +317,7 @@ void Properties::onLayout()
 					levelManager->update(newTime + selectedObject->startTime);
 				}
 
+				ImGui::SetCursorScreenPos(cursorPos);
 				ImGui::ItemSize(ImVec2(availX, timelineHeight + EDITOR_TIME_POINTER_HEIGHT));
 			}
 

@@ -60,9 +60,6 @@ void Timeline::onLayout() const
 		bool atLeastOneStripClicked = false;
 		for (int i = 0; i < levelManager->levelObjects.size(); i++)
 		{
-			const ImU32 inactiveCol = ImGui::GetColorU32(ImVec4(0.729f, 0.729f, 0.729f, 1.000f));
-			const ImU32 activeCol = ImGui::GetColorU32(ImVec4(0.384f, 0.384f, 0.384f, 1.000f));
-
 			LevelObject* levelObject = levelManager->levelObjects[i];
 
 			if (levelObject->killTime < startTime || levelObject->startTime > endTime)
@@ -136,7 +133,7 @@ void Timeline::onLayout() const
 
 			ImVec2 textSize = ImGui::CalcTextSize(name, name + levelObject->name.length());
 
-			ImU32 stripCol = stripActive ? activeCol : inactiveCol;
+			ImU32 stripCol = stripActive ? EDITOR_STRIP_ACTIVE_COL : EDITOR_STRIP_INACTIVE_COL;
 
 			const float distFromHead = 8.0f;
 
@@ -144,8 +141,8 @@ void Timeline::onLayout() const
 			ImVec2 localRectMax = ImVec2(stripMin.x + distFromHead + 4.0f + textSize.x, stripMax.y);
 
 			drawList->AddRectFilled(stripMin, stripMax, stripCol);
-			drawList->AddRectFilled(localRectMin, localRectMax, activeCol);
-			drawList->AddText(ImVec2(localRectMin.x + 2.0f, localRectMin.y), inactiveCol, name,
+			drawList->AddRectFilled(localRectMin, localRectMax, EDITOR_STRIP_ACTIVE_COL);
+			drawList->AddText(ImVec2(localRectMin.x + 2.0f, localRectMin.y), EDITOR_STRIP_INACTIVE_COL, name,
 			                  name + levelObject->name.size());
 
 			drawList->PopClipRect();

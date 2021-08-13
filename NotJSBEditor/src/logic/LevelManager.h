@@ -33,6 +33,9 @@ public:
 	void recalculateAllObjectActions();
 	void recalculateObjectAction(LevelObject* levelObject);
 	void recalculateActionIndex(float time);
+
+	void insertObject(LevelObject* levelObject);
+	void removeObject(LevelObject* levelObject);
 private:
 	Timeline* timeline;
 	Properties* properties;
@@ -46,5 +49,5 @@ private:
 	std::unordered_set<LevelObject*> aliveObjects;
 
 	void insertAction(ObjectAction value);
-	void spawnNode(LevelObject* levelObject);
+	void spawnObject(LevelObject* levelObject);
 };

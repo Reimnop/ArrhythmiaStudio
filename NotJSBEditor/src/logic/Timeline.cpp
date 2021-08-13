@@ -101,7 +101,7 @@ void Timeline::onLayout() const
 			{
 				stripActive = true;
 
-				// Dragging
+				// Dragging the strip
 				if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 				{
 					atLeastOneStripClicked = true;
@@ -192,8 +192,16 @@ void Timeline::onLayout() const
 			}
 		}
 
-		ImGui::SetCursorScreenPos(cursorPos);
+		// Object delete
+		if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
+		{
+			levelManager->removeObject(levelManager->levelObjects[levelManager->selectedObjectIndex]);
 
+			levelManager->selectedObjectIndex = -1;
+		}
+
+		// Jumping the time pointer
+		ImGui::SetCursorScreenPos(cursorPos);
 		bool pointerBeingDragged = false;
 		if (ImGui::InvisibleButton("##TimePointer", ImVec2(availX, EDITOR_TIME_POINTER_HEIGHT)))
 		{
@@ -204,6 +212,7 @@ void Timeline::onLayout() const
 			pointerBeingDragged = true;
 		}
 
+		// Dragging time pointer
 		if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 		{
 			float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
@@ -213,8 +222,8 @@ void Timeline::onLayout() const
 			pointerBeingDragged = true;
 		}
 
-		if (ImGui::IsWindowFocused() && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) &&
-			!atLeastOneStripClicked && !pointerBeingDragged)
+		// Deselect
+		if (ImGui::IsWindowFocused() && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !atLeastOneStripClicked && !pointerBeingDragged)
 		{
 			levelManager->selectedObjectIndex = -1;
 		}

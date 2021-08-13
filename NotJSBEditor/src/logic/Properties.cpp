@@ -324,28 +324,41 @@ void Properties::onLayout()
 
 			// Draw keyframe editor
 			ImGui::Separator();
-			if (selectedKeyframe.has_value() && selectedChannel != nullptr)
+			if (ImGui::IsWindowFocused() && selectedKeyframe.has_value() && selectedChannel != nullptr)
 			{
 				LevelObject* currentObject = levelManager->levelObjects[levelManager->selectedObjectIndex];
 				Keyframe kf = selectedKeyframe.value();
 
-				bool kfChanged = false;
-				ImGui::DragFloat("Keyframe Time", &kf.time, 0.1f);
-				kfChanged = kfChanged || ImGui::IsItemEdited();
-				ImGui::DragFloat("Keyframe Value", &kf.value, 0.1f);
-				kfChanged = kfChanged || ImGui::IsItemEdited();
-
-				if (kfChanged)
+				if (ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 				{
 					std::vector<Keyframe>::iterator it = std::find(selectedChannel->keyframes.begin(),
-					                                               selectedChannel->keyframes.end(),
-					                                               selectedKeyframe.value());
+						selectedChannel->keyframes.end(),
+						selectedKeyframe.value());
 					selectedChannel->keyframes.erase(it);
 
-					selectedChannel->insertKeyframe(kf);
-					selectedKeyframe = kf;
+					selectedKeyframe.reset();
+					selectedChannel = nullptr;
+				}
+				else
+				{
+					bool kfChanged = false;
+					ImGui::DragFloat("Keyframe Time", &kf.time, 0.1f, 0.0f, currentObject->killTime - currentObject->startTime);
+					kfChanged = kfChanged || ImGui::IsItemEdited();
+					ImGui::DragFloat("Keyframe Value", &kf.value, 0.1f);
+					kfChanged = kfChanged || ImGui::IsItemEdited();
 
-					levelManager->updateObject(currentObject);
+					if (kfChanged)
+					{
+						std::vector<Keyframe>::iterator it = std::find(selectedChannel->keyframes.begin(),
+							selectedChannel->keyframes.end(),
+							selectedKeyframe.value());
+						selectedChannel->keyframes.erase(it);
+
+						selectedChannel->insertKeyframe(kf);
+						selectedKeyframe = kf;
+
+						levelManager->updateObject(currentObject);
+					}
 				}
 			}
 			else

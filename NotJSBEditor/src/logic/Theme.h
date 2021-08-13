@@ -13,7 +13,7 @@ private:
 	float startTime;
 	float endTime;
 
-	int selectedSlot = -1;
+	int selectedSlotIndex = -1;
 	std::optional<ColorKeyframe> selectedKeyframe;
 
 	void onLayout();

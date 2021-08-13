@@ -21,14 +21,22 @@ SceneNode::SceneNode(std::string name, SceneNode* parent)
 SceneNode::~SceneNode()
 {
 	delete renderer;
-
-	setParent(nullptr);
 	delete transform;
 
-	// Delete children
+	setParent(nullptr);
+
+	// Remove from root
+	Scene* scene = Scene::inst;
+
+	std::vector<SceneNode*>::iterator it = std::remove(scene->rootNode->children.begin(), scene->rootNode->children.end(), this);
+	scene->rootNode->children.erase(it, scene->rootNode->children.end());
+
+	scene->rootNode->activeChildren.erase(this);
+
+	// Unparent children
 	for (SceneNode* node : children)
 	{
-		delete node;
+		node->setParent(nullptr);
 	}
 
 	children.clear();

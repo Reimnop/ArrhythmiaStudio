@@ -28,16 +28,16 @@ void Theme::onLayout()
 		{
 			for (int i = 0; i < levelManager->colorSlots.size(); i++)
 			{
-				if (colorSlotButton(std::string("Color Slot " + std::to_string(i)), levelManager->colorSlots[i]->currentColor, selectedSlot == i))
+				if (colorSlotButton(std::string("Color Slot " + std::to_string(i)), levelManager->colorSlots[i]->currentColor, selectedSlotIndex == i))
 				{
-					selectedSlot = i;
+					selectedSlotIndex = i;
 					selectedKeyframe.reset();
 				}
 			}
 		}
 		ImGui::EndChild();
 
-		if (selectedSlot != -1)
+		if (selectedSlotIndex != -1)
 		{
 			{
 				ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -60,7 +60,7 @@ void Theme::onLayout()
 					EDITOR_BIN_PRIMARY_COL);
 
 				// Draw keyframes
-				ColorSlot* slot = levelManager->colorSlots[selectedSlot];
+				ColorSlot* slot = levelManager->colorSlots[selectedSlotIndex];
 
 				for (int i = 0; i < slot->channel->keyframes.size(); i++)
 				{
@@ -204,18 +204,12 @@ void Theme::onLayout()
 			}
 
 			ImGui::Separator();
-			if (selectedKeyframe.has_value() && selectedSlot != -1)
+			if (ImGui::IsWindowFocused() && selectedKeyframe.has_value() && selectedSlotIndex != -1)
 			{
-				ColorSlot* currentSlot = levelManager->colorSlots[selectedSlot];
+				ColorSlot* currentSlot = levelManager->colorSlots[selectedSlotIndex];
 				ColorKeyframe kf = selectedKeyframe.value();
 
-				bool kfChanged = false;
-				ImGui::DragFloat("Keyframe Time", &kf.time, 0.1f);
-				kfChanged = kfChanged || ImGui::IsItemEdited();
-				ImGui::ColorEdit3("Keyframe Color", &kf.color.r);
-				kfChanged = kfChanged || ImGui::IsItemEdited();
-
-				if (kfChanged)
+				if (ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 				{
 					std::vector<ColorKeyframe>::iterator it = std::find(
 						currentSlot->channel->keyframes.begin(),
@@ -223,10 +217,29 @@ void Theme::onLayout()
 						selectedKeyframe.value());
 					currentSlot->channel->keyframes.erase(it);
 
-					currentSlot->channel->insertKeyframe(kf);
-					selectedKeyframe = kf;
+					selectedKeyframe.reset();
+				}
+				else
+				{
+					bool kfChanged = false;
+					ImGui::DragFloat("Keyframe Time", &kf.time, 0.1f, 0.0f, INFINITY);
+					kfChanged = kfChanged || ImGui::IsItemEdited();
+					ImGui::ColorEdit3("Keyframe Color", &kf.color.r);
+					kfChanged = kfChanged || ImGui::IsItemEdited();
 
-					levelManager->updateColorSlot(currentSlot);
+					if (kfChanged)
+					{
+						std::vector<ColorKeyframe>::iterator it = std::find(
+							currentSlot->channel->keyframes.begin(),
+							currentSlot->channel->keyframes.end(),
+							selectedKeyframe.value());
+						currentSlot->channel->keyframes.erase(it);
+
+						currentSlot->channel->insertKeyframe(kf);
+						selectedKeyframe = kf;
+
+						levelManager->updateColorSlot(currentSlot);
+					}
 				}
 			}
 			else

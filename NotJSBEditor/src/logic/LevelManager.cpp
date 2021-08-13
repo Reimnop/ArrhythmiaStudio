@@ -56,10 +56,10 @@ LevelManager::LevelManager()
 		obj->killTime = end;
 		obj->editorBinIndex = 0;
 
-		spawnNode(obj);
+		insertObject(obj);
 	}
 
-	recalculateAllObjectActions();
+	// recalculateAllObjectActions();
 
 	timeline = new Timeline();
 	properties = new Properties();
@@ -214,6 +214,39 @@ void LevelManager::recalculateActionIndex(float time)
 	}
 }
 
+void LevelManager::insertObject(LevelObject* levelObject)
+{
+	ObjectAction spawn, kill;
+	levelObject->genActionPair(&spawn, &kill);
+
+	insertAction(spawn);
+	insertAction(kill);
+
+	spawnObject(levelObject);
+
+	recalculateActionIndex(time);
+}
+
+void LevelManager::removeObject(LevelObject* levelObject)
+{
+	// Remove object
+	std::vector<LevelObject*>::iterator objIt = std::remove(levelObjects.begin(), levelObjects.end(), levelObject);
+	levelObjects.erase(objIt, levelObjects.end());
+
+	// Remove actions
+	std::vector<ObjectAction>::iterator it = std::remove_if(objectActions.begin(), objectActions.end(),
+		[levelObject](ObjectAction match)
+		{
+			return match.levelObject == levelObject;
+		});
+	objectActions.erase(it, objectActions.end());
+
+	// Delete object node
+	delete levelObject->node;
+
+	recalculateActionIndex(time);
+}
+
 void LevelManager::insertAction(ObjectAction value)
 {
 	if (objectActions.size() == 0)
@@ -230,7 +263,7 @@ void LevelManager::insertAction(ObjectAction value)
 	objectActions.insert(it, value);
 }
 
-void LevelManager::spawnNode(LevelObject* levelObject)
+void LevelManager::spawnObject(LevelObject* levelObject)
 {
 	SceneNode* node = new SceneNode(levelObject->name);
 	node->setActive(false);

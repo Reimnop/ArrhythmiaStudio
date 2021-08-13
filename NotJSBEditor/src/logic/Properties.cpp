@@ -1,13 +1,14 @@
 #include "Properties.h"
-#include "LevelManager.h"
 
-#include "../rendering/ImGuiController.h"
-#include "GlobalConstants.h"
-
+#include <algorithm>
 #include <functional>
 #include <imgui/imgui.h>
 #include <imgui/imgui_stdlib.h>
 #include <imgui/imgui_internal.h>
+
+#include "LevelManager.h"
+#include "../rendering/ImGuiController.h"
+#include "GlobalConstants.h"
 
 Properties* Properties::inst;
 
@@ -212,7 +213,7 @@ void Properties::onLayout()
 							float timeDelta = (delta.x / availX) * (endTime - startTime);
 
 							kf.time += timeDelta;
-							kf.time = std::max(kf.time, 0.0f);
+							kf.time = std::clamp(kf.time, 0.0f, selectedObject->killTime - selectedObject->startTime);
 
 							std::vector<Keyframe>::iterator it = std::find(
 								channel->keyframes.begin(),

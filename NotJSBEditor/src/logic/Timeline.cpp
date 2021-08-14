@@ -26,7 +26,7 @@ Timeline::Timeline()
 	ImGuiController::onLayout.push_back(std::bind(&Timeline::onLayout, this));
 }
 
-void Timeline::onLayout() const
+void Timeline::onLayout()
 {
 	LevelManager* levelManager = LevelManager::inst;
 
@@ -46,13 +46,16 @@ void Timeline::onLayout() const
 		ImVec2 clipSize = ImVec2(availX, timelineHeight);
 
 		// Draw editor bins
-		drawList->PushClipRect(timelineMin, ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y));
+		drawList->PushClipRect(timelineMin, ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y), true);
 
 		for (int i = 0; i < EDITOR_TIMELINE_BIN_COUNT; i++)
 		{
+			ImVec2 binMin = ImVec2(timelineMin.x, timelineMin.y + i * EDITOR_BIN_HEIGHT);
+			ImVec2 binSize = ImVec2(availX, EDITOR_BIN_HEIGHT);
+
 			drawList->AddRectFilled(
-				ImVec2(timelineMin.x, timelineMin.y + i * EDITOR_BIN_HEIGHT),
-				ImVec2(timelineMin.x + availX, timelineMin.y + (i + 1) * EDITOR_BIN_HEIGHT),
+				binMin,
+				ImVec2(binMin.x + binSize.x, binMin.y + binSize.y),
 				i % 2 ? EDITOR_BIN_SECONDARY_COL : EDITOR_BIN_PRIMARY_COL);
 		}
 
@@ -79,7 +82,7 @@ void Timeline::onLayout() const
 
 			ImVec2 stripSize = ImVec2(stripMax.x - stripMin.x, stripMax.y - stripMin.y);
 
-			drawList->PushClipRect(stripMin, stripMax);
+			drawList->PushClipRect(stripMin, stripMax, true);
 
 			ImGui::PushID(i + 1);
 
@@ -135,15 +138,12 @@ void Timeline::onLayout() const
 
 			ImU32 stripCol = stripActive ? EDITOR_STRIP_ACTIVE_COL : EDITOR_STRIP_INACTIVE_COL;
 
-			const float distFromHead = 8.0f;
-
-			ImVec2 localRectMin = ImVec2(stripMin.x + distFromHead, stripMin.y);
-			ImVec2 localRectMax = ImVec2(stripMin.x + distFromHead + 4.0f + textSize.x, stripMax.y);
+			ImVec2 localRectMin = ImVec2(stripMin.x + EDITOR_STRIP_LEFT, stripMin.y);
+			ImVec2 localRectMax = ImVec2(stripMin.x + EDITOR_STRIP_LEFT + EDITOR_STRIP_RIGHT + textSize.x, stripMax.y);
 
 			drawList->AddRectFilled(stripMin, stripMax, stripCol);
 			drawList->AddRectFilled(localRectMin, localRectMax, EDITOR_STRIP_ACTIVE_COL);
-			drawList->AddText(ImVec2(localRectMin.x + 2.0f, localRectMin.y), EDITOR_STRIP_INACTIVE_COL, name,
-			                  name + levelObject->name.size());
+			drawList->AddText(ImVec2(localRectMin.x + EDITOR_STRIP_TEXT_LEFT_MARGIN, localRectMin.y), EDITOR_STRIP_INACTIVE_COL, name, name + levelObject->name.size());
 
 			drawList->PopClipRect();
 		}
@@ -155,8 +155,7 @@ void Timeline::onLayout() const
 		drawList->PopClipRect();
 
 		// Time pointer
-		drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX,
-		                                         cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT));
+		drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT), true);
 
 		// Draw frame
 		drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT), borderCol);
@@ -226,6 +225,30 @@ void Timeline::onLayout() const
 		if (ImGui::IsWindowFocused() && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !atLeastOneStripClicked && !pointerBeingDragged)
 		{
 			levelManager->selectedObjectIndex = -1;
+		}
+
+		// New object popup
+		ImGui::SetCursorScreenPos(timelineMin);
+		ImGui::InvisibleButton("##NewObjectBtn", clipSize);
+
+		if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+		{
+			ImGui::OpenPopup("new-popup");
+		}
+
+		if (ImGui::BeginPopup("new-popup"))
+		{
+			if (ImGui::Selectable("New Object"))
+			{
+				LevelObject* newObject = new LevelObject("Untitled Object");
+				newObject->startTime = 0.0f;
+				newObject->killTime = 5.0f;
+				newObject->editorBinIndex = 0;
+
+				levelManager->insertObject(newObject);
+			}
+
+			ImGui::EndPopup();
 		}
 
 		// Reset cursor

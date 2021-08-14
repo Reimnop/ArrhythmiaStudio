@@ -28,7 +28,7 @@ void Theme::onLayout()
 		{
 			for (int i = 0; i < levelManager->colorSlots.size(); i++)
 			{
-				if (colorSlotButton(std::string("Color Slot " + std::to_string(i)), levelManager->colorSlots[i]->currentColor, selectedSlotIndex == i))
+				if (colorSlotButton(std::string("Color Slot " + std::to_string(i + 1)), levelManager->colorSlots[i]->currentColor, selectedSlotIndex == i))
 				{
 					selectedSlotIndex = i;
 					selectedKeyframe.reset();
@@ -52,7 +52,7 @@ void Theme::onLayout()
 				ImVec2 clipSize = ImVec2(availX, EDITOR_BIN_HEIGHT);
 
 				// Draw timeline
-				drawList->PushClipRect(timelineMin, ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y));
+				drawList->PushClipRect(timelineMin, ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y), true);
 
 				drawList->AddRectFilled(
 					ImVec2(timelineMin.x, timelineMin.y),
@@ -145,6 +145,7 @@ void Theme::onLayout()
 						kf.color = Color(1.0f, 1.0f, 1.0f);
 
 						slot->channel->insertKeyframe(kf);
+						slot->update(levelManager->time);
 					}
 				}
 
@@ -154,7 +155,7 @@ void Theme::onLayout()
 				drawList->PopClipRect();
 
 				// Time pointer
-				drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_BIN_HEIGHT + EDITOR_TIME_POINTER_HEIGHT));
+				drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_BIN_HEIGHT + EDITOR_TIME_POINTER_HEIGHT), true);
 
 				// Draw frame
 				drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT), borderCol);
@@ -204,18 +205,19 @@ void Theme::onLayout()
 			}
 
 			ImGui::Separator();
-			if (ImGui::IsWindowFocused() && selectedKeyframe.has_value() && selectedSlotIndex != -1)
+			if (selectedKeyframe.has_value() && selectedSlotIndex != -1)
 			{
 				ColorSlot* currentSlot = levelManager->colorSlots[selectedSlotIndex];
 				ColorKeyframe kf = selectedKeyframe.value();
 
-				if (ImGui::IsKeyPressed(GLFW_KEY_DELETE))
+				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 				{
 					std::vector<ColorKeyframe>::iterator it = std::find(
 						currentSlot->channel->keyframes.begin(),
 						currentSlot->channel->keyframes.end(),
 						selectedKeyframe.value());
 					currentSlot->channel->keyframes.erase(it);
+					levelManager->updateColorSlot(currentSlot);
 
 					selectedKeyframe.reset();
 				}
@@ -234,7 +236,6 @@ void Theme::onLayout()
 							currentSlot->channel->keyframes.end(),
 							selectedKeyframe.value());
 						currentSlot->channel->keyframes.erase(it);
-
 						currentSlot->channel->insertKeyframe(kf);
 						selectedKeyframe = kf;
 

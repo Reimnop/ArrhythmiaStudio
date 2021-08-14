@@ -69,7 +69,7 @@ void Properties::onLayout()
 			}
 
 			int colorSlot = selectedObject->colorSlotIndex + 1;
-			ImGui::SliderInt("Color slot", &colorSlot, 1, 30);
+			ImGui::SliderInt("Color Slot", &colorSlot, 1, 30);
 			selectedObject->colorSlotIndex = colorSlot - 1;
 
 			if (ImGui::IsItemEdited())

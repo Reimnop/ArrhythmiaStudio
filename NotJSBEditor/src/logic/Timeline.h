@@ -12,5 +12,5 @@ private:
 	float startTime;
 	float endTime;
 
-	void onLayout() const;
+	void onLayout();
 };

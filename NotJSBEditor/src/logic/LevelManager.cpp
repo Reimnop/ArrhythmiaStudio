@@ -59,8 +59,6 @@ LevelManager::LevelManager()
 		insertObject(obj);
 	}
 
-	// recalculateAllObjectActions();
-
 	timeline = new Timeline();
 	properties = new Properties();
 	theme = new Theme();
@@ -147,6 +145,8 @@ void LevelManager::updateObject(LevelObject* levelObject)
 			break;
 		}
 	}
+
+	levelObject->node->transform->position.z = levelObject->depth;
 }
 
 void LevelManager::updateColorSlot(ColorSlot* colorSlot)

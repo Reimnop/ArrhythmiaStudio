@@ -82,6 +82,8 @@ void Renderer::render()
 	glViewport(0, 0, viewportWidth, viewportHeight);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	glEnable(GL_DEPTH_TEST);
+
 	for (OutputDrawData drawData : queuedDrawData)
 	{
 		if (drawData.vao != lastVertexArray)

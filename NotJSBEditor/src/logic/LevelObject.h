@@ -12,11 +12,13 @@ class LevelObject
 {
 public:
 	std::string name;
-	float startTime;
-	float killTime;
-	int editorBinIndex;
-
+	float startTime = 0.0f;
+	float killTime = 5.0f;
+	int editorBinIndex = 0;
 	int colorSlotIndex = 0;
+
+	float depth = 0.0f;
+
 	std::vector<AnimationChannel*> animationChannels;
 
 	SceneNode* node;

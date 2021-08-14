@@ -3,9 +3,6 @@
 LevelObject::LevelObject(std::string name)
 {
 	this->name = name;
-	startTime = 0.0f;
-	killTime = 0.0f;
-	editorBinIndex = 0;
 	node = nullptr;
 }
 

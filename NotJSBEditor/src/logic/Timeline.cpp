@@ -91,6 +91,8 @@ void Timeline::onLayout()
 			{
 				atLeastOneStripClicked = true;
 				levelManager->selectedObjectIndex = i;
+
+				Properties::inst->reset();
 			}
 
 			bool stripActive = false;
@@ -225,6 +227,7 @@ void Timeline::onLayout()
 		if (ImGui::IsWindowFocused() && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !atLeastOneStripClicked && !pointerBeingDragged)
 		{
 			levelManager->selectedObjectIndex = -1;
+			Properties::inst->reset();
 		}
 
 		// New object popup

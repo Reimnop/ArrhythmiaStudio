@@ -79,6 +79,8 @@ MainWindow::MainWindow()
 		EXIT_FATAL("GLAD initialization failed!");
 	}
 
+	glfwSwapInterval(1);
+
 	// Intialize OpenGL debug callback
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);

@@ -1,19 +1,16 @@
 #include "Shader.h"
 
 #include <fstream>
+#include <sstream>
 #include <glad/glad.h>
 
 Shader::Shader(const char* vertPath, const char* fragPath)
 {
 	// Read vertex shader source
-	std::ifstream vertStream(vertPath);
-	std::string vertSource((std::istreambuf_iterator<char>(vertStream)), std::istreambuf_iterator<char>());
-	vertStream.close();
+	std::string vertSource = readAllText(vertPath);
 
 	// Read fragment shader source
-	std::ifstream fragStream(fragPath);
-	std::string fragSource((std::istreambuf_iterator<char>(fragStream)), std::istreambuf_iterator<char>());
-	fragStream.close();
+	std::string fragSource = readAllText(fragPath);
 
 	const char* vertSourcePtr = vertSource.c_str();
 	const char* fragSourcePtr = fragSource.c_str();
@@ -34,7 +31,7 @@ Shader::Shader(const char* vertPath, const char* fragPath)
 	if (vertCode != GL_TRUE)
 	{
 		glGetShaderInfoLog(vertexShader, 1024, nullptr, infoLogBuf);
-		throw "Error occurred whilst compiling Shader " + std::to_string(vertexShader) + "\n\n" + infoLogBuf;
+		throw std::runtime_error("Error occurred whilst compiling Shader " + std::to_string(vertexShader) + "\n\n" + infoLogBuf);
 	}
 
 	// Create fragment shader
@@ -48,7 +45,7 @@ Shader::Shader(const char* vertPath, const char* fragPath)
 	if (fragCode != GL_TRUE)
 	{
 		glGetShaderInfoLog(fragmentShader, 1024, nullptr, infoLogBuf);
-		throw "Error occurred whilst compiling Shader " + std::to_string(vertexShader) + "\n\n" + infoLogBuf;
+		throw std::runtime_error("Error occurred whilst compiling Shader " + std::to_string(vertexShader) + "\n\n" + infoLogBuf);
 	}
 
 	// Create program and link
@@ -62,7 +59,7 @@ Shader::Shader(const char* vertPath, const char* fragPath)
 	glGetProgramiv(handle, GL_LINK_STATUS, &linkCode);
 	if (linkCode != GL_TRUE)
 	{
-		throw "Error occurred whilst linking Program " + std::to_string(handle);
+		throw std::runtime_error("Error occurred whilst linking Program " + std::to_string(handle));
 	}
 
 	// Cleanup
@@ -101,4 +98,14 @@ uint32_t Shader::getHandle() const
 int Shader::getAttribLocation(const char* attribName)
 {
 	return uniformLocations[attribName];
+}
+
+std::string Shader::readAllText(const char* path)
+{
+	std::ifstream file(path);
+	std::stringstream buffer;
+	buffer << file.rdbuf();
+	file.close();
+
+	return buffer.str();
 }

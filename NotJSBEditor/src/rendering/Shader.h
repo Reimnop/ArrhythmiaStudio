@@ -15,4 +15,5 @@ private:
 	uint32_t handle;
 
 	std::unordered_map<std::string, int> uniformLocations;
+	std::string readAllText(const char* path);
 };

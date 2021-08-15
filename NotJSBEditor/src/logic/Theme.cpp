@@ -146,6 +146,8 @@ void Theme::onLayout()
 
 						slot->channel->insertKeyframe(kf);
 						slot->update(levelManager->time);
+
+						selectedKeyframe = kf;
 					}
 				}
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <nlohmann/json.hpp>
 
 #include "Keyframe.h"
 #include "AnimationChannelType.h"
@@ -13,10 +14,12 @@ public:
 	std::vector<Keyframe> keyframes;
 
 	AnimationChannel(AnimationChannelType channelType, int count, Keyframe* keyframes);
+	AnimationChannel(nlohmann::json j);
 	~AnimationChannel();
 
 	void insertKeyframe(Keyframe keyframe);
 	float update(float time);
+	nlohmann::ordered_json toJson();
 private:
 	float lastIndex;
 

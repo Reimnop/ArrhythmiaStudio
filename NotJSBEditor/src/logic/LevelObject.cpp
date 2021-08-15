@@ -1,8 +1,24 @@
 #include "LevelObject.h"
 
-LevelObject::LevelObject(std::string name)
+LevelObject::LevelObject()
 {
-	this->name = name;
+	node = nullptr;
+}
+
+LevelObject::LevelObject(nlohmann::json j)
+{
+	name = j["name"].get<std::string>();
+	startTime = j["start"].get<float>();
+	killTime = j["kill"].get<float>();
+	colorSlotIndex = j["color_slot"].get<int>();
+	editorBinIndex = j["editor_bin"].get<int>();
+
+	nlohmann::json::array_t arr = j["channels"].get<nlohmann::json::array_t>();
+	for (int i = 0; i < arr.size(); i++)
+	{
+		animationChannels.push_back(new AnimationChannel(arr[i]));
+	}
+
 	node = nullptr;
 }
 
@@ -61,4 +77,22 @@ bool LevelObject::hasChannel(AnimationChannelType channelType)
 	}
 
 	return false;
+}
+
+nlohmann::ordered_json LevelObject::toJson()
+{
+	nlohmann::ordered_json j;
+	j["name"] = name;
+	j["start"] = startTime;
+	j["kill"] = killTime;
+	j["color_slot"] = colorSlotIndex;
+	j["editor_bin"] = editorBinIndex;
+
+	j["channels"] = nlohmann::json::array();
+	for (int i = 0; i < animationChannels.size(); i++)
+	{
+		j["channels"][i] = animationChannels[i]->toJson();
+	}
+
+	return j;
 }

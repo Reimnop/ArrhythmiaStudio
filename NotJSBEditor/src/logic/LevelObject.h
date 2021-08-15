@@ -2,11 +2,11 @@
 
 #include <vector>
 #include <string>
+#include <nlohmann/json.hpp>
 
 #include "animation/AnimationChannel.h"
 #include "ObjectAction.h"
 #include "SceneNode.h"
-#include "ColorSlot.h"
 
 class LevelObject
 {
@@ -23,10 +23,12 @@ public:
 
 	SceneNode* node;
 
-	LevelObject(std::string name);
+	LevelObject();
+	LevelObject(nlohmann::json j);
 	~LevelObject();
 
 	void genActionPair(ObjectAction* spawnAction, ObjectAction* killAction);
 	void insertChannel(AnimationChannel* value);
 	bool hasChannel(AnimationChannelType channelType);
+	nlohmann::ordered_json toJson();
 };

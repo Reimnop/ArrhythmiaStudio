@@ -51,7 +51,8 @@ LevelManager::LevelManager()
 		float start = 5.0f;
 		float end = 25.0f;
 
-		LevelObject* obj = new LevelObject("Hello world!");
+		LevelObject* obj = new LevelObject();
+		obj->name = "Hello world!";
 		obj->startTime = start;
 		obj->killTime = end;
 		obj->editorBinIndex = 0;

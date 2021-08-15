@@ -11,6 +11,17 @@ AnimationChannel::AnimationChannel(AnimationChannelType channelType, int count, 
 	lastIndex = 0;
 }
 
+AnimationChannel::AnimationChannel(nlohmann::json j)
+{
+	type = j["type"].get<AnimationChannelType>();
+
+	nlohmann::json::array_t arr = j["keyframes"].get<nlohmann::json::array_t>();
+	for (int i = 0; i < arr.size(); i++)
+	{
+		insertKeyframe(Keyframe(arr[i]));
+	}
+}
+
 AnimationChannel::~AnimationChannel()
 {
 	keyframes.clear();
@@ -93,6 +104,20 @@ float AnimationChannel::update(float time)
 	// Apply easings
 	float t = (time - left.time) / (right.time - left.time);
 	return lerp(left.value, right.value, t);
+}
+
+nlohmann::ordered_json AnimationChannel::toJson()
+{
+	nlohmann::ordered_json j;
+	j["type"] = type;
+
+	j["keyframes"] = nlohmann::json::array();
+	for (int i = 0; i < keyframes.size(); i++)
+	{
+		j["keyframes"][i] = keyframes[i].toJson();
+	}
+
+	return j;
 }
 
 float AnimationChannel::lerp(float a, float b, float t)

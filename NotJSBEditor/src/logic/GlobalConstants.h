@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Windows.h>
+
 constexpr float EDITOR_KEYFRAME_SIZE = 12.0f;
 constexpr float EDITOR_BIN_HEIGHT = 20.0f;
 constexpr int EDITOR_TIMELINE_BIN_COUNT = 15;
@@ -20,3 +22,5 @@ constexpr unsigned int EDITOR_KEYFRAME_INACTIVE_COL = 0xFFBABABA;
 constexpr unsigned int EDITOR_KEYFRAME_ACTIVE_COL = 0xFF626262;
 constexpr unsigned int EDITOR_STRIP_INACTIVE_COL = 0xFFBABABA;
 constexpr unsigned int EDITOR_STRIP_ACTIVE_COL = 0xFF626262;
+
+const uint32_t EDITOR_FORMAT_OBJECT = RegisterClipboardFormatA("NotJSBEditorObject");

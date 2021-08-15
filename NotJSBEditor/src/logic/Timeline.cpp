@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
+#include <Windows.h>
 
 #include "../rendering/ImGuiController.h"
 #include "GlobalConstants.h"
@@ -129,6 +130,28 @@ void Timeline::onLayout()
 			if (levelManager->selectedObjectIndex == i)
 			{
 				stripActive = true;
+
+				// Copying the strip
+				if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_C))
+				{
+					bool clipOpenStatus = OpenClipboard(NULL);
+					assert(clipOpenStatus);
+
+					bool emptyStatus = EmptyClipboard();
+					assert(emptyStatus);
+
+					std::string jsonStr = levelObject->toJson().dump();
+					const char* jsonPtr = jsonStr.c_str();
+
+					HGLOBAL pGlobal = GlobalAlloc(GMEM_FIXED, jsonStr.size() + 1);
+					memcpy(pGlobal, jsonPtr, jsonStr.size() + 1);
+
+					SetClipboardData(EDITOR_FORMAT_OBJECT, pGlobal);
+
+					CloseClipboard();
+
+					GlobalFree(pGlobal);
+				}
 			}
 
 			ImGui::PopID();
@@ -201,6 +224,41 @@ void Timeline::onLayout()
 			levelManager->selectedObjectIndex = -1;
 		}
 
+		// Object paste
+		if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_V))
+		{
+			if (IsClipboardFormatAvailable(EDITOR_FORMAT_OBJECT))
+			{
+				bool openStatus = OpenClipboard(NULL);
+				assert(openStatus);
+
+				HGLOBAL pGlobal = GetClipboardData(EDITOR_FORMAT_OBJECT);
+
+				if (pGlobal)
+				{
+					const char* jsonPtr = (const char*)GlobalLock(pGlobal);
+					if (jsonPtr)
+					{
+						std::string jsonStr(jsonPtr);
+
+						nlohmann::json objJson = nlohmann::json::parse(jsonPtr);
+
+						float length = objJson["kill"].get<float>() - objJson["start"].get<float>();
+						objJson["start"] = levelManager->time;
+						objJson["kill"] = levelManager->time + length;
+
+						LevelObject* pasteObj = new LevelObject(objJson);
+
+						levelManager->insertObject(pasteObj);
+
+						GlobalUnlock(pGlobal);
+					}
+				}
+
+				CloseClipboard();
+			}
+		}
+
 		// Jumping the time pointer
 		ImGui::SetCursorScreenPos(cursorPos);
 		bool pointerBeingDragged = false;
@@ -243,9 +301,10 @@ void Timeline::onLayout()
 		{
 			if (ImGui::Selectable("New Object"))
 			{
-				LevelObject* newObject = new LevelObject("Untitled Object");
-				newObject->startTime = 0.0f;
-				newObject->killTime = 5.0f;
+				LevelObject* newObject = new LevelObject();
+				newObject->name = "Untitled object";
+				newObject->startTime = levelManager->time;
+				newObject->killTime = levelManager->time + 5.0f;
 				newObject->editorBinIndex = 0;
 
 				levelManager->insertObject(newObject);

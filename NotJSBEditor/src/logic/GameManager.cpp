@@ -5,7 +5,6 @@
 #include "DataManager.h"
 
 #include <functional>
-#include <bass/bass.h>
 
 GameManager::GameManager(GLFWwindow* window)
 {

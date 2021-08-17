@@ -19,6 +19,12 @@ struct Keyframe
 		value = j[1].get<float>();
 	}
 
+	Keyframe(float time, float value)
+	{
+		this->time = time;
+		this->value = value;
+	}
+
 	bool operator==(Keyframe other) const
 	{
 		return this->time == other.time && this->value == other.value;

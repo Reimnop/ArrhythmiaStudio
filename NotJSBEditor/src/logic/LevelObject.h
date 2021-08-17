@@ -11,9 +11,10 @@
 class LevelObject
 {
 public:
-	std::string name;
+	std::string name = "Untitled object";
 	float startTime = 0.0f;
 	float killTime = 5.0f;
+	int shapeIndex = 0;
 	int editorBinIndex = 0;
 	int colorSlotIndex = 0;
 

@@ -26,9 +26,9 @@ void Theme::onLayout()
 		float windowWith = ImGui::GetContentRegionAvailWidth();
 		if (ImGui::BeginChild("##ThemeColors", ImVec2(windowWith, 280.0f), true))
 		{
-			for (int i = 0; i < levelManager->colorSlots.size(); i++)
+			for (int i = 0; i < levelManager->level->colorSlots.size(); i++)
 			{
-				if (colorSlotButton(std::string("Color Slot " + std::to_string(i + 1)), levelManager->colorSlots[i]->currentColor, selectedSlotIndex == i))
+				if (colorSlotButton(std::string("Color Slot " + std::to_string(i + 1)), levelManager->level->colorSlots[i]->currentColor, selectedSlotIndex == i))
 				{
 					selectedSlotIndex = i;
 					selectedKeyframe.reset();
@@ -60,7 +60,7 @@ void Theme::onLayout()
 					EDITOR_BIN_PRIMARY_COL);
 
 				// Draw keyframes
-				ColorSlot* slot = levelManager->colorSlots[selectedSlotIndex];
+				ColorSlot* slot = levelManager->level->colorSlots[selectedSlotIndex];
 
 				for (int i = 0; i < slot->channel->keyframes.size(); i++)
 				{
@@ -165,8 +165,7 @@ void Theme::onLayout()
 				// Draw time pointer
 				constexpr float pointerRectHeight = EDITOR_TIME_POINTER_HEIGHT - EDITOR_TIME_POINTER_TRI_HEIGHT;
 
-				float relativeTime = std::max(levelManager->time, 0.0f);
-				float pointerPos = cursorPos.x + (relativeTime - startTime) / (endTime - startTime) * availX;
+				float pointerPos = cursorPos.x + (levelManager->time - startTime) / (endTime - startTime) * availX;
 
 				drawList->AddLine(ImVec2(pointerPos, cursorPos.y),
 					ImVec2(pointerPos, cursorPos.y + EDITOR_BIN_HEIGHT + EDITOR_TIME_POINTER_HEIGHT), borderCol);
@@ -188,17 +187,23 @@ void Theme::onLayout()
 				if (ImGui::InvisibleButton("##TimePointer", ImVec2(availX, EDITOR_TIME_POINTER_HEIGHT)))
 				{
 					float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
-					newTime = std::max(0.0f, newTime);
+					newTime = std::clamp(newTime, 0.0f, levelManager->audioClip->getLength());
 
-					levelManager->update(newTime);
+					levelManager->audioClip->pause();
+
+					levelManager->updateLevel(newTime);
+					levelManager->audioClip->seek(newTime);
 				}
 
 				if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 				{
 					float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
-					newTime = std::max(0.0f, newTime);
+					newTime = std::clamp(newTime, 0.0f, levelManager->audioClip->getLength());
 
-					levelManager->update(newTime);
+					levelManager->audioClip->pause();
+
+					levelManager->updateLevel(newTime);
+					levelManager->audioClip->seek(newTime);
 				}
 
 				// Reset cursor
@@ -209,7 +214,7 @@ void Theme::onLayout()
 			ImGui::Separator();
 			if (selectedKeyframe.has_value() && selectedSlotIndex != -1)
 			{
-				ColorSlot* currentSlot = levelManager->colorSlots[selectedSlotIndex];
+				ColorSlot* currentSlot = levelManager->level->colorSlots[selectedSlotIndex];
 				ColorKeyframe kf = selectedKeyframe.value();
 
 				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))

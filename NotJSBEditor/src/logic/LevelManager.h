@@ -3,12 +3,14 @@
 #include <vector>
 #include <unordered_set>
 
+#include "AudioClip.h"
 #include "LevelObject.h"
 #include "Timeline.h"
 #include "Properties.h"
 #include "Theme.h"
 #include "ObjectAction.h"
 #include "ColorSlot.h"
+#include "Level.h"
 
 class Theme;
 
@@ -17,16 +19,21 @@ class LevelManager
 public:
 	static LevelManager* inst;
 
-	std::vector<ColorSlot*> colorSlots;
+	AudioClip* audioClip;
 
-	std::vector<LevelObject*> levelObjects;
+	Level* level;
+
 	int selectedObjectIndex = -1;
 
 	float time = 0.0f;
 
 	LevelManager();
 
-	void update(float time);
+	void loadLevel(Level* level);
+
+	void update();
+
+	void updateLevel(float time);
 	void updateObject(LevelObject* levelObject);
 	void updateColorSlot(ColorSlot* colorSlot);
 

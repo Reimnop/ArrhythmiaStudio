@@ -3,6 +3,7 @@
 
 #include <logger.h>
 #include <helper.h>
+#include <bass/bass.h>
 
 void glfwErrorCallback(int error_code, const char* description)
 {
@@ -43,12 +44,12 @@ MainWindow* MainWindow::inst;
 
 MainWindow::MainWindow()
 {
-	if (MainWindow::inst)
+	if (inst)
 	{
 		return;
 	}
 
-	MainWindow::inst = this;
+	inst = this;
 
 	glfwSetErrorCallback(glfwErrorCallback);
 
@@ -86,6 +87,9 @@ MainWindow::MainWindow()
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(glDebugCallback, nullptr);
 
+	// Initialize audio
+	BASS_Init(-1, 44100, BASS_DEVICE_STEREO, NULL, NULL);
+
 	// Initialize other things with onLoad
 	onLoad();
 }
@@ -93,6 +97,7 @@ MainWindow::MainWindow()
 MainWindow::~MainWindow()
 {
 	glfwTerminate();
+	BASS_Free();
 }
 
 void MainWindow::onLoad()

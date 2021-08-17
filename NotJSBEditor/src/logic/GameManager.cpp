@@ -2,25 +2,48 @@
 
 #include "../rendering/ImGuiController.h"
 #include "../rendering/Renderer.h"
+#include "DataManager.h"
 
 #include <functional>
+#include <bass/bass.h>
 
 GameManager::GameManager(GLFWwindow* window)
 {
 	mainWindow = window;
 
-	levelManager = new LevelManager();
-	levelManager->update(0.0f);
-
 	ImGuiController::onLayout.push_back(std::bind(&GameManager::onLayout, this));
+
+	shapeManager = new ShapeManager();
+	levelManager = new LevelManager();
 }
 
 void GameManager::update()
 {
+	levelManager->update();
 }
 
 void GameManager::onLayout()
 {
+	// Menu bar
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("Save"))
+			{
+				DataManager::inst->saveLevel();
+			}
+
+			if (ImGui::MenuItem("Open"))
+			{
+				DataManager::inst->openLevel();
+			}
+
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+
 	// Open viewport
 	if (ImGui::Begin("Viewport"))
 	{

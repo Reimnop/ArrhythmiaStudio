@@ -1,10 +1,9 @@
 #include "LevelManager.h"
 #include "Theme.h"
 
+#include "ShapeManager.h"
 #include "../rendering/Mesh.h"
 #include "../rendering/MeshRenderer.h"
-
-Mesh* mesh;
 
 LevelManager* LevelManager::inst;
 
@@ -17,47 +16,45 @@ LevelManager::LevelManager()
 
 	inst = this;
 
-	glm::vec3 vertices[] = {
-		glm::vec3(0.5f, 0.5f, 0.0f),
-		glm::vec3(-0.5f, 0.5f, 0.0f),
-		glm::vec3(-0.5f, -0.5f, 0.0f),
-		glm::vec3(0.5f, -0.5f, 0.0f)
-	};
-
-	uint32_t indices[] = {
-		0, 1, 2,
-		0, 2, 3
-	};
-
-	mesh = new Mesh(4, vertices, 6, indices);
-
 	ColorSlot::init();
 
-	// Intialize 30 color slots
-	for (int i = 0; i < 30; i++)
+	// Initialize startup level
 	{
-		ColorKeyframe kf = ColorKeyframe();
-		kf.time = 0.0f;
-		kf.color = Color(0.5f, 0.5f, 0.5f);
+		Level* level = new Level();
 
-		ColorSlot* colorSlot = new ColorSlot(1, &kf);
+		level->name = "Untitled level";
+		level->song = R"(C:\Users\UserTCQ\Music\Creo-Dimension.mp3)";
 
-		colorSlot->update(0.0f);
+		// Intialize 30 color slots
+		for (int i = 0; i < 30; i++)
+		{
+			ColorKeyframe kf = ColorKeyframe();
+			kf.time = 0.0f;
+			kf.color = Color(1.0f, 1.0f, 1.0f);
 
-		colorSlots.push_back(colorSlot);
-	}
+			ColorSlot* colorSlot = new ColorSlot(1, &kf);
 
-	{
-		float start = 5.0f;
-		float end = 25.0f;
+			level->colorSlots.push_back(colorSlot);
+		}
 
+		// Intialize startup object
 		LevelObject* obj = new LevelObject();
 		obj->name = "Hello world!";
-		obj->startTime = start;
-		obj->killTime = end;
-		obj->editorBinIndex = 0;
+		obj->startTime = 1.0f;
+		obj->killTime = 5.0f;
 
-		insertObject(obj);
+		Keyframe keyframes[2]
+		{
+			Keyframe(0.0f, 0.0f),
+			Keyframe(4.0f, 5.0f)
+		};
+
+		AnimationChannel* channel = new AnimationChannel(AnimationChannelType_PositionX, 2, keyframes);
+		obj->insertChannel(channel);
+
+		level->levelObjects.push_back(obj);
+
+		loadLevel(level);
 	}
 
 	timeline = new Timeline();
@@ -65,7 +62,46 @@ LevelManager::LevelManager()
 	theme = new Theme();
 }
 
-void LevelManager::update(float time)
+void LevelManager::loadLevel(Level* level)
+{
+	// Cleanup old level
+	if (this->level)
+	{
+		aliveObjects.clear();
+		objectActions.clear();
+
+		for (LevelObject* obj : this->level->levelObjects)
+		{
+			delete obj->node;
+		}
+
+		delete audioClip;
+		delete this->level;
+	}
+
+	this->level = level;
+
+	for (LevelObject* obj : level->levelObjects)
+	{
+		spawnObject(obj);
+	}
+
+	recalculateAllObjectActions();
+	recalculateActionIndex(time);
+	updateLevel(0.0f);
+
+	audioClip = new AudioClip(level->song.c_str());
+}
+
+void LevelManager::update()
+{
+	if (audioClip->isPlaying())
+	{
+		updateLevel(audioClip->getPosition());
+	}
+}
+
+void LevelManager::updateLevel(float time)
 {
 	this->time = time;
 
@@ -115,7 +151,7 @@ void LevelManager::update(float time)
 	}
 
 	// Update all color slots
-	for (ColorSlot* colorSlot : colorSlots)
+	for (ColorSlot* colorSlot : level->colorSlots)
 	{
 		updateColorSlot(colorSlot);
 	}
@@ -160,10 +196,10 @@ void LevelManager::recalculateAllObjectActions()
 	// Clear and re-add object actions
 	objectActions.clear();
 
-	for (int i = 0; i < levelObjects.size(); i++)
+	for (int i = 0; i < level->levelObjects.size(); i++)
 	{
 		ObjectAction spawnAction, killAction;
-		levelObjects[i]->genActionPair(&spawnAction, &killAction);
+		level->levelObjects[i]->genActionPair(&spawnAction, &killAction);
 
 		insertAction(spawnAction);
 		insertAction(killAction);
@@ -191,14 +227,14 @@ void LevelManager::recalculateObjectAction(LevelObject* levelObject)
 void LevelManager::recalculateActionIndex(float time)
 {
 	// Reset all objects
-	for (LevelObject* levelObject : levelObjects)
+	for (LevelObject* levelObject : level->levelObjects)
 	{
 		levelObject->node->setActive(false);
 	}
 
 	// Reset action index and recalculate
 	actionIndex = 0;
-	while (actionIndex < objectActions.size() && objectActions[actionIndex].time <= time)
+	while (actionIndex < objectActions.size() && objectActions[actionIndex].time < time)
 	{
 		switch (objectActions[actionIndex].type)
 		{
@@ -224,6 +260,7 @@ void LevelManager::insertObject(LevelObject* levelObject)
 	insertAction(kill);
 
 	spawnObject(levelObject);
+	level->levelObjects.push_back(levelObject);
 
 	recalculateActionIndex(time);
 }
@@ -231,8 +268,8 @@ void LevelManager::insertObject(LevelObject* levelObject)
 void LevelManager::removeObject(LevelObject* levelObject)
 {
 	// Remove object
-	std::vector<LevelObject*>::iterator objIt = std::remove(levelObjects.begin(), levelObjects.end(), levelObject);
-	levelObjects.erase(objIt, levelObjects.end());
+	std::vector<LevelObject*>::iterator objIt = std::remove(level->levelObjects.begin(), level->levelObjects.end(), levelObject);
+	level->levelObjects.erase(objIt, level->levelObjects.end());
 
 	// Remove actions
 	std::vector<ObjectAction>::iterator it = std::remove_if(objectActions.begin(), objectActions.end(),
@@ -270,12 +307,10 @@ void LevelManager::spawnObject(LevelObject* levelObject)
 	node->setActive(false);
 
 	MeshRenderer* renderer = new MeshRenderer();
-	renderer->mesh = mesh;
-	renderer->material = colorSlots[levelObject->colorSlotIndex]->material;
+	renderer->mesh = ShapeManager::inst->shapes[levelObject->shapeIndex].mesh;
+	renderer->material = level->colorSlots[levelObject->colorSlotIndex]->material;
 
 	node->renderer = renderer;
 
 	levelObject->node = node;
-
-	levelObjects.push_back(levelObject);
 }

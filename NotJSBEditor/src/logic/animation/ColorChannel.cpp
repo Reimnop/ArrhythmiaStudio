@@ -10,6 +10,15 @@ ColorChannel::ColorChannel(int count, ColorKeyframe* keyframes)
 	lastIndex = 0;
 }
 
+ColorChannel::ColorChannel(nlohmann::json j)
+{
+	nlohmann::json::array_t keyframes = j["keyframes"].get<nlohmann::json::array_t>();
+	for (int i = 0; i < keyframes.size(); i++)
+	{
+		insertKeyframe(ColorKeyframe(keyframes[i]));
+	}
+}
+
 ColorChannel::~ColorChannel()
 {
 	keyframes.clear();
@@ -95,6 +104,18 @@ Color ColorChannel::update(float time)
 	float g = lerp(left.color.g, right.color.g, t);
 	float b = lerp(left.color.b, right.color.b, t);
 	return Color(r, g, b);
+}
+
+nlohmann::ordered_json ColorChannel::toJson()
+{
+	nlohmann::ordered_json j;
+	j["keyframes"] = nlohmann::json::array();
+	for (int i = 0; i < keyframes.size(); i++)
+	{
+		j["keyframes"][i] = keyframes[i].toJson();
+	}
+
+	return j;
 }
 
 float ColorChannel::lerp(float a, float b, float t)

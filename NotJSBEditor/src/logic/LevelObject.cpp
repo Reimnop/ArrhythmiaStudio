@@ -10,6 +10,8 @@ LevelObject::LevelObject(nlohmann::json j)
 	name = j["name"].get<std::string>();
 	startTime = j["start"].get<float>();
 	killTime = j["kill"].get<float>();
+	depth = j["depth"].get<float>();
+	shapeIndex = j["shape"].get<int>();
 	colorSlotIndex = j["color_slot"].get<int>();
 	editorBinIndex = j["editor_bin"].get<int>();
 
@@ -85,6 +87,8 @@ nlohmann::ordered_json LevelObject::toJson()
 	j["name"] = name;
 	j["start"] = startTime;
 	j["kill"] = killTime;
+	j["depth"] = depth;
+	j["shape"] = shapeIndex;
 	j["color_slot"] = colorSlotIndex;
 	j["editor_bin"] = editorBinIndex;
 

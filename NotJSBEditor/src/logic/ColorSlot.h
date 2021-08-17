@@ -1,5 +1,7 @@
 #pragma once
 
+#include <nlohmann/json.hpp>
+
 #include "animation/Color.h"
 #include "animation/ColorChannel.h"
 #include "../rendering/Shader.h"
@@ -16,9 +18,11 @@ public:
 	static void init();
 
 	ColorSlot(int count, ColorKeyframe* keyframes);
+	ColorSlot(nlohmann::json j);
 	~ColorSlot();
 
 	void update(float time);
+	nlohmann::ordered_json toJson();
 private:
 	static Shader* shader;
 };

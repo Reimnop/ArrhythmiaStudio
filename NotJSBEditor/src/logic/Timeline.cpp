@@ -34,288 +34,376 @@ void Timeline::onLayout()
 	// Open a sequence window
 	if (ImGui::Begin("Timeline"))
 	{
-		ImDrawList* drawList = ImGui::GetWindowDrawList();
-		ImGuiStyle& style = ImGui::GetStyle();
-		ImGuiIO& io = ImGui::GetIO();
+		ImGui::Text(timeToString(levelManager->time).c_str());
 
-		ImVec2 cursorPos = ImGui::GetCursorScreenPos();
-		float availX = ImGui::GetContentRegionAvailWidth();
+		ImGui::SameLine();
 
-		ImVec2 timelineMin = ImVec2(cursorPos.x, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT);
-		float timelineHeight = EDITOR_TIMELINE_BIN_COUNT * EDITOR_BIN_HEIGHT;
-
-		ImVec2 clipSize = ImVec2(availX, timelineHeight);
-
-		// Draw editor bins
-		drawList->PushClipRect(timelineMin, ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y), true);
-
-		for (int i = 0; i < EDITOR_TIMELINE_BIN_COUNT; i++)
+		if (playButton(levelManager->audioClip->isPlaying()))
 		{
-			ImVec2 binMin = ImVec2(timelineMin.x, timelineMin.y + i * EDITOR_BIN_HEIGHT);
-			ImVec2 binSize = ImVec2(availX, EDITOR_BIN_HEIGHT);
+			AudioClip* clip = levelManager->audioClip;
 
-			drawList->AddRectFilled(
-				binMin,
-				ImVec2(binMin.x + binSize.x, binMin.y + binSize.y),
-				i % 2 ? EDITOR_BIN_SECONDARY_COL : EDITOR_BIN_PRIMARY_COL);
+			if (clip->isPlaying())
+			{
+				clip->pause();
+			}
+			else
+			{
+				clip->play();
+			}
 		}
 
-		// Draw editor strips
-		bool atLeastOneStripClicked = false;
-		for (int i = 0; i < levelManager->levelObjects.size(); i++)
+		// Draw the timeline (huge code!)
 		{
-			LevelObject* levelObject = levelManager->levelObjects[i];
+			ImDrawList* drawList = ImGui::GetWindowDrawList();
+			ImGuiStyle& style = ImGui::GetStyle();
+			ImGuiIO& io = ImGui::GetIO();
 
-			if (levelObject->killTime < startTime || levelObject->startTime > endTime)
+			ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+			float availX = ImGui::GetContentRegionAvailWidth();
+
+			ImVec2 timelineMin = ImVec2(cursorPos.x, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT);
+			float timelineHeight = EDITOR_TIMELINE_BIN_COUNT * EDITOR_BIN_HEIGHT;
+
+			ImVec2 clipSize = ImVec2(availX, timelineHeight);
+
+			// Draw editor bins
+			drawList->PushClipRect(timelineMin, ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y), true);
+
+			for (int i = 0; i < EDITOR_TIMELINE_BIN_COUNT; i++)
 			{
-				continue;
+				ImVec2 binMin = ImVec2(timelineMin.x, timelineMin.y + i * EDITOR_BIN_HEIGHT);
+				ImVec2 binSize = ImVec2(availX, EDITOR_BIN_HEIGHT);
+
+				drawList->AddRectFilled(
+					binMin,
+					ImVec2(binMin.x + binSize.x, binMin.y + binSize.y),
+					i % 2 ? EDITOR_BIN_SECONDARY_COL : EDITOR_BIN_PRIMARY_COL);
 			}
 
-			// Calculate start and end position in pixel
-			float startPos = (levelObject->startTime - startTime) / (endTime - startTime) * availX;
-			float endPos = (levelObject->killTime - startTime) / (endTime - startTime) * availX;
-
-			// Calculate strip params
-			ImVec2 stripMin = ImVec2(timelineMin.x + startPos,
-			                         timelineMin.y + levelObject->editorBinIndex * EDITOR_BIN_HEIGHT);
-			ImVec2 stripMax = ImVec2(timelineMin.x + endPos,
-			                         timelineMin.y + (levelObject->editorBinIndex + 1) * EDITOR_BIN_HEIGHT);
-
-			ImVec2 stripSize = ImVec2(stripMax.x - stripMin.x, stripMax.y - stripMin.y);
-
-			drawList->PushClipRect(stripMin, stripMax, true);
-
-			ImGui::PushID(i + 1);
-
-			ImGui::SetCursorScreenPos(stripMin);
-			if (ImGui::InvisibleButton("##Strip", stripSize))
+			// Draw editor strips
+			bool atLeastOneStripClicked = false;
+			for (int i = 0; i < levelManager->level->levelObjects.size(); i++)
 			{
-				atLeastOneStripClicked = true;
-				levelManager->selectedObjectIndex = i;
+				LevelObject* levelObject = levelManager->level->levelObjects[i];
 
-				Properties::inst->reset();
-			}
+				if (levelObject->killTime < startTime || levelObject->startTime > endTime)
+				{
+					continue;
+				}
 
-			bool stripActive = false;
+				// Calculate start and end position in pixel
+				float startPos = (levelObject->startTime - startTime) / (endTime - startTime) * availX;
+				float endPos = (levelObject->killTime - startTime) / (endTime - startTime) * availX;
 
-			if (ImGui::IsItemHovered())
-			{
-				stripActive = true;
-			}
+				// Calculate strip params
+				ImVec2 stripMin = ImVec2(timelineMin.x + startPos,
+					timelineMin.y + levelObject->editorBinIndex * EDITOR_BIN_HEIGHT);
+				ImVec2 stripMax = ImVec2(timelineMin.x + endPos,
+					timelineMin.y + (levelObject->editorBinIndex + 1) * EDITOR_BIN_HEIGHT);
 
-			if (ImGui::IsItemActive())
-			{
-				stripActive = true;
+				ImVec2 stripSize = ImVec2(stripMax.x - stripMin.x, stripMax.y - stripMin.y);
 
-				// Dragging the strip
-				if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+				drawList->PushClipRect(stripMin, stripMax, true);
+
+				ImGui::PushID(i + 1);
+
+				ImGui::SetCursorScreenPos(stripMin);
+				if (ImGui::InvisibleButton("##Strip", stripSize))
 				{
 					atLeastOneStripClicked = true;
 					levelManager->selectedObjectIndex = i;
 
-					ImVec2 delta = io.MouseDelta;
-					float timeDelta = (delta.x / availX) * (endTime - startTime);
-
-					timeDelta = std::clamp(timeDelta, -levelObject->startTime, endTime - levelObject->killTime);
-
-					levelObject->startTime += timeDelta;
-					levelObject->killTime += timeDelta;
-
-					// Recalculate object actions
-					levelManager->recalculateObjectAction(levelObject);
-					levelManager->recalculateActionIndex(levelManager->time);
+					Properties::inst->reset();
 				}
-			}
 
-			if (levelManager->selectedObjectIndex == i)
-			{
-				stripActive = true;
+				bool stripActive = false;
 
-				// Copying the strip
-				if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_C))
+				if (ImGui::IsItemHovered())
 				{
-					bool clipOpenStatus = OpenClipboard(NULL);
-					assert(clipOpenStatus);
-
-					bool emptyStatus = EmptyClipboard();
-					assert(emptyStatus);
-
-					std::string jsonStr = levelObject->toJson().dump();
-					const char* jsonPtr = jsonStr.c_str();
-
-					HGLOBAL pGlobal = GlobalAlloc(GMEM_FIXED, jsonStr.size() + 1);
-					memcpy(pGlobal, jsonPtr, jsonStr.size() + 1);
-
-					SetClipboardData(EDITOR_FORMAT_OBJECT, pGlobal);
-
-					CloseClipboard();
-
-					GlobalFree(pGlobal);
+					stripActive = true;
 				}
-			}
 
-			ImGui::PopID();
-
-			// Draw the strip
-			const char* name = levelObject->name.c_str();
-
-			ImVec2 textSize = ImGui::CalcTextSize(name, name + levelObject->name.length());
-
-			ImU32 stripCol = stripActive ? EDITOR_STRIP_ACTIVE_COL : EDITOR_STRIP_INACTIVE_COL;
-
-			ImVec2 localRectMin = ImVec2(stripMin.x + EDITOR_STRIP_LEFT, stripMin.y);
-			ImVec2 localRectMax = ImVec2(stripMin.x + EDITOR_STRIP_LEFT + EDITOR_STRIP_RIGHT + textSize.x, stripMax.y);
-
-			drawList->AddRectFilled(stripMin, stripMax, stripCol);
-			drawList->AddRectFilled(localRectMin, localRectMax, EDITOR_STRIP_ACTIVE_COL);
-			drawList->AddText(ImVec2(localRectMin.x + EDITOR_STRIP_TEXT_LEFT_MARGIN, localRectMin.y), EDITOR_STRIP_INACTIVE_COL, name, name + levelObject->name.size());
-
-			drawList->PopClipRect();
-		}
-
-		// Frames
-		ImU32 borderCol = ImGui::GetColorU32(ImGuiCol_Border);
-		drawList->AddRect(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + timelineHeight), borderCol);
-
-		drawList->PopClipRect();
-
-		// Time pointer
-		drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT), true);
-
-		// Draw frame
-		drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT), borderCol);
-
-		// Draw time pointer
-		constexpr float pointerRectHeight = EDITOR_TIME_POINTER_HEIGHT - EDITOR_TIME_POINTER_TRI_HEIGHT;
-
-		float pointerPos = cursorPos.x + (levelManager->time - startTime) / (endTime - startTime) * availX;
-		drawList->AddLine(ImVec2(pointerPos, cursorPos.y),
-		                  ImVec2(pointerPos, cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT), borderCol);
-
-		drawList->AddRectFilled(
-			ImVec2(pointerPos - EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y),
-			ImVec2(pointerPos + EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y + pointerRectHeight),
-			borderCol);
-
-		drawList->AddTriangleFilled(
-			ImVec2(pointerPos - EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y + pointerRectHeight),
-			ImVec2(pointerPos, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT),
-			ImVec2(pointerPos + EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y + pointerRectHeight),
-			borderCol);
-
-		drawList->PopClipRect();
-
-		// Changing editor bins
-		if (levelManager->selectedObjectIndex != -1)
-		{
-			LevelObject* selectedObject = levelManager->levelObjects[levelManager->selectedObjectIndex];
-			if (ImGui::IsWindowHovered())
-			{
-				selectedObject->editorBinIndex -= io.MouseWheel;
-				selectedObject->editorBinIndex = std::clamp(selectedObject->editorBinIndex, 0, EDITOR_TIMELINE_BIN_COUNT - 1);
-			}
-		}
-
-		// Object delete
-		if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
-		{
-			levelManager->removeObject(levelManager->levelObjects[levelManager->selectedObjectIndex]);
-
-			levelManager->selectedObjectIndex = -1;
-		}
-
-		// Object paste
-		if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_V))
-		{
-			if (IsClipboardFormatAvailable(EDITOR_FORMAT_OBJECT))
-			{
-				bool openStatus = OpenClipboard(NULL);
-				assert(openStatus);
-
-				HGLOBAL pGlobal = GetClipboardData(EDITOR_FORMAT_OBJECT);
-
-				if (pGlobal)
+				if (ImGui::IsItemActive())
 				{
-					const char* jsonPtr = (const char*)GlobalLock(pGlobal);
-					if (jsonPtr)
+					stripActive = true;
+
+					// Dragging the strip
+					if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 					{
-						std::string jsonStr(jsonPtr);
+						atLeastOneStripClicked = true;
+						levelManager->selectedObjectIndex = i;
 
-						nlohmann::json objJson = nlohmann::json::parse(jsonPtr);
+						ImVec2 delta = io.MouseDelta;
+						float timeDelta = (delta.x / availX) * (endTime - startTime);
 
-						float length = objJson["kill"].get<float>() - objJson["start"].get<float>();
-						objJson["start"] = levelManager->time;
-						objJson["kill"] = levelManager->time + length;
+						timeDelta = std::clamp(timeDelta, -levelObject->startTime, levelManager->audioClip->getLength() - levelObject->killTime);
 
-						LevelObject* pasteObj = new LevelObject(objJson);
+						levelObject->startTime += timeDelta;
+						levelObject->killTime += timeDelta;
 
-						levelManager->insertObject(pasteObj);
-
-						GlobalUnlock(pGlobal);
+						// Recalculate object actions
+						levelManager->recalculateObjectAction(levelObject);
+						levelManager->recalculateActionIndex(levelManager->time);
 					}
 				}
 
-				CloseClipboard();
+				if (levelManager->selectedObjectIndex == i)
+				{
+					stripActive = true;
+
+					// Copying the strip
+					if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_C))
+					{
+						bool clipOpenStatus = OpenClipboard(NULL);
+						assert(clipOpenStatus);
+
+						bool emptyStatus = EmptyClipboard();
+						assert(emptyStatus);
+
+						std::string jsonStr = levelObject->toJson().dump();
+						const char* jsonPtr = jsonStr.c_str();
+
+						HGLOBAL pGlobal = GlobalAlloc(GMEM_FIXED, jsonStr.size() + 1);
+						memcpy(pGlobal, jsonPtr, jsonStr.size() + 1);
+
+						SetClipboardData(EDITOR_FORMAT_OBJECT, pGlobal);
+
+						CloseClipboard();
+
+						GlobalFree(pGlobal);
+					}
+				}
+
+				ImGui::PopID();
+
+				// Draw the strip
+				const char* name = levelObject->name.c_str();
+
+				ImVec2 textSize = ImGui::CalcTextSize(name, name + levelObject->name.length());
+
+				ImU32 stripCol = stripActive ? EDITOR_STRIP_ACTIVE_COL : EDITOR_STRIP_INACTIVE_COL;
+
+				ImVec2 localRectMin = ImVec2(stripMin.x + EDITOR_STRIP_LEFT, stripMin.y);
+				ImVec2 localRectMax = ImVec2(stripMin.x + EDITOR_STRIP_LEFT + EDITOR_STRIP_RIGHT + textSize.x, stripMax.y);
+
+				drawList->AddRectFilled(stripMin, stripMax, stripCol);
+				drawList->AddRectFilled(localRectMin, localRectMax, EDITOR_STRIP_ACTIVE_COL);
+				drawList->AddText(ImVec2(localRectMin.x + EDITOR_STRIP_TEXT_LEFT_MARGIN, localRectMin.y), EDITOR_STRIP_INACTIVE_COL, name, name + levelObject->name.size());
+
+				drawList->PopClipRect();
 			}
-		}
 
-		// Jumping the time pointer
-		ImGui::SetCursorScreenPos(cursorPos);
-		bool pointerBeingDragged = false;
-		if (ImGui::InvisibleButton("##TimePointer", ImVec2(availX, EDITOR_TIME_POINTER_HEIGHT)))
-		{
-			float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
-			newTime = std::max(0.0f, newTime);
+			// Frames
+			ImU32 borderCol = ImGui::GetColorU32(ImGuiCol_Border);
+			drawList->AddRect(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + timelineHeight), borderCol);
 
-			levelManager->update(newTime);
-			pointerBeingDragged = true;
-		}
+			drawList->PopClipRect();
 
-		// Dragging time pointer
-		if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
-		{
-			float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
-			newTime = std::max(0.0f, newTime);
+			// Time pointer
+			drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT), true);
 
-			levelManager->update(newTime);
-			pointerBeingDragged = true;
-		}
+			// Draw frame
+			drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT), borderCol);
 
-		// Deselect
-		if (ImGui::IsWindowFocused() && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !atLeastOneStripClicked && !pointerBeingDragged)
-		{
-			levelManager->selectedObjectIndex = -1;
-			Properties::inst->reset();
-		}
+			// Draw time pointer
+			constexpr float pointerRectHeight = EDITOR_TIME_POINTER_HEIGHT - EDITOR_TIME_POINTER_TRI_HEIGHT;
 
-		// New object popup
-		ImGui::SetCursorScreenPos(timelineMin);
-		ImGui::InvisibleButton("##NewObjectBtn", clipSize);
+			float pointerPos = cursorPos.x + (levelManager->time - startTime) / (endTime - startTime) * availX;
+			drawList->AddLine(ImVec2(pointerPos, cursorPos.y),
+				ImVec2(pointerPos, cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT), borderCol);
 
-		if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
-		{
-			ImGui::OpenPopup("new-popup");
-		}
+			drawList->AddRectFilled(
+				ImVec2(pointerPos - EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y),
+				ImVec2(pointerPos + EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y + pointerRectHeight),
+				borderCol);
 
-		if (ImGui::BeginPopup("new-popup"))
-		{
-			if (ImGui::Selectable("New Object"))
+			drawList->AddTriangleFilled(
+				ImVec2(pointerPos - EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y + pointerRectHeight),
+				ImVec2(pointerPos, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT),
+				ImVec2(pointerPos + EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y + pointerRectHeight),
+				borderCol);
+
+			drawList->PopClipRect();
+
+			// Changing editor bins
+			if (levelManager->selectedObjectIndex != -1)
 			{
-				LevelObject* newObject = new LevelObject();
-				newObject->name = "Untitled object";
-				newObject->startTime = levelManager->time;
-				newObject->killTime = levelManager->time + 5.0f;
-				newObject->editorBinIndex = 0;
-
-				levelManager->insertObject(newObject);
+				LevelObject* selectedObject = levelManager->level->levelObjects[levelManager->selectedObjectIndex];
+				if (ImGui::IsWindowHovered())
+				{
+					selectedObject->editorBinIndex -= io.MouseWheel;
+					selectedObject->editorBinIndex = std::clamp(selectedObject->editorBinIndex, 0, EDITOR_TIMELINE_BIN_COUNT - 1);
+				}
 			}
 
-			ImGui::EndPopup();
-		}
+			// Object delete
+			if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
+			{
+				levelManager->removeObject(levelManager->level->levelObjects[levelManager->selectedObjectIndex]);
 
-		// Reset cursor
-		ImGui::SetCursorScreenPos(cursorPos);
-		ImGui::ItemSize(ImVec2(availX, timelineHeight + EDITOR_TIME_POINTER_HEIGHT));
+				levelManager->selectedObjectIndex = -1;
+			}
+
+			// Object paste
+			if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_V))
+			{
+				if (IsClipboardFormatAvailable(EDITOR_FORMAT_OBJECT))
+				{
+					bool openStatus = OpenClipboard(NULL);
+					assert(openStatus);
+
+					HGLOBAL pGlobal = GetClipboardData(EDITOR_FORMAT_OBJECT);
+
+					if (pGlobal)
+					{
+						const char* jsonPtr = (const char*)GlobalLock(pGlobal);
+						if (jsonPtr)
+						{
+							std::string jsonStr(jsonPtr);
+
+							nlohmann::json objJson = nlohmann::json::parse(jsonPtr);
+
+							float length = objJson["kill"].get<float>() - objJson["start"].get<float>();
+							objJson["start"] = levelManager->time;
+							objJson["kill"] = levelManager->time + length;
+
+							LevelObject* pasteObj = new LevelObject(objJson);
+
+							levelManager->insertObject(pasteObj);
+
+							GlobalUnlock(pGlobal);
+						}
+					}
+
+					CloseClipboard();
+				}
+			}
+
+			// Jumping the time pointer
+			ImGui::SetCursorScreenPos(cursorPos);
+			bool pointerBeingDragged = false;
+			if (ImGui::InvisibleButton("##TimePointer", ImVec2(availX, EDITOR_TIME_POINTER_HEIGHT)))
+			{
+				float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
+				newTime = std::clamp(newTime, 0.0f, levelManager->audioClip->getLength());
+
+				levelManager->audioClip->pause();
+
+				levelManager->updateLevel(newTime);
+				levelManager->audioClip->seek(newTime);
+				pointerBeingDragged = true;
+			}
+
+			// Dragging time pointer
+			if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+			{
+				float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
+				newTime = std::clamp(newTime, 0.0f, levelManager->audioClip->getLength());
+
+				levelManager->audioClip->pause();
+
+				levelManager->updateLevel(newTime);
+				levelManager->audioClip->seek(newTime);
+				pointerBeingDragged = true;
+			}
+
+			// Play/Pause
+			if (ImGui::IsKeyPressed(GLFW_KEY_SPACE))
+			{
+				AudioClip* clip = levelManager->audioClip;
+
+				if (clip->isPlaying())
+				{
+					clip->pause();
+				}
+				else
+				{
+					clip->play();
+				}
+			}
+
+			// Deselect
+			if (ImGui::IsWindowFocused() && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !atLeastOneStripClicked && !pointerBeingDragged)
+			{
+				levelManager->selectedObjectIndex = -1;
+				Properties::inst->reset();
+			}
+
+			// New object popup
+			ImGui::SetCursorScreenPos(timelineMin);
+			ImGui::InvisibleButton("##NewObjectBtn", clipSize);
+
+			if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+			{
+				ImGui::OpenPopup("new-popup");
+			}
+
+			if (ImGui::BeginPopup("new-popup"))
+			{
+				if (ImGui::Selectable("New Object"))
+				{
+					LevelObject* newObject = new LevelObject();
+					newObject->startTime = levelManager->time;
+					newObject->killTime = levelManager->time + 5.0f;
+
+					levelManager->insertObject(newObject);
+				}
+
+				ImGui::EndPopup();
+			}
+
+			// Reset cursor
+			ImGui::SetCursorScreenPos(cursorPos);
+			ImGui::ItemSize(ImVec2(availX, timelineHeight + EDITOR_TIME_POINTER_HEIGHT));
+		}
 	}
 	ImGui::End();
+}
+
+bool Timeline::playButton(bool playing)
+{
+	ImDrawList* drawList = ImGui::GetWindowDrawList();
+	ImVec2 cursor = ImGui::GetCursorScreenPos();
+
+	if (playing)
+	{
+		drawList->AddRectFilled(
+			cursor, 
+			ImVec2(cursor.x + EDITOR_PLAY_BUTTON_SIZE / 3.0f, cursor.y + EDITOR_PLAY_BUTTON_SIZE), 
+			EDITOR_PLAY_BUTTON_COL);
+		drawList->AddRectFilled(
+			ImVec2(cursor.x + EDITOR_PLAY_BUTTON_SIZE / 3.0f * 2.0f, cursor.y), 
+			ImVec2(cursor.x + EDITOR_PLAY_BUTTON_SIZE, cursor.y + EDITOR_PLAY_BUTTON_SIZE), 
+			EDITOR_PLAY_BUTTON_COL);
+	}
+	else
+	{
+		drawList->AddTriangleFilled(
+			cursor,
+			ImVec2(cursor.x, cursor.y + EDITOR_PLAY_BUTTON_SIZE),
+			ImVec2(cursor.x + EDITOR_PLAY_BUTTON_SIZE, cursor.y + EDITOR_PLAY_BUTTON_SIZE * 0.5f),
+			EDITOR_PLAY_BUTTON_COL);
+	}
+
+	return ImGui::InvisibleButton("##PlayButton", ImVec2(EDITOR_PLAY_BUTTON_SIZE, EDITOR_PLAY_BUTTON_SIZE));
+}
+
+std::string Timeline::timeToString(float time)
+{
+	float secs = std::floor(time);
+	float frac = time - secs;
+
+	int milliseconds = (int)(frac * 1000.0f) % 1000;
+	int seconds = (int)secs % 60;
+	int minutes = (int)secs / 60 % 60;
+	int hours = (int)secs / 3600 % 60;
+
+	std::string millisecondsStr =
+		milliseconds < 10 ? "00" + std::to_string(milliseconds) :
+		milliseconds < 100 ? "0" + std::to_string(milliseconds) : std::to_string(milliseconds);
+	std::string secondsStr = seconds < 10 ? "0" + std::to_string(seconds) : std::to_string(seconds);
+	std::string minutesStr = minutes < 10 ? "0" + std::to_string(minutes) : std::to_string(minutes);
+	std::string hoursStr = hours < 10 ? "0" + std::to_string(hours) : std::to_string(hours);
+
+	return hoursStr + ":" + minutesStr + ":" + secondsStr + "." + millisecondsStr;
 }

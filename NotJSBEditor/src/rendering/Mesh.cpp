@@ -1,6 +1,6 @@
 #include "Mesh.h"
 
-Mesh::Mesh(int verticesCount, glm::vec3* vertices, int indicesCount, uint32_t* indices)
+Mesh::Mesh(int verticesCount, int indicesCount, glm::vec3* vertices, uint32_t* indices)
 {
 	this->verticesCount = verticesCount;
 	this->indicesCount = indicesCount;

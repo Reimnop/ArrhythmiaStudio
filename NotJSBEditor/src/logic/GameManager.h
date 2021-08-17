@@ -4,6 +4,7 @@
 #include <imgui/imgui.h>
 
 #include "LevelManager.h"
+#include "ShapeManager.h"
 
 class MainWindow;
 
@@ -17,6 +18,7 @@ public:
 private:
 	GLFWwindow* mainWindow;
 	LevelManager* levelManager;
+	ShapeManager* shapeManager;
 
 	void onLayout();
 	void calculateViewportRect(ImVec2 size, float* width, float* height);

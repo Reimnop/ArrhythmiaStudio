@@ -40,12 +40,12 @@ void Properties::onLayout()
 {
 	LevelManager* levelManager = LevelManager::inst;
 
-	// Open Dope Sheet window
+	// Open properties window
 	if (ImGui::Begin("Properties"))
 	{
 		if (levelManager->selectedObjectIndex != -1)
 		{
-			LevelObject* selectedObject = levelManager->levelObjects[levelManager->selectedObjectIndex];
+			LevelObject* selectedObject = levelManager->level->levelObjects[levelManager->selectedObjectIndex];
 
 			ImGui::InputText("Object Name", &selectedObject->name);
 
@@ -75,7 +75,7 @@ void Properties::onLayout()
 			if (ImGui::IsItemEdited())
 			{
 				MeshRenderer* mr = (MeshRenderer*)selectedObject->node->renderer;
-				mr->material = levelManager->colorSlots[selectedObject->colorSlotIndex]->material;
+				mr->material = levelManager->level->colorSlots[selectedObject->colorSlotIndex]->material;
 			}
 
 			int editorBin = selectedObject->editorBinIndex + 1;
@@ -326,16 +326,24 @@ void Properties::onLayout()
 				{
 					float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
 					newTime = std::max(0.0f, newTime);
+					newTime += selectedObject->startTime;
 
-					levelManager->update(newTime + selectedObject->startTime);
+					levelManager->audioClip->pause();
+
+					levelManager->updateLevel(newTime);
+					levelManager->audioClip->seek(newTime);
 				}
 
 				if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 				{
 					float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
 					newTime = std::max(0.0f, newTime);
+					newTime += selectedObject->startTime;
 
-					levelManager->update(newTime + selectedObject->startTime);
+					levelManager->audioClip->pause();
+
+					levelManager->updateLevel(newTime);
+					levelManager->audioClip->seek(newTime);
 				}
 
 				ImGui::SetCursorScreenPos(cursorPos);
@@ -346,7 +354,7 @@ void Properties::onLayout()
 			ImGui::Separator();
 			if (selectedKeyframe.has_value() && selectedChannel != nullptr)
 			{
-				LevelObject* currentObject = levelManager->levelObjects[levelManager->selectedObjectIndex];
+				LevelObject* currentObject = levelManager->level->levelObjects[levelManager->selectedObjectIndex];
 				Keyframe kf = selectedKeyframe.value();
 
 				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))

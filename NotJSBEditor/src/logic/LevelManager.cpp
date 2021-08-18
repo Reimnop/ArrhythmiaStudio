@@ -20,10 +20,12 @@ LevelManager::LevelManager()
 
 	// Initialize startup level
 	{
-		Level* level = new Level();
+		level = new Level();
 
 		level->name = "Untitled level";
 		level->song = R"(C:\Users\UserTCQ\Music\Creo-Dimension.mp3)";
+
+		audioClip = new AudioClip(level->song.c_str());
 
 		// Intialize 30 color slots
 		for (int i = 0; i < 30; i++)
@@ -52,9 +54,7 @@ LevelManager::LevelManager()
 		AnimationChannel* channel = new AnimationChannel(AnimationChannelType_PositionX, 2, keyframes);
 		obj->insertChannel(channel);
 
-		level->levelObjects.push_back(obj);
-
-		loadLevel(level);
+		insertObject(obj);
 	}
 
 	timeline = new Timeline();
@@ -62,35 +62,41 @@ LevelManager::LevelManager()
 	theme = new Theme();
 }
 
-void LevelManager::loadLevel(Level* level)
+void LevelManager::loadLevel(nlohmann::json j)
 {
 	// Cleanup old level
-	if (this->level)
+	if (level)
 	{
 		aliveObjects.clear();
 		objectActions.clear();
-
-		for (LevelObject* obj : this->level->levelObjects)
-		{
-			delete obj->node;
-		}
-
 		delete audioClip;
-		delete this->level;
+		delete level;
 	}
 
-	this->level = level;
+	// Parse new level json
+	Level* newLevel = new Level();
+	newLevel->name = j["name"].get<std::string>();
+	newLevel->song = j["song"].get<std::string>();
 
-	for (LevelObject* obj : level->levelObjects)
+	level = newLevel;
+
+	nlohmann::json::array_t slotArr = j["color_slots"].get<nlohmann::json::array_t>();
+	for (nlohmann::json slotJson : slotArr)
 	{
-		spawnObject(obj);
+		newLevel->colorSlots.push_back(new ColorSlot(slotJson));
+	}
+
+	nlohmann::json::array_t objArr = j["objects"].get<nlohmann::json::array_t>();
+	for (nlohmann::json objJson : objArr)
+	{
+		recursivelyIntializeObjectTree(objJson, nullptr, newLevel);
 	}
 
 	recalculateAllObjectActions();
 	recalculateActionIndex(time);
 	updateLevel(0.0f);
 
-	audioClip = new AudioClip(level->song.c_str());
+	audioClip = new AudioClip(newLevel->song.c_str());
 }
 
 void LevelManager::update()
@@ -269,7 +275,7 @@ void LevelManager::removeObject(LevelObject* levelObject)
 {
 	// Remove object
 	std::vector<LevelObject*>::iterator objIt = std::remove(level->levelObjects.begin(), level->levelObjects.end(), levelObject);
-	level->levelObjects.erase(objIt, level->levelObjects.end());
+	level->levelObjects.erase(objIt);
 
 	// Remove actions
 	std::vector<ObjectAction>::iterator it = std::remove_if(objectActions.begin(), objectActions.end(),
@@ -279,8 +285,11 @@ void LevelManager::removeObject(LevelObject* levelObject)
 		});
 	objectActions.erase(it, objectActions.end());
 
-	// Delete object node
-	delete levelObject->node;
+	// Remove from alive objects
+	aliveObjects.erase(levelObject);
+
+	// Delete object
+	delete levelObject;
 
 	recalculateActionIndex(time);
 }
@@ -313,4 +322,23 @@ void LevelManager::spawnObject(LevelObject* levelObject)
 	node->renderer = renderer;
 
 	levelObject->node = node;
+}
+
+void LevelManager::recursivelyIntializeObjectTree(nlohmann::json j, LevelObject* parent, Level* level)
+{
+	LevelObject* obj = new LevelObject(j);
+
+	level->levelObjects.push_back(obj);
+	spawnObject(obj);
+
+	obj->setParent(parent);
+
+	if (j.contains("children")) 
+	{
+		nlohmann::json::array_t children = j["children"].get<nlohmann::json::array_t>();
+		for (nlohmann::json child : children)
+		{
+			recursivelyIntializeObjectTree(child, obj, level);
+		}
+	}
 }

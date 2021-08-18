@@ -26,13 +26,44 @@ LevelObject::LevelObject(nlohmann::json j)
 
 LevelObject::~LevelObject()
 {
+	// Unparent all children
+	for (LevelObject* child : children)
+	{
+		child->setParent(nullptr);
+	}
+
 	for (AnimationChannel* channel : animationChannels)
 	{
 		delete channel;
 	}
 
+	delete node;
+
 	animationChannels.clear();
 	animationChannels.shrink_to_fit();
+}
+
+void LevelObject::setParent(LevelObject* newParent)
+{
+	// Remove from old parent
+	if (parent)
+	{
+		std::vector<LevelObject*>::iterator it = std::remove(parent->children.begin(), parent->children.end(), this);
+		parent->children.erase(it);
+	}
+
+	// Add to new parent
+	if (newParent)
+	{
+		newParent->children.push_back(this);
+		node->setParent(newParent->node);
+	}
+	else
+	{
+		node->setParent(nullptr);
+	}
+
+	parent = newParent;
 }
 
 void LevelObject::genActionPair(ObjectAction* spawnAction, ObjectAction* killAction)
@@ -81,7 +112,7 @@ bool LevelObject::hasChannel(AnimationChannelType channelType)
 	return false;
 }
 
-nlohmann::ordered_json LevelObject::toJson()
+nlohmann::ordered_json LevelObject::toJson(bool excludeChildren)
 {
 	nlohmann::ordered_json j;
 	j["name"] = name;
@@ -96,6 +127,15 @@ nlohmann::ordered_json LevelObject::toJson()
 	for (int i = 0; i < animationChannels.size(); i++)
 	{
 		j["channels"][i] = animationChannels[i]->toJson();
+	}
+	
+	if (!excludeChildren)
+	{
+		j["children"] = nlohmann::json::array();
+		for (int i = 0; i < children.size(); i++)
+		{
+			j["children"][i] = children[i]->toJson();
+		}
 	}
 
 	return j;

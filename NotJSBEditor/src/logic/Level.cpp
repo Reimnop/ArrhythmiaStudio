@@ -1,25 +1,5 @@
 #include "Level.h"
 
-Level::Level() = default;
-
-Level::Level(nlohmann::json j)
-{
-	name = j["name"].get<std::string>();
-	song = j["song"].get<std::string>();
-
-	nlohmann::json::array_t objects = j["objects"].get<nlohmann::json::array_t>();
-	for (int i = 0; i < objects.size(); i++)
-	{
-		levelObjects.push_back(new LevelObject(objects[i]));
-	}
-
-	nlohmann::json::array_t slots = j["color_slots"].get<nlohmann::json::array_t>();
-	for (int i = 0; i < slots.size(); i++)
-	{
-		colorSlots.push_back(new ColorSlot(slots[i]));
-	}
-}
-
 Level::~Level()
 {
 	for (LevelObject* obj : levelObjects)
@@ -43,10 +23,14 @@ nlohmann::ordered_json Level::toJson()
 	nlohmann::ordered_json j;
 	j["name"] = name;
 	j["song"] = song;
+
 	j["objects"] = nlohmann::ordered_json::array();
 	for (int i = 0; i < levelObjects.size(); i++)
 	{
-		j["objects"][i] = levelObjects[i]->toJson();
+		if (levelObjects[i]->parent == nullptr) 
+		{
+			j["objects"].push_back(levelObjects[i]->toJson());
+		}
 	}
 
 	j["color_slots"] = nlohmann::ordered_json::array();

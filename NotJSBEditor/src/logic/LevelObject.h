@@ -17,8 +17,10 @@ public:
 	int shapeIndex = 0;
 	int editorBinIndex = 0;
 	int colorSlotIndex = 0;
-
 	float depth = 0.0f;
+
+	LevelObject* parent;
+	std::vector<LevelObject*> children;
 
 	std::vector<AnimationChannel*> animationChannels;
 
@@ -28,8 +30,10 @@ public:
 	LevelObject(nlohmann::json j);
 	~LevelObject();
 
+	void setParent(LevelObject* newParent);
+
 	void genActionPair(ObjectAction* spawnAction, ObjectAction* killAction);
 	void insertChannel(AnimationChannel* value);
 	bool hasChannel(AnimationChannelType channelType);
-	nlohmann::ordered_json toJson();
+	nlohmann::ordered_json toJson(bool excludeChildren = false);
 };

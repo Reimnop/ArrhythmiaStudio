@@ -77,7 +77,6 @@ void DataManager::openLevel()
 		nlohmann::json j = nlohmann::json::parse(ss.str());
 		s.close();
 
-		Level* level = new Level(j);
-		LevelManager::inst->loadLevel(level);
+		LevelManager::inst->loadLevel(j);
 	}
 }

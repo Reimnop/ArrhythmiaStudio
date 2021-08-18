@@ -13,8 +13,6 @@ public:
 	std::vector<ColorSlot*> colorSlots;
 	std::vector<LevelObject*> levelObjects;
 
-	Level();
-	Level(nlohmann::json j);
 	~Level();
 
 	nlohmann::ordered_json toJson();

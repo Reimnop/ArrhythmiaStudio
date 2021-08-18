@@ -29,7 +29,7 @@ public:
 
 	LevelManager();
 
-	void loadLevel(Level* level);
+	void loadLevel(nlohmann::json j);
 
 	void update();
 
@@ -57,4 +57,5 @@ private:
 
 	void insertAction(ObjectAction value);
 	void spawnObject(LevelObject* levelObject);
+	void recursivelyIntializeObjectTree(nlohmann::json j, LevelObject* parent, Level* level);
 };

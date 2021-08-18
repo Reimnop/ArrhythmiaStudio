@@ -150,28 +150,6 @@ void Timeline::onLayout()
 				if (levelManager->selectedObjectIndex == i)
 				{
 					stripActive = true;
-
-					// Copying the strip
-					if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_C))
-					{
-						bool clipOpenStatus = OpenClipboard(NULL);
-						assert(clipOpenStatus);
-
-						bool emptyStatus = EmptyClipboard();
-						assert(emptyStatus);
-
-						std::string jsonStr = levelObject->toJson().dump();
-						const char* jsonPtr = jsonStr.c_str();
-
-						HGLOBAL pGlobal = GlobalAlloc(GMEM_FIXED, jsonStr.size() + 1);
-						memcpy(pGlobal, jsonPtr, jsonStr.size() + 1);
-
-						SetClipboardData(EDITOR_FORMAT_OBJECT, pGlobal);
-
-						CloseClipboard();
-
-						GlobalFree(pGlobal);
-					}
 				}
 
 				ImGui::PopID();
@@ -244,6 +222,30 @@ void Timeline::onLayout()
 				levelManager->selectedObjectIndex = -1;
 			}
 
+			// Object copy
+			if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_C))
+			{
+				LevelObject* selectedObject = levelManager->level->levelObjects[levelManager->selectedObjectIndex];
+
+				bool clipOpenStatus = OpenClipboard(NULL);
+				assert(clipOpenStatus);
+
+				bool emptyStatus = EmptyClipboard();
+				assert(emptyStatus);
+
+				std::string jsonStr = selectedObject->toJson(true).dump();
+				const char* jsonPtr = jsonStr.c_str();
+
+				HGLOBAL pGlobal = GlobalAlloc(GMEM_FIXED, jsonStr.size() + 1);
+				memcpy(pGlobal, jsonPtr, jsonStr.size() + 1);
+
+				SetClipboardData(EDITOR_FORMAT_OBJECT, pGlobal);
+
+				CloseClipboard();
+
+				GlobalFree(pGlobal);
+			}
+
 			// Object paste
 			if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_V))
 			{
@@ -308,7 +310,7 @@ void Timeline::onLayout()
 			}
 
 			// Play/Pause
-			if (ImGui::IsKeyPressed(GLFW_KEY_SPACE))
+			if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_SPACE))
 			{
 				AudioClip* clip = levelManager->audioClip;
 

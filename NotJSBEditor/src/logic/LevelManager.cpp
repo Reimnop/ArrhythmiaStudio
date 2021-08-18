@@ -89,7 +89,7 @@ void LevelManager::loadLevel(nlohmann::json j)
 	nlohmann::json::array_t objArr = j["objects"].get<nlohmann::json::array_t>();
 	for (nlohmann::json objJson : objArr)
 	{
-		recursivelyIntializeObjectTree(objJson, nullptr, newLevel);
+		recursivelyInitializeObjectTree(objJson, nullptr, newLevel);
 	}
 
 	recalculateAllObjectActions();
@@ -324,7 +324,7 @@ void LevelManager::spawnObject(LevelObject* levelObject)
 	levelObject->node = node;
 }
 
-void LevelManager::recursivelyIntializeObjectTree(nlohmann::json j, LevelObject* parent, Level* level)
+void LevelManager::recursivelyInitializeObjectTree(nlohmann::json j, LevelObject* parent, Level* level)
 {
 	LevelObject* obj = new LevelObject(j);
 
@@ -338,7 +338,7 @@ void LevelManager::recursivelyIntializeObjectTree(nlohmann::json j, LevelObject*
 		nlohmann::json::array_t children = j["children"].get<nlohmann::json::array_t>();
 		for (nlohmann::json child : children)
 		{
-			recursivelyIntializeObjectTree(child, obj, level);
+			recursivelyInitializeObjectTree(child, obj, level);
 		}
 	}
 }

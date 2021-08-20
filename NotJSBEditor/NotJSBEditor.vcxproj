@@ -128,7 +128,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -153,7 +153,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -544,6 +544,7 @@
     <ClInclude Include="src\logic\DataManager.h" />
     <ClInclude Include="src\logic\GlobalConstants.h" />
     <ClInclude Include="src\logic\Level.h" />
+    <ClInclude Include="src\logic\LevelCreateInfo.h" />
     <ClInclude Include="src\logic\Properties.h" />
     <ClInclude Include="src\logic\GameManager.h" />
     <ClInclude Include="src\logic\LevelManager.h" />

@@ -29,7 +29,7 @@ public:
 
 	LevelManager();
 
-	void loadLevel(nlohmann::json j);
+	void loadLevel(std::string levelPath);
 
 	void update();
 

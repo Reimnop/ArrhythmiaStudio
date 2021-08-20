@@ -16,7 +16,7 @@ constexpr float EDITOR_STRIP_LEFT = 8.0f;
 constexpr float EDITOR_STRIP_RIGHT = 8.0f;
 constexpr float EDITOR_STRIP_TEXT_LEFT_MARGIN = 4.0f;
 constexpr float EDITOR_PROP_LABEL_TEXT_LEFT_MARGIN = 8.0f;
-constexpr int EDITOR_WAVEFORM_PIX_PER_SEC = 20;
+constexpr float EDITOR_WAVEFORM_FREQ = 50.0f;
 
 constexpr uint32_t EDITOR_PLAY_BUTTON_COL = 0xFFBABABA;
 constexpr uint32_t EDITOR_BIN_PRIMARY_COL = 0xFF1F1F1F;

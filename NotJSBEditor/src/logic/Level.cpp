@@ -22,7 +22,6 @@ nlohmann::ordered_json Level::toJson()
 {
 	nlohmann::ordered_json j;
 	j["name"] = name;
-	j["song"] = song;
 
 	j["objects"] = nlohmann::ordered_json::array();
 	for (int i = 0; i < levelObjects.size(); i++)

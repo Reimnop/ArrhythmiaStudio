@@ -9,14 +9,15 @@ layout(std430, binding = 1) buffer audioBuffer {
 
 layout(location = 0) uniform float startTime;
 layout(location = 1) uniform float endTime;
-layout(location = 2) uniform int frequency;
+layout(location = 2) uniform float frequency;
 
 float getSampleRange(float t) 
 {
-	int offset = int(startTime * frequency);
-	int sampleIndex = int((endTime - startTime) * t * frequency) + offset;
-	sampleIndex = max(min(sampleIndex, samples.length() - 1), 0);
-	return abs(samples[sampleIndex]);
+	float offset = startTime * frequency;
+	float sampleIndex = (endTime - startTime) * t * frequency + offset;
+	sampleIndex = max(min(sampleIndex, samples.length() - 1.0), 0.0);
+
+	return abs(samples[int(sampleIndex)]);
 }
 
 void main() {

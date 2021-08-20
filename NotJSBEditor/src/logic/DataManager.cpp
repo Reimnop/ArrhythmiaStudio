@@ -3,9 +3,8 @@
 #include "LevelManager.h"
 
 #include <fstream>
-#include <sstream>
-#include <winnt.h>
-#include <Windows.h>
+#include <filesystem>
+#include <shobjidl.h>
 #include <nlohmann/json.hpp>
 
 DataManager* DataManager::inst;
@@ -20,63 +19,101 @@ DataManager::DataManager()
 	inst = this;
 }
 
+void DataManager::newLevel(LevelCreateInfo createInfo)
+{
+	levelDir = createInfo.levelPath;
+
+	genLevelFiles(createInfo);
+	LevelManager::inst->loadLevel(createInfo.levelPath);
+}
 
 void DataManager::saveLevel(bool saveAs)
 {
-	WCHAR fileName[MAX_PATH];
-	ZeroMemory(&fileName, MAX_PATH);
-	fileName[0] = '\0';
-
-	OPENFILENAMEW ofn;
-	ofn.lStructSize = sizeof(OPENFILENAME);
-	ofn.hwndOwner = NULL;
-	ofn.lpstrFilter = TEXT("NotJSBEditor Level File\0*.njelv\0");
-	ofn.lpstrCustomFilter = NULL;
-	ofn.lpstrFile = fileName;
-	ofn.nMaxFile = MAX_PATH;
-	ofn.lpstrFileTitle = NULL;
-	ofn.lpstrInitialDir = NULL;
-	ofn.lpstrTitle = TEXT("Save Level File...");
-	ofn.Flags = OFN_EXPLORER;
-	ofn.lpstrDefExt = TEXT("");
-
-	if (GetSaveFileNameW(&ofn))
+	if (saveAs || levelDir.empty())
 	{
-		std::ofstream s(fileName);
-		s << LevelManager::inst->level->toJson();
+		IFileDialog* fd;
+		CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&fd));
 
-		s.close();
+		DWORD dwFlags;
+		fd->GetOptions(&dwFlags);
+		fd->SetOptions(dwFlags | FOS_FORCEFILESYSTEM | FOS_PICKFOLDERS);
+		fd->Show(NULL);
+
+		IShellItem* psiResult;
+		if (SUCCEEDED(fd->GetResult(&psiResult)))
+		{
+			PWSTR pszFilePath = NULL;
+			psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+			std::wstring ws(pszFilePath);
+			std::string newLevelDir(ws.begin(), ws.end());
+
+			std::filesystem::copy(levelDir, newLevelDir);
+			levelDir = newLevelDir;
+
+			CoTaskMemFree(pszFilePath);
+		}
+
+		fd->Release();
 	}
+
+	std::filesystem::path levelFilePath(levelDir);
+	levelFilePath /= "level.njelv";
+
+	std::ofstream s(levelFilePath);
+	s << LevelManager::inst->level->toJson();
+	s.close();
 }
 
 void DataManager::openLevel()
 {
-	WCHAR fileName[MAX_PATH];
-	ZeroMemory(&fileName, MAX_PATH);
-	fileName[0] = '\0';
+	IFileDialog* fd;
+	CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&fd));
 
-	OPENFILENAMEW ofn;
-	ofn.lStructSize = sizeof(OPENFILENAME);
-	ofn.hwndOwner = NULL;
-	ofn.lpstrFilter = TEXT("NotJSBEditor Level File\0*.njelv\0");
-	ofn.lpstrCustomFilter = NULL;
-	ofn.lpstrFile = fileName;
-	ofn.nMaxFile = MAX_PATH;
-	ofn.lpstrFileTitle = NULL;
-	ofn.lpstrInitialDir = NULL;
-	ofn.lpstrTitle = TEXT("Select Level File...");
-	ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
-	ofn.lpstrDefExt = TEXT("");
+	DWORD dwFlags;
+	fd->GetOptions(&dwFlags);
+	fd->SetOptions(dwFlags | FOS_FORCEFILESYSTEM | FOS_PICKFOLDERS);
+	fd->Show(NULL);
 
-	if (GetOpenFileNameW(&ofn))
+	IShellItem* psiResult;
+	if (SUCCEEDED(fd->GetResult(&psiResult)))
 	{
-		std::ifstream s(fileName);
+		PWSTR pszFilePath = NULL;
+		psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
 
-		std::stringstream ss;
-		ss << s.rdbuf();
-		nlohmann::json j = nlohmann::json::parse(ss.str());
-		s.close();
+		std::wstring ws(pszFilePath);
 
-		LevelManager::inst->loadLevel(j);
+		levelDir = std::string(ws.begin(), ws.end());
+		LevelManager::inst->loadLevel(levelDir);
+
+		CoTaskMemFree(pszFilePath);
 	}
+
+	fd->Release();
+}
+
+void DataManager::genLevelFiles(LevelCreateInfo createInfo)
+{
+	nlohmann::ordered_json j;
+	j["name"] = createInfo.levelName;
+	j["objects"] = nlohmann::ordered_json::array();
+
+	for (int i = 0; i < 30; i++)
+	{
+		j["color_slots"][i]["keyframes"][0]["time"] = 0.0f;
+		j["color_slots"][i]["keyframes"][0]["color"][0] = 1.0f;
+		j["color_slots"][i]["keyframes"][0]["color"][1] = 1.0f;
+		j["color_slots"][i]["keyframes"][0]["color"][2] = 1.0f;
+	}
+
+	std::filesystem::path levelFilePath(createInfo.levelPath);
+	levelFilePath /= "level.njelv";
+	std::filesystem::path songFilePath(createInfo.levelPath);
+	songFilePath /= "song.ogg";
+
+	std::ofstream s(levelFilePath);
+	s << j;
+	s.close();
+
+	std::filesystem::copy(createInfo.levelSong, songFilePath);
 }

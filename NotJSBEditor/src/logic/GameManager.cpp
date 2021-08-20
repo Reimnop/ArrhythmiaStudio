@@ -2,9 +2,13 @@
 
 #include "../rendering/ImGuiController.h"
 #include "../rendering/Renderer.h"
-#include "DataManager.h"
 
+#include <fstream>
 #include <functional>
+#include <imgui/imgui.h>
+#include <imgui/imgui_stdlib.h>
+
+#include <ShlObj.h>
 
 GameManager::GameManager(GLFWwindow* window)
 {
@@ -14,6 +18,7 @@ GameManager::GameManager(GLFWwindow* window)
 
 	shapeManager = new ShapeManager();
 	levelManager = new LevelManager();
+	dataManager = new DataManager();
 }
 
 void GameManager::update()
@@ -23,24 +28,64 @@ void GameManager::update()
 
 void GameManager::onLayout()
 {
+	bool doOpenLevelPopup = false;
+
 	// Menu bar
 	if (ImGui::BeginMainMenuBar())
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem("Save"))
+			if (ImGui::MenuItem("New", "Ctrl+N"))
 			{
-				DataManager::inst->saveLevel();
+				doOpenLevelPopup = true;
 			}
 
-			if (ImGui::MenuItem("Open"))
+			if (ImGui::MenuItem("Save", "Ctrl+S"))
 			{
-				DataManager::inst->openLevel();
+				dataManager->saveLevel();
+			}
+
+			if (ImGui::MenuItem("Save As", "Ctrl+Shift+S"))
+			{
+				dataManager->saveLevel(true);
+			}
+
+			if (ImGui::MenuItem("Open", "Ctrl+O"))
+			{
+				dataManager->openLevel();
 			}
 
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
+	}
+
+	// Keyboard shortcuts handling
+	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_N))
+	{
+		doOpenLevelPopup = true;
+	}
+
+	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT) && ImGui::IsKeyPressed(GLFW_KEY_S))
+	{
+		dataManager->saveLevel(true);
+	}
+
+	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_S))
+	{
+		dataManager->saveLevel();
+	}
+	
+	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_O))
+	{
+		dataManager->openLevel();
+	}
+
+	if (doOpenLevelPopup)
+	{
+		currentCreateInfo = LevelCreateInfo();
+
+		ImGui::OpenPopup("New Level");
 	}
 
 	// Open viewport
@@ -67,6 +112,89 @@ void GameManager::onLayout()
 		drawList->AddRect(frameMin, frameMax, ImGui::GetColorU32(ImGuiCol_Border), 0.0f, ImDrawFlags_None, 2.0f);
 	}
 	ImGui::End();
+
+	// Level creation popup
+	if (ImGui::BeginPopupModal("New Level", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings))
+	{
+		ImGui::SetNextItemWidth(318.0f);
+		ImGui::InputText("Level name", &currentCreateInfo.levelName);
+
+		ImGui::PushID(1);
+		if (ImGui::Button("Browse"))
+		{
+			COMDLG_FILTERSPEC filter;
+			filter.pszName = L"Ogg Vorbis file";
+			filter.pszSpec = L"*.ogg";
+
+			IFileDialog* fd;
+			CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&fd));
+
+			DWORD dwFlags;
+			fd->GetOptions(&dwFlags);
+			fd->SetOptions(dwFlags | FOS_FORCEFILESYSTEM);
+			fd->SetFileTypes(1, &filter);
+			fd->Show(NULL);
+
+			IShellItem* psiResult;
+			if (SUCCEEDED(fd->GetResult(&psiResult)))
+			{
+				PWSTR pszFilePath = NULL;
+				psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+				std::wstring ws(pszFilePath);
+				currentCreateInfo.levelSong = std::string(ws.begin(), ws.end());
+
+				CoTaskMemFree(pszFilePath);
+			}
+
+			fd->Release();
+		}
+		ImGui::SameLine();
+		ImGui::InputText("Level song", &currentCreateInfo.levelSong);
+		ImGui::PopID();
+
+		ImGui::PushID(2);
+		if (ImGui::Button("Browse"))
+		{
+			IFileDialog* fd;
+			CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&fd));
+
+			DWORD dwFlags;
+			fd->GetOptions(&dwFlags);
+			fd->SetOptions(dwFlags | FOS_FORCEFILESYSTEM | FOS_PICKFOLDERS);
+			fd->Show(NULL);
+
+			IShellItem* psiResult;
+			if (SUCCEEDED(fd->GetResult(&psiResult)))
+			{
+				PWSTR pszFilePath = NULL;
+				psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+				std::wstring ws(pszFilePath);
+				currentCreateInfo.levelPath = std::string(ws.begin(), ws.end());
+
+				CoTaskMemFree(pszFilePath);
+			}
+
+			fd->Release();
+		}
+		ImGui::SameLine();
+		ImGui::InputText("Level path", &currentCreateInfo.levelPath);
+		ImGui::PopID();
+
+		if (ImGui::Button("Cancel"))
+		{
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("OK"))
+		{
+			dataManager->newLevel(currentCreateInfo);
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
 }
 
 void GameManager::calculateViewportRect(ImVec2 size, float* width, float* height)

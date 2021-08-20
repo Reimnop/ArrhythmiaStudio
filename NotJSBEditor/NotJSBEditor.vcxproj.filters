@@ -1271,6 +1271,9 @@
     <ClInclude Include="src\rendering\Texture2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\logic\LevelCreateInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\glm\ext\matrix_clip_space.inl">

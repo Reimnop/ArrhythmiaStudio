@@ -3,8 +3,10 @@
 #include <GLFW/glfw3.h>
 #include <imgui/imgui.h>
 
+#include "LevelCreateInfo.h"
 #include "LevelManager.h"
 #include "ShapeManager.h"
+#include "DataManager.h"
 
 class MainWindow;
 
@@ -19,6 +21,9 @@ private:
 	GLFWwindow* mainWindow;
 	LevelManager* levelManager;
 	ShapeManager* shapeManager;
+	DataManager* dataManager;
+
+	LevelCreateInfo currentCreateInfo;
 
 	void onLayout();
 	void calculateViewportRect(ImVec2 size, float* width, float* height);

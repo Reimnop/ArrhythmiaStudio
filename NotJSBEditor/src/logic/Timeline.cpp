@@ -22,7 +22,7 @@ Timeline::Timeline()
 	inst = this;
 
 	startTime = 0.0f;
-	endTime = 30.0f;
+	endTime = 10.0f;
 
 	waveformTex = new Texture2D(512, 512, GL_RGBA32F, GL_RGBA, GL_FLOAT);
 	waveformShader = new ComputeShader("Assets/Shaders/waveform.comp");
@@ -32,15 +32,12 @@ Timeline::Timeline()
 	glBufferData(GL_SHADER_STORAGE_BUFFER, 0, nullptr, GL_DYNAMIC_COPY);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 
-	genBuffer(LevelManager::inst->audioClip);
-
 	ImGuiController::onLayout.push_back(std::bind(&Timeline::onLayout, this));
 }
 
 void Timeline::genBuffer(AudioClip* clip)
 {
-	float length = clip->getLength();
-	int pixCount = length * (float)EDITOR_WAVEFORM_PIX_PER_SEC;
+	int pixCount = clip->getLength() * EDITOR_WAVEFORM_FREQ;
 
 	float* samples = new float[pixCount];
 	for (int i = 0; i < pixCount; i++)
@@ -125,7 +122,10 @@ void Timeline::onLayout()
 			}
 
 			// Draw waveform
-			drawList->AddImage((uint32_t*)waveformTex->getHandle(), ImVec2(timelineMin.x, timelineMax.y), ImVec2(timelineMax.x, timelineMin.y));
+			if (levelManager->audioClip) 
+			{
+				drawList->AddImage((uint32_t*)waveformTex->getHandle(), ImVec2(timelineMin.x, timelineMax.y), ImVec2(timelineMax.x, timelineMin.y));
+			}
 
 			// Draw editor strips
 			bool atLeastOneStripClicked = false;
@@ -229,7 +229,7 @@ void Timeline::onLayout()
 				float zoom = (endTime - startTime) * 0.5f;
 
 				zoom -= io.MouseWheel;
-				zoom = std::clamp(zoom, 10.0f, songLength * 0.5f);
+				zoom = std::clamp(zoom, 2.5f, songLength * 0.5f);
 
 				startTime = (startTime + endTime) * 0.5f - zoom;
 				endTime = (startTime + endTime) * 0.5f + zoom;
@@ -282,23 +282,15 @@ void Timeline::onLayout()
 
 			drawList->PopClipRect();
 
-			// Changing editor bins
-			if (levelManager->selectedObjectIndex != -1)
-			{
-				LevelObject* selectedObject = levelManager->level->levelObjects[levelManager->selectedObjectIndex];
-				if (ImGui::IsWindowHovered())
-				{
-					selectedObject->editorBinIndex -= io.MouseWheel;
-					selectedObject->editorBinIndex = std::clamp(selectedObject->editorBinIndex, 0, EDITOR_TIMELINE_BIN_COUNT - 1);
-				}
-			}
-
 			// Object delete
 			if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 			{
-				levelManager->removeObject(levelManager->level->levelObjects[levelManager->selectedObjectIndex]);
+				if (levelManager->selectedObjectIndex != -1) 
+				{
+					levelManager->removeObject(levelManager->level->levelObjects[levelManager->selectedObjectIndex]);
 
-				levelManager->selectedObjectIndex = -1;
+					levelManager->selectedObjectIndex = -1;
+				}
 			}
 
 			// Object copy
@@ -444,16 +436,20 @@ void Timeline::onLayout()
 			oldWaveformSize = timelineSize;
 		}
 
-		glUseProgram(waveformShader->getHandle());
+		// Compute waveform
+		if (levelManager->audioClip) 
+		{
+			glUseProgram(waveformShader->getHandle());
 
-		glBindImageTexture(0, waveformTex->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_RGBA32F);
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, audioBuffer);
+			glBindImageTexture(0, waveformTex->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_RGBA32F);
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, audioBuffer);
 
-		glUniform1f(0, startTime);
-		glUniform1f(1, endTime);
-		glUniform1i(2, EDITOR_WAVEFORM_PIX_PER_SEC);
+			glUniform1f(0, startTime);
+			glUniform1f(1, endTime);
+			glUniform1f(2, EDITOR_WAVEFORM_FREQ);
 
-		glDispatchCompute(std::ceil(timelineSize.x / 8.0f), std::ceil(timelineSize.y / 8), 1);
+			glDispatchCompute(std::ceil(timelineSize.x / 8.0f), std::ceil(timelineSize.y / 8), 1);
+		}
 	}
 	ImGui::End();
 }

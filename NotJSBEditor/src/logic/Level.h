@@ -9,7 +9,6 @@ class Level
 {
 public:
 	std::string name;
-	std::string song;
 	std::vector<ColorSlot*> colorSlots;
 	std::vector<LevelObject*> levelObjects;
 

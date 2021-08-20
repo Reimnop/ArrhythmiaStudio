@@ -4,6 +4,9 @@
 #include "ShapeManager.h"
 #include "../rendering/MeshRenderer.h"
 
+#include <filesystem>
+#include <fstream>
+
 LevelManager* LevelManager::inst;
 
 LevelManager::LevelManager()
@@ -17,51 +20,14 @@ LevelManager::LevelManager()
 
 	ColorSlot::init();
 
-	// Initialize startup level
-	{
-		level = new Level();
-
-		level->name = "Untitled level";
-		level->song = R"(C:\Users\UserTCQ\Music\Creo-Dimension.mp3)";
-
-		audioClip = new AudioClip(level->song.c_str());
-
-		// Intialize 30 color slots
-		for (int i = 0; i < 30; i++)
-		{
-			ColorKeyframe kf = ColorKeyframe();
-			kf.time = 0.0f;
-			kf.color = Color(1.0f, 1.0f, 1.0f);
-
-			ColorSlot* colorSlot = new ColorSlot(1, &kf);
-
-			level->colorSlots.push_back(colorSlot);
-		}
-
-		// Intialize startup object
-		LevelObject* obj = new LevelObject();
-		obj->name = "Hello world!";
-		obj->startTime = 1.0f;
-		obj->killTime = 5.0f;
-
-		Keyframe keyframes[2]
-		{
-			Keyframe(0.0f, 0.0f),
-			Keyframe(4.0f, 5.0f)
-		};
-
-		AnimationChannel* channel = new AnimationChannel(AnimationChannelType_PositionX, 2, keyframes);
-		obj->insertChannel(channel);
-
-		insertObject(obj);
-	}
-
 	timeline = new Timeline();
 	properties = new Properties();
 	theme = new Theme();
+
+	loadLevel("Assets/StartupLevel");
 }
 
-void LevelManager::loadLevel(nlohmann::json j)
+void LevelManager::loadLevel(std::string levelPath)
 {
 	// Cleanup old level
 	if (level)
@@ -73,9 +39,17 @@ void LevelManager::loadLevel(nlohmann::json j)
 	}
 
 	// Parse new level json
+	std::filesystem::path levelDir = levelPath;
+	std::filesystem::path levelFilePath = levelDir / "level.njelv";
+	std::filesystem::path songFilePath = levelDir / "song.ogg";
+
+	std::ifstream s(levelFilePath);
+	nlohmann::json j;
+	s >> j;
+	s.close();
+
 	Level* newLevel = new Level();
 	newLevel->name = j["name"].get<std::string>();
-	newLevel->song = j["song"].get<std::string>();
 
 	level = newLevel;
 
@@ -95,7 +69,7 @@ void LevelManager::loadLevel(nlohmann::json j)
 	recalculateActionIndex(time);
 	updateLevel(0.0f);
 
-	audioClip = new AudioClip(newLevel->song.c_str());
+	audioClip = new AudioClip(songFilePath.generic_string().c_str());
 
 	Properties::inst->reset();
 	Timeline::inst->genBuffer(audioClip);

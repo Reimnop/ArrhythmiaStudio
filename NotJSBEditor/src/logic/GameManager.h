@@ -7,6 +7,7 @@
 #include "LevelManager.h"
 #include "ShapeManager.h"
 #include "DataManager.h"
+#include "DiscordManager.h"
 
 class MainWindow;
 
@@ -22,9 +23,13 @@ private:
 	LevelManager* levelManager;
 	ShapeManager* shapeManager;
 	DataManager* dataManager;
+	DiscordManager* discordManager;
+
+	float editTimeElapsed = 0.0f;
 
 	LevelCreateInfo currentCreateInfo;
 
 	void onLayout();
 	void calculateViewportRect(ImVec2 size, float* width, float* height);
+	std::string timeToString(float time);
 };

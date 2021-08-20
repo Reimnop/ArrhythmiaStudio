@@ -2,10 +2,12 @@
 #include "Theme.h"
 
 #include "ShapeManager.h"
+#include "DiscordManager.h"
 #include "../rendering/MeshRenderer.h"
 
 #include <filesystem>
 #include <fstream>
+#include <ctime>
 
 LevelManager* LevelManager::inst;
 
@@ -73,6 +75,14 @@ void LevelManager::loadLevel(std::string levelPath)
 
 	Properties::inst->reset();
 	Timeline::inst->genBuffer(audioClip);
+
+	std::string stateStr = "Editing " + newLevel->name;
+
+	discord::Activity activity = discord::Activity();
+	activity.SetState(stateStr.c_str());
+	activity.GetTimestamps().SetStart(std::time(nullptr));
+
+	DiscordManager::inst->updateActivity(activity);
 }
 
 void LevelManager::update()

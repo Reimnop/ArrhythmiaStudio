@@ -7,7 +7,6 @@
 #include <functional>
 #include <imgui/imgui.h>
 #include <imgui/imgui_stdlib.h>
-
 #include <ShlObj.h>
 
 GameManager::GameManager(GLFWwindow* window)
@@ -17,13 +16,15 @@ GameManager::GameManager(GLFWwindow* window)
 	ImGuiController::onLayout.push_back(std::bind(&GameManager::onLayout, this));
 
 	shapeManager = new ShapeManager();
-	levelManager = new LevelManager();
 	dataManager = new DataManager();
+	discordManager = new DiscordManager();
+	levelManager = new LevelManager();
 }
 
 void GameManager::update()
 {
 	levelManager->update();
+	discordManager->update();
 }
 
 void GameManager::onLayout()
@@ -211,4 +212,19 @@ void GameManager::calculateViewportRect(ImVec2 size, float* width, float* height
 		*width = size.x;
 		*height = size.x / aspect;
 	}
+}
+
+std::string GameManager::timeToString(float time)
+{
+	float secs = std::floor(time);
+
+	int seconds = (int)secs % 60;
+	int minutes = (int)secs / 60 % 60;
+	int hours = (int)secs / 3600 % 60;
+
+	std::string secondsStr = seconds < 10 ? "0" + std::to_string(seconds) : std::to_string(seconds);
+	std::string minutesStr = minutes < 10 ? "0" + std::to_string(minutes) : std::to_string(minutes);
+	std::string hoursStr = hours < 10 ? "0" + std::to_string(hours) : std::to_string(hours);
+
+	return hoursStr + ":" + minutesStr + ":" + secondsStr;
 }

@@ -128,7 +128,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib;discord_game_sdk.dll.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -153,10 +153,24 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib;discord_game_sdk.dll.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\discord\achievement_manager.cpp" />
+    <ClCompile Include="include\discord\activity_manager.cpp" />
+    <ClCompile Include="include\discord\application_manager.cpp" />
+    <ClCompile Include="include\discord\core.cpp" />
+    <ClCompile Include="include\discord\image_manager.cpp" />
+    <ClCompile Include="include\discord\lobby_manager.cpp" />
+    <ClCompile Include="include\discord\network_manager.cpp" />
+    <ClCompile Include="include\discord\overlay_manager.cpp" />
+    <ClCompile Include="include\discord\relationship_manager.cpp" />
+    <ClCompile Include="include\discord\storage_manager.cpp" />
+    <ClCompile Include="include\discord\store_manager.cpp" />
+    <ClCompile Include="include\discord\types.cpp" />
+    <ClCompile Include="include\discord\user_manager.cpp" />
+    <ClCompile Include="include\discord\voice_manager.cpp" />
     <ClCompile Include="include\glm\detail\glm.cpp" />
     <ClCompile Include="include\imgui\imgui.cpp" />
     <ClCompile Include="include\imgui\imgui_demo.cpp" />
@@ -172,6 +186,7 @@
     <ClCompile Include="src\logic\AudioClip.cpp" />
     <ClCompile Include="src\logic\ColorSlot.cpp" />
     <ClCompile Include="src\logic\DataManager.cpp" />
+    <ClCompile Include="src\logic\DiscordManager.cpp" />
     <ClCompile Include="src\logic\Level.cpp" />
     <ClCompile Include="src\logic\Properties.cpp" />
     <ClCompile Include="src\logic\LevelObject.cpp" />
@@ -197,6 +212,23 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\bass\bass.h" />
+    <ClInclude Include="include\discord\achievement_manager.h" />
+    <ClInclude Include="include\discord\activity_manager.h" />
+    <ClInclude Include="include\discord\application_manager.h" />
+    <ClInclude Include="include\discord\core.h" />
+    <ClInclude Include="include\discord\discord.h" />
+    <ClInclude Include="include\discord\event.h" />
+    <ClInclude Include="include\discord\ffi.h" />
+    <ClInclude Include="include\discord\image_manager.h" />
+    <ClInclude Include="include\discord\lobby_manager.h" />
+    <ClInclude Include="include\discord\network_manager.h" />
+    <ClInclude Include="include\discord\overlay_manager.h" />
+    <ClInclude Include="include\discord\relationship_manager.h" />
+    <ClInclude Include="include\discord\storage_manager.h" />
+    <ClInclude Include="include\discord\store_manager.h" />
+    <ClInclude Include="include\discord\types.h" />
+    <ClInclude Include="include\discord\user_manager.h" />
+    <ClInclude Include="include\discord\voice_manager.h" />
     <ClInclude Include="include\glad\glad.h" />
     <ClInclude Include="include\GLFW\glfw3.h" />
     <ClInclude Include="include\GLFW\glfw3native.h" />
@@ -542,6 +574,7 @@
     <ClInclude Include="src\logic\AudioClip.h" />
     <ClInclude Include="src\logic\ColorSlot.h" />
     <ClInclude Include="src\logic\DataManager.h" />
+    <ClInclude Include="src\logic\DiscordManager.h" />
     <ClInclude Include="src\logic\GlobalConstants.h" />
     <ClInclude Include="src\logic\Level.h" />
     <ClInclude Include="src\logic\LevelCreateInfo.h" />
@@ -585,6 +618,7 @@
     <None Include="Assets\Shaders\waveform.comp" />
     <None Include="Assets\Shapes\square.shp" />
     <None Include="bass.dll" />
+    <None Include="discord_game_sdk.dll" />
     <None Include="include\glm\detail\func_common.inl" />
     <None Include="include\glm\detail\func_common_simd.inl" />
     <None Include="include\glm\detail\func_exponential.inl" />
@@ -727,6 +761,7 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs\bass.lib" />
+    <Library Include="libs\discord_game_sdk.dll.lib" />
     <Library Include="libs\glfw3.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

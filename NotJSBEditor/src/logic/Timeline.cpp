@@ -24,7 +24,46 @@ Timeline::Timeline()
 	startTime = 0.0f;
 	endTime = 30.0f;
 
+	waveformTex = new Texture2D(512, 512, GL_RGBA32F, GL_RGBA, GL_FLOAT);
+	waveformShader = new ComputeShader("Assets/Shaders/waveform.comp");
+
+	glGenBuffers(1, &audioBuffer);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, audioBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, 0, nullptr, GL_DYNAMIC_COPY);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+	genBuffer(LevelManager::inst->audioClip);
+
 	ImGuiController::onLayout.push_back(std::bind(&Timeline::onLayout, this));
+}
+
+void Timeline::genBuffer(AudioClip* clip)
+{
+	float length = clip->getLength();
+	int pixCount = length * (float)EDITOR_WAVEFORM_PIX_PER_SEC;
+
+	float* samples = new float[pixCount];
+	for (int i = 0; i < pixCount; i++)
+	{
+		float t1 = i / (float)pixCount;
+		float t2 = (i + 1) / (float)pixCount;
+
+		int i1 = (int)lerp(0.0f, clip->samplesCount - 1, t1);
+		int i2 = (int)lerp(0.0f, clip->samplesCount - 1, t2);
+
+		float s = 0.0f;
+		for (int j = i1; j < i2; j++)
+		{
+			s += std::abs(clip->samples[j]);
+		}
+		samples[i] = s / (i2 - i1);
+	}
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, audioBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, pixCount * sizeof(float), samples, GL_DYNAMIC_COPY);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+	delete[] samples;
 }
 
 void Timeline::onLayout()
@@ -52,6 +91,8 @@ void Timeline::onLayout()
 			}
 		}
 
+		glm::ivec2 timelineSize;
+
 		// Draw the timeline (huge code!)
 		{
 			ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -65,9 +106,12 @@ void Timeline::onLayout()
 			float timelineHeight = EDITOR_TIMELINE_BIN_COUNT * EDITOR_BIN_HEIGHT;
 
 			ImVec2 clipSize = ImVec2(availX, timelineHeight);
+			ImVec2 timelineMax = ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y);
+
+			timelineSize = glm::ivec2((int)clipSize.x, (int)clipSize.y);
 
 			// Draw editor bins
-			drawList->PushClipRect(timelineMin, ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y), true);
+			drawList->PushClipRect(timelineMin, timelineMax, true);
 
 			for (int i = 0; i < EDITOR_TIMELINE_BIN_COUNT; i++)
 			{
@@ -79,6 +123,9 @@ void Timeline::onLayout()
 					ImVec2(binMin.x + binSize.x, binMin.y + binSize.y),
 					i % 2 ? EDITOR_BIN_SECONDARY_COL : EDITOR_BIN_PRIMARY_COL);
 			}
+
+			// Draw waveform
+			drawList->AddImage((uint32_t*)waveformTex->getHandle(), ImVec2(timelineMin.x, timelineMax.y), ImVec2(timelineMax.x, timelineMin.y));
 
 			// Draw editor strips
 			bool atLeastOneStripClicked = false;
@@ -169,6 +216,38 @@ void Timeline::onLayout()
 				drawList->AddText(ImVec2(localRectMin.x + EDITOR_STRIP_TEXT_LEFT_MARGIN, localRectMin.y), EDITOR_STRIP_INACTIVE_COL, name, name + levelObject->name.size());
 
 				drawList->PopClipRect();
+			}
+
+			// Timeline move and zoom
+			ImGui::SetCursorScreenPos(timelineMin);
+			ImGui::InvisibleButton("##TimelineFillButton", clipSize);
+
+			if (ImGui::IsWindowFocused() && ImGui::IsItemHovered())
+			{
+				float songLength = levelManager->audioClip->getLength();
+
+				float zoom = (endTime - startTime) * 0.5f;
+
+				zoom -= io.MouseWheel;
+				zoom = std::clamp(zoom, 10.0f, songLength * 0.5f);
+
+				startTime = (startTime + endTime) * 0.5f - zoom;
+				endTime = (startTime + endTime) * 0.5f + zoom;
+
+				if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
+				{
+					float timeDelta = (io.MouseDelta.x / availX) * (endTime - startTime);
+					float newStartTime = startTime - timeDelta;
+					float newEndTime = endTime - timeDelta;
+					if (newStartTime >= 0.0f && newEndTime <= songLength)
+					{
+						startTime = newStartTime;
+						endTime = newEndTime;
+					}
+				}
+
+				startTime = std::clamp(startTime, 0.0f, songLength);
+				endTime = std::clamp(endTime, 0.0f, songLength);
 			}
 
 			// Frames
@@ -358,6 +437,23 @@ void Timeline::onLayout()
 			ImGui::SetCursorScreenPos(cursorPos);
 			ImGui::ItemSize(ImVec2(availX, timelineHeight + EDITOR_TIME_POINTER_HEIGHT));
 		}
+
+		if (timelineSize != oldWaveformSize) 
+		{
+			waveformTex->resize(timelineSize.x, timelineSize.y);
+			oldWaveformSize = timelineSize;
+		}
+
+		glUseProgram(waveformShader->getHandle());
+
+		glBindImageTexture(0, waveformTex->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_RGBA32F);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, audioBuffer);
+
+		glUniform1f(0, startTime);
+		glUniform1f(1, endTime);
+		glUniform1i(2, EDITOR_WAVEFORM_PIX_PER_SEC);
+
+		glDispatchCompute(std::ceil(timelineSize.x / 8.0f), std::ceil(timelineSize.y / 8), 1);
 	}
 	ImGui::End();
 }
@@ -408,4 +504,9 @@ std::string Timeline::timeToString(float time)
 	std::string hoursStr = hours < 10 ? "0" + std::to_string(hours) : std::to_string(hours);
 
 	return hoursStr + ":" + minutesStr + ":" + secondsStr + "." + millisecondsStr;
+}
+
+float Timeline::lerp(float a, float b, float t)
+{
+	return (a * (1.0f - t)) + (b * t);
 }

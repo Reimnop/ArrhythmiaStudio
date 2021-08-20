@@ -1,10 +1,16 @@
 #pragma once
 
+#include <cstdint>
 #include <bass/bass.h>
 
 class AudioClip
 {
 public:
+	float* samples;
+	uint64_t samplesCount;
+	uint32_t channelsCount;
+	uint32_t frequency;
+
 	AudioClip(const char* path);
 	~AudioClip();
 
@@ -19,5 +25,6 @@ public:
 
 	void seek(float time);
 private:
-	HSTREAM handle;
+	HSAMPLE sample;
+	HCHANNEL channel;
 };

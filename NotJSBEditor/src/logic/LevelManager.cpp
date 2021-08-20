@@ -2,7 +2,6 @@
 #include "Theme.h"
 
 #include "ShapeManager.h"
-#include "../rendering/Mesh.h"
 #include "../rendering/MeshRenderer.h"
 
 LevelManager* LevelManager::inst;
@@ -97,6 +96,9 @@ void LevelManager::loadLevel(nlohmann::json j)
 	updateLevel(0.0f);
 
 	audioClip = new AudioClip(newLevel->song.c_str());
+
+	Properties::inst->reset();
+	Timeline::inst->genBuffer(audioClip);
 }
 
 void LevelManager::update()

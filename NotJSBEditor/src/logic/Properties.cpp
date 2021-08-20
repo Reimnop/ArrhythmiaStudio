@@ -306,6 +306,38 @@ void Properties::onLayout()
 					ImGui::PopID();
 				}
 
+				// Timeline move and zoom
+				ImGui::SetCursorScreenPos(timelineMin);
+				ImGui::InvisibleButton("##TimelineFillButton", clipSize);
+
+				if (ImGui::IsWindowFocused() && ImGui::IsItemHovered())
+				{
+					float length = selectedObject->killTime - selectedObject->startTime;
+
+					float zoom = (endTime - startTime) * 0.5f;
+
+					zoom -= io.MouseWheel;
+					zoom = std::clamp(zoom, 0.0f, length * 0.5f);
+
+					startTime = (startTime + endTime) * 0.5f - zoom;
+					endTime = (startTime + endTime) * 0.5f + zoom;
+
+					if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
+					{
+						float timeDelta = (io.MouseDelta.x / availX) * (endTime - startTime);
+						float newStartTime = startTime - timeDelta;
+						float newEndTime = endTime - timeDelta;
+						if (newStartTime >= 0.0f && newEndTime <= length)
+						{
+							startTime = newStartTime;
+							endTime = newEndTime;
+						}
+					}
+
+					startTime = std::clamp(startTime, 0.0f, length);
+					endTime = std::clamp(endTime, 0.0f, length);
+				}
+
 				// Frames
 				drawList->AddRect(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + timelineHeight), borderCol);
 

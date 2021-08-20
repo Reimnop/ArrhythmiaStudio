@@ -1,0 +1,38 @@
+#version 440
+
+layout(local_size_x = 8, local_size_y = 8) in;
+
+layout(rgba32f, binding = 0) uniform image2D img_output;
+layout(std430, binding = 1) buffer audioBuffer {
+	float samples[];
+};
+
+layout(location = 0) uniform float startTime;
+layout(location = 1) uniform float endTime;
+layout(location = 2) uniform int frequency;
+
+float getSampleRange(float t) 
+{
+	int offset = int(startTime * frequency);
+	int sampleIndex = int((endTime - startTime) * t * frequency) + offset;
+	sampleIndex = max(min(sampleIndex, samples.length() - 1), 0);
+	return abs(samples[sampleIndex]);
+}
+
+void main() {
+	ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy);
+	ivec2 size = imageSize(img_output);
+
+	vec2 coord = pixelCoords / vec2(size);
+
+	float s = getSampleRange(coord.x);
+
+	if (coord.y < s) 
+	{
+		imageStore(img_output, pixelCoords, vec4(0.4, 0.4, 0.4, 0.7));
+	}
+	else 
+	{
+		imageStore(img_output, pixelCoords, vec4(0.0));
+	}
+}

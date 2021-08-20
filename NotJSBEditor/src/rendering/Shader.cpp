@@ -6,6 +6,9 @@
 
 Shader::Shader(const char* vertPath, const char* fragPath)
 {
+	char infoLogBuf[2048];
+	char uniformNameBuf[2048];
+
 	// Read vertex shader source
 	std::string vertSource = readAllText(vertPath);
 
@@ -18,8 +21,6 @@ Shader::Shader(const char* vertPath, const char* fragPath)
 	int vertSize = vertSource.size();
 	int fragSize = fragSource.size();
 
-	char infoLogBuf[1024];
-
 	// Create vertex shader
 	int vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertSourcePtr, &vertSize);
@@ -30,7 +31,7 @@ Shader::Shader(const char* vertPath, const char* fragPath)
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vertCode);
 	if (vertCode != GL_TRUE)
 	{
-		glGetShaderInfoLog(vertexShader, 1024, nullptr, infoLogBuf);
+		glGetShaderInfoLog(vertexShader, sizeof(infoLogBuf), nullptr, infoLogBuf);
 		throw std::runtime_error("Error occurred whilst compiling Shader " + std::to_string(vertexShader) + "\n\n" + infoLogBuf);
 	}
 
@@ -44,7 +45,7 @@ Shader::Shader(const char* vertPath, const char* fragPath)
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fragCode);
 	if (fragCode != GL_TRUE)
 	{
-		glGetShaderInfoLog(fragmentShader, 1024, nullptr, infoLogBuf);
+		glGetShaderInfoLog(fragmentShader, sizeof(infoLogBuf), nullptr, infoLogBuf);
 		throw std::runtime_error("Error occurred whilst compiling Shader " + std::to_string(vertexShader) + "\n\n" + infoLogBuf);
 	}
 
@@ -71,8 +72,6 @@ Shader::Shader(const char* vertPath, const char* fragPath)
 	// Get uniform locations
 	int numberOfUniforms;
 	glGetProgramiv(handle, GL_ACTIVE_UNIFORMS, &numberOfUniforms);
-
-	char uniformNameBuf[64];
 
 	for (int i = 0; i < numberOfUniforms; i++)
 	{

@@ -151,6 +151,38 @@ void Theme::onLayout()
 					}
 				}
 
+				// Timeline move and zoom
+				ImGui::SetCursorScreenPos(timelineMin);
+				ImGui::InvisibleButton("##TimelineFillButton", clipSize);
+
+				if (ImGui::IsWindowFocused() && ImGui::IsItemHovered())
+				{
+					float songLength = levelManager->audioClip->getLength();
+
+					float zoom = (endTime - startTime) * 0.5f;
+
+					zoom -= io.MouseWheel;
+					zoom = std::clamp(zoom, 10.0f, songLength * 0.5f);
+
+					startTime = (startTime + endTime) * 0.5f - zoom;
+					endTime = (startTime + endTime) * 0.5f + zoom;
+
+					if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
+					{
+						float timeDelta = (io.MouseDelta.x / availX) * (endTime - startTime);
+						float newStartTime = startTime - timeDelta;
+						float newEndTime = endTime - timeDelta;
+						if (newStartTime >= 0.0f && newEndTime <= songLength)
+						{
+							startTime = newStartTime;
+							endTime = newEndTime;
+						}
+					}
+
+					startTime = std::clamp(startTime, 0.0f, songLength);
+					endTime = std::clamp(endTime, 0.0f, songLength);
+				}
+
 				// Frames
 				ImU32 borderCol = ImGui::GetColorU32(ImGuiCol_Border);
 				drawList->AddRect(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + EDITOR_BIN_HEIGHT), borderCol);

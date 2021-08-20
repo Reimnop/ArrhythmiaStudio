@@ -186,12 +186,14 @@
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\MainWindow.cpp" />
     <ClCompile Include="src\rendering\Camera.cpp" />
+    <ClCompile Include="src\rendering\ComputeShader.cpp" />
     <ClCompile Include="src\rendering\ImGuiController.cpp" />
     <ClCompile Include="src\rendering\Material.cpp" />
     <ClCompile Include="src\rendering\Mesh.cpp" />
     <ClCompile Include="src\rendering\MeshRenderer.cpp" />
     <ClCompile Include="src\rendering\Renderer.cpp" />
     <ClCompile Include="src\rendering\Shader.cpp" />
+    <ClCompile Include="src\rendering\Texture2D.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\bass\bass.h" />
@@ -557,6 +559,7 @@
     <ClInclude Include="src\logic\Transform.h" />
     <ClInclude Include="src\MainWindow.h" />
     <ClInclude Include="src\rendering\Camera.h" />
+    <ClInclude Include="src\rendering\ComputeShader.h" />
     <ClInclude Include="src\rendering\DrawCommand.h" />
     <ClInclude Include="src\rendering\DrawCommandType.h" />
     <ClInclude Include="src\rendering\DrawElementsCommand.h" />
@@ -572,11 +575,13 @@
     <ClInclude Include="src\rendering\Renderer.h" />
     <ClInclude Include="src\rendering\RendererComponent.h" />
     <ClInclude Include="src\rendering\Shader.h" />
+    <ClInclude Include="src\rendering\Texture2D.h" />
     <ClInclude Include="src\rendering\VertexAttrib.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Shaders\unlit.frag" />
     <None Include="Assets\Shaders\unlit.vert" />
+    <None Include="Assets\Shaders\waveform.comp" />
     <None Include="Assets\Shapes\square.shp" />
     <None Include="bass.dll" />
     <None Include="include\glm\detail\func_common.inl" />

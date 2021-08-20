@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <algorithm>
+#include <iostream>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 #include <Windows.h>
@@ -222,7 +223,9 @@ void Timeline::onLayout()
 			ImGui::SetCursorScreenPos(timelineMin);
 			ImGui::InvisibleButton("##TimelineFillButton", clipSize);
 
-			if (ImGui::IsWindowFocused() && ImGui::IsItemHovered())
+			bool isTimelineHovered = ImGui::IsItemHovered();
+
+			if (ImGui::IsWindowFocused() && isTimelineHovered)
 			{
 				float songLength = levelManager->audioClip->getLength();
 
@@ -298,17 +301,16 @@ void Timeline::onLayout()
 			{
 				LevelObject* selectedObject = levelManager->level->levelObjects[levelManager->selectedObjectIndex];
 
-				bool clipOpenStatus = OpenClipboard(NULL);
-				assert(clipOpenStatus);
-
-				bool emptyStatus = EmptyClipboard();
-				assert(emptyStatus);
+				OpenClipboard(NULL);
+				EmptyClipboard();
 
 				std::string jsonStr = selectedObject->toJson(true).dump();
 				const char* jsonPtr = jsonStr.c_str();
 
-				HGLOBAL pGlobal = GlobalAlloc(GMEM_FIXED, jsonStr.size() + 1);
-				memcpy(pGlobal, jsonPtr, jsonStr.size() + 1);
+				HGLOBAL pGlobal = GlobalAlloc(GMEM_MOVEABLE, jsonStr.size() + 1);
+				HGLOBAL lGlobal = GlobalLock(pGlobal);
+				memcpy(lGlobal, jsonPtr, jsonStr.size() + 1);
+				GlobalUnlock(pGlobal);
 
 				SetClipboardData(EDITOR_FORMAT_OBJECT, pGlobal);
 
@@ -322,8 +324,7 @@ void Timeline::onLayout()
 			{
 				if (IsClipboardFormatAvailable(EDITOR_FORMAT_OBJECT))
 				{
-					bool openStatus = OpenClipboard(NULL);
-					assert(openStatus);
+					OpenClipboard(NULL);
 
 					HGLOBAL pGlobal = GetClipboardData(EDITOR_FORMAT_OBJECT);
 
@@ -396,7 +397,7 @@ void Timeline::onLayout()
 			}
 
 			// Deselect
-			if (ImGui::IsWindowFocused() && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !atLeastOneStripClicked && !pointerBeingDragged)
+			if (ImGui::IsWindowFocused() && isTimelineHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !atLeastOneStripClicked && !pointerBeingDragged)
 			{
 				levelManager->selectedObjectIndex = -1;
 				Properties::inst->reset();

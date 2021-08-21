@@ -4,7 +4,7 @@
 #include <sstream>
 #include <glad/glad.h>
 
-ComputeShader::ComputeShader(const char* sourcePath)
+ComputeShader::ComputeShader(std::filesystem::path sourcePath)
 {
 	char infoLogBuf[2048];
 	char uniformNameBuf[2048];
@@ -66,7 +66,7 @@ ComputeShader::~ComputeShader()
 	glDeleteProgram(handle);
 }
 
-int ComputeShader::getAttribLocation(const char* attribName)
+int ComputeShader::getAttribLocation(std::string attribName)
 {
 	return uniformLocations[attribName];
 }
@@ -76,7 +76,7 @@ uint32_t ComputeShader::getHandle() const
 	return handle;
 }
 
-std::string ComputeShader::readAllText(const char* path)
+std::string ComputeShader::readAllText(std::filesystem::path path)
 {
 	std::ifstream file(path);
 	std::stringstream buffer;

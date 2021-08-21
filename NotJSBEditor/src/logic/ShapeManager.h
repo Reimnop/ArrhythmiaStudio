@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <vector>
 
 #include "Shape.h"
@@ -14,5 +15,5 @@ public:
 	ShapeManager();
 	~ShapeManager();
 private:
-	Shape getShapeFromFile(const char* path);
+	Shape getShapeFromFile(std::filesystem::path path);
 };

@@ -1,15 +1,16 @@
 #pragma once
 
+#include <filesystem>
 #include <string>
 #include <unordered_map>
 
 class ComputeShader
 {
 public:
-	ComputeShader(const char* sourcePath);
+	ComputeShader(std::filesystem::path sourcePath);
 	~ComputeShader();
 
-	int getAttribLocation(const char* attribName);
+	int getAttribLocation(std::string attribName);
 
 	uint32_t getHandle() const;
 private:
@@ -17,5 +18,5 @@ private:
 
 	std::unordered_map<std::string, int> uniformLocations;
 
-	std::string readAllText(const char* path);
+	std::string readAllText(std::filesystem::path path);
 };

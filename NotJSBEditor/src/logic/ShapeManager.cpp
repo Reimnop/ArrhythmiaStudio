@@ -1,5 +1,6 @@
 #include "ShapeManager.h"
 
+#include <filesystem>
 #include <fstream>
 
 ShapeManager* ShapeManager::inst;
@@ -27,12 +28,12 @@ ShapeManager::~ShapeManager()
 	shapes.shrink_to_fit();
 }
 
-Shape ShapeManager::getShapeFromFile(const char* path)
+Shape ShapeManager::getShapeFromFile(std::filesystem::path path)
 {
 	std::ifstream stream(path);
 
 	std::string name;
-	stream >> name;
+	std::getline(stream, name);
 
 	int verticesCount;
 	stream >> verticesCount;

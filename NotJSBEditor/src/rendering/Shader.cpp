@@ -4,7 +4,7 @@
 #include <sstream>
 #include <glad/glad.h>
 
-Shader::Shader(const char* vertPath, const char* fragPath)
+Shader::Shader(std::filesystem::path vertPath, std::filesystem::path fragPath)
 {
 	char infoLogBuf[2048];
 	char uniformNameBuf[2048];
@@ -94,12 +94,12 @@ uint32_t Shader::getHandle() const
 	return handle;
 }
 
-int Shader::getAttribLocation(const char* attribName)
+int Shader::getAttribLocation(std::string attribName)
 {
 	return uniformLocations[attribName];
 }
 
-std::string Shader::readAllText(const char* path)
+std::string Shader::readAllText(std::filesystem::path path)
 {
 	std::ifstream file(path);
 	std::stringstream buffer;

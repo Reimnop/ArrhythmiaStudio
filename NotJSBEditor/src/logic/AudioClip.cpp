@@ -1,10 +1,11 @@
 #include "AudioClip.h"
 
+#include <filesystem>
 #include <iostream>
 
-AudioClip::AudioClip(const char* path)
+AudioClip::AudioClip(std::filesystem::path path)
 {
-	sample = BASS_SampleLoad(false, path, 0, 0, 1, BASS_SAMPLE_FLOAT);
+	sample = BASS_SampleLoad(false, path.c_str(), 0, 0, 1, BASS_SAMPLE_FLOAT);
 	channel = BASS_SampleGetChannel(sample, 0);
 
 	BASS_SAMPLE info;

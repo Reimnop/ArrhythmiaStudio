@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <filesystem>
 #include <bass/bass.h>
 
 class AudioClip
@@ -11,7 +12,7 @@ public:
 	uint32_t channelsCount;
 	uint32_t frequency;
 
-	AudioClip(const char* path);
+	AudioClip(std::filesystem::path path);
 	~AudioClip();
 
 	void play();

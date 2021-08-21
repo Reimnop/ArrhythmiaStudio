@@ -198,8 +198,10 @@ void Properties::onLayout()
 				{
 					ImU32 textCol = ImGui::GetColorU32(ImGuiCol_Text);
 
+					std::string channelName = getChannelName(selectedObject->animationChannels[i]->type);
+
 					ImVec2 labelMin = ImVec2(timelineMin.x + EDITOR_PROP_LABEL_TEXT_LEFT_MARGIN, timelineMin.y + EDITOR_BIN_HEIGHT * i);
-					drawList->AddText(labelMin, textCol, getChannelName(selectedObject->animationChannels[i]->type));
+					drawList->AddText(labelMin, textCol, channelName.c_str());
 				}
 
 				// Draw the keyframes
@@ -455,7 +457,7 @@ void Properties::onLayout()
 	ImGui::End();
 }
 
-const char* Properties::getChannelName(AnimationChannelType channelType)
+std::string Properties::getChannelName(AnimationChannelType channelType)
 {
 	switch (channelType)
 	{

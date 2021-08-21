@@ -71,7 +71,7 @@ void LevelManager::loadLevel(std::string levelPath)
 	recalculateActionIndex(time);
 	updateLevel(0.0f);
 
-	audioClip = new AudioClip(songFilePath.generic_string().c_str());
+	audioClip = new AudioClip(songFilePath.generic_string());
 
 	Properties::inst->reset();
 	Timeline::inst->genBuffer(audioClip);

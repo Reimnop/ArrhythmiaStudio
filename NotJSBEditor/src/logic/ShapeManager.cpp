@@ -41,7 +41,7 @@ Shape ShapeManager::getShapeFromFile(std::filesystem::path path)
 	std::ifstream s(path);
 
 	std::string name;
-	std::getline(stream, name);
+	std::getline(s, name);
 
 	int verticesCount;
 	s >> verticesCount;

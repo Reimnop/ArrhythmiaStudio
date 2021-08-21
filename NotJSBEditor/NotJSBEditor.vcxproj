@@ -616,6 +616,7 @@
     <None Include="Assets\Shaders\unlit.frag" />
     <None Include="Assets\Shaders\unlit.vert" />
     <None Include="Assets\Shaders\waveform.comp" />
+    <None Include="Assets\Shapes\circle.shp" />
     <None Include="Assets\Shapes\square.shp" />
     <None Include="bass.dll" />
     <None Include="discord_game_sdk.dll" />
@@ -763,6 +764,9 @@
     <Library Include="libs\bass.lib" />
     <Library Include="libs\discord_game_sdk.dll.lib" />
     <Library Include="libs\glfw3.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\Shapes\shapes_list.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

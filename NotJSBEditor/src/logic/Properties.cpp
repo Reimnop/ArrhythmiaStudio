@@ -10,6 +10,7 @@
 #include "../rendering/ImGuiController.h"
 #include "../rendering/MeshRenderer.h"
 #include "GlobalConstants.h"
+#include "ShapeManager.h"
 
 Properties* Properties::inst;
 
@@ -59,6 +60,22 @@ void Properties::onLayout()
 			{
 				levelManager->recalculateObjectAction(selectedObject);
 				levelManager->recalculateActionIndex(levelManager->time);
+			}
+
+			std::vector<Shape> shapes = ShapeManager::inst->shapes;
+			if (ImGui::BeginCombo("Shape", shapes[selectedObject->shapeIndex].name.c_str()))
+			{
+				for (int i = 0; i < shapes.size(); i++)
+				{
+					if (ImGui::Selectable(shapes[i].name.c_str(), i == selectedObject->shapeIndex))
+					{
+						selectedObject->shapeIndex = i;
+						MeshRenderer* mr = (MeshRenderer*)selectedObject->node->renderer;
+						mr->mesh = shapes[i].mesh;
+					}
+				}
+
+				ImGui::EndCombo();
 			}
 
 			ImGui::SliderFloat("Depth", &selectedObject->depth, -32.0f, 32.0f);

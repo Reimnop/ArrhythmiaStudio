@@ -38,30 +38,30 @@ ShapeManager::~ShapeManager()
 
 Shape ShapeManager::getShapeFromFile(std::filesystem::path path)
 {
-	std::ifstream stream(path);
+	std::ifstream s(path);
 
 	std::string name;
 	std::getline(stream, name);
 
 	int verticesCount;
-	stream >> verticesCount;
+	s >> verticesCount;
 	glm::vec3* vertices = new glm::vec3[verticesCount];
 	for (int i = 0; i < verticesCount; i++)
 	{
 		float x, y;
-		stream >> x >> y;
+		s >> x >> y;
 		vertices[i] = glm::vec3(x, y, 0.0f);
 	}
 
 	int indicesCount;
-	stream >> indicesCount;
+	s >> indicesCount;
 	uint32_t* indices = new uint32_t[indicesCount];
 	for (int i = 0; i < indicesCount; i++)
 	{
-		stream >> indices[i];
+		s >> indices[i];
 	}
 
-	stream.close();
+	s.close();
 
 	return Shape(name, new Mesh(verticesCount, indicesCount, vertices, indices));
 }

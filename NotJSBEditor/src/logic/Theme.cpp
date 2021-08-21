@@ -166,16 +166,17 @@ void Theme::onLayout()
 					float currentPos = (startTime + endTime) * 0.5f;
 
 					float zoom = visibleLength / songLength;
+					bool fullZoom = (zoom == 1.0f);
 
 					float pos = 0.5f;
-					if (endPos - startPos != 0.0f)
+					if (!fullZoom)
 					{
 						pos = (currentPos - startPos) / (endPos - startPos);
 					}
 
 					zoom -= io.MouseWheel * 0.05f;
 
-					if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
+					if (!fullZoom && ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
 					{
 						float timeDelta = (io.MouseDelta.x / availX) * (endTime - startTime);
 						pos -= timeDelta / (endPos - startPos);

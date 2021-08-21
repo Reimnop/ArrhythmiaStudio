@@ -315,39 +315,29 @@ void Properties::onLayout()
 					float length = selectedObject->killTime - selectedObject->startTime;
 
 					float visibleLength = endTime - startTime;
-
-					float startPos = visibleLength * 0.5f;
-					float endPos = length - visibleLength * 0.5f;
 					float currentPos = (startTime + endTime) * 0.5f;
 
 					float zoom = visibleLength / length;
-					bool fullZoom = (zoom == 1.0f);
-
-					float pos = 0.5f;
-					if (!fullZoom)
-					{
-						pos = (currentPos - startPos) / (endPos - startPos);
-					}
 
 					zoom -= io.MouseWheel * 0.05f;
 
-					if (!fullZoom && ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
+					if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
 					{
-						float timeDelta = (io.MouseDelta.x / availX) * (endTime - startTime);
-						pos -= timeDelta / (endPos - startPos);
+						currentPos -= io.MouseDelta.x / availX * visibleLength;
 					}
 
 					float minZoom = 2.0f / length;
 					zoom = std::clamp(zoom, minZoom, 1.0f);
-					pos = std::clamp(pos, 0.0f, 1.0f);
 
 					float newVisibleLength = zoom * length;
-					float newStartPos = newVisibleLength * 0.5f;
-					float newEndPos = length - newVisibleLength * 0.5f;
-					float newPos = lerp(newStartPos, newEndPos, pos);
 
-					startTime = newPos - newVisibleLength * 0.5f;
-					endTime = newPos + newVisibleLength * 0.5f;
+					float minPos = newVisibleLength * 0.5f;
+					float maxPos = length - minPos;
+
+					currentPos = std::clamp(currentPos, minPos, maxPos);
+
+					startTime = currentPos - newVisibleLength * 0.5f;
+					endTime = currentPos + newVisibleLength * 0.5f;
 				}
 
 				// Frames

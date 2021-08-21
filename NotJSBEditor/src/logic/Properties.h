@@ -23,4 +23,5 @@ private:
 
 	void onLayout();
 	const char* getChannelName(AnimationChannelType channelType);
+	float lerp(float a, float b, float t);
 };

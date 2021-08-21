@@ -229,28 +229,39 @@ void Timeline::onLayout()
 			{
 				float songLength = levelManager->audioClip->getLength();
 
-				float zoom = (endTime - startTime) * 0.5f;
+				float visibleLength = endTime - startTime;
+				
+				float startPos = visibleLength * 0.5f;
+				float endPos = songLength - visibleLength * 0.5f;
+				float currentPos = (startTime + endTime) * 0.5f;
 
-				zoom -= io.MouseWheel;
-				zoom = std::clamp(zoom, 2.5f, songLength * 0.5f);
+				float zoom = visibleLength / songLength;
 
-				startTime = (startTime + endTime) * 0.5f - zoom;
-				endTime = (startTime + endTime) * 0.5f + zoom;
+				float pos = 0.5f;
+				if (endPos - startPos != 0.0f)
+				{
+					pos = (currentPos - startPos) / (endPos - startPos);
+				}
+
+				zoom -= io.MouseWheel * 0.05f;
 
 				if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
 				{
 					float timeDelta = (io.MouseDelta.x / availX) * (endTime - startTime);
-					float newStartTime = startTime - timeDelta;
-					float newEndTime = endTime - timeDelta;
-					if (newStartTime >= 0.0f && newEndTime <= songLength)
-					{
-						startTime = newStartTime;
-						endTime = newEndTime;
-					}
+					pos -= timeDelta / (endPos - startPos);
 				}
 
-				startTime = std::clamp(startTime, 0.0f, songLength);
-				endTime = std::clamp(endTime, 0.0f, songLength);
+				float minZoom = 2.0f / songLength;
+				zoom = std::clamp(zoom, minZoom, 1.0f);
+				pos = std::clamp(pos, 0.0f, 1.0f);
+
+				float newVisibleLength = zoom * songLength;
+				float newStartPos = newVisibleLength * 0.5f;
+				float newEndPos = songLength - newVisibleLength * 0.5f;
+				float newPos = lerp(newStartPos, newEndPos, pos);
+
+				startTime = newPos - newVisibleLength * 0.5f;
+				endTime = newPos + newVisibleLength * 0.5f;
 			}
 
 			// Frames

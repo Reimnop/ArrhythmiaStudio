@@ -314,28 +314,39 @@ void Properties::onLayout()
 				{
 					float length = selectedObject->killTime - selectedObject->startTime;
 
-					float zoom = (endTime - startTime) * 0.5f;
+					float visibleLength = endTime - startTime;
 
-					zoom -= io.MouseWheel;
-					zoom = std::clamp(zoom, 0.0f, length * 0.5f);
+					float startPos = visibleLength * 0.5f;
+					float endPos = length - visibleLength * 0.5f;
+					float currentPos = (startTime + endTime) * 0.5f;
 
-					startTime = (startTime + endTime) * 0.5f - zoom;
-					endTime = (startTime + endTime) * 0.5f + zoom;
+					float zoom = visibleLength / length;
+
+					float pos = 0.5f;
+					if (endPos - startPos != 0.0f)
+					{
+						pos = (currentPos - startPos) / (endPos - startPos);
+					}
+
+					zoom -= io.MouseWheel * 0.05f;
 
 					if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
 					{
 						float timeDelta = (io.MouseDelta.x / availX) * (endTime - startTime);
-						float newStartTime = startTime - timeDelta;
-						float newEndTime = endTime - timeDelta;
-						if (newStartTime >= 0.0f && newEndTime <= length)
-						{
-							startTime = newStartTime;
-							endTime = newEndTime;
-						}
+						pos -= timeDelta / (endPos - startPos);
 					}
 
-					startTime = std::clamp(startTime, 0.0f, length);
-					endTime = std::clamp(endTime, 0.0f, length);
+					float minZoom = 2.0f / length;
+					zoom = std::clamp(zoom, minZoom, 1.0f);
+					pos = std::clamp(pos, 0.0f, 1.0f);
+
+					float newVisibleLength = zoom * length;
+					float newStartPos = newVisibleLength * 0.5f;
+					float newEndPos = length - newVisibleLength * 0.5f;
+					float newPos = lerp(newStartPos, newEndPos, pos);
+
+					startTime = newPos - newVisibleLength * 0.5f;
+					endTime = newPos + newVisibleLength * 0.5f;
 				}
 
 				// Frames
@@ -470,4 +481,9 @@ const char* Properties::getChannelName(AnimationChannelType channelType)
 	}
 
 	return "Unknown type";
+}
+
+float Properties::lerp(float a, float b, float t)
+{
+	return (a * (1.0f - t)) + (b * t);
 }

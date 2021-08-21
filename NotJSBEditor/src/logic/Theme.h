@@ -18,4 +18,5 @@ private:
 
 	void onLayout();
 	bool colorSlotButton(std::string label, Color color, bool selected);
+	float lerp(float a, float b, float t);
 };

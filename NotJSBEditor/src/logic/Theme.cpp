@@ -159,28 +159,39 @@ void Theme::onLayout()
 				{
 					float songLength = levelManager->audioClip->getLength();
 
-					float zoom = (endTime - startTime) * 0.5f;
+					float visibleLength = endTime - startTime;
 
-					zoom -= io.MouseWheel;
-					zoom = std::clamp(zoom, 10.0f, songLength * 0.5f);
+					float startPos = visibleLength * 0.5f;
+					float endPos = songLength - visibleLength * 0.5f;
+					float currentPos = (startTime + endTime) * 0.5f;
 
-					startTime = (startTime + endTime) * 0.5f - zoom;
-					endTime = (startTime + endTime) * 0.5f + zoom;
+					float zoom = visibleLength / songLength;
+
+					float pos = 0.5f;
+					if (endPos - startPos != 0.0f)
+					{
+						pos = (currentPos - startPos) / (endPos - startPos);
+					}
+
+					zoom -= io.MouseWheel * 0.05f;
 
 					if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
 					{
 						float timeDelta = (io.MouseDelta.x / availX) * (endTime - startTime);
-						float newStartTime = startTime - timeDelta;
-						float newEndTime = endTime - timeDelta;
-						if (newStartTime >= 0.0f && newEndTime <= songLength)
-						{
-							startTime = newStartTime;
-							endTime = newEndTime;
-						}
+						pos -= timeDelta / (endPos - startPos);
 					}
 
-					startTime = std::clamp(startTime, 0.0f, songLength);
-					endTime = std::clamp(endTime, 0.0f, songLength);
+					float minZoom = 2.0f / songLength;
+					zoom = std::clamp(zoom, minZoom, 1.0f);
+					pos = std::clamp(pos, 0.0f, 1.0f);
+
+					float newVisibleLength = zoom * songLength;
+					float newStartPos = newVisibleLength * 0.5f;
+					float newEndPos = songLength - newVisibleLength * 0.5f;
+					float newPos = lerp(newStartPos, newEndPos, pos);
+
+					startTime = newPos - newVisibleLength * 0.5f;
+					endTime = newPos + newVisibleLength * 0.5f;
 				}
 
 				// Frames
@@ -318,4 +329,9 @@ bool Theme::colorSlotButton(std::string label, Color color, bool selected)
 	                        ImGui::GetColorU32(ImVec4(color.r, color.g, color.b, 1.0f)));
 
 	return clicked;
+}
+
+float Theme::lerp(float a, float b, float t)
+{
+	return (a * (1.0f - t)) + (b * t);
 }

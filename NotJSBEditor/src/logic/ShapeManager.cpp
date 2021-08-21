@@ -14,7 +14,15 @@ ShapeManager::ShapeManager()
 
 	inst = this;
 
-	shapes.push_back(getShapeFromFile("Assets/Shapes/square.shp"));
+	std::ifstream s("Assets/Shapes/shapes_list.txt");
+
+	std::string line;
+	while (std::getline(s, line))
+	{
+		shapes.push_back(getShapeFromFile("Assets/Shapes" / std::filesystem::path(line)));
+	}
+
+	s.close();
 }
 
 ShapeManager::~ShapeManager()

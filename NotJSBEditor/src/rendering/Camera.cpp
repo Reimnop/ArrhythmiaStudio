@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-void Camera::calculateViewProjection(float aspect, glm::mat4* view, glm::mat4* projection)
+void Camera::calculateViewProjection(float aspect, glm::mat4* view, glm::mat4* projection) const
 {
 	float leftRight = orthographicScale * aspect * 0.5f;
 	float bottomTop = orthographicScale * 0.5f;

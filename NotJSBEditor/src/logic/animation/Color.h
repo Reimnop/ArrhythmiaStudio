@@ -18,7 +18,7 @@ struct Color
 		this->b = b;
 	}
 
-	bool operator==(Color b)
+	bool operator==(Color b) const
 	{
 		return this->r == b.r && this->g == b.g && this->b == b.b;
 	}

@@ -209,7 +209,8 @@ void Properties::onLayout()
 				const ImVec2 clipSize = ImVec2(availX, timelineHeight);
 
 				// Draw editor bins
-				drawList->PushClipRect(timelineMin, ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y), true);
+				drawList->PushClipRect(timelineMin, ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y),
+				                       true);
 
 				for (int i = 0; i < EDITOR_PROP_BIN_COUNT; i++)
 				{
@@ -228,7 +229,8 @@ void Properties::onLayout()
 
 					std::string channelName = getChannelName(selectedObject->animationChannels[i]->type);
 
-					ImVec2 labelMin = ImVec2(timelineMin.x + EDITOR_PROP_LABEL_TEXT_LEFT_MARGIN, timelineMin.y + EDITOR_BIN_HEIGHT * i);
+					ImVec2 labelMin = ImVec2(timelineMin.x + EDITOR_PROP_LABEL_TEXT_LEFT_MARGIN,
+					                         timelineMin.y + EDITOR_BIN_HEIGHT * i);
 					drawList->AddText(labelMin, textCol, channelName.c_str());
 				}
 
@@ -295,7 +297,8 @@ void Properties::onLayout()
 							levelManager->updateObject(selectedObject);
 						}
 
-						if (selectedKeyframe.has_value() && selectedKeyframe.value() == kf && selectedChannel == channel)
+						if (selectedKeyframe.has_value() && selectedKeyframe.value() == kf && selectedChannel ==
+							channel)
 						{
 							kfActive = true;
 						}
@@ -371,15 +374,19 @@ void Properties::onLayout()
 				}
 
 				// Frames
-				drawList->AddRect(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + timelineHeight), borderCol);
+				drawList->AddRect(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + timelineHeight),
+				                  borderCol);
 
 				drawList->PopClipRect();
 
 				// Time pointer
-				drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT), true);
+				drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX,
+				                                         cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT),
+				                       true);
 
 				// Draw frame
-				drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT), borderCol);
+				drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT),
+				                  borderCol);
 
 				// Draw time pointer
 				constexpr float pointerRectHeight = EDITOR_TIME_POINTER_HEIGHT - EDITOR_TIME_POINTER_TRI_HEIGHT;
@@ -388,7 +395,8 @@ void Properties::onLayout()
 				float pointerPos = cursorPos.x + (relativeTime - startTime) / (endTime - startTime) * availX;
 
 				drawList->AddLine(ImVec2(pointerPos, cursorPos.y),
-					ImVec2(pointerPos, cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT), borderCol);
+				                  ImVec2(pointerPos, cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT),
+				                  borderCol);
 
 				drawList->AddRectFilled(
 					ImVec2(pointerPos - EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y),
@@ -442,8 +450,8 @@ void Properties::onLayout()
 				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 				{
 					std::vector<Keyframe>::iterator it = std::find(selectedChannel->keyframes.begin(),
-						selectedChannel->keyframes.end(),
-						selectedKeyframe.value());
+					                                               selectedChannel->keyframes.end(),
+					                                               selectedKeyframe.value());
 					selectedChannel->keyframes.erase(it);
 					selectedChannel->update(levelManager->time);
 
@@ -453,7 +461,8 @@ void Properties::onLayout()
 				else
 				{
 					bool kfChanged = false;
-					ImGui::DragFloat("Keyframe Time", &kf.time, 0.1f, 0.0f, currentObject->killTime - currentObject->startTime);
+					ImGui::DragFloat("Keyframe Time", &kf.time, 0.1f, 0.0f,
+					                 currentObject->killTime - currentObject->startTime);
 					kfChanged = kfChanged || ImGui::IsItemEdited();
 					ImGui::DragFloat("Keyframe Value", &kf.value, 0.1f);
 					kfChanged = kfChanged || ImGui::IsItemEdited();
@@ -461,8 +470,8 @@ void Properties::onLayout()
 					if (kfChanged)
 					{
 						std::vector<Keyframe>::iterator it = std::find(selectedChannel->keyframes.begin(),
-							selectedChannel->keyframes.end(),
-							selectedKeyframe.value());
+						                                               selectedChannel->keyframes.end(),
+						                                               selectedKeyframe.value());
 
 						selectedChannel->keyframes.erase(it);
 						selectedChannel->insertKeyframe(kf);

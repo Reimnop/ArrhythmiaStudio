@@ -32,7 +32,8 @@ Shader::Shader(std::filesystem::path vertPath, std::filesystem::path fragPath)
 	if (vertCode != GL_TRUE)
 	{
 		glGetShaderInfoLog(vertexShader, sizeof(infoLogBuf), nullptr, infoLogBuf);
-		throw std::runtime_error("Error occurred whilst compiling Shader " + std::to_string(vertexShader) + "\n\n" + infoLogBuf);
+		throw std::runtime_error(
+			"Error occurred whilst compiling Shader " + std::to_string(vertexShader) + "\n\n" + infoLogBuf);
 	}
 
 	// Create fragment shader
@@ -46,7 +47,8 @@ Shader::Shader(std::filesystem::path vertPath, std::filesystem::path fragPath)
 	if (fragCode != GL_TRUE)
 	{
 		glGetShaderInfoLog(fragmentShader, sizeof(infoLogBuf), nullptr, infoLogBuf);
-		throw std::runtime_error("Error occurred whilst compiling Shader " + std::to_string(vertexShader) + "\n\n" + infoLogBuf);
+		throw std::runtime_error(
+			"Error occurred whilst compiling Shader " + std::to_string(vertexShader) + "\n\n" + infoLogBuf);
 	}
 
 	// Create program and link

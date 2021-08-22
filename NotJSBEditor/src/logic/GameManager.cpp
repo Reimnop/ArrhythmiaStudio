@@ -21,7 +21,7 @@ GameManager::GameManager(GLFWwindow* window)
 	levelManager = new LevelManager();
 }
 
-void GameManager::update()
+void GameManager::update() const
 {
 	levelManager->update();
 	discordManager->update();
@@ -34,7 +34,8 @@ void GameManager::onLayout()
 	if (ImGui::BeginPopupModal("Welcome", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings))
 	{
 		ImGui::Text("Welcome to Not JSB Editor!");
-		ImGui::TextWrapped("Before continuing, please create a new level with File->New (Ctrl+N) or open a new level with File->Open (Ctrl+O).");
+		ImGui::TextWrapped(
+			"Before continuing, please create a new level with File->New (Ctrl+N) or open a new level with File->Open (Ctrl+O).");
 
 		if (ImGui::Button("OK"))
 		{
@@ -45,7 +46,9 @@ void GameManager::onLayout()
 	}
 
 	// Level creation popup
-	if (ImGui::BeginPopupModal("New Level", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings))
+	if (ImGui::BeginPopupModal("New Level", nullptr,
+	                           ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize |
+	                           ImGuiWindowFlags_NoSavedSettings))
 	{
 		ImGui::SetNextItemWidth(318.0f);
 		ImGui::InputText("Level name", &currentCreateInfo.levelName);
@@ -139,7 +142,7 @@ void GameManager::onLayout()
 				doOpenLevelPopup = true;
 			}
 
-			if (!dataManager->isStartupLevel) 
+			if (!dataManager->isStartupLevel)
 			{
 				if (ImGui::MenuItem("Save", "Ctrl+S"))
 				{
@@ -170,7 +173,8 @@ void GameManager::onLayout()
 
 	if (!dataManager->isStartupLevel)
 	{
-		if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT) && ImGui::IsKeyPressed(GLFW_KEY_S))
+		if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT) &&
+			ImGui::IsKeyPressed(GLFW_KEY_S))
 		{
 			dataManager->saveLevel(true);
 		}
@@ -180,7 +184,7 @@ void GameManager::onLayout()
 			dataManager->saveLevel();
 		}
 	}
-	
+
 	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_O))
 	{
 		dataManager->openLevel();
@@ -224,12 +228,13 @@ void GameManager::onLayout()
 		                   ImVec2(frameMax.x, frameMin.y));
 		drawList->AddRect(frameMin, frameMax, ImGui::GetColorU32(ImGuiCol_Border), 0.0f, ImDrawFlags_None, 2.0f);
 
-		if (dataManager->isStartupLevel) 
+		if (dataManager->isStartupLevel)
 		{
 			ImGui::SetCursorScreenPos(ImVec2(frameMin.x + 4.0f, frameMin.y + 4.0f));
-			if (ImGui::BeginChild("warn-startup", ImVec2(320.0f, 120.0f))) 
+			if (ImGui::BeginChild("warn-startup", ImVec2(320.0f, 120.0f)))
 			{
-				ImGui::TextWrapped("Warning: All changes made in the startup level will not be saved. Please create a new level or open an existing level.");
+				ImGui::TextWrapped(
+					"Warning: All changes made in the startup level will not be saved. Please create a new level or open an existing level.");
 
 				ImGui::EndChild();
 			}
@@ -254,7 +259,7 @@ void GameManager::calculateViewportRect(ImVec2 size, float* width, float* height
 	}
 }
 
-std::string GameManager::timeToString(float time)
+std::string GameManager::timeToString(float time) const
 {
 	float secs = std::floor(time);
 

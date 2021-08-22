@@ -17,6 +17,6 @@ private:
 	std::optional<ColorKeyframe> selectedKeyframe;
 
 	void onLayout();
-	bool colorSlotButton(std::string label, Color color, bool selected);
+	bool colorSlotButton(std::string label, Color color, bool selected) const;
 	float lerp(float a, float b, float t);
 };

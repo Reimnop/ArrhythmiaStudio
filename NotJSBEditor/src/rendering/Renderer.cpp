@@ -83,7 +83,7 @@ void Renderer::render()
 
 	glViewport(0, 0, viewportWidth, viewportHeight);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 
@@ -149,15 +149,16 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 		OutputDrawData* output;
 		if (node->renderer->render(drawData, &output))
 		{
-			if (output->drawTransparent) 
+			if (output->drawTransparent)
 			{
 				if (queuedDrawDataTransparent.empty())
 				{
 					queuedDrawDataTransparent.push_back(output);
 				}
-				else 
+				else
 				{
-					std::vector<OutputDrawData*>::iterator it = std::lower_bound(queuedDrawDataTransparent.begin(), queuedDrawDataTransparent.end(), output,
+					std::vector<OutputDrawData*>::iterator it = std::lower_bound(
+						queuedDrawDataTransparent.begin(), queuedDrawDataTransparent.end(), output,
 						[](const OutputDrawData* a, const OutputDrawData* b)
 						{
 							return a->drawDepth < b->drawDepth;

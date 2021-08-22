@@ -14,7 +14,7 @@ public:
 	float depthNear = -64.0f;
 	float depthFar = 64.0f;
 
-	void calculateViewProjection(float aspect, glm::mat4* view, glm::mat4* projection);
+	void calculateViewProjection(float aspect, glm::mat4* view, glm::mat4* projection) const;
 private:
 	glm::mat4 calculateModelMatrix() const;
 };

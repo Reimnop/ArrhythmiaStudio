@@ -15,16 +15,16 @@ public:
 	AudioClip(std::filesystem::path path);
 	~AudioClip();
 
-	void play();
-	void pause();
-	void stop();
+	void play() const;
+	void pause() const;
+	void stop() const;
 
-	bool isPlaying();
+	bool isPlaying() const;
 
-	float getLength();
-	float getPosition();
+	float getLength() const;
+	float getPosition() const;
 
-	void seek(float time);
+	void seek(float time) const;
 private:
 	HSAMPLE sample;
 	HCHANNEL channel;

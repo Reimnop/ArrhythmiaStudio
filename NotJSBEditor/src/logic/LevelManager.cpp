@@ -149,7 +149,7 @@ void LevelManager::updateLevel(float time)
 	}
 }
 
-void LevelManager::updateObject(LevelObject* levelObject)
+void LevelManager::updateObject(LevelObject* levelObject) const
 {
 	for (AnimationChannel* channel : levelObject->animationChannels)
 	{
@@ -182,7 +182,7 @@ void LevelManager::updateObject(LevelObject* levelObject)
 	levelObject->node->transform->position.z = levelObject->depth;
 }
 
-void LevelManager::updateColorSlot(ColorSlot* colorSlot)
+void LevelManager::updateColorSlot(ColorSlot* colorSlot) const
 {
 	colorSlot->update(time);
 }
@@ -264,15 +264,16 @@ void LevelManager::insertObject(LevelObject* levelObject)
 void LevelManager::removeObject(LevelObject* levelObject)
 {
 	// Remove object
-	std::vector<LevelObject*>::iterator objIt = std::remove(level->levelObjects.begin(), level->levelObjects.end(), levelObject);
+	std::vector<LevelObject*>::iterator objIt = std::remove(level->levelObjects.begin(), level->levelObjects.end(),
+	                                                        levelObject);
 	level->levelObjects.erase(objIt);
 
 	// Remove actions
 	std::vector<ObjectAction>::iterator it = std::remove_if(objectActions.begin(), objectActions.end(),
-		[levelObject](ObjectAction match)
-		{
-			return match.levelObject == levelObject;
-		});
+	                                                        [levelObject](ObjectAction match)
+	                                                        {
+		                                                        return match.levelObject == levelObject;
+	                                                        });
 	objectActions.erase(it, objectActions.end());
 
 	// Remove from alive objects
@@ -300,7 +301,7 @@ void LevelManager::insertAction(ObjectAction value)
 	objectActions.insert(it, value);
 }
 
-void LevelManager::spawnObject(LevelObject* levelObject)
+void LevelManager::spawnObject(LevelObject* levelObject) const
 {
 	SceneNode* node = new SceneNode(levelObject->name);
 	node->setActive(false);
@@ -323,7 +324,7 @@ void LevelManager::recursivelyInitializeObjectTree(nlohmann::json j, LevelObject
 
 	obj->setParent(parent);
 
-	if (j.contains("children")) 
+	if (j.contains("children"))
 	{
 		nlohmann::json::array_t children = j["children"].get<nlohmann::json::array_t>();
 		for (nlohmann::json child : children)

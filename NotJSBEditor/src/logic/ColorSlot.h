@@ -22,7 +22,7 @@ public:
 	~ColorSlot();
 
 	void update(float time);
-	nlohmann::ordered_json toJson();
+	nlohmann::ordered_json toJson() const;
 private:
 	static Shader* shader;
 };

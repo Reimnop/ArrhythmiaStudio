@@ -26,7 +26,7 @@ nlohmann::ordered_json Level::toJson()
 	j["objects"] = nlohmann::ordered_json::array();
 	for (int i = 0; i < levelObjects.size(); i++)
 	{
-		if (levelObjects[i]->parent == nullptr) 
+		if (levelObjects[i]->parent == nullptr)
 		{
 			j["objects"].push_back(levelObjects[i]->toJson());
 		}

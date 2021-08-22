@@ -19,21 +19,24 @@ DiscordManager::DiscordManager()
 	{
 		Logger::error("Error while initializing Discord!");
 	}
-	else 
+	else
 	{
-		core->SetLogHook(discord::LogLevel::Debug, [this](discord::LogLevel logLevel, const char* msg) { this->debugCallback(logLevel, msg); });
+		core->SetLogHook(discord::LogLevel::Debug, [this](discord::LogLevel logLevel, const char* msg)
+		{
+			this->debugCallback(logLevel, msg);
+		});
 	}
 }
 
-void DiscordManager::updateActivity(discord::Activity activity)
+void DiscordManager::updateActivity(discord::Activity activity) const
 {
-	if (core) 
+	if (core)
 	{
 		core->ActivityManager().UpdateActivity(activity, nullptr);
 	}
 }
 
-void DiscordManager::update()
+void DiscordManager::update() const
 {
 	if (core)
 	{

@@ -18,5 +18,5 @@ public:
 	void saveLevel(bool saveAs = false);
 	void openLevel();
 private:
-	void genLevelFiles(LevelCreateInfo createInfo);
+	void genLevelFiles(LevelCreateInfo createInfo) const;
 };

@@ -122,9 +122,10 @@ void Timeline::onLayout()
 			}
 
 			// Draw waveform
-			if (levelManager->audioClip) 
+			if (levelManager->audioClip)
 			{
-				drawList->AddImage((uint32_t*)waveformTex->getHandle(), ImVec2(timelineMin.x, timelineMax.y), ImVec2(timelineMax.x, timelineMin.y));
+				drawList->AddImage((uint32_t*)waveformTex->getHandle(), ImVec2(timelineMin.x, timelineMax.y),
+				                   ImVec2(timelineMax.x, timelineMin.y));
 			}
 
 			// Draw editor strips
@@ -144,9 +145,9 @@ void Timeline::onLayout()
 
 				// Calculate strip params
 				ImVec2 stripMin = ImVec2(timelineMin.x + startPos,
-					timelineMin.y + levelObject->editorBinIndex * EDITOR_BIN_HEIGHT);
+				                         timelineMin.y + levelObject->editorBinIndex * EDITOR_BIN_HEIGHT);
 				ImVec2 stripMax = ImVec2(timelineMin.x + endPos,
-					timelineMin.y + (levelObject->editorBinIndex + 1) * EDITOR_BIN_HEIGHT);
+				                         timelineMin.y + (levelObject->editorBinIndex + 1) * EDITOR_BIN_HEIGHT);
 
 				ImVec2 stripSize = ImVec2(stripMax.x - stripMin.x, stripMax.y - stripMin.y);
 
@@ -183,7 +184,8 @@ void Timeline::onLayout()
 						ImVec2 delta = io.MouseDelta;
 						float timeDelta = (delta.x / availX) * (endTime - startTime);
 
-						timeDelta = std::clamp(timeDelta, -levelObject->startTime, levelManager->audioClip->getLength() - levelObject->killTime);
+						timeDelta = std::clamp(timeDelta, -levelObject->startTime,
+						                       levelManager->audioClip->getLength() - levelObject->killTime);
 
 						levelObject->startTime += timeDelta;
 						levelObject->killTime += timeDelta;
@@ -209,11 +211,13 @@ void Timeline::onLayout()
 				ImU32 stripCol = stripActive ? EDITOR_STRIP_ACTIVE_COL : EDITOR_STRIP_INACTIVE_COL;
 
 				ImVec2 localRectMin = ImVec2(stripMin.x + EDITOR_STRIP_LEFT, stripMin.y);
-				ImVec2 localRectMax = ImVec2(stripMin.x + EDITOR_STRIP_LEFT + EDITOR_STRIP_RIGHT + textSize.x, stripMax.y);
+				ImVec2 localRectMax = ImVec2(stripMin.x + EDITOR_STRIP_LEFT + EDITOR_STRIP_RIGHT + textSize.x,
+				                             stripMax.y);
 
 				drawList->AddRectFilled(stripMin, stripMax, stripCol);
 				drawList->AddRectFilled(localRectMin, localRectMax, EDITOR_STRIP_ACTIVE_COL);
-				drawList->AddText(ImVec2(localRectMin.x + EDITOR_STRIP_TEXT_LEFT_MARGIN, localRectMin.y), EDITOR_STRIP_INACTIVE_COL, name, name + levelObject->name.size());
+				drawList->AddText(ImVec2(localRectMin.x + EDITOR_STRIP_TEXT_LEFT_MARGIN, localRectMin.y),
+				                  EDITOR_STRIP_INACTIVE_COL, name, name + levelObject->name.size());
 
 				drawList->PopClipRect();
 			}
@@ -261,17 +265,19 @@ void Timeline::onLayout()
 			drawList->PopClipRect();
 
 			// Time pointer
-			drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT), true);
+			drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX,
+			                                         cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT), true);
 
 			// Draw frame
-			drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT), borderCol);
+			drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT),
+			                  borderCol);
 
 			// Draw time pointer
 			constexpr float pointerRectHeight = EDITOR_TIME_POINTER_HEIGHT - EDITOR_TIME_POINTER_TRI_HEIGHT;
 
 			float pointerPos = cursorPos.x + (levelManager->time - startTime) / (endTime - startTime) * availX;
 			drawList->AddLine(ImVec2(pointerPos, cursorPos.y),
-				ImVec2(pointerPos, cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT), borderCol);
+			                  ImVec2(pointerPos, cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT), borderCol);
 
 			drawList->AddRectFilled(
 				ImVec2(pointerPos - EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y),
@@ -289,7 +295,7 @@ void Timeline::onLayout()
 			// Object delete
 			if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 			{
-				if (levelManager->selectedObjectIndex != -1) 
+				if (levelManager->selectedObjectIndex != -1)
 				{
 					levelManager->removeObject(levelManager->level->levelObjects[levelManager->selectedObjectIndex]);
 
@@ -398,7 +404,8 @@ void Timeline::onLayout()
 			}
 
 			// Deselect
-			if (ImGui::IsWindowFocused() && isTimelineHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !atLeastOneStripClicked && !pointerBeingDragged)
+			if (ImGui::IsWindowFocused() && isTimelineHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !
+				atLeastOneStripClicked && !pointerBeingDragged)
 			{
 				levelManager->selectedObjectIndex = -1;
 				Properties::inst->reset();
@@ -432,14 +439,14 @@ void Timeline::onLayout()
 			ImGui::ItemSize(ImVec2(availX, timelineHeight + EDITOR_TIME_POINTER_HEIGHT));
 		}
 
-		if (timelineSize != oldWaveformSize) 
+		if (timelineSize != oldWaveformSize)
 		{
 			waveformTex->resize(timelineSize.x, timelineSize.y);
 			oldWaveformSize = timelineSize;
 		}
 
 		// Compute waveform
-		if (levelManager->audioClip) 
+		if (levelManager->audioClip)
 		{
 			glUseProgram(waveformShader->getHandle());
 
@@ -464,12 +471,12 @@ bool Timeline::playButton(bool playing)
 	if (playing)
 	{
 		drawList->AddRectFilled(
-			cursor, 
-			ImVec2(cursor.x + EDITOR_PLAY_BUTTON_SIZE / 3.0f, cursor.y + EDITOR_PLAY_BUTTON_SIZE), 
+			cursor,
+			ImVec2(cursor.x + EDITOR_PLAY_BUTTON_SIZE / 3.0f, cursor.y + EDITOR_PLAY_BUTTON_SIZE),
 			EDITOR_PLAY_BUTTON_COL);
 		drawList->AddRectFilled(
-			ImVec2(cursor.x + EDITOR_PLAY_BUTTON_SIZE / 3.0f * 2.0f, cursor.y), 
-			ImVec2(cursor.x + EDITOR_PLAY_BUTTON_SIZE, cursor.y + EDITOR_PLAY_BUTTON_SIZE), 
+			ImVec2(cursor.x + EDITOR_PLAY_BUTTON_SIZE / 3.0f * 2.0f, cursor.y),
+			ImVec2(cursor.x + EDITOR_PLAY_BUTTON_SIZE, cursor.y + EDITOR_PLAY_BUTTON_SIZE),
 			EDITOR_PLAY_BUTTON_COL);
 	}
 	else
@@ -484,7 +491,7 @@ bool Timeline::playButton(bool playing)
 	return ImGui::InvisibleButton("##PlayButton", ImVec2(EDITOR_PLAY_BUTTON_SIZE, EDITOR_PLAY_BUTTON_SIZE));
 }
 
-std::string Timeline::timeToString(float time)
+std::string Timeline::timeToString(float time) const
 {
 	float secs = std::floor(time);
 	float frac = time - secs;
@@ -495,8 +502,11 @@ std::string Timeline::timeToString(float time)
 	int hours = (int)secs / 3600 % 60;
 
 	std::string millisecondsStr =
-		milliseconds < 10 ? "00" + std::to_string(milliseconds) :
-		milliseconds < 100 ? "0" + std::to_string(milliseconds) : std::to_string(milliseconds);
+		milliseconds < 10
+			? "00" + std::to_string(milliseconds)
+			: milliseconds < 100
+			? "0" + std::to_string(milliseconds)
+			: std::to_string(milliseconds);
 	std::string secondsStr = seconds < 10 ? "0" + std::to_string(seconds) : std::to_string(seconds);
 	std::string minutesStr = minutes < 10 ? "0" + std::to_string(minutes) : std::to_string(minutes);
 	std::string hoursStr = hours < 10 ? "0" + std::to_string(hours) : std::to_string(hours);

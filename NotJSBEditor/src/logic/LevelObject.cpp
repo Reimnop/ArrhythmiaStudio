@@ -128,7 +128,7 @@ nlohmann::ordered_json LevelObject::toJson(bool excludeChildren)
 	{
 		j["channels"][i] = animationChannels[i]->toJson();
 	}
-	
+
 	if (!excludeChildren)
 	{
 		j["children"] = nlohmann::json::array();

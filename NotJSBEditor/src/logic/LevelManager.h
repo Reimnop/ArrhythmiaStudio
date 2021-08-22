@@ -34,8 +34,8 @@ public:
 	void update();
 
 	void updateLevel(float time);
-	void updateObject(LevelObject* levelObject);
-	void updateColorSlot(ColorSlot* colorSlot);
+	void updateObject(LevelObject* levelObject) const;
+	void updateColorSlot(ColorSlot* colorSlot) const;
 
 	void recalculateAllObjectActions();
 	void recalculateObjectAction(LevelObject* levelObject);
@@ -56,6 +56,6 @@ private:
 	std::unordered_set<LevelObject*> aliveObjects;
 
 	void insertAction(ObjectAction value);
-	void spawnObject(LevelObject* levelObject);
+	void spawnObject(LevelObject* levelObject) const;
 	void recursivelyInitializeObjectTree(nlohmann::json j, LevelObject* parent, Level* level);
 };

@@ -15,5 +15,5 @@ public:
 	ShapeManager();
 	~ShapeManager();
 private:
-	Shape getShapeFromFile(std::filesystem::path path);
+	Shape getShapeFromFile(std::filesystem::path path) const;
 };

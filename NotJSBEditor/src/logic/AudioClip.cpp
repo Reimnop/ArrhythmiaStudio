@@ -28,39 +28,39 @@ AudioClip::~AudioClip()
 	delete[] samples;
 }
 
-void AudioClip::play()
+void AudioClip::play() const
 {
 	BASS_ChannelPlay(channel, false);
 }
 
-void AudioClip::pause()
+void AudioClip::pause() const
 {
 	BASS_ChannelPause(channel);
 }
 
-void AudioClip::stop()
+void AudioClip::stop() const
 {
 	BASS_ChannelStop(channel);
 }
 
-bool AudioClip::isPlaying()
+bool AudioClip::isPlaying() const
 {
 	return BASS_ChannelIsActive(channel) == BASS_ACTIVE_PLAYING;
 }
 
-float AudioClip::getLength()
+float AudioClip::getLength() const
 {
 	QWORD bytePos = BASS_ChannelGetLength(channel, BASS_POS_BYTE);
 	return (float)BASS_ChannelBytes2Seconds(channel, bytePos);
 }
 
-float AudioClip::getPosition()
+float AudioClip::getPosition() const
 {
 	QWORD bytePos = BASS_ChannelGetPosition(channel, BASS_POS_BYTE);
 	return (float)BASS_ChannelBytes2Seconds(channel, bytePos);
 }
 
-void AudioClip::seek(float time)
+void AudioClip::seek(float time) const
 {
 	QWORD bytePos = BASS_ChannelSeconds2Bytes(channel, time);
 	BASS_ChannelSetPosition(channel, bytePos, BASS_POS_BYTE);

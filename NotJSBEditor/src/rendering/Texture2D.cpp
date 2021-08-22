@@ -22,7 +22,7 @@ Texture2D::~Texture2D()
 	glDeleteTextures(1, &handle);
 }
 
-void Texture2D::resize(int width, int height)
+void Texture2D::resize(int width, int height) const
 {
 	glBindTexture(GL_TEXTURE_2D, handle);
 	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, nullptr);

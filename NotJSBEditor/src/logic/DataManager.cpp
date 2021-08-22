@@ -96,7 +96,7 @@ void DataManager::openLevel()
 	isStartupLevel = false;
 }
 
-void DataManager::genLevelFiles(LevelCreateInfo createInfo)
+void DataManager::genLevelFiles(LevelCreateInfo createInfo) const
 {
 	nlohmann::ordered_json j;
 	j["name"] = createInfo.levelName;

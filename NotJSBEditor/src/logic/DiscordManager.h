@@ -9,8 +9,8 @@ public:
 
 	DiscordManager();
 
-	void update();
-	void updateActivity(discord::Activity activity);
+	void update() const;
+	void updateActivity(discord::Activity activity) const;
 private:
 	discord::Core* core;
 

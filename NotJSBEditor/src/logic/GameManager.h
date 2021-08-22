@@ -17,7 +17,7 @@ public:
 	GameManager(GLFWwindow* window);
 
 	// Runs every frame
-	void update();
+	void update() const;
 private:
 	GLFWwindow* mainWindow;
 	LevelManager* levelManager;
@@ -32,5 +32,5 @@ private:
 
 	void onLayout();
 	void calculateViewportRect(ImVec2 size, float* width, float* height);
-	std::string timeToString(float time);
+	std::string timeToString(float time) const;
 };

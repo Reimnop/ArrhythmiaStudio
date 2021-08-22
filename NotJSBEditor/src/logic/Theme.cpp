@@ -28,7 +28,8 @@ void Theme::onLayout()
 		{
 			for (int i = 0; i < levelManager->level->colorSlots.size(); i++)
 			{
-				if (colorSlotButton(std::string("Color Slot " + std::to_string(i + 1)), levelManager->level->colorSlots[i]->currentColor, selectedSlotIndex == i))
+				if (colorSlotButton(std::string("Color Slot " + std::to_string(i + 1)),
+				                    levelManager->level->colorSlots[i]->currentColor, selectedSlotIndex == i))
 				{
 					selectedSlotIndex = i;
 					selectedKeyframe.reset();
@@ -52,7 +53,8 @@ void Theme::onLayout()
 				ImVec2 clipSize = ImVec2(availX, EDITOR_BIN_HEIGHT);
 
 				// Draw timeline
-				drawList->PushClipRect(timelineMin, ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y), true);
+				drawList->PushClipRect(timelineMin, ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y),
+				                       true);
 
 				drawList->AddRectFilled(
 					ImVec2(timelineMin.x, timelineMin.y),
@@ -187,14 +189,18 @@ void Theme::onLayout()
 
 				// Frames
 				ImU32 borderCol = ImGui::GetColorU32(ImGuiCol_Border);
-				drawList->AddRect(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + EDITOR_BIN_HEIGHT), borderCol);
+				drawList->AddRect(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + EDITOR_BIN_HEIGHT),
+				                  borderCol);
 				drawList->PopClipRect();
 
 				// Time pointer
-				drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_BIN_HEIGHT + EDITOR_TIME_POINTER_HEIGHT), true);
+				drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX,
+				                                         cursorPos.y + EDITOR_BIN_HEIGHT + EDITOR_TIME_POINTER_HEIGHT),
+				                       true);
 
 				// Draw frame
-				drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT), borderCol);
+				drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT),
+				                  borderCol);
 
 				// Draw time pointer
 				constexpr float pointerRectHeight = EDITOR_TIME_POINTER_HEIGHT - EDITOR_TIME_POINTER_TRI_HEIGHT;
@@ -202,7 +208,8 @@ void Theme::onLayout()
 				float pointerPos = cursorPos.x + (levelManager->time - startTime) / (endTime - startTime) * availX;
 
 				drawList->AddLine(ImVec2(pointerPos, cursorPos.y),
-					ImVec2(pointerPos, cursorPos.y + EDITOR_BIN_HEIGHT + EDITOR_TIME_POINTER_HEIGHT), borderCol);
+				                  ImVec2(pointerPos, cursorPos.y + EDITOR_BIN_HEIGHT + EDITOR_TIME_POINTER_HEIGHT),
+				                  borderCol);
 
 				drawList->AddRectFilled(
 					ImVec2(pointerPos - EDITOR_TIME_POINTER_WIDTH * 0.5f, cursorPos.y),
@@ -293,7 +300,7 @@ void Theme::onLayout()
 	ImGui::End();
 }
 
-bool Theme::colorSlotButton(std::string label, Color color, bool selected)
+bool Theme::colorSlotButton(std::string label, Color color, bool selected) const
 {
 	const float previewSize = ImGui::GetTextLineHeight();
 

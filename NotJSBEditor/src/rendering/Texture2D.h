@@ -6,10 +6,11 @@
 class Texture2D
 {
 public:
-	Texture2D(int width, int height, GLenum internalFormat = GL_RGBA, GLenum format = GL_RGBA, GLenum type = GL_UNSIGNED_BYTE);
+	Texture2D(int width, int height, GLenum internalFormat = GL_RGBA, GLenum format = GL_RGBA,
+	          GLenum type = GL_UNSIGNED_BYTE);
 	~Texture2D();
 
-	void resize(int width, int height);
+	void resize(int width, int height) const;
 
 	uint32_t getHandle() const;
 private:

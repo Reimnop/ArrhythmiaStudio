@@ -26,7 +26,8 @@ ComputeShader::ComputeShader(std::filesystem::path sourcePath)
 	if (vertCode != GL_TRUE)
 	{
 		glGetShaderInfoLog(shader, sizeof(infoLogBuf), nullptr, infoLogBuf);
-		throw std::runtime_error("Error occurred whilst compiling Shader " + std::to_string(handle) + "\n\n" + infoLogBuf);
+		throw std::runtime_error(
+			"Error occurred whilst compiling Shader " + std::to_string(handle) + "\n\n" + infoLogBuf);
 	}
 
 	// Create program

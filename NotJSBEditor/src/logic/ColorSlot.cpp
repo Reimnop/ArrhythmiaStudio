@@ -46,7 +46,7 @@ void ColorSlot::update(float time)
 	material->updateBuffer();
 }
 
-nlohmann::ordered_json ColorSlot::toJson()
+nlohmann::ordered_json ColorSlot::toJson() const
 {
 	return channel->toJson();
 }

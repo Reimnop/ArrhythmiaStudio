@@ -21,12 +21,12 @@ MeshRenderer::~MeshRenderer()
 
 bool MeshRenderer::render(InputDrawData input, OutputDrawData** output)
 {
-	if (!canRender()) 
+	if (!canRender())
 	{
 		return false;
 	}
 
-	if (opacity == 0.0f) 
+	if (opacity == 0.0f)
 	{
 		return false;
 	}

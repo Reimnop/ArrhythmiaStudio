@@ -36,7 +36,7 @@ ShapeManager::~ShapeManager()
 	shapes.shrink_to_fit();
 }
 
-Shape ShapeManager::getShapeFromFile(std::filesystem::path path)
+Shape ShapeManager::getShapeFromFile(std::filesystem::path path) const
 {
 	std::ifstream s(path);
 

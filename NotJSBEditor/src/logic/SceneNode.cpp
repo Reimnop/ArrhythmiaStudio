@@ -28,7 +28,8 @@ SceneNode::~SceneNode()
 	// Remove from root
 	Scene* scene = Scene::inst;
 
-	std::vector<SceneNode*>::iterator it = std::remove(scene->rootNode->children.begin(), scene->rootNode->children.end(), this);
+	std::vector<SceneNode*>::iterator it = std::remove(scene->rootNode->children.begin(),
+	                                                   scene->rootNode->children.end(), this);
 	scene->rootNode->children.erase(it, scene->rootNode->children.end());
 
 	scene->rootNode->activeChildren.erase(this);
@@ -57,7 +58,7 @@ void SceneNode::setParent(SceneNode* newParent)
 		newParent = Scene::inst->rootNode;
 	}
 
-	if (newParent) 
+	if (newParent)
 	{
 		// Add to new parent
 		newParent->children.push_back(this);

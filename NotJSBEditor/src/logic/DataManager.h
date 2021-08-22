@@ -8,6 +8,7 @@ class DataManager
 {
 public:
 	static DataManager* inst;
+	bool isStartupLevel = true;
 
 	std::string levelDir;
 

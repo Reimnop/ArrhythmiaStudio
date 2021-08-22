@@ -13,4 +13,6 @@ public:
 	void updateActivity(discord::Activity activity);
 private:
 	discord::Core* core;
+
+	void debugCallback(discord::LogLevel logLevel, const char* msg);
 };

@@ -53,7 +53,7 @@ void AnimationChannel::insertKeyframe(Keyframe keyframe)
 float AnimationChannel::update(float time)
 {
 	// Bounds checking
-	if (keyframes.size() == 0)
+	if (keyframes.empty())
 	{
 		return 0.0f;
 	}

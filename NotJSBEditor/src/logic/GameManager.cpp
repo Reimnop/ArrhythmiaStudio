@@ -29,90 +29,20 @@ void GameManager::update()
 
 void GameManager::onLayout()
 {
-	bool doOpenLevelPopup = false;
-
-	// Menu bar
-	if (ImGui::BeginMainMenuBar())
+	// Welcome popup to block the user from doing anything on the startup level
+	ImGui::SetNextWindowSize(ImVec2(320.0f, 140.0f));
+	if (ImGui::BeginPopupModal("Welcome", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings))
 	{
-		if (ImGui::BeginMenu("File"))
+		ImGui::Text("Welcome to Not JSB Editor!");
+		ImGui::TextWrapped("Before continuing, please create a new level with File->New (Ctrl+N) or open a new level with File->Open (Ctrl+O).");
+
+		if (ImGui::Button("OK"))
 		{
-			if (ImGui::MenuItem("New", "Ctrl+N"))
-			{
-				doOpenLevelPopup = true;
-			}
-
-			if (ImGui::MenuItem("Save", "Ctrl+S"))
-			{
-				dataManager->saveLevel();
-			}
-
-			if (ImGui::MenuItem("Save As", "Ctrl+Shift+S"))
-			{
-				dataManager->saveLevel(true);
-			}
-
-			if (ImGui::MenuItem("Open", "Ctrl+O"))
-			{
-				dataManager->openLevel();
-			}
-
-			ImGui::EndMenu();
+			ImGui::CloseCurrentPopup();
 		}
-		ImGui::EndMainMenuBar();
+
+		ImGui::EndPopup();
 	}
-
-	// Keyboard shortcuts handling
-	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_N))
-	{
-		doOpenLevelPopup = true;
-	}
-
-	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT) && ImGui::IsKeyPressed(GLFW_KEY_S))
-	{
-		dataManager->saveLevel(true);
-	}
-
-	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_S))
-	{
-		dataManager->saveLevel();
-	}
-	
-	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_O))
-	{
-		dataManager->openLevel();
-	}
-
-	if (doOpenLevelPopup)
-	{
-		currentCreateInfo = LevelCreateInfo();
-
-		ImGui::OpenPopup("New Level");
-	}
-
-	// Open viewport
-	if (ImGui::Begin("Viewport"))
-	{
-		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
-
-		float width, height;
-		calculateViewportRect(contentRegion, &width, &height);
-
-		Renderer::inst->viewportWidth = width;
-		Renderer::inst->viewportHeight = height;
-
-		ImVec2 cursorPos = ImGui::GetCursorScreenPos();
-
-		ImVec2 frameMin = ImVec2(cursorPos.x + (contentRegion.x - width) / 2.0f,
-		                         cursorPos.y + (contentRegion.y - height) / 2.0f);
-		ImVec2 frameMax = ImVec2(frameMin.x + width, frameMin.y + height);
-
-		ImDrawList* drawList = ImGui::GetWindowDrawList();
-
-		drawList->AddImage((ImTextureID)Renderer::inst->getRenderTexture(), ImVec2(frameMin.x, frameMax.y),
-		                   ImVec2(frameMax.x, frameMin.y));
-		drawList->AddRect(frameMin, frameMax, ImGui::GetColorU32(ImGuiCol_Border), 0.0f, ImDrawFlags_None, 2.0f);
-	}
-	ImGui::End();
 
 	// Level creation popup
 	if (ImGui::BeginPopupModal("New Level", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings))
@@ -196,6 +126,116 @@ void GameManager::onLayout()
 
 		ImGui::EndPopup();
 	}
+
+	bool doOpenLevelPopup = false;
+
+	// Menu bar
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("New", "Ctrl+N"))
+			{
+				doOpenLevelPopup = true;
+			}
+
+			if (!dataManager->isStartupLevel) 
+			{
+				if (ImGui::MenuItem("Save", "Ctrl+S"))
+				{
+					dataManager->saveLevel();
+				}
+
+				if (ImGui::MenuItem("Save As", "Ctrl+Shift+S"))
+				{
+					dataManager->saveLevel(true);
+				}
+			}
+
+			if (ImGui::MenuItem("Open", "Ctrl+O"))
+			{
+				dataManager->openLevel();
+			}
+
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+
+	// Keyboard shortcuts handling
+	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_N))
+	{
+		doOpenLevelPopup = true;
+	}
+
+	if (!dataManager->isStartupLevel)
+	{
+		if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT) && ImGui::IsKeyPressed(GLFW_KEY_S))
+		{
+			dataManager->saveLevel(true);
+		}
+
+		if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_S))
+		{
+			dataManager->saveLevel();
+		}
+	}
+	
+	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_O))
+	{
+		dataManager->openLevel();
+	}
+
+	if (doOpenLevelPopup)
+	{
+		currentCreateInfo = LevelCreateInfo();
+
+		ImGui::OpenPopup("New Level");
+	}
+
+	// Open welcome popup
+	if (!welcomeOpened)
+	{
+		ImGui::OpenPopup("Welcome");
+
+		welcomeOpened = true;
+	}
+
+	// Open viewport
+	if (ImGui::Begin("Viewport"))
+	{
+		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
+
+		float width, height;
+		calculateViewportRect(contentRegion, &width, &height);
+
+		Renderer::inst->viewportWidth = width;
+		Renderer::inst->viewportHeight = height;
+
+		ImVec2 cursorPos = ImGui::GetCursorScreenPos();
+
+		ImVec2 frameMin = ImVec2(cursorPos.x + (contentRegion.x - width) / 2.0f,
+		                         cursorPos.y + (contentRegion.y - height) / 2.0f);
+		ImVec2 frameMax = ImVec2(frameMin.x + width, frameMin.y + height);
+
+		ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+		drawList->AddImage((ImTextureID)Renderer::inst->getRenderTexture(), ImVec2(frameMin.x, frameMax.y),
+		                   ImVec2(frameMax.x, frameMin.y));
+		drawList->AddRect(frameMin, frameMax, ImGui::GetColorU32(ImGuiCol_Border), 0.0f, ImDrawFlags_None, 2.0f);
+
+		if (dataManager->isStartupLevel) 
+		{
+			ImGui::SetCursorScreenPos(ImVec2(frameMin.x + 4.0f, frameMin.y + 4.0f));
+			if (ImGui::BeginChild("warn-startup", ImVec2(320.0f, 120.0f))) 
+			{
+				ImGui::TextWrapped("Warning: All changes made in the startup level will not be saved. Please create a new level or open an existing level.");
+
+				ImGui::EndChild();
+			}
+		}
+	}
+	ImGui::End();
 }
 
 void GameManager::calculateViewportRect(ImVec2 size, float* width, float* height)

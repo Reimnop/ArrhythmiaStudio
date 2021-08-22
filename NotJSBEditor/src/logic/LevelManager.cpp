@@ -172,6 +172,10 @@ void LevelManager::updateObject(LevelObject* levelObject)
 				channel->update(time - levelObject->startTime) / 180.0f * 3.14159265359f,
 				glm::vec3(0.0f, 0.0f, -1.0f));
 			break;
+		case AnimationChannelType_Opacity:
+			MeshRenderer* mr = (MeshRenderer*)levelObject->node->renderer;
+			mr->opacity = std::clamp(channel->update(time - levelObject->startTime), 0.0f, 1.0f);
+			break;
 		}
 	}
 

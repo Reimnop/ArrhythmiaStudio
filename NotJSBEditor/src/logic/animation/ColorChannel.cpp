@@ -27,7 +27,7 @@ ColorChannel::~ColorChannel()
 
 void ColorChannel::insertKeyframe(ColorKeyframe keyframe)
 {
-	if (keyframes.size() == 0)
+	if (keyframes.empty())
 	{
 		keyframes.push_back(keyframe);
 		return;

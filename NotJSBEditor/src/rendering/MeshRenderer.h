@@ -13,7 +13,9 @@ public:
 	Mesh* mesh;
 	Material* material;
 
-	bool render(InputDrawData input, OutputDrawData* output) override;
+	float opacity = 1.0f;
+
+	bool render(InputDrawData input, OutputDrawData** output) override;
 private:
 	uint32_t uniformBuffers[2];
 

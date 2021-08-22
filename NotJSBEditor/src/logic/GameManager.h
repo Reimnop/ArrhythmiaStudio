@@ -25,6 +25,7 @@ private:
 	DataManager* dataManager;
 	DiscordManager* discordManager;
 
+	bool welcomeOpened = false;
 	float editTimeElapsed = 0.0f;
 
 	LevelCreateInfo currentCreateInfo;

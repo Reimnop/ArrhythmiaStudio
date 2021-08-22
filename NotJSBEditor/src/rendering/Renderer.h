@@ -34,7 +34,8 @@ private:
 	uint32_t renderTexture;
 	uint32_t depthBuffer;
 
-	std::vector<OutputDrawData> queuedDrawData;
+	std::vector<OutputDrawData*> queuedDrawDataOpaque;
+	std::vector<OutputDrawData*> queuedDrawDataTransparent;
 
 	GLFWwindow* mainWindow;
 	ImGuiController* imGuiController;
@@ -42,4 +43,5 @@ private:
 	Camera* camera;
 
 	void recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform, glm::mat4 view, glm::mat4 projection);
+	void processDrawData(const OutputDrawData* drawData);
 };

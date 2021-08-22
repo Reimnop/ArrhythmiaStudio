@@ -179,6 +179,17 @@ void Properties::onLayout()
 					selectedObject->insertChannel(channel);
 				}
 
+				if (!selectedObject->hasChannel(AnimationChannelType_Opacity) && ImGui::Selectable("Opacity"))
+				{
+					Keyframe first = Keyframe();
+					first.time = 0.0f;
+					first.value = 1.0f;
+
+					AnimationChannel* channel = new AnimationChannel(AnimationChannelType_Opacity, 1, &first);
+
+					selectedObject->insertChannel(channel);
+				}
+
 				ImGui::EndPopup();
 			}
 
@@ -488,6 +499,8 @@ std::string Properties::getChannelName(AnimationChannelType channelType)
 		return "Scale Y";
 	case AnimationChannelType_Rotation:
 		return "Rotation";
+	case AnimationChannelType_Opacity:
+		return "Opacity";
 	}
 
 	return "Unknown type";

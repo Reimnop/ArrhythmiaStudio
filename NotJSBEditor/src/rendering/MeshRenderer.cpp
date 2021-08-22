@@ -19,10 +19,17 @@ MeshRenderer::~MeshRenderer()
 	glDeleteBuffers(1, uniformBuffers);
 }
 
-bool MeshRenderer::render(InputDrawData input, OutputDrawData* output)
+bool MeshRenderer::render(InputDrawData input, OutputDrawData** output)
 {
-	if (!canRender())
+	if (!canRender()) 
+	{
 		return false;
+	}
+
+	if (opacity == 0.0f) 
+	{
+		return false;
+	}
 
 	uniformBuffers[1] = material->getUniformBuffer();
 
@@ -31,20 +38,26 @@ bool MeshRenderer::render(InputDrawData input, OutputDrawData* output)
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, 256, &input);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
+	// Decompose matrix
+	glm::vec3 translation = input.model[3];
+
 	// Construct the draw data for rendering
 	DrawElementsCommand* drawCommand = new DrawElementsCommand();
 	drawCommand->offset = 0;
 	drawCommand->count = mesh->indicesCount;
 
-	OutputDrawData drawData = OutputDrawData();
-	drawData.vao = mesh->getVao();
-	drawData.shader = material->getShader()->getHandle();
-	drawData.uniformBuffersCount = 2;
-	drawData.uniformBuffers = uniformBuffers;
-	drawData.commandType = DrawCommandType_DrawElements;
-	drawData.drawCommand = drawCommand;
+	OutputDrawData* drawData = new OutputDrawData();
+	drawData->vao = mesh->getVao();
+	drawData->shader = material->getShader()->getHandle();
+	drawData->uniformBuffersCount = 2;
+	drawData->uniformBuffers = uniformBuffers;
+	drawData->drawDepth = translation.z;
+	drawData->drawTransparent = (opacity < 1.0f);
+	drawData->renderCallback = [this]() { glUniform1f(0, opacity); };
+	drawData->commandType = DrawCommandType_DrawElements;
+	drawData->drawCommand = drawCommand;
 
-	(*output) = drawData;
+	*output = drawData;
 
 	return true;
 }

@@ -25,6 +25,8 @@ void DataManager::newLevel(LevelCreateInfo createInfo)
 
 	genLevelFiles(createInfo);
 	LevelManager::inst->loadLevel(createInfo.levelPath);
+
+	isStartupLevel = false;
 }
 
 void DataManager::saveLevel(bool saveAs)
@@ -90,6 +92,8 @@ void DataManager::openLevel()
 	}
 
 	fd->Release();
+
+	isStartupLevel = false;
 }
 
 void DataManager::genLevelFiles(LevelCreateInfo createInfo)

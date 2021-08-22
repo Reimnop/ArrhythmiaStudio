@@ -2,6 +2,8 @@
 
 #include "DrawElementsCommand.h"
 
+#include <algorithm>
+
 Renderer* Renderer::inst;
 
 Renderer::Renderer(GLFWwindow* window)
@@ -81,46 +83,35 @@ void Renderer::render()
 
 	glViewport(0, 0, viewportWidth, viewportHeight);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	
 	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
 
-	for (OutputDrawData drawData : queuedDrawData)
+	for (const OutputDrawData* drawData : queuedDrawDataOpaque)
 	{
-		if (drawData.vao != lastVertexArray)
-		{
-			glBindVertexArray(drawData.vao);
-			lastVertexArray = drawData.vao;
-		}
+		processDrawData(drawData);
 
-		if (drawData.shader != lastShader)
-		{
-			glUseProgram(drawData.shader);
-			lastShader = drawData.shader;
-		}
-
-		// Bind all uniform buffers
-		if (drawData.uniformBuffers)
-		{
-			for (int i = 0; i < drawData.uniformBuffersCount; i++)
-			{
-				glBindBufferBase(GL_UNIFORM_BUFFER, i, drawData.uniformBuffers[i]);
-			}
-		}
-
-		switch (drawData.commandType)
-		{
-		case DrawCommandType_DrawElements:
-			DrawElementsCommand drawElementsCommand = *(DrawElementsCommand*)drawData.drawCommand;
-			glDrawElements(GL_TRIANGLES, drawElementsCommand.count, GL_UNSIGNED_INT, (void*)drawElementsCommand.offset);
-			delete (DrawElementsCommand*)drawData.drawCommand;
-			break;
-		}
+		delete drawData;
 	}
+
+	glDepthMask(GL_FALSE);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	for (const OutputDrawData* drawData : queuedDrawDataTransparent)
+	{
+		processDrawData(drawData);
+
+		delete drawData;
+	}
+
+	glDepthMask(GL_TRUE);
 
 	FramebufferStack::pop();
 
 	// Clean up
-	queuedDrawData.clear();
+	queuedDrawDataOpaque.clear();
+	queuedDrawDataTransparent.clear();
 
 	lastVertexArray = 0;
 	lastShader = 0;
@@ -144,21 +135,41 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 		return;
 	}
 
-	glm::mat4 nodeTransform = node->transform->getLocalMatrix();
-	glm::mat4 globalTransform = parentTransform * nodeTransform;
+	const glm::mat4 nodeTransform = node->transform->getLocalMatrix();
+	const glm::mat4 globalTransform = parentTransform * nodeTransform;
 
 	if (node->renderer)
 	{
-		InputDrawData drawData = InputDrawData();
+		InputDrawData drawData;
 		drawData.model = globalTransform;
 		drawData.view = view;
 		drawData.projection = projection;
 		drawData.modelViewProjection = projection * view * globalTransform;
 
-		OutputDrawData output;
+		OutputDrawData* output;
 		if (node->renderer->render(drawData, &output))
 		{
-			queuedDrawData.push_back(output);
+			if (output->drawTransparent) 
+			{
+				if (queuedDrawDataTransparent.empty())
+				{
+					queuedDrawDataTransparent.push_back(output);
+				}
+				else 
+				{
+					std::vector<OutputDrawData*>::iterator it = std::lower_bound(queuedDrawDataTransparent.begin(), queuedDrawDataTransparent.end(), output,
+						[](const OutputDrawData* a, const OutputDrawData* b)
+						{
+							return a->drawDepth < b->drawDepth;
+						});
+
+					queuedDrawDataTransparent.insert(it, output);
+				}
+			}
+			else
+			{
+				queuedDrawDataOpaque.push_back(output);
+			}
 		}
 	}
 
@@ -166,4 +177,40 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 	{
 		recursivelyRenderNodes(child, globalTransform, view, projection);
 	}
+}
+
+void Renderer::processDrawData(const OutputDrawData* drawData)
+{
+	if (drawData->vao != lastVertexArray)
+	{
+		glBindVertexArray(drawData->vao);
+		lastVertexArray = drawData->vao;
+	}
+
+	if (drawData->shader != lastShader)
+	{
+		glUseProgram(drawData->shader);
+		lastShader = drawData->shader;
+	}
+
+	// Bind all uniform buffers
+	if (drawData->uniformBuffers)
+	{
+		for (int i = 0; i < drawData->uniformBuffersCount; i++)
+		{
+			glBindBufferBase(GL_UNIFORM_BUFFER, i, drawData->uniformBuffers[i]);
+		}
+	}
+
+	drawData->renderCallback();
+
+	switch (drawData->commandType)
+	{
+	case DrawCommandType_DrawElements:
+		const DrawElementsCommand* drawElementsCommand = (DrawElementsCommand*)drawData->drawCommand;
+		glDrawElements(GL_TRIANGLES, drawElementsCommand->count, GL_UNSIGNED_INT, (void*)drawElementsCommand->offset);
+		break;
+	}
+
+	delete drawData->drawCommand;
 }

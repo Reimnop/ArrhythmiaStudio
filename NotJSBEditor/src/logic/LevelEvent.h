@@ -13,6 +13,6 @@ public:
 	LevelEvent(nlohmann::json j);
 	~LevelEvent();
 
-	float update(float time);
+	float update(float time) const;
 	nlohmann::ordered_json toJson();
 };

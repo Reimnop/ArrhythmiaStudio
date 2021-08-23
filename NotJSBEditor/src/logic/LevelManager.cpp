@@ -3,6 +3,7 @@
 
 #include "ShapeManager.h"
 #include "DiscordManager.h"
+#include "../rendering/Renderer.h"
 #include "../rendering/MeshRenderer.h"
 
 #include <filesystem>
@@ -58,18 +59,35 @@ void LevelManager::loadLevel(std::string levelPath)
 
 	level = newLevel;
 
-	nlohmann::json::array_t slotArr = j["color_slots"].get<nlohmann::json::array_t>();
-	for (const nlohmann::json& slotJson : slotArr)
+	if (j.contains("color_slots"))
 	{
-		newLevel->colorSlots.push_back(new ColorSlot(slotJson));
+		nlohmann::json::array_t slotArr = j["color_slots"].get<nlohmann::json::array_t>();
+		for (const nlohmann::json& slotJson : slotArr)
+		{
+			newLevel->colorSlots.push_back(new ColorSlot(slotJson));
+		}
 	}
 
 	Logger::info("Loaded " + std::to_string(newLevel->colorSlots.size()) + " color slots");
 
-	nlohmann::json::array_t objArr = j["objects"].get<nlohmann::json::array_t>();
-	for (const nlohmann::json& objJson : objArr)
+	if (j.contains("level_events")) 
 	{
-		recursivelyInitializeObjectTree(objJson, nullptr, newLevel);
+		nlohmann::json::array_t eventArr = j["level_events"].get<nlohmann::json::array_t>();
+		for (const nlohmann::json& eventJson : eventArr)
+		{
+			newLevel->insertLevelEvent(new LevelEvent(eventJson));
+		}
+	}
+
+	Logger::info("Loaded " + std::to_string(newLevel->levelEvents.size()) + " level events");
+
+	if (j.contains("objects")) 
+	{
+		nlohmann::json::array_t objArr = j["objects"].get<nlohmann::json::array_t>();
+		for (const nlohmann::json& objJson : objArr)
+		{
+			recursivelyInitializeObjectTree(objJson, nullptr, newLevel);
+		}
 	}
 
 	Logger::info("Loaded " + std::to_string(newLevel->levelObjects.size()) + " objects");
@@ -145,16 +163,50 @@ void LevelManager::updateLevel(float time)
 
 	lastTime = time;
 
-	// Animate alive objects
-	for (LevelObject* levelObject : aliveObjects)
-	{
-		updateObject(levelObject);
-	}
-
 	// Update all color slots
 	for (ColorSlot* colorSlot : level->colorSlots)
 	{
 		updateColorSlot(colorSlot);
+	}
+
+	// Update all level events
+	for (LevelEvent* levelEvent : level->levelEvents)
+	{
+		updateLevelEvent(levelEvent);
+	}
+
+	// Update alive objects
+	for (LevelObject* levelObject : aliveObjects)
+	{
+		updateObject(levelObject);
+	}
+}
+
+void LevelManager::updateColorSlot(ColorSlot* colorSlot) const
+{
+	colorSlot->update(time);
+}
+
+void LevelManager::updateLevelEvent(LevelEvent* levelEvent) const
+{
+	Camera* camera = Renderer::inst->camera;
+
+	switch (levelEvent->type)
+	{
+	case LevelEventType_CameraPositionX:
+		camera->position.x = levelEvent->update(time);
+		break;
+	case LevelEventType_CameraPositionY:
+		camera->position.y = levelEvent->update(time);
+		break;
+	case LevelEventType_CameraScale:
+		camera->orthographicScale = levelEvent->update(time);
+		break;
+	case LevelEventType_CameraRotation:
+		camera->rotation = glm::angleAxis(
+			levelEvent->update(time) / 180.0f * 3.14159265359f,
+			glm::vec3(0.0f, 0.0f, -1.0f));
+		break;
 	}
 }
 
@@ -189,11 +241,6 @@ void LevelManager::updateObject(LevelObject* levelObject) const
 	}
 
 	levelObject->node->transform->position.z = levelObject->depth;
-}
-
-void LevelManager::updateColorSlot(ColorSlot* colorSlot) const
-{
-	colorSlot->update(time);
 }
 
 void LevelManager::recalculateAllObjectActions()

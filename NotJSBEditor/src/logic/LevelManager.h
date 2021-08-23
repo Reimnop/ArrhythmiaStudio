@@ -34,8 +34,9 @@ public:
 	void update();
 
 	void updateLevel(float time);
-	void updateObject(LevelObject* levelObject) const;
 	void updateColorSlot(ColorSlot* colorSlot) const;
+	void updateLevelEvent(LevelEvent* levelEvent) const;
+	void updateObject(LevelObject* levelObject) const;
 
 	void recalculateAllObjectActions();
 	void recalculateObjectAction(LevelObject* levelObject);

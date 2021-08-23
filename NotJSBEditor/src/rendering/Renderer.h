@@ -15,6 +15,8 @@ class Renderer
 public:
 	static Renderer* inst;
 
+	Camera* camera;
+
 	int viewportWidth;
 	int viewportHeight;
 
@@ -39,8 +41,6 @@ private:
 
 	GLFWwindow* mainWindow;
 	ImGuiController* imGuiController;
-
-	Camera* camera;
 
 	void recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform, glm::mat4 view, glm::mat4 projection);
 	void processDrawData(const OutputDrawData* drawData);

@@ -2,20 +2,28 @@
 
 Level::~Level()
 {
-	for (LevelObject* obj : levelObjects)
+	for (const ColorSlot* colorSlot : colorSlots)
 	{
-		delete obj;
+		delete colorSlot;
 	}
 
-	for (ColorSlot* slot : colorSlots)
+	for (const LevelEvent* levelEvent : levelEvents)
 	{
-		delete slot;
+		delete levelEvent;
 	}
 
-	levelObjects.clear();
+	for (const LevelObject* levelObject : levelObjects)
+	{
+		delete levelObject;
+	}
+
 	colorSlots.clear();
-	levelObjects.shrink_to_fit();
+	levelEvents.clear();
+	levelObjects.clear();
+
 	colorSlots.shrink_to_fit();
+	levelEvents.shrink_to_fit();
+	levelObjects.shrink_to_fit();
 }
 
 void Level::insertLevelEvent(LevelEvent* value)
@@ -46,6 +54,18 @@ nlohmann::ordered_json Level::toJson()
 	nlohmann::ordered_json j;
 	j["name"] = name;
 
+	j["color_slots"] = nlohmann::ordered_json::array();
+	for (int i = 0; i < colorSlots.size(); i++)
+	{
+		j["color_slots"][i] = colorSlots[i]->toJson();
+	}
+
+	j["level_events"] = nlohmann::ordered_json::array();
+	for (int i = 0; i < levelEvents.size(); i++)
+	{
+		j["level_events"][i] = levelEvents[i]->toJson();
+	}
+
 	j["objects"] = nlohmann::ordered_json::array();
 	for (int i = 0; i < levelObjects.size(); i++)
 	{
@@ -53,12 +73,6 @@ nlohmann::ordered_json Level::toJson()
 		{
 			j["objects"].push_back(levelObjects[i]->toJson());
 		}
-	}
-
-	j["color_slots"] = nlohmann::ordered_json::array();
-	for (int i = 0; i < colorSlots.size(); i++)
-	{
-		j["color_slots"][i] = colorSlots[i]->toJson();
 	}
 
 	return j;

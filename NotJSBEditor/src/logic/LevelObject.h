@@ -4,7 +4,7 @@
 #include <string>
 #include <nlohmann/json.hpp>
 
-#include "animation/AnimationChannel.h"
+#include "AnimationChannel.h"
 #include "ObjectAction.h"
 #include "SceneNode.h"
 
@@ -36,4 +36,6 @@ public:
 	void insertChannel(AnimationChannel* value);
 	bool hasChannel(AnimationChannelType channelType);
 	nlohmann::ordered_json toJson(bool excludeChildren = false);
+private:
+	bool animationChannelLookup[AnimationChannelType_Count];
 };

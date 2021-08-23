@@ -124,78 +124,19 @@ void Properties::onLayout()
 
 			if (ImGui::BeginPopup("new-channel"))
 			{
-				if (!selectedObject->hasChannel(AnimationChannelType_PositionX) && ImGui::Selectable("Position X"))
-				{
-					Keyframe first = Keyframe();
-					first.time = 0.0f;
-					first.value = 0.0f;
-
-					AnimationChannel* channel = new AnimationChannel(AnimationChannelType_PositionX, 1, &first);
-
-					selectedObject->insertChannel(channel);
-				}
-
-				if (!selectedObject->hasChannel(AnimationChannelType_PositionY) && ImGui::Selectable("Position Y"))
-				{
-					Keyframe first = Keyframe();
-					first.time = 0.0f;
-					first.value = 0.0f;
-
-					AnimationChannel* channel = new AnimationChannel(AnimationChannelType_PositionY, 1, &first);
-
-					selectedObject->insertChannel(channel);
-				}
-
-				if (!selectedObject->hasChannel(AnimationChannelType_ScaleX) && ImGui::Selectable("Scale X"))
-				{
-					Keyframe first = Keyframe();
-					first.time = 0.0f;
-					first.value = 1.0f;
-
-					AnimationChannel* channel = new AnimationChannel(AnimationChannelType_ScaleX, 1, &first);
-
-					selectedObject->insertChannel(channel);
-				}
-
-				if (!selectedObject->hasChannel(AnimationChannelType_ScaleY) && ImGui::Selectable("Scale Y"))
-				{
-					Keyframe first = Keyframe();
-					first.time = 0.0f;
-					first.value = 1.0f;
-
-					AnimationChannel* channel = new AnimationChannel(AnimationChannelType_ScaleY, 1, &first);
-
-					selectedObject->insertChannel(channel);
-				}
-
-				if (!selectedObject->hasChannel(AnimationChannelType_Rotation) && ImGui::Selectable("Rotation"))
-				{
-					Keyframe first = Keyframe();
-					first.time = 0.0f;
-					first.value = 0.0f;
-
-					AnimationChannel* channel = new AnimationChannel(AnimationChannelType_Rotation, 1, &first);
-
-					selectedObject->insertChannel(channel);
-				}
-
-				if (!selectedObject->hasChannel(AnimationChannelType_Opacity) && ImGui::Selectable("Opacity"))
-				{
-					Keyframe first = Keyframe();
-					first.time = 0.0f;
-					first.value = 1.0f;
-
-					AnimationChannel* channel = new AnimationChannel(AnimationChannelType_Opacity, 1, &first);
-
-					selectedObject->insertChannel(channel);
-				}
+				insertChannelSelectable(selectedObject, AnimationChannelType_PositionX, 0.0f);
+				insertChannelSelectable(selectedObject, AnimationChannelType_PositionY, 0.0f);
+				insertChannelSelectable(selectedObject, AnimationChannelType_ScaleX, 1.0f);
+				insertChannelSelectable(selectedObject, AnimationChannelType_ScaleY, 1.0f);
+				insertChannelSelectable(selectedObject, AnimationChannelType_Rotation, 0.0f);
+				insertChannelSelectable(selectedObject, AnimationChannelType_Opacity, 1.0f);
 
 				ImGui::EndPopup();
 			}
 
 			// Draw keyframe timelime
 			{
-				constexpr float timelineHeight = EDITOR_PROP_BIN_COUNT * EDITOR_BIN_HEIGHT;
+				constexpr float timelineHeight = AnimationChannelType_Count * EDITOR_BIN_HEIGHT;
 
 				ImDrawList* drawList = ImGui::GetWindowDrawList();
 				ImGuiStyle& style = ImGui::GetStyle();
@@ -212,7 +153,7 @@ void Properties::onLayout()
 				drawList->PushClipRect(timelineMin, ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y),
 				                       true);
 
-				for (int i = 0; i < EDITOR_PROP_BIN_COUNT; i++)
+				for (int i = 0; i < AnimationChannelType_Count; i++)
 				{
 					drawList->AddRectFilled(
 						ImVec2(timelineMin.x, timelineMin.y + i * EDITOR_BIN_HEIGHT),
@@ -239,13 +180,14 @@ void Properties::onLayout()
 				for (int i = 0; i < selectedObject->animationChannels.size(); i++)
 				{
 					AnimationChannel* channel = selectedObject->animationChannels[i];
+					Sequence* sequence = channel->sequence;
 
 					ImVec2 binMin = ImVec2(timelineMin.x, timelineMin.y + EDITOR_BIN_HEIGHT * i);
 					ImGui::SetCursorScreenPos(binMin);
 
-					for (int j = 0; j < channel->keyframes.size(); j++)
+					for (int j = 0; j < sequence->keyframes.size(); j++)
 					{
-						Keyframe kf = channel->keyframes[j];
+						Keyframe kf = sequence->keyframes[j];
 
 						ImVec2 kfPos = ImVec2(
 							EDITOR_KEYFRAME_OFFSET + binMin.x + (kf.time - startTime) / (endTime - startTime) * availX,
@@ -286,12 +228,12 @@ void Properties::onLayout()
 							kf.time = std::clamp(kf.time, 0.0f, selectedObject->killTime - selectedObject->startTime);
 
 							std::vector<Keyframe>::iterator it = std::find(
-								channel->keyframes.begin(),
-								channel->keyframes.end(),
+								sequence->keyframes.begin(),
+								sequence->keyframes.end(),
 								selectedKeyframe.value());
-							channel->keyframes.erase(it);
+							sequence->keyframes.erase(it);
 
-							channel->insertKeyframe(kf);
+							sequence->insertKeyframe(kf);
 							selectedKeyframe = kf;
 
 							levelManager->updateObject(selectedObject);
@@ -331,7 +273,7 @@ void Properties::onLayout()
 							kf.time = kfTime;
 							kf.value = 0.0f;
 
-							channel->insertKeyframe(kf);
+							channel->sequence->insertKeyframe(kf);
 							levelManager->updateObject(selectedObject);
 						}
 					}
@@ -449,10 +391,10 @@ void Properties::onLayout()
 
 				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 				{
-					std::vector<Keyframe>::iterator it = std::find(selectedChannel->keyframes.begin(),
-					                                               selectedChannel->keyframes.end(),
+					std::vector<Keyframe>::iterator it = std::find(selectedChannel->sequence->keyframes.begin(),
+					                                               selectedChannel->sequence->keyframes.end(),
 					                                               selectedKeyframe.value());
-					selectedChannel->keyframes.erase(it);
+					selectedChannel->sequence->keyframes.erase(it);
 					selectedChannel->update(levelManager->time);
 
 					selectedKeyframe.reset();
@@ -469,12 +411,12 @@ void Properties::onLayout()
 
 					if (kfChanged)
 					{
-						std::vector<Keyframe>::iterator it = std::find(selectedChannel->keyframes.begin(),
-						                                               selectedChannel->keyframes.end(),
+						std::vector<Keyframe>::iterator it = std::find(selectedChannel->sequence->keyframes.begin(),
+						                                               selectedChannel->sequence->keyframes.end(),
 						                                               selectedKeyframe.value());
 
-						selectedChannel->keyframes.erase(it);
-						selectedChannel->insertKeyframe(kf);
+						selectedChannel->sequence->keyframes.erase(it);
+						selectedChannel->sequence->insertKeyframe(kf);
 						selectedKeyframe = kf;
 
 						levelManager->updateObject(currentObject);
@@ -492,6 +434,21 @@ void Properties::onLayout()
 		}
 	}
 	ImGui::End();
+}
+
+void Properties::insertChannelSelectable(LevelObject* levelObject, AnimationChannelType channelType, float defaultValue)
+{
+	std::string channelName = getChannelName(channelType);
+	if (!levelObject->hasChannel(channelType) && ImGui::Selectable(channelName.c_str()))
+	{
+		Keyframe first = Keyframe();
+		first.time = 0.0f;
+		first.value = defaultValue;
+
+		AnimationChannel* channel = new AnimationChannel(channelType, 1, &first);
+
+		levelObject->insertChannel(channel);
+	}
 }
 
 std::string Properties::getChannelName(AnimationChannelType channelType)

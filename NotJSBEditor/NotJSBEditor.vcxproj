@@ -181,8 +181,10 @@
     <ClCompile Include="include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="include\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="include\glad\glad.c" />
-    <ClCompile Include="src\logic\animation\AnimationChannel.cpp" />
+    <ClCompile Include="src\logic\AnimationChannel.cpp" />
     <ClCompile Include="src\logic\animation\ColorChannel.cpp" />
+    <ClCompile Include="src\logic\LevelEvent.cpp" />
+    <ClCompile Include="src\logic\animation\Sequence.cpp" />
     <ClCompile Include="src\logic\AudioClip.cpp" />
     <ClCompile Include="src\logic\ColorSlot.cpp" />
     <ClCompile Include="src\logic\DataManager.cpp" />
@@ -564,12 +566,13 @@
     <ClInclude Include="include\nlohmann\ordered_map.hpp" />
     <ClInclude Include="include\nlohmann\thirdparty\hedley\hedley.hpp" />
     <ClInclude Include="include\nlohmann\thirdparty\hedley\hedley_undef.hpp" />
-    <ClInclude Include="src\logic\animation\AnimationChannelType.h" />
-    <ClInclude Include="src\logic\animation\AnimationChannel.h" />
+    <ClInclude Include="src\logic\AnimationChannelType.h" />
+    <ClInclude Include="src\logic\AnimationChannel.h" />
     <ClInclude Include="src\logic\animation\Color.h" />
     <ClInclude Include="src\logic\animation\ColorChannel.h" />
     <ClInclude Include="src\logic\animation\ColorKeyframe.h" />
     <ClInclude Include="src\logic\animation\Keyframe.h" />
+    <ClInclude Include="src\logic\animation\Sequence.h" />
     <ClInclude Include="src\logic\AudioClip.h" />
     <ClInclude Include="src\logic\ColorSlot.h" />
     <ClInclude Include="src\logic\DataManager.h" />
@@ -578,6 +581,7 @@
     <ClInclude Include="src\logic\Level.h" />
     <ClInclude Include="src\logic\LevelCreateInfo.h" />
     <ClInclude Include="src\logic\LevelEvent.h" />
+    <ClInclude Include="src\logic\LevelEventType.h" />
     <ClInclude Include="src\logic\Properties.h" />
     <ClInclude Include="src\logic\GameManager.h" />
     <ClInclude Include="src\logic\LevelManager.h" />

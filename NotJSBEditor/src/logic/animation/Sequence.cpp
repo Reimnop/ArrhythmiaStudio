@@ -1,34 +1,31 @@
-#include "AnimationChannel.h"
+#include "Sequence.h"
 
-AnimationChannel::AnimationChannel(AnimationChannelType channelType, int count, Keyframe* keyframes)
+Sequence::Sequence(int count, Keyframe* keyframes)
 {
 	for (int i = 0; i < count; i++)
 	{
 		insertKeyframe(keyframes[i]);
 	}
 
-	type = channelType;
 	lastIndex = 0;
 }
 
-AnimationChannel::AnimationChannel(nlohmann::json j)
+Sequence::Sequence(nlohmann::json j)
 {
-	type = j["type"].get<AnimationChannelType>();
-
-	nlohmann::json::array_t arr = j["keyframes"].get<nlohmann::json::array_t>();
+	nlohmann::json::array_t arr = j.get<nlohmann::json::array_t>();
 	for (int i = 0; i < arr.size(); i++)
 	{
 		insertKeyframe(Keyframe(arr[i]));
 	}
 }
 
-AnimationChannel::~AnimationChannel()
+Sequence::~Sequence()
 {
 	keyframes.clear();
 	keyframes.shrink_to_fit();
 }
 
-void AnimationChannel::insertKeyframe(Keyframe keyframe)
+void Sequence::insertKeyframe(Keyframe keyframe)
 {
 	if (keyframes.size() == 0)
 	{
@@ -43,14 +40,14 @@ void AnimationChannel::insertKeyframe(Keyframe keyframe)
 	}
 
 	std::vector<Keyframe>::iterator it = std::lower_bound(keyframes.begin(), keyframes.end(), keyframe,
-	                                                      [](Keyframe a, Keyframe b)
-	                                                      {
-		                                                      return a.time < b.time;
-	                                                      });
+		[](Keyframe a, Keyframe b)
+		{
+			return a.time < b.time;
+		});
 	keyframes.insert(it, keyframe);
 }
 
-float AnimationChannel::update(float time)
+float Sequence::update(float time)
 {
 	// Bounds checking
 	if (keyframes.empty())
@@ -106,21 +103,18 @@ float AnimationChannel::update(float time)
 	return lerp(left.value, right.value, t);
 }
 
-nlohmann::ordered_json AnimationChannel::toJson()
+nlohmann::json Sequence::toJson()
 {
-	nlohmann::ordered_json j;
-	j["type"] = type;
-
-	j["keyframes"] = nlohmann::json::array();
+	nlohmann::json j = nlohmann::json::array();
 	for (int i = 0; i < keyframes.size(); i++)
 	{
-		j["keyframes"][i] = keyframes[i].toJson();
+		j[i] = keyframes[i].toJson();
 	}
 
 	return j;
 }
 
-float AnimationChannel::lerp(float a, float b, float t)
+float Sequence::lerp(float a, float b, float t)
 {
 	return (a * (1.0f - t)) + (b * t);
 }

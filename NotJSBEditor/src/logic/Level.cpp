@@ -18,6 +18,29 @@ Level::~Level()
 	colorSlots.shrink_to_fit();
 }
 
+void Level::insertLevelEvent(LevelEvent* value)
+{
+	if (hasLevelEvent(value->type))
+	{
+		return;
+	}
+
+	std::vector<LevelEvent*>::iterator it = std::lower_bound(levelEvents.begin(), levelEvents.end(),
+		value,
+		[](const LevelEvent* a, const LevelEvent* b)
+		{
+			return a->type < b->type;
+		});
+	levelEvents.insert(it, value);
+
+	levelEventLookup[value->type] = true;
+}
+
+bool Level::hasLevelEvent(LevelEventType type)
+{
+	return levelEventLookup[type];
+}
+
 nlohmann::ordered_json Level::toJson()
 {
 	nlohmann::ordered_json j;

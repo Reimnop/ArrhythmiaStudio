@@ -18,7 +18,7 @@ LevelObject::LevelObject(nlohmann::json j)
 	nlohmann::json::array_t arr = j["channels"].get<nlohmann::json::array_t>();
 	for (int i = 0; i < arr.size(); i++)
 	{
-		animationChannels.push_back(new AnimationChannel(arr[i]));
+		insertChannel(new AnimationChannel(arr[i]));
 	}
 
 	node = nullptr;
@@ -84,32 +84,25 @@ void LevelObject::genActionPair(ObjectAction* spawnAction, ObjectAction* killAct
 
 void LevelObject::insertChannel(AnimationChannel* value)
 {
-	if (animationChannels.size() == 0)
+	if (hasChannel(value->type))
 	{
-		animationChannels.push_back(value);
 		return;
 	}
 
 	std::vector<AnimationChannel*>::iterator it = std::lower_bound(animationChannels.begin(), animationChannels.end(),
 	                                                               value,
-	                                                               [](AnimationChannel* a, AnimationChannel* b)
+	                                                               [](const AnimationChannel* a, const AnimationChannel* b)
 	                                                               {
 		                                                               return a->type < b->type;
 	                                                               });
 	animationChannels.insert(it, value);
+
+	animationChannelLookup[value->type] = true;
 }
 
 bool LevelObject::hasChannel(AnimationChannelType channelType)
 {
-	for (int i = 0; i < animationChannels.size(); i++)
-	{
-		if (animationChannels[i]->type == channelType)
-		{
-			return true;
-		}
-	}
-
-	return false;
+	return animationChannelLookup[channelType];
 }
 
 nlohmann::ordered_json LevelObject::toJson(bool excludeChildren)

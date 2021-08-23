@@ -4,22 +4,20 @@
 #include <nlohmann/json.hpp>
 
 #include "Keyframe.h"
-#include "AnimationChannelType.h"
 
 // Contains keyframes and also animates them
-class AnimationChannel
+class Sequence
 {
 public:
-	AnimationChannelType type;
 	std::vector<Keyframe> keyframes;
 
-	AnimationChannel(AnimationChannelType channelType, int count, Keyframe* keyframes);
-	AnimationChannel(nlohmann::json j);
-	~AnimationChannel();
+	Sequence(int count, Keyframe* keyframes);
+	Sequence(nlohmann::json j);
+	~Sequence();
 
 	void insertKeyframe(Keyframe keyframe);
 	float update(float time);
-	nlohmann::ordered_json toJson();
+	nlohmann::json toJson();
 private:
 	float lastIndex;
 

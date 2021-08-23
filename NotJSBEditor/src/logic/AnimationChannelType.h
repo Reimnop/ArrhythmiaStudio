@@ -7,5 +7,6 @@ enum AnimationChannelType
 	AnimationChannelType_ScaleX,
 	AnimationChannelType_ScaleY,
 	AnimationChannelType_Rotation,
-	AnimationChannelType_Opacity
+	AnimationChannelType_Opacity,
+	AnimationChannelType_Count
 };

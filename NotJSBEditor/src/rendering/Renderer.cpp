@@ -162,21 +162,14 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 		{
 			if (output->drawTransparent)
 			{
-				if (queuedDrawDataTransparent.empty())
-				{
-					queuedDrawDataTransparent.push_back(output);
-				}
-				else
-				{
-					std::vector<OutputDrawData*>::iterator it = std::lower_bound(
-						queuedDrawDataTransparent.begin(), queuedDrawDataTransparent.end(), output,
-						[](const OutputDrawData* a, const OutputDrawData* b)
-						{
-							return a->drawDepth < b->drawDepth;
-						});
+				std::vector<OutputDrawData*>::iterator it = std::lower_bound(
+					queuedDrawDataTransparent.begin(), queuedDrawDataTransparent.end(), output,
+					[](const OutputDrawData* a, const OutputDrawData* b)
+					{
+						return a->drawDepth < b->drawDepth;
+					});
 
-					queuedDrawDataTransparent.insert(it, output);
-				}
+				queuedDrawDataTransparent.insert(it, output);
 			}
 			else
 			{

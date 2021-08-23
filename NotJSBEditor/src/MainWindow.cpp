@@ -2,7 +2,6 @@
 #include "logic/GameManager.h"
 
 #include <logger.h>
-#include <helper.h>
 #include <bass/bass.h>
 
 void glfwErrorCallback(int error_code, const char* description)
@@ -56,7 +55,7 @@ MainWindow::MainWindow()
 	// Init GLFW
 	if (!glfwInit())
 	{
-		EXIT_FATAL("GLFW initialization failed!");
+		throw std::runtime_error("GLFW initialization failed!");
 	}
 
 	// Create window
@@ -70,14 +69,14 @@ MainWindow::MainWindow()
 
 	if (!window)
 	{
-		EXIT_FATAL("Window creation failed!");
+		throw std::runtime_error("Window creation failed!");
 	}
 
 	glfwMakeContextCurrent(window);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		EXIT_FATAL("GLAD initialization failed!");
+		throw std::runtime_error("GLAD initialization failed!");
 	}
 
 	glfwSwapInterval(1);

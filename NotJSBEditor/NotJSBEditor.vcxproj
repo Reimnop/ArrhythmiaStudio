@@ -514,7 +514,6 @@
     <ClInclude Include="include\glm\vec3.hpp" />
     <ClInclude Include="include\glm\vec4.hpp" />
     <ClInclude Include="include\glm\vector_relational.hpp" />
-    <ClInclude Include="include\helper.h" />
     <ClInclude Include="include\imgui\imconfig.h" />
     <ClInclude Include="include\imgui\imgui.h" />
     <ClInclude Include="include\imgui\imgui_impl_glfw.h" />
@@ -578,6 +577,7 @@
     <ClInclude Include="src\logic\GlobalConstants.h" />
     <ClInclude Include="src\logic\Level.h" />
     <ClInclude Include="src\logic\LevelCreateInfo.h" />
+    <ClInclude Include="src\logic\LevelEvent.h" />
     <ClInclude Include="src\logic\Properties.h" />
     <ClInclude Include="src\logic\GameManager.h" />
     <ClInclude Include="src\logic\LevelManager.h" />

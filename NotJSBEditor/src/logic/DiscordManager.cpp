@@ -34,6 +34,10 @@ void DiscordManager::updateActivity(discord::Activity activity) const
 	{
 		core->ActivityManager().UpdateActivity(activity, nullptr);
 	}
+	else
+	{
+		Logger::error("Error while updating Discord activity!");
+	}
 }
 
 void DiscordManager::update() const

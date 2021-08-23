@@ -3,6 +3,7 @@
 #include "DrawElementsCommand.h"
 
 #include <algorithm>
+#include <logger.h>
 
 Renderer* Renderer::inst;
 
@@ -14,8 +15,18 @@ Renderer::Renderer(GLFWwindow* window)
 	}
 	inst = this;
 
-	const int initialWidth = 1280;
-	const int initialHeight = 720;
+	const GLubyte* renderer = glGetString(GL_RENDERER);
+	const GLubyte* vendor = glGetString(GL_VENDOR);
+	const GLubyte* version = glGetString(GL_VERSION);
+	const GLubyte* langVer = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+	Logger::info("Renderer: " + std::string((const char*)renderer));
+	Logger::info("Vendor: " + std::string((const char*)vendor));
+	Logger::info("OpenGL Version: " + std::string((const char*)version));
+	Logger::info("GLSL Version: " + std::string((const char*)langVer));
+
+	constexpr int initialWidth = 1280;
+	constexpr int initialHeight = 720;
 
 	viewportWidth = initialWidth;
 	viewportHeight = initialHeight;

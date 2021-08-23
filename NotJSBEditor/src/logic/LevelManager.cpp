@@ -8,6 +8,7 @@
 #include <filesystem>
 #include <fstream>
 #include <ctime>
+#include <logger.h>
 
 LevelManager* LevelManager::inst;
 
@@ -40,6 +41,8 @@ void LevelManager::loadLevel(std::string levelPath)
 		delete level;
 	}
 
+	Logger::info("Loading level at " + levelPath);
+
 	// Parse new level json
 	std::filesystem::path levelDir = levelPath;
 	std::filesystem::path levelFilePath = levelDir / "level.njelv";
@@ -61,11 +64,15 @@ void LevelManager::loadLevel(std::string levelPath)
 		newLevel->colorSlots.push_back(new ColorSlot(slotJson));
 	}
 
+	Logger::info("Loaded " + std::to_string(newLevel->colorSlots.size()) + " color slots");
+
 	nlohmann::json::array_t objArr = j["objects"].get<nlohmann::json::array_t>();
 	for (nlohmann::json objJson : objArr)
 	{
 		recursivelyInitializeObjectTree(objJson, nullptr, newLevel);
 	}
+
+	Logger::info("Loaded " + std::to_string(newLevel->levelObjects.size()) + " objects");
 
 	recalculateAllObjectActions();
 	recalculateActionIndex(time);
@@ -83,6 +90,8 @@ void LevelManager::loadLevel(std::string levelPath)
 	activity.GetTimestamps().SetStart(std::time(nullptr));
 
 	DiscordManager::inst->updateActivity(activity);
+
+	Logger::info("Finished loading level " + newLevel->name);
 }
 
 void LevelManager::update()

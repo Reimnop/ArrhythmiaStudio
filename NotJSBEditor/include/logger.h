@@ -1,19 +1,38 @@
 #pragma once
 
 #include <iostream>
+#include <Windows.h>
 
 static class Logger
 {
 public:
-	static void info(std::string msg) {
-		std::cout << "\u001b[40m" /* BG */ << "\u001b[97m" /* FG */ << "[NotJSBEditor] [INFO] " << msg << std::endl;
+	template<typename T>
+	static void info(T obj) {
+		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleTextAttribute(hConsole, BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE | BACKGROUND_INTENSITY);
+		std::cout << "[NotJSBEditor] [INFO]";
+
+		SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+		std::cout << " " << obj << std::endl;
 	}
 
-	static void warn(std::string msg) {
-		std::cout << "\u001b[43m" /* BG */ << "\u001b[37m" /* FG */ << "[NotJSBEditor] [WARN] " << "\u001b[0m" /* RESET */ << " " << "\u001b[93m" /* FG */ << msg << std::endl;
+	template<typename T>
+	static void warn(T obj) {
+		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleTextAttribute(hConsole, BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+		std::cout << "[NotJSBEditor] [WARN]";
+
+		SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+		std::cout << " " << obj << std::endl;
 	}
 
-	static void error(std::string msg) {
-		std::cout << "\u001b[41m" /* BG */ << "\u001b[37m" /* FG */ << "[NotJSBEditor] [ERROR] " << "\u001b[0m" /* RESET */ << " " << "\u001b[91m" /* FG */ << msg << std::endl;
+	template<typename T>
+	static void error(T obj) {
+		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleTextAttribute(hConsole, BACKGROUND_RED | BACKGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY);
+		std::cout << "[NotJSBEditor] [ERRO]";
+
+		SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY);
+		std::cout << " " << obj << std::endl;
 	}
 };

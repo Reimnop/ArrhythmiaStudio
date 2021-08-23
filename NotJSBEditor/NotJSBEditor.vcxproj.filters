@@ -314,9 +314,6 @@
     <ClInclude Include="include\logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\helper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\glad\glad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1371,6 +1368,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\DiscordManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\LevelEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

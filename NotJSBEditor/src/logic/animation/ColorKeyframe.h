@@ -23,7 +23,7 @@ struct ColorKeyframe
 		color.b = j["color"][2].get<float>();
 	}
 
-	bool operator==(ColorKeyframe b)
+	bool operator==(ColorKeyframe b) const
 	{
 		return this->time == b.time && this->color == b.color;
 	}

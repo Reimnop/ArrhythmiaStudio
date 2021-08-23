@@ -27,7 +27,7 @@ ShapeManager::ShapeManager()
 
 ShapeManager::~ShapeManager()
 {
-	for (Shape shape : shapes)
+	for (const Shape& shape : shapes)
 	{
 		delete shape.mesh;
 	}

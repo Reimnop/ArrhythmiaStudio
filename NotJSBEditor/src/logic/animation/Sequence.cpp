@@ -27,7 +27,7 @@ Sequence::~Sequence()
 
 void Sequence::insertKeyframe(Keyframe keyframe)
 {
-	if (keyframes.size() == 0)
+	if (keyframes.empty())
 	{
 		keyframes.push_back(keyframe);
 		return;
@@ -40,10 +40,10 @@ void Sequence::insertKeyframe(Keyframe keyframe)
 	}
 
 	std::vector<Keyframe>::iterator it = std::lower_bound(keyframes.begin(), keyframes.end(), keyframe,
-		[](Keyframe a, Keyframe b)
-		{
-			return a.time < b.time;
-		});
+	                                                      [](Keyframe a, Keyframe b)
+	                                                      {
+		                                                      return a.time < b.time;
+	                                                      });
 	keyframes.insert(it, keyframe);
 }
 

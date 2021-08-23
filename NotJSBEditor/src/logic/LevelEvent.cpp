@@ -17,7 +17,7 @@ LevelEvent::~LevelEvent()
 	delete sequence;
 }
 
-float LevelEvent::update(float time)
+float LevelEvent::update(float time) const
 {
 	return sequence->update(time);
 }

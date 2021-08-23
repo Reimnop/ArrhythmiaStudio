@@ -70,7 +70,8 @@ void Timeline::onLayout()
 	// Open a sequence window
 	if (ImGui::Begin("Timeline"))
 	{
-		ImGui::Text(timeToString(levelManager->time).c_str());
+		std::string time = timeToString(levelManager->time);
+		ImGui::Text(time.c_str());
 
 		ImGui::SameLine();
 

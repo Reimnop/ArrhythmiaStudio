@@ -59,7 +59,7 @@ void LevelManager::loadLevel(std::string levelPath)
 	level = newLevel;
 
 	nlohmann::json::array_t slotArr = j["color_slots"].get<nlohmann::json::array_t>();
-	for (nlohmann::json slotJson : slotArr)
+	for (const nlohmann::json& slotJson : slotArr)
 	{
 		newLevel->colorSlots.push_back(new ColorSlot(slotJson));
 	}
@@ -67,7 +67,7 @@ void LevelManager::loadLevel(std::string levelPath)
 	Logger::info("Loaded " + std::to_string(newLevel->colorSlots.size()) + " color slots");
 
 	nlohmann::json::array_t objArr = j["objects"].get<nlohmann::json::array_t>();
-	for (nlohmann::json objJson : objArr)
+	for (const nlohmann::json& objJson : objArr)
 	{
 		recursivelyInitializeObjectTree(objJson, nullptr, newLevel);
 	}
@@ -296,7 +296,7 @@ void LevelManager::removeObject(LevelObject* levelObject)
 
 void LevelManager::insertAction(ObjectAction value)
 {
-	if (objectActions.size() == 0)
+	if (objectActions.empty())
 	{
 		objectActions.push_back(value);
 		return;
@@ -324,7 +324,7 @@ void LevelManager::spawnObject(LevelObject* levelObject) const
 	levelObject->node = node;
 }
 
-void LevelManager::recursivelyInitializeObjectTree(nlohmann::json j, LevelObject* parent, Level* level)
+void LevelManager::recursivelyInitializeObjectTree(nlohmann::json j, LevelObject* parent, Level* level) const
 {
 	LevelObject* obj = new LevelObject(j);
 
@@ -336,7 +336,7 @@ void LevelManager::recursivelyInitializeObjectTree(nlohmann::json j, LevelObject
 	if (j.contains("children"))
 	{
 		nlohmann::json::array_t children = j["children"].get<nlohmann::json::array_t>();
-		for (nlohmann::json child : children)
+		for (const nlohmann::json& child : children)
 		{
 			recursivelyInitializeObjectTree(child, obj, level);
 		}

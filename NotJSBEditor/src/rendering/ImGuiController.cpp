@@ -40,7 +40,7 @@ void ImGuiController::update()
 	ImGui::DockSpaceOverViewport();
 
 	// Call all onLayout
-	for (std::function<void()> layoutFunc : onLayout)
+	for (const std::function<void()>& layoutFunc : onLayout)
 	{
 		layoutFunc();
 	}

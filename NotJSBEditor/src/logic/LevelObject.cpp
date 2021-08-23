@@ -91,7 +91,8 @@ void LevelObject::insertChannel(AnimationChannel* value)
 
 	std::vector<AnimationChannel*>::iterator it = std::lower_bound(animationChannels.begin(), animationChannels.end(),
 	                                                               value,
-	                                                               [](const AnimationChannel* a, const AnimationChannel* b)
+	                                                               [](const AnimationChannel* a,
+	                                                                  const AnimationChannel* b)
 	                                                               {
 		                                                               return a->type < b->type;
 	                                                               });

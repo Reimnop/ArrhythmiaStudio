@@ -17,7 +17,7 @@ AnimationChannel::~AnimationChannel()
 	delete sequence;
 }
 
-float AnimationChannel::update(float time)
+float AnimationChannel::update(float time) const
 {
 	return sequence->update(time);
 }

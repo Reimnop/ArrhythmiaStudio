@@ -50,7 +50,7 @@ void ColorChannel::insertKeyframe(ColorKeyframe keyframe)
 Color ColorChannel::update(float time)
 {
 	// Bounds checking
-	if (keyframes.size() == 0)
+	if (keyframes.empty())
 	{
 		return Color();
 	}

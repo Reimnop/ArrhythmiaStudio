@@ -57,5 +57,5 @@ private:
 
 	void insertAction(ObjectAction value);
 	void spawnObject(LevelObject* levelObject) const;
-	void recursivelyInitializeObjectTree(nlohmann::json j, LevelObject* parent, Level* level);
+	void recursivelyInitializeObjectTree(nlohmann::json j, LevelObject* parent, Level* level) const;
 };

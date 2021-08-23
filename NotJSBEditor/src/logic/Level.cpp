@@ -26,11 +26,11 @@ void Level::insertLevelEvent(LevelEvent* value)
 	}
 
 	std::vector<LevelEvent*>::iterator it = std::lower_bound(levelEvents.begin(), levelEvents.end(),
-		value,
-		[](const LevelEvent* a, const LevelEvent* b)
-		{
-			return a->type < b->type;
-		});
+	                                                         value,
+	                                                         [](const LevelEvent* a, const LevelEvent* b)
+	                                                         {
+		                                                         return a->type < b->type;
+	                                                         });
 	levelEvents.insert(it, value);
 
 	levelEventLookup[value->type] = true;

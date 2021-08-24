@@ -38,8 +38,8 @@ void Events::onLayout()
 		{
 			insertEventSelectable(LevelEventType_CameraPositionX, 0.0f);
 			insertEventSelectable(LevelEventType_CameraPositionY, 0.0f);
-			insertEventSelectable(LevelEventType_CameraRotation, 0.0f);
 			insertEventSelectable(LevelEventType_CameraScale, 5.0f);
+			insertEventSelectable(LevelEventType_CameraRotation, 0.0f);
 
 			ImGui::EndPopup();
 		}
@@ -296,7 +296,7 @@ void Events::onLayout()
 					bool kfChanged = false;
 					ImGui::DragFloat("Keyframe Time", &kf.time, 0.1f, 0.0f, levelManager->audioClip->getLength());
 					kfChanged = kfChanged || ImGui::IsItemEdited();
-					ImGui::DragFloat("Keyframe Value", &kf.value, 0.1f, 0.0f, INFINITY);
+					ImGui::DragFloat("Keyframe Value", &kf.value, 0.1f);
 					kfChanged = kfChanged || ImGui::IsItemEdited();
 
 					if (kfChanged)
@@ -351,10 +351,10 @@ std::string Events::getEventName(LevelEventType type) const
 		return "Camera Position X";
 	case LevelEventType_CameraPositionY:
 		return "Camera Position Y";
-	case LevelEventType_CameraRotation:
-		return "Camera Rotation";
 	case LevelEventType_CameraScale:
 		return "Camera Scale";
+	case LevelEventType_CameraRotation:
+		return "Camera Rotation";
 	}
 
 	return "Unknown event";

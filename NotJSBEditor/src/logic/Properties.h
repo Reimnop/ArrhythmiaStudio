@@ -24,6 +24,6 @@ private:
 
 	void onLayout();
 	void insertChannelSelectable(LevelObject* levelObject, AnimationChannelType channelType, float defaultValue);
-	std::string getChannelName(AnimationChannelType channelType);
-	float lerp(float a, float b, float t);
+	std::string getChannelName(AnimationChannelType channelType) const;
+	float lerp(float a, float b, float t) const;
 };

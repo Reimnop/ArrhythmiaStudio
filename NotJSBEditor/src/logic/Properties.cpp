@@ -438,7 +438,7 @@ void Properties::onLayout()
 
 void Properties::insertChannelSelectable(LevelObject* levelObject, AnimationChannelType channelType, float defaultValue)
 {
-	std::string channelName = getChannelName(channelType);
+	const std::string channelName = getChannelName(channelType);
 	if (!levelObject->hasChannel(channelType) && ImGui::Selectable(channelName.c_str()))
 	{
 		Keyframe first = Keyframe();
@@ -451,7 +451,7 @@ void Properties::insertChannelSelectable(LevelObject* levelObject, AnimationChan
 	}
 }
 
-std::string Properties::getChannelName(AnimationChannelType channelType)
+std::string Properties::getChannelName(AnimationChannelType channelType) const
 {
 	switch (channelType)
 	{
@@ -472,7 +472,7 @@ std::string Properties::getChannelName(AnimationChannelType channelType)
 	return "Unknown type";
 }
 
-float Properties::lerp(float a, float b, float t)
+float Properties::lerp(float a, float b, float t) const
 {
 	return (a * (1.0f - t)) + (b * t);
 }

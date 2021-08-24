@@ -1,7 +1,7 @@
-#include "Theme.h"
+#include "Events.h"
 
 #include "../rendering/ImGuiController.h"
-#include "animation/ColorChannel.h"
+#include "LevelEvent.h"
 #include "LevelManager.h"
 #include "GlobalConstants.h"
 
@@ -9,42 +9,58 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
-Theme::Theme()
+Events::Events()
 {
 	startTime = 0.0f;
 	endTime = 30.0f;
 
-	ImGuiController::onLayout.push_back(std::bind(&Theme::onLayout, this));
+	ImGuiController::onLayout.push_back(std::bind(&Events::onLayout, this));
 }
 
-void Theme::reset()
+void Events::reset()
 {
-	selectedSlotIndex = -1;
+	selectedEventIndex = -1;
 	selectedKeyframe.reset();
 }
 
-void Theme::onLayout()
+void Events::onLayout()
 {
 	LevelManager* levelManager = LevelManager::inst;
 
-	if (ImGui::Begin("Theme"))
+	if (ImGui::Begin("Events"))
 	{
-		float windowWith = ImGui::GetContentRegionAvailWidth();
-		if (ImGui::BeginChild("##ThemeColors", ImVec2(windowWith, 240.0f), true))
+		if (ImGui::Button("Add level event"))
 		{
-			for (int i = 0; i < levelManager->level->colorSlots.size(); i++)
+			ImGui::OpenPopup("add-level-event-popup");
+		}
+
+		if (ImGui::BeginPopup("add-level-event-popup"))
+		{
+			insertEventSelectable(LevelEventType_CameraPositionX, 0.0f);
+			insertEventSelectable(LevelEventType_CameraPositionY, 0.0f);
+			insertEventSelectable(LevelEventType_CameraRotation, 0.0f);
+			insertEventSelectable(LevelEventType_CameraScale, 5.0f);
+
+			ImGui::EndPopup();
+		}
+
+		float windowWith = ImGui::GetContentRegionAvailWidth();
+		if (ImGui::BeginChild("##LevelEvents", ImVec2(windowWith, 240.0f), true))
+		{
+			for (int i = 0; i < levelManager->level->levelEvents.size(); i++)
 			{
-				if (colorSlotButton(std::string("Color Slot " + std::to_string(i + 1)),
-				                    levelManager->level->colorSlots[i]->currentColor, selectedSlotIndex == i))
+				std::string label = getEventName(levelManager->level->levelEvents[i]->type);
+
+				if (ImGui::Selectable(label.c_str(), selectedEventIndex == i))
 				{
-					selectedSlotIndex = i;
+					selectedEventIndex = i;
 					selectedKeyframe.reset();
 				}
 			}
 		}
 		ImGui::EndChild();
 
-		if (selectedSlotIndex != -1)
+		if (selectedEventIndex != -1)
 		{
 			{
 				ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -68,11 +84,11 @@ void Theme::onLayout()
 					EDITOR_BIN_PRIMARY_COL);
 
 				// Draw keyframes
-				ColorSlot* slot = levelManager->level->colorSlots[selectedSlotIndex];
+				LevelEvent* selectedEvent = levelManager->level->levelEvents[selectedEventIndex];
 
-				for (int i = 0; i < slot->channel->keyframes.size(); i++)
+				for (int i = 0; i < selectedEvent->sequence->keyframes.size(); i++)
 				{
-					ColorKeyframe kf = slot->channel->keyframes[i];
+					Keyframe kf = selectedEvent->sequence->keyframes[i];
 
 					ImVec2 kfPos = ImVec2(
 						EDITOR_KEYFRAME_OFFSET + timelineMin.x + (kf.time - startTime) / (endTime - startTime) * availX,
@@ -109,16 +125,16 @@ void Theme::onLayout()
 						kf.time += timeDelta;
 						kf.time = std::max(kf.time, 0.0f);
 
-						std::vector<ColorKeyframe>::iterator it = std::find(
-							slot->channel->keyframes.begin(),
-							slot->channel->keyframes.end(),
+						std::vector<Keyframe>::iterator it = std::find(
+							selectedEvent->sequence->keyframes.begin(),
+							selectedEvent->sequence->keyframes.end(),
 							selectedKeyframe.value());
-						slot->channel->keyframes.erase(it);
+						selectedEvent->sequence->keyframes.erase(it);
 
-						slot->channel->insertKeyframe(kf);
+						selectedEvent->sequence->insertKeyframe(kf);
 						selectedKeyframe = kf;
 
-						levelManager->updateColorSlot(slot);
+						levelManager->updateLevelEvent(selectedEvent);
 					}
 
 					if (selectedKeyframe.has_value() && selectedKeyframe.value() == kf)
@@ -148,12 +164,12 @@ void Theme::onLayout()
 
 					if (kfTime > 0.0f)
 					{
-						ColorKeyframe kf = ColorKeyframe();
+						Keyframe kf = Keyframe();
 						kf.time = kfTime;
-						kf.color = Color(1.0f, 1.0f, 1.0f);
+						kf.value = 0.0f;
 
-						slot->channel->insertKeyframe(kf);
-						slot->update(levelManager->time);
+						selectedEvent->sequence->insertKeyframe(kf);
+						selectedEvent->update(levelManager->time);
 
 						selectedKeyframe = kf;
 					}
@@ -259,19 +275,19 @@ void Theme::onLayout()
 			}
 
 			ImGui::Separator();
-			if (selectedKeyframe.has_value() && selectedSlotIndex != -1)
+			if (selectedKeyframe.has_value() && selectedEventIndex != -1)
 			{
-				ColorSlot* currentSlot = levelManager->level->colorSlots[selectedSlotIndex];
-				ColorKeyframe kf = selectedKeyframe.value();
+				LevelEvent* selectedEvent = levelManager->level->levelEvents[selectedEventIndex];
+				Keyframe kf = selectedKeyframe.value();
 
 				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 				{
-					std::vector<ColorKeyframe>::iterator it = std::find(
-						currentSlot->channel->keyframes.begin(),
-						currentSlot->channel->keyframes.end(),
+					std::vector<Keyframe>::iterator it = std::find(
+						selectedEvent->sequence->keyframes.begin(),
+						selectedEvent->sequence->keyframes.end(),
 						selectedKeyframe.value());
-					currentSlot->channel->keyframes.erase(it);
-					levelManager->updateColorSlot(currentSlot);
+					selectedEvent->sequence->keyframes.erase(it);
+					levelManager->updateLevelEvent(selectedEvent);
 
 					selectedKeyframe.reset();
 				}
@@ -280,20 +296,20 @@ void Theme::onLayout()
 					bool kfChanged = false;
 					ImGui::DragFloat("Keyframe Time", &kf.time, 0.1f, 0.0f, levelManager->audioClip->getLength());
 					kfChanged = kfChanged || ImGui::IsItemEdited();
-					ImGui::ColorEdit3("Keyframe Color", &kf.color.r);
+					ImGui::DragFloat("Keyframe Value", &kf.value, 0.1f, 0.0f, INFINITY);
 					kfChanged = kfChanged || ImGui::IsItemEdited();
 
 					if (kfChanged)
 					{
-						std::vector<ColorKeyframe>::iterator it = std::find(
-							currentSlot->channel->keyframes.begin(),
-							currentSlot->channel->keyframes.end(),
+						std::vector<Keyframe>::iterator it = std::find(
+							selectedEvent->sequence->keyframes.begin(),
+							selectedEvent->sequence->keyframes.end(),
 							selectedKeyframe.value());
-						currentSlot->channel->keyframes.erase(it);
-						currentSlot->channel->insertKeyframe(kf);
+						selectedEvent->sequence->keyframes.erase(it);
+						selectedEvent->sequence->insertKeyframe(kf);
 						selectedKeyframe = kf;
 
-						levelManager->updateColorSlot(currentSlot);
+						levelManager->updateLevelEvent(selectedEvent);
 					}
 				}
 			}
@@ -304,42 +320,47 @@ void Theme::onLayout()
 		}
 		else
 		{
-			ImGui::Text("No color slot selected");
+			ImGui::Text("No level event selected");
 		}
 	}
 	ImGui::End();
 }
 
-bool Theme::colorSlotButton(std::string label, Color color, bool selected) const
+void Events::insertEventSelectable(LevelEventType type, float defaultValue) const
 {
-	ImU32 inactiveCol = ImGui::GetColorU32(ImGuiCol_Button);
-	ImU32 activeCol = ImGui::GetColorU32(ImGuiCol_ButtonActive);
+	const std::string channelName = getEventName(type);
+	Level* level = LevelManager::inst->level;
 
-	ImVec2 cursorPos = ImGui::GetCursorScreenPos();
-	ImDrawList* drawList = ImGui::GetWindowDrawList();
+	if (!level->hasLevelEvent(type) && ImGui::Selectable(channelName.c_str()))
+	{
+		Keyframe first = Keyframe();
+		first.time = 0.0f;
+		first.value = defaultValue;
 
-	float availX = ImGui::GetContentRegionAvailWidth();
+		LevelEvent* levelEvent = new LevelEvent(type, 1, &first);
 
-	ImVec2 btnSize = ImVec2(availX, EDITOR_THEME_COLOR_SLOT_HEIGHT);
-	ImVec2 btnMax = ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_THEME_COLOR_SLOT_HEIGHT);
-
-	const char* labelPtr = label.c_str();
-	bool clicked = ImGui::InvisibleButton(labelPtr, btnSize);
-
-	bool active = clicked || selected || ImGui::IsItemHovered() || ImGui::IsItemActive();
-
-	drawList->AddRectFilled(cursorPos, btnMax, active ? activeCol : inactiveCol);
-	drawList->AddText(ImVec2(cursorPos.x + EDITOR_THEME_COLOR_SLOT_HEIGHT + 2.0f, cursorPos.y),
-	                  ImGui::GetColorU32(ImGuiCol_Text),
-	                  labelPtr, labelPtr + label.size());
-	drawList->AddRectFilled(cursorPos, ImVec2(cursorPos.x + EDITOR_THEME_COLOR_SLOT_HEIGHT,
-	                                          cursorPos.y + EDITOR_THEME_COLOR_SLOT_HEIGHT),
-	                        ImGui::GetColorU32(ImVec4(color.r, color.g, color.b, 1.0f)));
-
-	return clicked;
+		level->insertLevelEvent(levelEvent);
+	}
 }
 
-float Theme::lerp(float a, float b, float t)
+std::string Events::getEventName(LevelEventType type) const
+{
+	switch (type)
+	{
+	case LevelEventType_CameraPositionX:
+		return "Camera Position X";
+	case LevelEventType_CameraPositionY:
+		return "Camera Position Y";
+	case LevelEventType_CameraRotation:
+		return "Camera Rotation";
+	case LevelEventType_CameraScale:
+		return "Camera Scale";
+	}
+
+	return "Unknown event";
+}
+
+float Events::lerp(float a, float b, float t)
 {
 	return (a * (1.0f - t)) + (b * t);
 }

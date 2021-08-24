@@ -8,6 +8,7 @@
 #include "Timeline.h"
 #include "Properties.h"
 #include "Theme.h"
+#include "Events.h"
 #include "ObjectAction.h"
 #include "ColorSlot.h"
 #include "Level.h"
@@ -48,6 +49,7 @@ private:
 	Timeline* timeline;
 	Properties* properties;
 	Theme* theme;
+	Events* events;
 
 	float lastTime = 0.0f;
 

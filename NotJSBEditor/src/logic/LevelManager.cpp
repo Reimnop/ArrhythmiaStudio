@@ -27,6 +27,7 @@ LevelManager::LevelManager()
 	timeline = new Timeline();
 	properties = new Properties();
 	theme = new Theme();
+	events = new Events();
 
 	loadLevel("Assets/StartupLevel");
 }
@@ -70,7 +71,7 @@ void LevelManager::loadLevel(std::string levelPath)
 
 	Logger::info("Loaded " + std::to_string(newLevel->colorSlots.size()) + " color slots");
 
-	if (j.contains("level_events")) 
+	if (j.contains("level_events"))
 	{
 		nlohmann::json::array_t eventArr = j["level_events"].get<nlohmann::json::array_t>();
 		for (const nlohmann::json& eventJson : eventArr)
@@ -81,7 +82,7 @@ void LevelManager::loadLevel(std::string levelPath)
 
 	Logger::info("Loaded " + std::to_string(newLevel->levelEvents.size()) + " level events");
 
-	if (j.contains("objects")) 
+	if (j.contains("objects"))
 	{
 		nlohmann::json::array_t objArr = j["objects"].get<nlohmann::json::array_t>();
 		for (const nlohmann::json& objJson : objArr)
@@ -98,8 +99,10 @@ void LevelManager::loadLevel(std::string levelPath)
 
 	audioClip = new AudioClip(songFilePath.generic_string());
 
-	Properties::inst->reset();
-	Timeline::inst->genBuffer(audioClip);
+	properties->reset();
+	theme->reset();
+	events->reset();
+	timeline->genBuffer(audioClip);
 
 	std::string stateStr = "Editing " + newLevel->name;
 

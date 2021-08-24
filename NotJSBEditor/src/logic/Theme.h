@@ -9,6 +9,8 @@ class Theme
 {
 public:
 	Theme();
+
+	void reset();
 private:
 	float startTime;
 	float endTime;

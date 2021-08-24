@@ -177,6 +177,9 @@
     <ClCompile Include="src\logic\LevelEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\logic\Events.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
@@ -1383,6 +1386,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\LevelEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\Events.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

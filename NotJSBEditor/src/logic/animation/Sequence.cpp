@@ -1,5 +1,7 @@
 #include "Sequence.h"
 
+#include "Easing.h"
+
 Sequence::Sequence(int count, Keyframe* keyframes)
 {
 	for (int i = 0; i < count; i++)
@@ -99,8 +101,11 @@ float Sequence::update(float time)
 	}
 
 	// Apply easings
-	float t = (time - left.time) / (right.time - left.time);
-	return lerp(left.value, right.value, t);
+	const EaseFunc ease = Easing::getEaseFunction(right.easing);
+	const float t = (time - left.time) / (right.time - left.time);
+	const float easedT = ease(t);
+
+	return lerp(left.value, right.value, easedT);
 }
 
 nlohmann::json Sequence::toJson()

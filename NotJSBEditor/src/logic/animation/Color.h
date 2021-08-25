@@ -18,8 +18,8 @@ struct Color
 		this->b = b;
 	}
 
-	bool operator==(Color b) const
+	bool operator==(Color other) const
 	{
-		return this->r == b.r && this->g == b.g && this->b == b.b;
+		return r == other.r && g == other.g && b == other.b;
 	}
 };

@@ -183,6 +183,7 @@
     <ClCompile Include="include\glad\glad.c" />
     <ClCompile Include="src\logic\AnimationChannel.cpp" />
     <ClCompile Include="src\logic\animation\ColorChannel.cpp" />
+    <ClCompile Include="src\logic\animation\Easing.h" />
     <ClCompile Include="src\logic\Events.cpp" />
     <ClCompile Include="src\logic\LevelEvent.cpp" />
     <ClCompile Include="src\logic\animation\Sequence.cpp" />
@@ -572,6 +573,7 @@
     <ClInclude Include="src\logic\animation\Color.h" />
     <ClInclude Include="src\logic\animation\ColorChannel.h" />
     <ClInclude Include="src\logic\animation\ColorKeyframe.h" />
+    <ClInclude Include="src\logic\animation\EaseType.h" />
     <ClInclude Include="src\logic\animation\Keyframe.h" />
     <ClInclude Include="src\logic\animation\Sequence.h" />
     <ClInclude Include="src\logic\AudioClip.h" />

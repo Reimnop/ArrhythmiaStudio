@@ -1,5 +1,7 @@
 #include "ColorChannel.h"
 
+#include "Easing.h"
+
 ColorChannel::ColorChannel(int count, ColorKeyframe* keyframes)
 {
 	for (int i = 0; i < count; i++)
@@ -99,10 +101,13 @@ Color ColorChannel::update(float time)
 	}
 
 	// Apply easings
-	float t = (time - left.time) / (right.time - left.time);
-	float r = lerp(left.color.r, right.color.r, t);
-	float g = lerp(left.color.g, right.color.g, t);
-	float b = lerp(left.color.b, right.color.b, t);
+	const EaseFunc ease = Easing::getEaseFunction(right.easing);
+	const float t = (time - left.time) / (right.time - left.time);
+	const float easedT = ease(t);
+
+	const float r = lerp(left.color.r, right.color.r, easedT);
+	const float g = lerp(left.color.g, right.color.g, easedT);
+	const float b = lerp(left.color.b, right.color.b, easedT);
 	return Color(r, g, b);
 }
 

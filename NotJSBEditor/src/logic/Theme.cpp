@@ -4,6 +4,7 @@
 #include "animation/ColorChannel.h"
 #include "LevelManager.h"
 #include "GlobalConstants.h"
+#include "animation/Easing.h"
 
 #include <functional>
 #include <imgui/imgui.h>
@@ -282,6 +283,22 @@ void Theme::onLayout()
 					kfChanged = kfChanged || ImGui::IsItemEdited();
 					ImGui::ColorEdit3("Keyframe Color", &kf.color.r);
 					kfChanged = kfChanged || ImGui::IsItemEdited();
+
+					std::string currentEaseName = Easing::getEaseName(kf.easing);
+					if (ImGui::BeginCombo("Easing", currentEaseName.c_str()))
+					{
+						for (int i = 0; i < EaseType_Count; i++)
+						{
+							std::string easeName = Easing::getEaseName((EaseType)i);
+							if (ImGui::Selectable(easeName.c_str(), kf.easing == i))
+							{
+								kf.easing = (EaseType)i;
+								kfChanged = true;
+							}
+						}
+
+						ImGui::EndCombo();
+					}
 
 					if (kfChanged)
 					{

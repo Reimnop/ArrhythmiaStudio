@@ -11,6 +11,7 @@
 #include "../rendering/MeshRenderer.h"
 #include "GlobalConstants.h"
 #include "ShapeManager.h"
+#include "animation/Easing.h"
 
 Properties* Properties::inst;
 
@@ -408,6 +409,22 @@ void Properties::onLayout()
 					kfChanged = kfChanged || ImGui::IsItemEdited();
 					ImGui::DragFloat("Keyframe Value", &kf.value, 0.1f);
 					kfChanged = kfChanged || ImGui::IsItemEdited();
+
+					std::string currentEaseName = Easing::getEaseName(kf.easing);
+					if (ImGui::BeginCombo("Easing", currentEaseName.c_str()))
+					{
+						for (int i = 0; i < EaseType_Count; i++)
+						{
+							std::string easeName = Easing::getEaseName((EaseType)i);
+							if (ImGui::Selectable(easeName.c_str(), kf.easing == i))
+							{
+								kf.easing = (EaseType)i;
+								kfChanged = true;
+							}
+						}
+
+						ImGui::EndCombo();
+					}
 
 					if (kfChanged)
 					{

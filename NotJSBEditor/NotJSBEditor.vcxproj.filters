@@ -180,6 +180,9 @@
     <ClCompile Include="src\logic\Events.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\logic\animation\Easing.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
@@ -1389,6 +1392,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\Events.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\animation\EaseType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

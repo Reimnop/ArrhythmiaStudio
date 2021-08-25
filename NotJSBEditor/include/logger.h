@@ -3,9 +3,11 @@
 #include <iostream>
 #include <Windows.h>
 
-static class Logger
+class Logger
 {
 public:
+	Logger() = delete;
+
 	template<typename T>
 	static void info(T obj) {
 		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);

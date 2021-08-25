@@ -4,9 +4,11 @@
 #include <cstdint>
 #include <glad/glad.h>
 
-static class FramebufferStack
+class FramebufferStack
 {
 public:
+	FramebufferStack() = delete;
+
 	static void push(uint32_t framebuffer)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);

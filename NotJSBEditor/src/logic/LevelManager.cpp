@@ -129,7 +129,7 @@ void LevelManager::updateLevel(float time)
 
 	if (time > lastTime)
 	{
-		while (actionIndex < objectActions.size() && objectActions[actionIndex].time < time)
+		while (indexAdvance(time))
 		{
 			switch (objectActions[actionIndex].type)
 			{
@@ -147,7 +147,7 @@ void LevelManager::updateLevel(float time)
 	}
 	else
 	{
-		while (actionIndex > 0 && objectActions[actionIndex - 1].time > time)
+		while (indexReverse(time))
 		{
 			switch (objectActions[actionIndex - 1].type)
 			{
@@ -289,7 +289,7 @@ void LevelManager::recalculateActionIndex(float time)
 
 	// Reset action index and recalculate
 	actionIndex = 0;
-	while (actionIndex < objectActions.size() && objectActions[actionIndex].time < time)
+	while (indexAdvance(time))
 	{
 		switch (objectActions[actionIndex].type)
 		{
@@ -342,6 +342,28 @@ void LevelManager::removeObject(LevelObject* levelObject)
 	delete levelObject;
 
 	recalculateActionIndex(time);
+}
+
+bool LevelManager::indexAdvance(float time) const
+{
+	if (actionIndex >= objectActions.size())
+		return false;
+
+	if (time >= objectActions[actionIndex].time)
+		return true;
+
+	return false;
+}
+
+bool LevelManager::indexReverse(float time) const
+{
+	if (actionIndex <= 0)
+		return false;
+
+	if (time < objectActions[actionIndex - 1].time)
+		return true;
+
+	return false;
 }
 
 void LevelManager::insertAction(ObjectAction value)

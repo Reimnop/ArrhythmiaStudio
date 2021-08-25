@@ -58,6 +58,9 @@ private:
 	std::vector<ObjectAction> objectActions;
 	std::unordered_set<LevelObject*> aliveObjects;
 
+	bool indexAdvance(float time) const;
+	bool indexReverse(float time) const;
+
 	void insertAction(ObjectAction value);
 	void spawnObject(LevelObject* levelObject) const;
 	void recursivelyInitializeObjectTree(nlohmann::json j, LevelObject* parent, Level* level) const;

@@ -3,7 +3,7 @@
 #include "DrawCommand.h"
 
 // glDrawElements
-struct DrawElementsCommand : public DrawCommand
+struct DrawElementsCommand : DrawCommand
 {
 	int count;
 	int offset;

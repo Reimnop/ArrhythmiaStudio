@@ -1,0 +1,19 @@
+#version 440
+
+layout(local_size_x = 8, local_size_y = 8) in;
+
+layout(r11f_g11f_b10f, binding = 0) uniform image2D img_output;
+
+const float a = 2.51;
+const float b = 0.03;
+const float c = 2.43;
+const float d = 0.59;
+const float e = 0.14;
+
+void main() {
+	ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy);
+
+	vec3 col = imageLoad(img_output, pixelCoords).rgb;
+	col = clamp((col * (a * col + b)) / (col * (c * col + d) + e), 0.0, 1.0);
+	imageStore(img_output, pixelCoords, vec4(col, 1.0));
+}

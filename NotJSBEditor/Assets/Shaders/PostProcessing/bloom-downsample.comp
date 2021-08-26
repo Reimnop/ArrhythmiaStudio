@@ -35,5 +35,5 @@ void main() {
     o += (F + G + L + K) * div.y;
     o += (G + H + M + L) * div.y;
 
-	imageStore(img_output, pixelCoords, vec4(o * 0.7, 1.0));
+	imageStore(img_output, pixelCoords, vec4(o, 1.0));
 }

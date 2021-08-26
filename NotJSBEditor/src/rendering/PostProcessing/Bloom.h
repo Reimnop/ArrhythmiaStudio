@@ -13,8 +13,10 @@ public:
 
 	void processImage(uint32_t image, int width, int height) override;
 private:
-	ComputeShader* blurDownsampleShader;
-	ComputeShader* blurUpsampleShader;
+	ComputeShader* downsampleShader;
+	ComputeShader* upsampleShader;
+	ComputeShader* blurHShader;
+	ComputeShader* blurVShader;
 
 	int lastWidth;
 	int lastHeight;

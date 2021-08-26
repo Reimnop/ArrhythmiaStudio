@@ -5,8 +5,8 @@
 
 Bloom::Bloom()
 {
-	blurDownsampleShader = new ComputeShader("Assets/Shaders/PostProcessing/blur-downsample.comp");
-	blurUpsampleShader = new ComputeShader("Assets/Shaders/PostProcessing/blur-upsample.comp");
+	downsampleShader = new ComputeShader("Assets/Shaders/PostProcessing/bloom-downsample.comp");
+	upsampleShader = new ComputeShader("Assets/Shaders/PostProcessing/bloom-upsample.comp");
 
 	lastWidth = RENDERER_INITIAL_WIDTH;
 	lastHeight = RENDERER_INITIAL_HEIGHT;
@@ -47,13 +47,13 @@ void Bloom::processImage(uint32_t image, int width, int height)
 		lastHeight = height;
 	}
 
-	// Blur and downsample
-	glUseProgram(blurDownsampleShader->getHandle());
-
+	// Downsampling
 	for (int i = 0; i < downsamplingTextures.size(); i++)
 	{
 		int w, h;
 		downsamplingTextures[i]->getSize(&w, &h);
+
+		glUseProgram(downsampleShader->getHandle());
 
 		glBindImageTexture(0, downsamplingTextures[i]->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_R11F_G11F_B10F);
 
@@ -63,8 +63,8 @@ void Bloom::processImage(uint32_t image, int width, int height)
 		glDispatchCompute(std::ceil(w / 8.0f), std::ceil(h / 8.0f), 1);
 	}
 
-	// Blur and upsample
-	glUseProgram(blurUpsampleShader->getHandle());
+	// Upsampling
+	glUseProgram(upsampleShader->getHandle());
 
 	glUniform1i(0, 0);
 	glUniform1i(1, 1);

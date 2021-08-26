@@ -186,6 +186,9 @@
     <ClCompile Include="src\rendering\PostProcessing\Bloom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\rendering\PostProcessing\Tonemapping.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
@@ -1409,6 +1412,9 @@
     <ClInclude Include="src\rendering\GlobalConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\rendering\PostProcessing\Tonemapping.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\glm\ext\matrix_clip_space.inl">
@@ -1826,8 +1832,9 @@
     <None Include="Assets\Shaders\waveform.comp" />
     <None Include="discord_game_sdk.dll" />
     <None Include="Assets\Shapes\circle.shp" />
-    <None Include="Assets\Shaders\PostProcessing\blur-downsample.comp" />
-    <None Include="Assets\Shaders\PostProcessing\blur-upsample.comp" />
+    <None Include="Assets\Shaders\PostProcessing\tonemapping.comp" />
+    <None Include="Assets\Shaders\PostProcessing\bloom-downsample.comp" />
+    <None Include="Assets\Shaders\PostProcessing\bloom-upsample.comp" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\Inconsolata.ttf" />

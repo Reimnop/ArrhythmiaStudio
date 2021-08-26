@@ -211,6 +211,7 @@
     <ClCompile Include="src\rendering\Mesh.cpp" />
     <ClCompile Include="src\rendering\MeshRenderer.cpp" />
     <ClCompile Include="src\rendering\PostProcessing\Bloom.cpp" />
+    <ClCompile Include="src\rendering\PostProcessing\Tonemapping.cpp" />
     <ClCompile Include="src\rendering\Renderer.cpp" />
     <ClCompile Include="src\rendering\Shader.cpp" />
     <ClCompile Include="src\rendering\Texture2D.cpp" />
@@ -618,6 +619,7 @@
     <ClInclude Include="src\rendering\OutputDrawData.h" />
     <ClInclude Include="src\rendering\PostProcessing\Bloom.h" />
     <ClInclude Include="src\rendering\PostProcessing\PostProcessor.h" />
+    <ClInclude Include="src\rendering\PostProcessing\Tonemapping.h" />
     <ClInclude Include="src\rendering\Renderer.h" />
     <ClInclude Include="src\rendering\RendererComponent.h" />
     <ClInclude Include="src\rendering\Shader.h" />
@@ -625,8 +627,9 @@
     <ClInclude Include="src\rendering\VertexAttrib.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Shaders\PostProcessing\blur-downsample.comp" />
-    <None Include="Assets\Shaders\PostProcessing\blur-upsample.comp" />
+    <None Include="Assets\Shaders\PostProcessing\bloom-downsample.comp" />
+    <None Include="Assets\Shaders\PostProcessing\bloom-upsample.comp" />
+    <None Include="Assets\Shaders\PostProcessing\tonemapping.comp" />
     <None Include="Assets\Shaders\unlit.frag" />
     <None Include="Assets\Shaders\unlit.vert" />
     <None Include="Assets\Shaders\waveform.comp" />

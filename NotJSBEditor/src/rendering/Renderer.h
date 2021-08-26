@@ -10,6 +10,7 @@
 #include "ImGuiController.h"
 #include "FramebufferStack.h"
 #include "PostProcessing/Bloom.h"
+// #include "PostProcessing/Tonemapping.h"
 
 class Renderer
 {
@@ -17,6 +18,7 @@ public:
 	static Renderer* inst;
 
 	Bloom* bloom;
+	// Tonemapping* tonemapping;
 
 	Camera* camera;
 

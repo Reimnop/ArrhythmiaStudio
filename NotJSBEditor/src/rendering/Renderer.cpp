@@ -64,6 +64,7 @@ Renderer::Renderer(GLFWwindow* window)
 	imGuiController = new ImGuiController(window, "Assets/Inconsolata.ttf");
 
 	bloom = new Bloom();
+	// tonemapping = new Tonemapping();
 }
 
 void Renderer::update()
@@ -124,6 +125,7 @@ void Renderer::render()
 	FramebufferStack::pop();
 
 	bloom->processImage(renderTexture, viewportWidth, viewportHeight);
+	// tonemapping->processImage(renderTexture, viewportWidth, viewportHeight);
 
 	// Clean up
 	queuedDrawDataOpaque.clear();

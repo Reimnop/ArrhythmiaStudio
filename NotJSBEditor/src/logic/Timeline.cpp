@@ -458,7 +458,7 @@ void Timeline::onLayout()
 			glUniform1f(1, endTime);
 			glUniform1f(2, EDITOR_WAVEFORM_FREQ);
 
-			glDispatchCompute(std::ceil(timelineSize.x / 8.0f), std::ceil(timelineSize.y / 8), 1);
+			glDispatchCompute(std::ceil(timelineSize.x / 8.0f), std::ceil(timelineSize.y / 8.0f), 1);
 		}
 	}
 	ImGui::End();

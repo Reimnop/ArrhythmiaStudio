@@ -210,6 +210,7 @@
     <ClCompile Include="src\rendering\Material.cpp" />
     <ClCompile Include="src\rendering\Mesh.cpp" />
     <ClCompile Include="src\rendering\MeshRenderer.cpp" />
+    <ClCompile Include="src\rendering\PostProcessing\Bloom.cpp" />
     <ClCompile Include="src\rendering\Renderer.cpp" />
     <ClCompile Include="src\rendering\Shader.cpp" />
     <ClCompile Include="src\rendering\Texture2D.cpp" />
@@ -606,6 +607,7 @@
     <ClInclude Include="src\rendering\DrawCommandType.h" />
     <ClInclude Include="src\rendering\DrawElementsCommand.h" />
     <ClInclude Include="src\rendering\FramebufferStack.h" />
+    <ClInclude Include="src\rendering\GlobalConstants.h" />
     <ClInclude Include="src\rendering\ImGuiController.h" />
     <ClInclude Include="src\rendering\InputDrawData.h" />
     <ClInclude Include="src\rendering\Material.h" />
@@ -614,6 +616,8 @@
     <ClInclude Include="src\rendering\Mesh.h" />
     <ClInclude Include="src\rendering\MeshRenderer.h" />
     <ClInclude Include="src\rendering\OutputDrawData.h" />
+    <ClInclude Include="src\rendering\PostProcessing\Bloom.h" />
+    <ClInclude Include="src\rendering\PostProcessing\PostProcessor.h" />
     <ClInclude Include="src\rendering\Renderer.h" />
     <ClInclude Include="src\rendering\RendererComponent.h" />
     <ClInclude Include="src\rendering\Shader.h" />
@@ -621,6 +625,8 @@
     <ClInclude Include="src\rendering\VertexAttrib.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Shaders\PostProcessing\blur-downsample.comp" />
+    <None Include="Assets\Shaders\PostProcessing\blur-upsample.comp" />
     <None Include="Assets\Shaders\unlit.frag" />
     <None Include="Assets\Shaders\unlit.vert" />
     <None Include="Assets\Shaders\waveform.comp" />

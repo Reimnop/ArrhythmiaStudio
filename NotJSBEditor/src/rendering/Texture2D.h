@@ -10,11 +10,15 @@ public:
 	          GLenum type = GL_UNSIGNED_BYTE);
 	~Texture2D();
 
-	void resize(int width, int height) const;
+	void resize(int width, int height);
 
 	uint32_t getHandle() const;
+	void getSize(int* width, int* height) const;
 private:
 	uint32_t handle;
+
+	int width;
+	int height;
 
 	GLenum internalFormat;
 	GLenum format;

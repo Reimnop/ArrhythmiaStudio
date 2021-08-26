@@ -24,7 +24,7 @@ Timeline::Timeline()
 	startTime = 0.0f;
 	endTime = 10.0f;
 
-	waveformTex = new Texture2D(512, 512, GL_RGBA32F, GL_RGBA, GL_FLOAT);
+	waveformTex = new Texture2D(512, 512, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
 	waveformShader = new ComputeShader("Assets/Shaders/waveform.comp");
 
 	glGenBuffers(1, &audioBuffer);
@@ -451,7 +451,7 @@ void Timeline::onLayout()
 		{
 			glUseProgram(waveformShader->getHandle());
 
-			glBindImageTexture(0, waveformTex->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_RGBA32F);
+			glBindImageTexture(0, waveformTex->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_RGBA8);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, audioBuffer);
 
 			glUniform1f(0, startTime);

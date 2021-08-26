@@ -1,6 +1,8 @@
 #include "Renderer.h"
 
 #include "DrawElementsCommand.h"
+#include "PostProcessing/Bloom.h"
+#include "GlobalConstants.h"
 
 #include <algorithm>
 #include <logger.h>
@@ -25,26 +27,25 @@ Renderer::Renderer(GLFWwindow* window)
 	Logger::info("OpenGL Version: " + std::string((const char*)version));
 	Logger::info("GLSL Version: " + std::string((const char*)langVer));
 
-	constexpr int initialWidth = 1280;
-	constexpr int initialHeight = 720;
-
-	viewportWidth = initialWidth;
-	viewportHeight = initialHeight;
-	lastViewportWidth = initialWidth;
-	lastViewportHeight = initialHeight;
+	viewportWidth = RENDERER_INITIAL_WIDTH;
+	viewportHeight = RENDERER_INITIAL_HEIGHT;
+	lastViewportWidth = viewportWidth;
+	lastViewportHeight = viewportHeight;
 
 	// Generate color texture
 	glGenTextures(1, &renderTexture);
 	glBindTexture(GL_TEXTURE_2D, renderTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, initialWidth, initialHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_R11F_G11F_B10F, viewportWidth, viewportHeight, 0, GL_RGB, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// Generate render texture
 	glGenRenderbuffers(1, &depthBuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, initialWidth, initialHeight);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, viewportWidth, viewportHeight);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	// Initialize framebuffer to render into
@@ -61,6 +62,8 @@ Renderer::Renderer(GLFWwindow* window)
 
 	camera = new Camera();
 	imGuiController = new ImGuiController(window, "Assets/Inconsolata.ttf");
+
+	bloom = new Bloom();
 }
 
 void Renderer::update()
@@ -71,7 +74,7 @@ void Renderer::update()
 	{
 		// Resize all framebuffer attachments
 		glBindTexture(GL_TEXTURE_2D, renderTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, viewportWidth, viewportHeight, 0, GL_RGB, GL_FLOAT, nullptr);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R11F_G11F_B10F, viewportWidth, viewportHeight, 0, GL_RGB, GL_FLOAT, nullptr);
 		glBindTexture(GL_TEXTURE_2D, 0);
 
 		glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
@@ -119,6 +122,8 @@ void Renderer::render()
 	glDepthMask(GL_TRUE);
 
 	FramebufferStack::pop();
+
+	bloom->processImage(renderTexture, viewportWidth, viewportHeight);
 
 	// Clean up
 	queuedDrawDataOpaque.clear();

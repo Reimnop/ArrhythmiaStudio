@@ -41,6 +41,7 @@ void Events::onLayout()
 			insertEventSelectable(LevelEventType_CameraPositionY, 0.0f);
 			insertEventSelectable(LevelEventType_CameraScale, 5.0f);
 			insertEventSelectable(LevelEventType_CameraRotation, 0.0f);
+			insertEventSelectable(LevelEventType_BloomIntensity, 0.0f);
 
 			ImGui::EndPopup();
 		}
@@ -372,6 +373,8 @@ std::string Events::getEventName(LevelEventType type) const
 		return "Camera Scale";
 	case LevelEventType_CameraRotation:
 		return "Camera Rotation";
+	case LevelEventType_BloomIntensity:
+		return "Bloom Intensity";
 	}
 
 	return "Unknown event";

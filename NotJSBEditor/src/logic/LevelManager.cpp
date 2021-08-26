@@ -209,6 +209,8 @@ void LevelManager::updateLevelEvent(LevelEvent* levelEvent) const
 		camera->rotation = glm::angleAxis(
 			levelEvent->update(time) / 180.0f * 3.14159265359f,
 			glm::vec3(0.0f, 0.0f, -1.0f));
+	case LevelEventType_BloomIntensity:
+		Renderer::inst->bloom->intensity = levelEvent->update(time);
 		break;
 	}
 }

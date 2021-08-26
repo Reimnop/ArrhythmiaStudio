@@ -9,11 +9,14 @@
 #include "Camera.h"
 #include "ImGuiController.h"
 #include "FramebufferStack.h"
+#include "PostProcessing/Bloom.h"
 
 class Renderer
 {
 public:
 	static Renderer* inst;
+
+	Bloom* bloom;
 
 	Camera* camera;
 

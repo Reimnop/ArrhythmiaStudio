@@ -5,30 +5,16 @@
 
 Bloom::Bloom()
 {
-	downsampleShader = new ComputeShader("Assets/Shaders/PostProcessing/bloom-downsample.comp");
+	blurHorizontal = new ComputeShader("Assets/Shaders/PostProcessing/bloom-blur-horizontal.comp");
+	blurVertical = new ComputeShader("Assets/Shaders/PostProcessing/bloom-blur-vertical.comp");
 	upsampleShader = new ComputeShader("Assets/Shaders/PostProcessing/bloom-upsample.comp");
+	combineShader = new ComputeShader("Assets/Shaders/PostProcessing/bloom-combine.comp");
 
 	lastWidth = RENDERER_INITIAL_WIDTH;
 	lastHeight = RENDERER_INITIAL_HEIGHT;
 
-	int w = RENDERER_INITIAL_WIDTH;
-	int h = RENDERER_INITIAL_HEIGHT;
-
-	for (int i = 0; i < 6; i++)
-	{
-		w /= 2;
-		h /= 2;
-
-		downsamplingTextures.push_back(new Texture2D(w, h, GL_R11F_G11F_B10F, GL_RGB, GL_FLOAT));
-	}
-
-	for (int i = 0; i < 5; i++)
-	{
-		w *= 2;
-		h *= 2;
-
-		upsamplingTextures.push_back(new Texture2D(w, h, GL_R11F_G11F_B10F, GL_RGB, GL_FLOAT));
-	}
+	genMips(RENDERER_INITIAL_WIDTH, RENDERER_INITIAL_HEIGHT);
+	bloomTex = new Texture2D(RENDERER_INITIAL_WIDTH, RENDERER_INITIAL_HEIGHT, GL_R11F_G11F_B10F, GL_RGB, GL_FLOAT);
 }
 
 void Bloom::processImage(uint32_t image, int width, int height)
@@ -38,29 +24,39 @@ void Bloom::processImage(uint32_t image, int width, int height)
 		return;
 	}
 
-	// Resize if viewport size changes
-	if (width != lastWidth || height != lastHeight)
+	if (lastWidth != width || lastHeight != height)
 	{
-		resizeTextures(width, height);
+		resizeMips(width, height);
+		bloomTex->resize(width, height);
 
 		lastWidth = width;
 		lastHeight = height;
 	}
 
 	// Downsampling
-	for (int i = 0; i < downsamplingTextures.size(); i++)
+	glActiveTexture(GL_TEXTURE0);
+
+	for (int i = 0; i < MIP_CHAIN_SIZE; i++) 
 	{
-		int w, h;
-		downsamplingTextures[i]->getSize(&w, &h);
+		// Horizontal gaussian blur
+		glUseProgram(blurHorizontal->getHandle());
 
-		glUseProgram(downsampleShader->getHandle());
+		glBindImageTexture(0, mipChain[i]->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_R11F_G11F_B10F);
+		glBindTexture(GL_TEXTURE_2D, i == 0 ? image : mipChain[i - 1]->getHandle());
 
-		glBindImageTexture(0, downsamplingTextures[i]->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_R11F_G11F_B10F);
+		glDispatchCompute(std::ceil(mipWidths[i] / 8.0f), std::ceil(mipHeights[i] / 8.0f), 1);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, i == 0 ? image : downsamplingTextures[i - 1]->getHandle());
+		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
-		glDispatchCompute(std::ceil(w / 8.0f), std::ceil(h / 8.0f), 1);
+		// Vertical gaussian blur
+		glUseProgram(blurVertical->getHandle());
+
+		glBindImageTexture(0, mipChain[i]->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_R11F_G11F_B10F);
+		glBindTexture(GL_TEXTURE_2D, mipChain[i]->getHandle());
+
+		glDispatchCompute(std::ceil(mipWidths[i] / 8.0f), std::ceil(mipHeights[i] / 8.0f), 1);
+
+		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 	}
 
 	// Upsampling
@@ -68,53 +64,96 @@ void Bloom::processImage(uint32_t image, int width, int height)
 
 	glUniform1i(0, 0);
 	glUniform1i(1, 1);
-	glUniform1f(2, intensity);
+	glUniform1f(2, scatter);
 
-	for (int i = 0; i < upsamplingTextures.size(); i++)
+	for (int i = MIP_CHAIN_SIZE; i < MIP_CHAIN_SIZE * 2 - 1; i++)
 	{
-		int w, h;
-		upsamplingTextures[i]->getSize(&w, &h);
+		const int j = 2 * MIP_CHAIN_SIZE - i - 2;
 
-		glBindImageTexture(0, upsamplingTextures[i]->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_R11F_G11F_B10F);
+		glBindImageTexture(0, mipChain[i]->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_R11F_G11F_B10F);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, i == 0 ? downsamplingTextures.back()->getHandle() : upsamplingTextures[i - 1]->getHandle());
+		glBindTexture(GL_TEXTURE_2D, mipChain[i - 1]->getHandle());
 
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, downsamplingTextures[downsamplingTextures.size() - i - 2]->getHandle());
+		glBindTexture(GL_TEXTURE_2D, mipChain[j]->getHandle());
 
-		glDispatchCompute(std::ceil(w / 8.0f), std::ceil(h / 8.0f), 1);
+		glDispatchCompute(std::ceil(mipWidths[j] / 8.0f), std::ceil(mipHeights[j] / 8.0f), 1);
+
+		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 	}
 
-	glBindImageTexture(0, image, 0, false, 0, GL_WRITE_ONLY, GL_R11F_G11F_B10F);
+	glBindImageTexture(0, bloomTex->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_R11F_G11F_B10F);
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, upsamplingTextures.back()->getHandle());
+	glBindTexture(GL_TEXTURE_2D, mipChain.back()->getHandle());
 
 	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, image);
 
 	glDispatchCompute(std::ceil(width / 8.0f), std::ceil(height / 8.0f), 1);
+
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+	// Combine source and bloom texture
+	glUseProgram(combineShader->getHandle());
+
+	glUniform1i(0, 0);
+	glUniform1i(1, 1);
+	glUniform1f(2, intensity);
+
+	glBindImageTexture(0, image, 0, false, 0, GL_WRITE_ONLY, GL_R11F_G11F_B10F);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, image);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, bloomTex->getHandle());
+
+	glDispatchCompute(std::ceil(width / 8.0f), std::ceil(height / 8.0f), 1);
+
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
 
-void Bloom::resizeTextures(int width, int height)
+void Bloom::resizeMips(int width, int height)
 {
-	int w = width;
-	int h = height;
+	recalculateMipSizes(width, height);
 
-	for (int i = 0; i < downsamplingTextures.size(); i++)
+	for (int i = 0; i < MIP_CHAIN_SIZE; i++)
 	{
-		w /= 2;
-		h /= 2;
-
-		downsamplingTextures[i]->resize(w, h);
+		mipChain[i]->resize(mipWidths[i], mipHeights[i]);
 	}
 
-	for (int i = 0; i < upsamplingTextures.size(); i++)
+	for (int i = MIP_CHAIN_SIZE; i < MIP_CHAIN_SIZE * 2 - 1; i++)
 	{
-		w *= 2;
-		h *= 2;
+		const int j = 2 * MIP_CHAIN_SIZE - i - 2;
+		mipChain[i]->resize(mipWidths[j], mipHeights[j]);
+	}
+}
 
-		upsamplingTextures[i]->resize(w, h);
+void Bloom::genMips(int width, int height)
+{
+	recalculateMipSizes(width, height);
+
+	for (int i = 0; i < MIP_CHAIN_SIZE; i++)
+	{
+		mipChain.push_back(new Texture2D(mipWidths[i], mipHeights[i], GL_R11F_G11F_B10F, GL_RGB, GL_FLOAT));
+	}
+
+	for (int i = MIP_CHAIN_SIZE; i < MIP_CHAIN_SIZE * 2 - 1; i++)
+	{
+		const int j = 2 * MIP_CHAIN_SIZE - i - 2;
+		mipChain.push_back(new Texture2D(mipWidths[j], mipHeights[j], GL_R11F_G11F_B10F, GL_RGB, GL_FLOAT));
+	}
+}
+
+void Bloom::recalculateMipSizes(int width, int height)
+{
+	for (int i = 0; i < MIP_CHAIN_SIZE; i++)
+	{
+		width /= 2;
+		height /= 2;
+		mipWidths[i] = width;
+		mipHeights[i] = height;
 	}
 }

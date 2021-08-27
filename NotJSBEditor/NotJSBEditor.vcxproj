@@ -627,7 +627,9 @@
     <ClInclude Include="src\rendering\VertexAttrib.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Shaders\PostProcessing\bloom-downsample.comp" />
+    <None Include="Assets\Shaders\PostProcessing\bloom-blur-horizontal.comp" />
+    <None Include="Assets\Shaders\PostProcessing\bloom-blur-vertical.comp" />
+    <None Include="Assets\Shaders\PostProcessing\bloom-combine.comp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-upsample.comp" />
     <None Include="Assets\Shaders\PostProcessing\tonemapping.comp" />
     <None Include="Assets\Shaders\unlit.frag" />

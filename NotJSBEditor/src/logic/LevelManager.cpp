@@ -213,6 +213,9 @@ void LevelManager::updateLevelEvent(LevelEvent* levelEvent) const
 	case LevelEventType_BloomIntensity:
 		Renderer::inst->bloom->intensity = levelEvent->update(time);
 		break;
+	case LevelEventType_BloomScatter:
+		Renderer::inst->bloom->scatter = levelEvent->update(time);
+		break;
 	}
 }
 

@@ -1833,8 +1833,10 @@
     <None Include="discord_game_sdk.dll" />
     <None Include="Assets\Shapes\circle.shp" />
     <None Include="Assets\Shaders\PostProcessing\tonemapping.comp" />
-    <None Include="Assets\Shaders\PostProcessing\bloom-downsample.comp" />
+    <None Include="Assets\Shaders\PostProcessing\bloom-blur-horizontal.comp" />
+    <None Include="Assets\Shaders\PostProcessing\bloom-blur-vertical.comp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-upsample.comp" />
+    <None Include="Assets\Shaders\PostProcessing\bloom-combine.comp" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\Inconsolata.ttf" />

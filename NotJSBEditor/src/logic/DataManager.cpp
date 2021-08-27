@@ -89,11 +89,11 @@ void DataManager::openLevel()
 		LevelManager::inst->loadLevel(levelDir);
 
 		CoTaskMemFree(pszFilePath);
+
+		isStartupLevel = false;
 	}
 
 	fd->Release();
-
-	isStartupLevel = false;
 }
 
 void DataManager::genLevelFiles(LevelCreateInfo createInfo) const

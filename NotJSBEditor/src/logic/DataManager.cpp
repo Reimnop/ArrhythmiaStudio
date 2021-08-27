@@ -4,7 +4,7 @@
 
 #include <fstream>
 #include <filesystem>
-#include <shobjidl.h>
+#include <ShlObj.h>
 #include <nlohmann/json.hpp>
 
 DataManager* DataManager::inst;

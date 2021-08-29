@@ -34,8 +34,7 @@ void GameManager::onLayout()
 	if (ImGui::BeginPopupModal("Welcome", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings))
 	{
 		ImGui::Text("Welcome to Not JSB Editor!");
-		ImGui::TextWrapped(
-			"Before continuing, please create a new level with File->New (Ctrl+N) or open a new level with File->Open (Ctrl+O).");
+		ImGui::TextWrapped("Before continuing, please create a new level with File->New (Ctrl+N) or open a new level with File->Open (Ctrl+O).");
 
 		if (ImGui::Button("OK"))
 		{

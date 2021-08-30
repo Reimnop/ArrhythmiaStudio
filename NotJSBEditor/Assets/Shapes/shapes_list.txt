@@ -1,2 +1,12 @@
 square.shp
+hollow_square.shp
 circle.shp
+circle_quarter.shp
+hollow_circle.shp
+hollow_circle_quarter.shp
+pentagon.shp
+hollow_pentagon.shp
+hexagon.shp
+hollow_hexagon.shp
+triangle.shp
+right_angled_triangle.shp

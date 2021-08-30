@@ -160,7 +160,7 @@ void Timeline::onLayout()
 				if (ImGui::InvisibleButton("##Strip", stripSize))
 				{
 					atLeastOneStripClicked = true;
-					levelManager->selectedObjectIndex = i;
+					levelManager->selectedObject = levelObject;
 
 					Properties::inst->reset();
 				}
@@ -180,24 +180,28 @@ void Timeline::onLayout()
 					if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 					{
 						atLeastOneStripClicked = true;
-						levelManager->selectedObjectIndex = i;
+						levelManager->selectedObject = levelObject;
 
 						ImVec2 delta = io.MouseDelta;
 						float timeDelta = (delta.x / availX) * (endTime - startTime);
 
-						timeDelta = std::clamp(timeDelta, -levelObject->startTime,
-						                       levelManager->audioClip->getLength() - levelObject->killTime);
+						float length = levelManager->audioClip->getLength();
 
-						levelObject->startTime += timeDelta;
-						levelObject->killTime += timeDelta;
+						if (length > levelObject->killTime) 
+						{
+							timeDelta = std::clamp(timeDelta, -levelObject->startTime, length - levelObject->killTime);
 
-						// Recalculate object actions
-						levelManager->recalculateObjectAction(levelObject);
-						levelManager->recalculateActionIndex(levelManager->time);
+							levelObject->startTime += timeDelta;
+							levelObject->killTime += timeDelta;
+
+							// Recalculate object actions
+							levelManager->recalculateObjectAction(levelObject);
+							levelManager->recalculateActionIndex(levelManager->time);
+						}
 					}
 				}
 
-				if (levelManager->selectedObjectIndex == i)
+				if (levelManager->selectedObject == levelObject)
 				{
 					stripActive = true;
 				}
@@ -296,18 +300,18 @@ void Timeline::onLayout()
 			// Object delete
 			if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 			{
-				if (levelManager->selectedObjectIndex != -1)
+				if (levelManager->selectedObject)
 				{
-					levelManager->removeObject(levelManager->level->levelObjects[levelManager->selectedObjectIndex]);
+					levelManager->removeObject(levelManager->selectedObject);
 
-					levelManager->selectedObjectIndex = -1;
+					levelManager->selectedObject = nullptr;
 				}
 			}
 
 			// Object copy
 			if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_C))
 			{
-				LevelObject* selectedObject = levelManager->level->levelObjects[levelManager->selectedObjectIndex];
+				LevelObject* selectedObject = levelManager->selectedObject;
 
 				OpenClipboard(NULL);
 				EmptyClipboard();
@@ -408,7 +412,7 @@ void Timeline::onLayout()
 			if (ImGui::IsWindowFocused() && isTimelineHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !
 				atLeastOneStripClicked && !pointerBeingDragged)
 			{
-				levelManager->selectedObjectIndex = -1;
+				levelManager->selectedObject = nullptr;
 				Properties::inst->reset();
 			}
 

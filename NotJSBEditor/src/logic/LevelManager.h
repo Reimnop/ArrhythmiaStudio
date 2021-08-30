@@ -24,7 +24,7 @@ public:
 
 	Level* level;
 
-	int selectedObjectIndex = -1;
+	LevelObject* selectedObject;
 
 	float time = 0.0f;
 

@@ -45,9 +45,9 @@ void Properties::onLayout()
 	// Open properties window
 	if (ImGui::Begin("Properties"))
 	{
-		if (levelManager->selectedObjectIndex != -1)
+		if (levelManager->selectedObject)
 		{
-			LevelObject* selectedObject = levelManager->level->levelObjects[levelManager->selectedObjectIndex];
+			LevelObject* selectedObject = levelManager->selectedObject;
 
 			ImGui::InputText("Object Name", &selectedObject->name);
 
@@ -387,7 +387,7 @@ void Properties::onLayout()
 			ImGui::Separator();
 			if (selectedKeyframe.has_value() && selectedChannel != nullptr)
 			{
-				LevelObject* currentObject = levelManager->level->levelObjects[levelManager->selectedObjectIndex];
+				LevelObject* selectedObject = levelManager->selectedObject;
 				Keyframe kf = selectedKeyframe.value();
 
 				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
@@ -404,8 +404,7 @@ void Properties::onLayout()
 				else
 				{
 					bool kfChanged = false;
-					ImGui::DragFloat("Keyframe Time", &kf.time, 0.1f, 0.0f,
-					                 currentObject->killTime - currentObject->startTime);
+					ImGui::DragFloat("Keyframe Time", &kf.time, 0.1f, 0.0f, selectedObject->killTime - selectedObject->startTime);
 					kfChanged = kfChanged || ImGui::IsItemEdited();
 					ImGui::DragFloat("Keyframe Value", &kf.value, 0.1f);
 					kfChanged = kfChanged || ImGui::IsItemEdited();
@@ -436,7 +435,7 @@ void Properties::onLayout()
 						selectedChannel->sequence->insertKeyframe(kf);
 						selectedKeyframe = kf;
 
-						levelManager->updateObject(currentObject);
+						levelManager->updateObject(selectedObject);
 					}
 				}
 			}

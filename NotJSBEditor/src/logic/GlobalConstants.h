@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <Windows.h>
 
 constexpr float EDITOR_KEYFRAME_SIZE = 12.0f;

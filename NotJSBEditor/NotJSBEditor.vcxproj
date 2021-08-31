@@ -160,9 +160,9 @@
       <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib;discord_game_sdk.dll.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy "$(ProjectDir)Assets" "$(OutDir)Assets" /E /I
-xcopy "$(ProjectDir)bass.dll" "$(OutDir)"
-xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)"</Command>
+      <Command>xcopy "$(ProjectDir)Assets" "$(OutDir)Assets" /e /i /y
+xcopy "$(ProjectDir)bass.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -194,6 +194,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)"</Command>
     <ClCompile Include="src\logic\animation\ColorChannel.cpp" />
     <ClCompile Include="src\logic\animation\Easing.h" />
     <ClCompile Include="src\logic\Events.cpp" />
+    <ClCompile Include="src\logic\imgui\imgui_editorlib.cpp" />
     <ClCompile Include="src\logic\LevelEvent.cpp" />
     <ClCompile Include="src\logic\animation\Sequence.cpp" />
     <ClCompile Include="src\logic\AudioClip.cpp" />
@@ -593,6 +594,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)"</Command>
     <ClInclude Include="src\logic\DiscordManager.h" />
     <ClInclude Include="src\logic\Events.h" />
     <ClInclude Include="src\logic\GlobalConstants.h" />
+    <ClInclude Include="src\logic\imgui\imgui_editorlib.h" />
     <ClInclude Include="src\logic\Level.h" />
     <ClInclude Include="src\logic\LevelCreateInfo.h" />
     <ClInclude Include="src\logic\LevelEvent.h" />

@@ -9,6 +9,8 @@
 
 #include "../rendering/ImGuiController.h"
 #include "GlobalConstants.h"
+#include "logger.h"
+#include "imgui/imgui_editorlib.h"
 
 Timeline* Timeline::inst;
 
@@ -129,8 +131,64 @@ void Timeline::onLayout()
 				                   ImVec2(timelineMax.x, timelineMin.y));
 			}
 
-			// Draw editor strips
+			// Editor strips input pass
 			bool atLeastOneStripClicked = false;
+			for (int i = levelManager->level->levelObjects.size() - 1; i >= 0; i--)
+			{
+				LevelObject* levelObject = levelManager->level->levelObjects[i];
+
+				if (levelObject->killTime < startTime || levelObject->startTime > endTime)
+				{
+					continue;
+				}
+
+				// Calculate start and end position in pixel
+				float startPos = (levelObject->startTime - startTime) / (endTime - startTime) * availX;
+				float endPos = (levelObject->killTime - startTime) / (endTime - startTime) * availX;
+
+				// Calculate strip params
+				ImVec2 stripMin = ImVec2(timelineMin.x + startPos, timelineMin.y + levelObject->editorBinIndex * EDITOR_BIN_HEIGHT);
+				ImVec2 stripMax = ImVec2(timelineMin.x + endPos, timelineMin.y + (levelObject->editorBinIndex + 1) * EDITOR_BIN_HEIGHT);
+
+				const char* name = levelObject->name.c_str();
+
+				ImGui::PushID(i + 1);
+
+				bool pressed;
+				bool highlighted;
+				if (ImGui::EditorStripInputPass(name, stripMin, stripMax, levelManager->selectedObject == levelObject, &pressed, &highlighted))
+				{
+					atLeastOneStripClicked = true;
+					levelManager->selectedObject = levelObject;
+
+					// Dragging the strip
+					if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+					{
+						ImVec2 delta = io.MouseDelta;
+						float timeDelta = (delta.x / availX) * (endTime - startTime);
+
+						float length = levelManager->audioClip->getLength();
+
+						if (length > levelObject->killTime)
+						{
+							timeDelta = std::clamp(timeDelta, -levelObject->startTime, length - levelObject->killTime);
+
+							levelObject->startTime += timeDelta;
+							levelObject->killTime += timeDelta;
+
+							// Recalculate object actions
+							levelManager->recalculateObjectAction(levelObject);
+							levelManager->recalculateActionIndex(levelManager->time);
+						}
+					}
+				}
+
+				levelObject->timelineHighlighted = highlighted;
+
+				ImGui::PopID();
+			}
+
+			// Editor strips visual pass
 			for (int i = 0; i < levelManager->level->levelObjects.size(); i++)
 			{
 				LevelObject* levelObject = levelManager->level->levelObjects[i];
@@ -145,86 +203,12 @@ void Timeline::onLayout()
 				float endPos = (levelObject->killTime - startTime) / (endTime - startTime) * availX;
 
 				// Calculate strip params
-				ImVec2 stripMin = ImVec2(timelineMin.x + startPos,
-				                         timelineMin.y + levelObject->editorBinIndex * EDITOR_BIN_HEIGHT);
-				ImVec2 stripMax = ImVec2(timelineMin.x + endPos,
-				                         timelineMin.y + (levelObject->editorBinIndex + 1) * EDITOR_BIN_HEIGHT);
+				ImVec2 stripMin = ImVec2(timelineMin.x + startPos, timelineMin.y + levelObject->editorBinIndex * EDITOR_BIN_HEIGHT);
+				ImVec2 stripMax = ImVec2(timelineMin.x + endPos, timelineMin.y + (levelObject->editorBinIndex + 1) * EDITOR_BIN_HEIGHT);
 
-				ImVec2 stripSize = ImVec2(stripMax.x - stripMin.x, stripMax.y - stripMin.y);
-
-				drawList->PushClipRect(stripMin, stripMax, true);
-
-				ImGui::PushID(i + 1);
-
-				ImGui::SetCursorScreenPos(stripMin);
-				if (ImGui::InvisibleButton("##Strip", stripSize))
-				{
-					atLeastOneStripClicked = true;
-					levelManager->selectedObject = levelObject;
-
-					Properties::inst->reset();
-				}
-
-				bool stripActive = false;
-
-				if (ImGui::IsItemHovered())
-				{
-					stripActive = true;
-				}
-
-				if (ImGui::IsItemActive())
-				{
-					stripActive = true;
-
-					// Dragging the strip
-					if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
-					{
-						atLeastOneStripClicked = true;
-						levelManager->selectedObject = levelObject;
-
-						ImVec2 delta = io.MouseDelta;
-						float timeDelta = (delta.x / availX) * (endTime - startTime);
-
-						float length = levelManager->audioClip->getLength();
-
-						if (length > levelObject->killTime) 
-						{
-							timeDelta = std::clamp(timeDelta, -levelObject->startTime, length - levelObject->killTime);
-
-							levelObject->startTime += timeDelta;
-							levelObject->killTime += timeDelta;
-
-							// Recalculate object actions
-							levelManager->recalculateObjectAction(levelObject);
-							levelManager->recalculateActionIndex(levelManager->time);
-						}
-					}
-				}
-
-				if (levelManager->selectedObject == levelObject)
-				{
-					stripActive = true;
-				}
-
-				ImGui::PopID();
-
-				// Draw the strip
 				const char* name = levelObject->name.c_str();
 
-				ImVec2 textSize = ImGui::CalcTextSize(name, name + levelObject->name.length());
-
-				ImU32 stripCol = stripActive ? EDITOR_STRIP_ACTIVE_COL : EDITOR_STRIP_INACTIVE_COL;
-
-				ImVec2 localRectMin = ImVec2(stripMin.x + EDITOR_STRIP_LEFT, stripMin.y);
-				ImVec2 localRectMax = ImVec2(stripMin.x + EDITOR_STRIP_LEFT + EDITOR_STRIP_RIGHT + textSize.x,
-				                             stripMax.y);
-
-				drawList->AddRectFilled(stripMin, stripMax, stripCol);
-				drawList->AddRectFilled(localRectMin, localRectMax, EDITOR_STRIP_ACTIVE_COL);
-				drawList->AddText(ImVec2(localRectMin.x + EDITOR_STRIP_TEXT_LEFT_MARGIN, localRectMin.y),
-				                  EDITOR_STRIP_INACTIVE_COL, name, name + levelObject->name.size());
-
-				drawList->PopClipRect();
+				ImGui::EditorStripVisualPass(name, stripMin, stripMax, levelObject->timelineHighlighted);
 			}
 
 			// Timeline move and zoom

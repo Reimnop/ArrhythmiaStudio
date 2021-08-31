@@ -189,6 +189,9 @@
     <ClCompile Include="src\rendering\PostProcessing\Tonemapping.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\logic\imgui\imgui_editorlib.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
@@ -1413,6 +1416,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\rendering\PostProcessing\Tonemapping.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\imgui\imgui_editorlib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

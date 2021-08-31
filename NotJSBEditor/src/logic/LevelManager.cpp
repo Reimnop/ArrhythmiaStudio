@@ -99,7 +99,7 @@ void LevelManager::loadLevel(std::string levelPath)
 
 	audioClip = new AudioClip(songFilePath.generic_string());
 
-	selectedObject == nullptr;
+	selectedObject = nullptr;
 	theme->reset();
 	events->reset();
 	timeline->genBuffer(audioClip);

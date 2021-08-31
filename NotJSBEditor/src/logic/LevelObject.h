@@ -19,6 +19,10 @@ public:
 	int colorSlotIndex = 0;
 	float depth = 0.0f;
 
+	// Editor data do not touch
+	bool timelineHighlighted = false;
+	// [----------------------]
+
 	LevelObject* parent;
 	std::vector<LevelObject*> children;
 

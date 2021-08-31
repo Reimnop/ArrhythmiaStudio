@@ -45,9 +45,9 @@ void Properties::onLayout()
 	// Open properties window
 	if (ImGui::Begin("Properties"))
 	{
-		if (levelManager->selectedObject)
+		if (!levelManager->selectedObjects.empty())
 		{
-			LevelObject* selectedObject = levelManager->selectedObject;
+			LevelObject* selectedObject = *levelManager->selectedObjects.begin();
 
 			ImGui::InputText("Object Name", &selectedObject->name);
 
@@ -316,11 +316,37 @@ void Properties::onLayout()
 					endTime = currentPos + newVisibleLength * 0.5f;
 				}
 
-				// Frames
+				// Draw timeline border
 				drawList->AddRect(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + timelineHeight),
 				                  borderCol);
 
 				drawList->PopClipRect();
+
+				// Time pointer input handling
+				ImGui::SetCursorScreenPos(cursorPos);
+				if (ImGui::InvisibleButton("##TimePointer", ImVec2(availX, EDITOR_TIME_POINTER_HEIGHT)))
+				{
+					float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
+					newTime = std::max(0.0f, newTime);
+					newTime += selectedObject->startTime;
+
+					levelManager->audioClip->pause();
+
+					levelManager->updateLevel(newTime);
+					levelManager->audioClip->seek(newTime);
+				}
+
+				if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+				{
+					float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
+					newTime = std::max(0.0f, newTime);
+					newTime += selectedObject->startTime;
+
+					levelManager->audioClip->pause();
+
+					levelManager->updateLevel(newTime);
+					levelManager->audioClip->seek(newTime);
+				}
 
 				// Time pointer
 				drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX,
@@ -355,31 +381,6 @@ void Properties::onLayout()
 				drawList->PopClipRect();
 
 				ImGui::SetCursorScreenPos(cursorPos);
-				if (ImGui::InvisibleButton("##TimePointer", ImVec2(availX, EDITOR_TIME_POINTER_HEIGHT)))
-				{
-					float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
-					newTime = std::max(0.0f, newTime);
-					newTime += selectedObject->startTime;
-
-					levelManager->audioClip->pause();
-
-					levelManager->updateLevel(newTime);
-					levelManager->audioClip->seek(newTime);
-				}
-
-				if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
-				{
-					float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
-					newTime = std::max(0.0f, newTime);
-					newTime += selectedObject->startTime;
-
-					levelManager->audioClip->pause();
-
-					levelManager->updateLevel(newTime);
-					levelManager->audioClip->seek(newTime);
-				}
-
-				ImGui::SetCursorScreenPos(cursorPos);
 				ImGui::ItemSize(ImVec2(availX, timelineHeight + EDITOR_TIME_POINTER_HEIGHT));
 			}
 
@@ -387,7 +388,6 @@ void Properties::onLayout()
 			ImGui::Separator();
 			if (selectedKeyframe.has_value() && selectedChannel != nullptr)
 			{
-				LevelObject* selectedObject = levelManager->selectedObject;
 				Keyframe kf = selectedKeyframe.value();
 
 				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))

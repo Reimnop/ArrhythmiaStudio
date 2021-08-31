@@ -194,13 +194,37 @@ void Theme::onLayout()
 					endTime = currentPos + newVisibleLength * 0.5f;
 				}
 
-				// Frames
+				// Draw borders of the timeline
 				ImU32 borderCol = ImGui::GetColorU32(ImGuiCol_Border);
 				drawList->AddRect(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + EDITOR_BIN_HEIGHT),
 				                  borderCol);
 				drawList->PopClipRect();
 
-				// Time pointer
+				// Time pointer input handing
+				ImGui::SetCursorScreenPos(cursorPos);
+				if (ImGui::InvisibleButton("##TimePointer", ImVec2(availX, EDITOR_TIME_POINTER_HEIGHT)))
+				{
+					float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
+					newTime = std::clamp(newTime, 0.0f, levelManager->audioClip->getLength());
+
+					levelManager->audioClip->pause();
+
+					levelManager->updateLevel(newTime);
+					levelManager->audioClip->seek(newTime);
+				}
+
+				if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+				{
+					float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
+					newTime = std::clamp(newTime, 0.0f, levelManager->audioClip->getLength());
+
+					levelManager->audioClip->pause();
+
+					levelManager->updateLevel(newTime);
+					levelManager->audioClip->seek(newTime);
+				}
+
+				// Drawing the time pointer
 				drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX,
 				                                         cursorPos.y + EDITOR_BIN_HEIGHT + EDITOR_TIME_POINTER_HEIGHT),
 				                       true);
@@ -230,29 +254,6 @@ void Theme::onLayout()
 					borderCol);
 
 				drawList->PopClipRect();
-
-				ImGui::SetCursorScreenPos(cursorPos);
-				if (ImGui::InvisibleButton("##TimePointer", ImVec2(availX, EDITOR_TIME_POINTER_HEIGHT)))
-				{
-					float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
-					newTime = std::clamp(newTime, 0.0f, levelManager->audioClip->getLength());
-
-					levelManager->audioClip->pause();
-
-					levelManager->updateLevel(newTime);
-					levelManager->audioClip->seek(newTime);
-				}
-
-				if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
-				{
-					float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
-					newTime = std::clamp(newTime, 0.0f, levelManager->audioClip->getLength());
-
-					levelManager->audioClip->pause();
-
-					levelManager->updateLevel(newTime);
-					levelManager->audioClip->seek(newTime);
-				}
 
 				// Reset cursor
 				ImGui::SetCursorScreenPos(cursorPos);

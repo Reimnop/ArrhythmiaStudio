@@ -24,7 +24,7 @@ public:
 
 	Level* level;
 
-	LevelObject* selectedObject;
+	std::unordered_set<LevelObject*> selectedObjects;
 
 	float time = 0.0f;
 

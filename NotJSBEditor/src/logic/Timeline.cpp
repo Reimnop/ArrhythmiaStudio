@@ -128,11 +128,21 @@ void Timeline::onLayout()
 			if (levelManager->audioClip)
 			{
 				drawList->AddImage((uint32_t*)waveformTex->getHandle(), ImVec2(timelineMin.x, timelineMax.y),
-				                   ImVec2(timelineMax.x, timelineMin.y));
+					ImVec2(timelineMax.x, timelineMin.y));
 			}
 
+			bool isTimelineHovered = ImGui::IntersectAABB(timelineMin, timelineMax, io.MousePos);
+
+			// Deselect
+			if (isTimelineHovered && ImGui::IsWindowFocused() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL))
+			{
+				levelManager->selectedObjects.clear();
+				Properties::inst->reset();
+			}
+
+			bool stripDragging = false;
+
 			// Editor strips input pass
-			bool atLeastOneStripClicked = false;
 			for (int i = levelManager->level->levelObjects.size() - 1; i >= 0; i--)
 			{
 				LevelObject* levelObject = levelManager->level->levelObjects[i];
@@ -156,36 +166,43 @@ void Timeline::onLayout()
 
 				bool pressed;
 				bool highlighted;
-				if (ImGui::EditorStripInputPass(name, stripMin, stripMax, levelManager->selectedObject == levelObject, &pressed, &highlighted))
+				if (ImGui::EditorStripInputPass(name, stripMin, stripMax, levelManager->selectedObjects.count(levelObject), &pressed, &highlighted))
 				{
-					atLeastOneStripClicked = true;
-					levelManager->selectedObject = levelObject;
+					levelManager->selectedObjects.emplace(levelObject);
 
-					// Dragging the strip
 					if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 					{
-						ImVec2 delta = io.MouseDelta;
-						float timeDelta = (delta.x / availX) * (endTime - startTime);
-
-						float length = levelManager->audioClip->getLength();
-
-						if (length > levelObject->killTime)
-						{
-							timeDelta = std::clamp(timeDelta, -levelObject->startTime, length - levelObject->killTime);
-
-							levelObject->startTime += timeDelta;
-							levelObject->killTime += timeDelta;
-
-							// Recalculate object actions
-							levelManager->recalculateObjectAction(levelObject);
-							levelManager->recalculateActionIndex(levelManager->time);
-						}
+						stripDragging = true;
 					}
 				}
 
 				levelObject->timelineHighlighted = highlighted;
 
 				ImGui::PopID();
+			}
+
+			// Dragging strips
+			if (stripDragging) 
+			{
+				float minSt = INFINITY;
+				for (LevelObject* obj : levelManager->selectedObjects)
+				{
+					minSt = std::min(minSt, obj->startTime);
+				}
+
+				ImVec2 delta = io.MouseDelta;
+				float timeDelta = (delta.x / availX) * (endTime - startTime);
+				timeDelta = std::max(timeDelta, -minSt);
+
+				for (LevelObject* obj : levelManager->selectedObjects)
+				{
+					obj->startTime += timeDelta;
+					obj->killTime += timeDelta;
+
+					levelManager->recalculateObjectAction(obj);
+				}
+
+				levelManager->recalculateActionIndex(levelManager->time);
 			}
 
 			// Editor strips visual pass
@@ -212,11 +229,6 @@ void Timeline::onLayout()
 			}
 
 			// Timeline move and zoom
-			ImGui::SetCursorScreenPos(timelineMin);
-			ImGui::InvisibleButton("##TimelineFillButton", clipSize);
-
-			bool isTimelineHovered = ImGui::IsItemHovered();
-
 			if (ImGui::IsWindowFocused() && isTimelineHovered)
 			{
 				float songLength = levelManager->audioClip->getLength();
@@ -247,17 +259,43 @@ void Timeline::onLayout()
 				endTime = currentPos + newVisibleLength * 0.5f;
 			}
 
-			// Frames
+			// Timeline borders
 			ImU32 borderCol = ImGui::GetColorU32(ImGuiCol_Border);
 			drawList->AddRect(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + timelineHeight), borderCol);
 
 			drawList->PopClipRect();
 
-			// Time pointer
+			// Time pointer input handling
+			// Jumping the time pointer
+			ImGui::SetCursorScreenPos(cursorPos);
+			if (ImGui::InvisibleButton("##TimePointer", ImVec2(availX, EDITOR_TIME_POINTER_HEIGHT)))
+			{
+				float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
+				newTime = std::clamp(newTime, 0.0f, levelManager->audioClip->getLength());
+
+				levelManager->audioClip->pause();
+
+				levelManager->updateLevel(newTime);
+				levelManager->audioClip->seek(newTime);
+			}
+
+			// Dragging time pointer
+			if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+			{
+				float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
+				newTime = std::clamp(newTime, 0.0f, levelManager->audioClip->getLength());
+
+				levelManager->audioClip->pause();
+
+				levelManager->updateLevel(newTime);
+				levelManager->audioClip->seek(newTime);
+			}
+
+			// Drawing the time pointer
 			drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX,
 			                                         cursorPos.y + timelineHeight + EDITOR_TIME_POINTER_HEIGHT), true);
 
-			// Draw frame
+			// Draw frame of the time pointer
 			drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT),
 			                  borderCol);
 
@@ -284,18 +322,21 @@ void Timeline::onLayout()
 			// Object delete
 			if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 			{
-				if (levelManager->selectedObject)
+				if (!levelManager->selectedObjects.empty())
 				{
-					levelManager->removeObject(levelManager->selectedObject);
+					for (LevelObject* obj : levelManager->selectedObjects) 
+					{
+						levelManager->removeObject(obj);
+					}
 
-					levelManager->selectedObject = nullptr;
+					levelManager->selectedObjects.clear();
 				}
 			}
 
 			// Object copy
 			if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_C))
 			{
-				LevelObject* selectedObject = levelManager->selectedObject;
+				LevelObject* selectedObject = *levelManager->selectedObjects.begin();
 
 				OpenClipboard(NULL);
 				EmptyClipboard();
@@ -349,34 +390,6 @@ void Timeline::onLayout()
 				}
 			}
 
-			// Jumping the time pointer
-			ImGui::SetCursorScreenPos(cursorPos);
-			bool pointerBeingDragged = false;
-			if (ImGui::InvisibleButton("##TimePointer", ImVec2(availX, EDITOR_TIME_POINTER_HEIGHT)))
-			{
-				float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
-				newTime = std::clamp(newTime, 0.0f, levelManager->audioClip->getLength());
-
-				levelManager->audioClip->pause();
-
-				levelManager->updateLevel(newTime);
-				levelManager->audioClip->seek(newTime);
-				pointerBeingDragged = true;
-			}
-
-			// Dragging time pointer
-			if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
-			{
-				float newTime = startTime + (io.MousePos.x - cursorPos.x) / availX * (endTime - startTime);
-				newTime = std::clamp(newTime, 0.0f, levelManager->audioClip->getLength());
-
-				levelManager->audioClip->pause();
-
-				levelManager->updateLevel(newTime);
-				levelManager->audioClip->seek(newTime);
-				pointerBeingDragged = true;
-			}
-
 			// Play/Pause
 			if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_SPACE))
 			{
@@ -390,14 +403,6 @@ void Timeline::onLayout()
 				{
 					clip->play();
 				}
-			}
-
-			// Deselect
-			if (ImGui::IsWindowFocused() && isTimelineHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !
-				atLeastOneStripClicked && !pointerBeingDragged)
-			{
-				levelManager->selectedObject = nullptr;
-				Properties::inst->reset();
 			}
 
 			// New object popup

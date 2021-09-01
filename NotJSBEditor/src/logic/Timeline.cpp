@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <algorithm>
+#include <sstream>
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 #include <Windows.h>
@@ -334,19 +335,37 @@ void Timeline::onLayout()
 			}
 
 			// Object copy
-			if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_C))
+			if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_C) && levelManager->selectedObjects.size() > 0)
 			{
-				LevelObject* selectedObject = *levelManager->selectedObjects.begin();
-
 				OpenClipboard(NULL);
 				EmptyClipboard();
 
-				std::string jsonStr = selectedObject->toJson(true).dump();
-				const char* jsonPtr = jsonStr.c_str();
+				float minSt = INFINITY;
+				for (LevelObject* obj : levelManager->selectedObjects)
+				{
+					minSt = std::min(minSt, obj->startTime);
+				}
 
-				HGLOBAL pGlobal = GlobalAlloc(GMEM_MOVEABLE, jsonStr.size() + 1);
+				nlohmann::json j = nlohmann::json::array();
+				int i = 0;
+				for (LevelObject* obj : levelManager->selectedObjects)
+				{
+					nlohmann::json jObj = obj->toJson(true);
+					jObj["start"] = jObj["start"].get<float>() - minSt;
+					jObj["kill"] = jObj["kill"].get<float>() - minSt;
+
+					j[i] = jObj;
+					i++;
+				}
+
+				std::stringstream ss;
+				ss << j;
+
+				std::string jStr = ss.str();
+
+				HGLOBAL pGlobal = GlobalAlloc(GMEM_MOVEABLE, jStr.size() + 1);
 				HGLOBAL lGlobal = GlobalLock(pGlobal);
-				memcpy(lGlobal, jsonPtr, jsonStr.size() + 1);
+				memcpy(lGlobal, jStr.c_str(), jStr.size() + 1);
 				GlobalUnlock(pGlobal);
 
 				SetClipboardData(EDITOR_FORMAT_OBJECT, pGlobal);
@@ -372,15 +391,17 @@ void Timeline::onLayout()
 						{
 							std::string jsonStr(jsonPtr);
 
-							nlohmann::json objJson = nlohmann::json::parse(jsonPtr);
+							nlohmann::json objsJson = nlohmann::json::parse(jsonPtr);
 
-							float length = objJson["kill"].get<float>() - objJson["start"].get<float>();
-							objJson["start"] = levelManager->time;
-							objJson["kill"] = levelManager->time + length;
+							for (nlohmann::json objJson : objsJson) 
+							{
+								objJson["start"] = objJson["start"].get<float>() + levelManager->time;
+								objJson["kill"] = objJson["kill"].get<float>() + levelManager->time;
 
-							LevelObject* pasteObj = new LevelObject(objJson);
+								LevelObject* pasteObj = new LevelObject(objJson);
 
-							levelManager->insertObject(pasteObj);
+								levelManager->insertObject(pasteObj);
+							}
 
 							GlobalUnlock(pGlobal);
 						}

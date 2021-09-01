@@ -40,14 +40,6 @@ Material::Material(Shader* shader, int propertyCount, MaterialProperty* properti
 Material::~Material()
 {
 	glDeleteBuffers(1, &uniformBuffer);
-
-	propertyIndices.clear();
-
-	materialProperties.clear();
-	materialProperties.shrink_to_fit();
-
-	materialData.clear();
-	materialData.shrink_to_fit();
 }
 
 Shader* Material::getShader() const

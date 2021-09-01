@@ -39,9 +39,6 @@ SceneNode::~SceneNode()
 	{
 		node->setParent(nullptr);
 	}
-
-	children.clear();
-	children.shrink_to_fit();
 }
 
 void SceneNode::setParent(SceneNode* newParent)

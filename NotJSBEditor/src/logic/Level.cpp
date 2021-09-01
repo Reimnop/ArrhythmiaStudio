@@ -16,14 +16,6 @@ Level::~Level()
 	{
 		delete levelObject;
 	}
-
-	colorSlots.clear();
-	levelEvents.clear();
-	levelObjects.clear();
-
-	colorSlots.shrink_to_fit();
-	levelEvents.shrink_to_fit();
-	levelObjects.shrink_to_fit();
 }
 
 void Level::insertLevelEvent(LevelEvent* value)

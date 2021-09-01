@@ -13,7 +13,6 @@ public:
 
 	Sequence(int count, Keyframe* keyframes);
 	Sequence(nlohmann::json j);
-	~Sequence();
 
 	void insertKeyframe(Keyframe keyframe);
 	float update(float time);

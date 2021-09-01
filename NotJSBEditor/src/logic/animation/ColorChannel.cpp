@@ -21,12 +21,6 @@ ColorChannel::ColorChannel(nlohmann::json j)
 	}
 }
 
-ColorChannel::~ColorChannel()
-{
-	keyframes.clear();
-	keyframes.shrink_to_fit();
-}
-
 void ColorChannel::insertKeyframe(ColorKeyframe keyframe)
 {
 	if (keyframes.empty())

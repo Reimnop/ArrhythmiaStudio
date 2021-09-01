@@ -38,9 +38,6 @@ LevelObject::~LevelObject()
 	}
 
 	delete node;
-
-	animationChannels.clear();
-	animationChannels.shrink_to_fit();
 }
 
 void LevelObject::setParent(LevelObject* newParent)

@@ -31,9 +31,6 @@ ShapeManager::~ShapeManager()
 	{
 		delete shape.mesh;
 	}
-
-	shapes.clear();
-	shapes.shrink_to_fit();
 }
 
 Shape ShapeManager::getShapeFromFile(std::filesystem::path path) const

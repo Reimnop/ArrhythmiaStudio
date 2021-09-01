@@ -13,7 +13,6 @@ public:
 
 	ColorChannel(int count, ColorKeyframe* keyframes);
 	ColorChannel(nlohmann::json j);
-	~ColorChannel();
 
 	void insertKeyframe(ColorKeyframe keyframe);
 	Color update(float time);

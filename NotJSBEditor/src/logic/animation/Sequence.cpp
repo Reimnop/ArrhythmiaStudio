@@ -21,12 +21,6 @@ Sequence::Sequence(nlohmann::json j)
 	}
 }
 
-Sequence::~Sequence()
-{
-	keyframes.clear();
-	keyframes.shrink_to_fit();
-}
-
 void Sequence::insertKeyframe(Keyframe keyframe)
 {
 	if (keyframes.empty())

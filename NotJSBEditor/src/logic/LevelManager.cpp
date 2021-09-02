@@ -32,7 +32,7 @@ LevelManager::LevelManager()
 	loadLevel("Assets/StartupLevel");
 }
 
-void LevelManager::loadLevel(std::string levelPath)
+void LevelManager::loadLevel(const std::string& levelPath)
 {
 	// Cleanup old level
 	if (level)
@@ -358,12 +358,19 @@ void LevelManager::removeObject(LevelObject* levelObject)
 
 void LevelManager::initializeObjectParent(LevelObject* levelObject)
 {
-	if (levelObject->parentId) 
+	if (levelObject->parentId)
 	{
-		LevelObject* parent = level->levelObjects[levelObject->parentId];
+		if (level->levelObjects.count(levelObject->parentId)) 
+		{
+			LevelObject* parent = level->levelObjects[levelObject->parentId];
 
-		levelObject->node->setParent(parent->node);
-		parent->childrenId.emplace(levelObject->id);
+			levelObject->node->setParent(parent->node);
+			parent->childrenId.emplace(levelObject->id);
+		}
+		else
+		{
+			levelObject->parentId = 0;
+		}
 	}
 }
 

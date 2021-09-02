@@ -10,7 +10,7 @@
 
 #include "../rendering/ImGuiController.h"
 #include "GlobalConstants.h"
-#include "logger.h"
+#include "utils.h"
 #include "imgui/imgui_editorlib.h"
 
 Timeline* Timeline::inst;
@@ -135,7 +135,7 @@ void Timeline::onLayout()
 			bool isTimelineHovered = ImGui::IntersectAABB(timelineMin, timelineMax, io.MousePos);
 
 			// Deselect
-			if (isTimelineHovered && ImGui::IsWindowFocused() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL))
+			if (isTimelineHovered && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL))
 			{
 				levelManager->selectedObjects.clear();
 				Properties::inst->reset();
@@ -395,14 +395,41 @@ void Timeline::onLayout()
 
 							nlohmann::json objsJson = nlohmann::json::parse(jsonPtr);
 
+							// Generate new ids
+							std::unordered_map<uint64_t, uint64_t> idMap;
+							for (int i = 0; i < objsJson.size(); i++)
+							{
+								idMap[objsJson[i]["id"].get<uint64_t>()] = Utils::randomId();
+							}
+
+							for (int i = 0; i < objsJson.size(); i++)
+							{
+								uint64_t oldId = objsJson[i]["id"].get<uint64_t>();
+								objsJson[i]["id"] = idMap[oldId];
+
+								uint64_t oldPid = objsJson[i]["parent"].get<uint64_t>();
+								if (idMap.count(oldPid))
+								{
+									objsJson[i]["parent"] = idMap[oldPid];
+								}
+							}
+
+							std::vector<LevelObject*> newObjects;
+
 							for (nlohmann::json objJson : objsJson) 
 							{
 								objJson["start"] = objJson["start"].get<float>() + levelManager->time;
 								objJson["kill"] = objJson["kill"].get<float>() + levelManager->time;
 
-								LevelObject* pasteObj = new LevelObject(objJson);
+								LevelObject* newObject = new LevelObject(objJson);
 
-								levelManager->insertObject(pasteObj);
+								levelManager->insertObject(newObject);
+								newObjects.push_back(newObject);
+							}
+
+							for (LevelObject* obj : newObjects)
+							{
+								levelManager->initializeObjectParent(obj);
 							}
 
 							GlobalUnlock(pGlobal);

@@ -23,8 +23,11 @@ public:
 	bool timelineHighlighted = false;
 	// [----------------------]
 
-	LevelObject* parent;
-	std::vector<LevelObject*> children;
+	uint64_t id;
+	uint64_t parentId;
+
+	// DO NOT MODIFY!
+	std::unordered_set<uint64_t> childrenId;
 
 	std::vector<AnimationChannel*> animationChannels;
 
@@ -39,7 +42,7 @@ public:
 	void genActionPair(ObjectAction* spawnAction, ObjectAction* killAction);
 	void insertChannel(AnimationChannel* value);
 	bool hasChannel(AnimationChannelType channelType);
-	nlohmann::ordered_json toJson(bool excludeChildren = false);
+	nlohmann::ordered_json toJson();
 private:
 	bool animationChannelLookup[AnimationChannelType_Count];
 };

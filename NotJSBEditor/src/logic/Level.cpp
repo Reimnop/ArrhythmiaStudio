@@ -12,9 +12,9 @@ Level::~Level()
 		delete levelEvent;
 	}
 
-	for (const LevelObject* levelObject : levelObjects)
+	for (const std::pair<uint64_t, LevelObject*> x : levelObjects)
 	{
-		delete levelObject;
+		delete x.second;
 	}
 }
 
@@ -59,12 +59,9 @@ nlohmann::ordered_json Level::toJson()
 	}
 
 	j["objects"] = nlohmann::ordered_json::array();
-	for (int i = 0; i < levelObjects.size(); i++)
+	for (const std::pair<uint64_t, LevelObject*> x : levelObjects)
 	{
-		if (levelObjects[i]->parent == nullptr)
-		{
-			j["objects"].push_back(levelObjects[i]->toJson());
-		}
+		j["objects"].push_back(x.second->toJson());
 	}
 
 	return j;

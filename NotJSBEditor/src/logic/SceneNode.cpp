@@ -23,16 +23,11 @@ SceneNode::~SceneNode()
 	delete renderer;
 	delete transform;
 
-	setParent(nullptr);
+	// Remove from parent
+	std::vector<SceneNode*>::iterator it = std::remove(parent->children.begin(), parent->children.end(), this);
+	parent->children.erase(it);
 
-	// Remove from root
-	Scene* scene = Scene::inst;
-
-	std::vector<SceneNode*>::iterator it = std::remove(scene->rootNode->children.begin(),
-	                                                   scene->rootNode->children.end(), this);
-	scene->rootNode->children.erase(it, scene->rootNode->children.end());
-
-	scene->rootNode->activeChildren.erase(this);
+	parent->activeChildren.erase(this);
 
 	// Unparent children
 	for (SceneNode* node : children)

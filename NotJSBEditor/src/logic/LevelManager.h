@@ -45,6 +45,8 @@ public:
 
 	void insertObject(LevelObject* levelObject);
 	void removeObject(LevelObject* levelObject);
+
+	void initializeObjectParent(LevelObject* levelObject);
 private:
 	Timeline* timeline;
 	Properties* properties;
@@ -63,5 +65,4 @@ private:
 
 	void insertAction(ObjectAction value);
 	void spawnObject(LevelObject* levelObject) const;
-	void recursivelyInitializeObjectTree(nlohmann::json j, LevelObject* parent, Level* level) const;
 };

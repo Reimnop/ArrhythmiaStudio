@@ -1,13 +1,20 @@
 #include "LevelObject.h"
 
+#include "LevelManager.h"
+
+#include <utils.h>
+
 LevelObject::LevelObject()
 {
 	node = nullptr;
+	id = Utils::randomId();
 }
 
 LevelObject::LevelObject(nlohmann::json j)
 {
 	name = j["name"].get<std::string>();
+	id = j["id"].get<uint64_t>();
+	parentId = j["parent"].get<uint64_t>();
 	startTime = j["start"].get<float>();
 	killTime = j["kill"].get<float>();
 	depth = j["depth"].get<float>();
@@ -26,13 +33,29 @@ LevelObject::LevelObject(nlohmann::json j)
 
 LevelObject::~LevelObject()
 {
-	// Unparent all children
-	for (LevelObject* child : children)
+	Level* level = LevelManager::inst->level;
+
+	// Remove from parent
+	if (parentId)
 	{
-		child->setParent(nullptr);
+		LevelObject* parent = level->levelObjects[parentId];
+		parent->childrenId.erase(id);
 	}
 
-	for (AnimationChannel* channel : animationChannels)
+	// Cache children ids
+	const size_t childrenCount = childrenId.size();
+	uint64_t* children = new uint64_t[childrenCount];
+	std::copy(childrenId.begin(), childrenId.end(), children);
+
+	// Unparent all children
+	for (int i = 0; i < childrenCount; i++)
+	{
+		level->levelObjects[children[i]]->setParent(nullptr);
+	}
+
+	delete[] children;
+
+	for (const AnimationChannel* channel : animationChannels)
 	{
 		delete channel;
 	}
@@ -42,25 +65,26 @@ LevelObject::~LevelObject()
 
 void LevelObject::setParent(LevelObject* newParent)
 {
+	Level* level = LevelManager::inst->level;
+
 	// Remove from old parent
-	if (parent)
+	if (parentId)
 	{
-		std::vector<LevelObject*>::iterator it = std::remove(parent->children.begin(), parent->children.end(), this);
-		parent->children.erase(it);
+		level->levelObjects[parentId]->childrenId.erase(id);
 	}
 
 	// Add to new parent
 	if (newParent)
 	{
-		newParent->children.push_back(this);
+		newParent->childrenId.emplace(id);
+		parentId = newParent->id;
 		node->setParent(newParent->node);
 	}
 	else
 	{
+		parentId = 0;
 		node->setParent(nullptr);
 	}
-
-	parent = newParent;
 }
 
 void LevelObject::genActionPair(ObjectAction* spawnAction, ObjectAction* killAction)
@@ -103,10 +127,12 @@ bool LevelObject::hasChannel(AnimationChannelType channelType)
 	return animationChannelLookup[channelType];
 }
 
-nlohmann::ordered_json LevelObject::toJson(bool excludeChildren)
+nlohmann::ordered_json LevelObject::toJson()
 {
 	nlohmann::ordered_json j;
 	j["name"] = name;
+	j["id"] = id;
+	j["parent"] = parentId;
 	j["start"] = startTime;
 	j["kill"] = killTime;
 	j["depth"] = depth;
@@ -118,15 +144,6 @@ nlohmann::ordered_json LevelObject::toJson(bool excludeChildren)
 	for (int i = 0; i < animationChannels.size(); i++)
 	{
 		j["channels"][i] = animationChannels[i]->toJson();
-	}
-
-	if (!excludeChildren)
-	{
-		j["children"] = nlohmann::json::array();
-		for (int i = 0; i < children.size(); i++)
-		{
-			j["children"][i] = children[i]->toJson();
-		}
 	}
 
 	return j;

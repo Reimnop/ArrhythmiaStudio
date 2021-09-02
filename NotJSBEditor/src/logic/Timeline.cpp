@@ -143,10 +143,12 @@ void Timeline::onLayout()
 
 			bool stripDragging = false;
 
+			Level* level = levelManager->level;
+
 			// Editor strips input pass
-			for (int i = levelManager->level->levelObjects.size() - 1; i >= 0; i--)
+			for (auto it = level->levelObjects.rbegin(); it != level->levelObjects.rend(); it++)
 			{
-				LevelObject* levelObject = levelManager->level->levelObjects[i];
+				LevelObject* levelObject = it->second;
 
 				if (levelObject->killTime < startTime || levelObject->startTime > endTime)
 				{
@@ -163,7 +165,7 @@ void Timeline::onLayout()
 
 				const char* name = levelObject->name.c_str();
 
-				ImGui::PushID(i + 1);
+				ImGui::PushID(it->first);
 
 				bool pressed;
 				bool highlighted;
@@ -207,9 +209,9 @@ void Timeline::onLayout()
 			}
 
 			// Editor strips visual pass
-			for (int i = 0; i < levelManager->level->levelObjects.size(); i++)
+			for (auto it = level->levelObjects.begin(); it != level->levelObjects.end(); it++)
 			{
-				LevelObject* levelObject = levelManager->level->levelObjects[i];
+				LevelObject* levelObject = it->second;
 
 				if (levelObject->killTime < startTime || levelObject->startTime > endTime)
 				{
@@ -335,7 +337,7 @@ void Timeline::onLayout()
 			}
 
 			// Object copy
-			if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_C) && levelManager->selectedObjects.size() > 0)
+			if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_C) && !levelManager->selectedObjects.empty())
 			{
 				OpenClipboard(NULL);
 				EmptyClipboard();
@@ -350,7 +352,7 @@ void Timeline::onLayout()
 				int i = 0;
 				for (LevelObject* obj : levelManager->selectedObjects)
 				{
-					nlohmann::json jObj = obj->toJson(true);
+					nlohmann::json jObj = obj->toJson();
 					jObj["start"] = jObj["start"].get<float>() - minSt;
 					jObj["kill"] = jObj["kill"].get<float>() - minSt;
 

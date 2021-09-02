@@ -12,7 +12,7 @@ public:
 	std::string name;
 	std::vector<ColorSlot*> colorSlots;
 	std::vector<LevelEvent*> levelEvents;
-	std::vector<LevelObject*> levelObjects;
+	std::map<uint64_t, LevelObject*> levelObjects;
 
 	~Level();
 

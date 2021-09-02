@@ -102,16 +102,20 @@ void Properties::onLayout()
 				ImGui::SliderInt("Editor bin", &editorBin, 1, EDITOR_TIMELINE_BIN_COUNT);
 				selectedObject->editorBinIndex = editorBin - 1;
 
-				if (ImGui::BeginCombo("Parent", selectedObject->parent ? selectedObject->parent->name.c_str() : "None"))
+				Level* level = levelManager->level;
+
+				if (ImGui::BeginCombo("Parent", selectedObject->parentId ? level->levelObjects[selectedObject->parentId]->name.c_str() : "None"))
 				{
-					if (ImGui::Selectable("None", selectedObject->parent == nullptr))
+					if (ImGui::Selectable("None", selectedObject->parentId == 0))
 					{
 						selectedObject->setParent(nullptr);
 					}
 
-					for (LevelObject* obj : levelManager->level->levelObjects)
+					for (const std::pair<uint64_t, LevelObject*> x : level->levelObjects)
 					{
-						if (obj != selectedObject && ImGui::Selectable(obj->name.c_str(), obj == selectedObject->parent))
+						LevelObject* obj = x.second;
+
+						if (obj != selectedObject && ImGui::Selectable(obj->name.c_str(), obj->id == selectedObject->parentId))
 						{
 							selectedObject->setParent(obj);
 						}

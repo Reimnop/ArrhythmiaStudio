@@ -1421,6 +1421,9 @@
     <ClInclude Include="src\logic\imgui\imgui_editorlib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\glm\ext\matrix_clip_space.inl">

@@ -87,7 +87,12 @@ void LevelManager::loadLevel(std::string levelPath)
 		nlohmann::json::array_t objArr = j["objects"].get<nlohmann::json::array_t>();
 		for (const nlohmann::json& objJson : objArr)
 		{
-			recursivelyInitializeObjectTree(objJson, nullptr, newLevel);
+			insertObject(new LevelObject(objJson));
+		}
+
+		for (const std::pair<uint64_t, LevelObject*> x : newLevel->levelObjects)
+		{
+			initializeObjectParent(x.second);
 		}
 	}
 
@@ -257,10 +262,10 @@ void LevelManager::recalculateAllObjectActions()
 	// Clear and re-add object actions
 	objectActions.clear();
 
-	for (int i = 0; i < level->levelObjects.size(); i++)
+	for (const std::pair<uint64_t, LevelObject*> x : level->levelObjects)
 	{
 		ObjectAction spawnAction, killAction;
-		level->levelObjects[i]->genActionPair(&spawnAction, &killAction);
+		x.second->genActionPair(&spawnAction, &killAction);
 
 		insertAction(spawnAction);
 		insertAction(killAction);
@@ -288,9 +293,9 @@ void LevelManager::recalculateObjectAction(LevelObject* levelObject)
 void LevelManager::recalculateActionIndex(float time)
 {
 	// Reset all objects
-	for (LevelObject* levelObject : level->levelObjects)
+	for (const std::pair<uint64_t, LevelObject*> x : level->levelObjects)
 	{
-		levelObject->node->setActive(false);
+		x.second->node->setActive(false);
 	}
 
 	// Reset action index and recalculate
@@ -321,18 +326,13 @@ void LevelManager::insertObject(LevelObject* levelObject)
 	insertAction(kill);
 
 	spawnObject(levelObject);
-	level->levelObjects.push_back(levelObject);
+	level->levelObjects.emplace(levelObject->id, levelObject);
 
 	recalculateActionIndex(time);
 }
 
 void LevelManager::removeObject(LevelObject* levelObject)
 {
-	// Remove object
-	std::vector<LevelObject*>::iterator objIt = std::remove(level->levelObjects.begin(), level->levelObjects.end(),
-	                                                        levelObject);
-	level->levelObjects.erase(objIt);
-
 	// Remove actions
 	std::vector<ObjectAction>::iterator it = std::remove_if(objectActions.begin(), objectActions.end(),
 	                                                        [levelObject](ObjectAction match)
@@ -344,10 +344,27 @@ void LevelManager::removeObject(LevelObject* levelObject)
 	// Remove from alive objects
 	aliveObjects.erase(levelObject);
 
+	// We cache the id as it will not be available after deleting the object
+	const uint64_t id = levelObject->id;
+
 	// Delete object
 	delete levelObject;
 
+	// Remove object
+	level->levelObjects.erase(id);
+
 	recalculateActionIndex(time);
+}
+
+void LevelManager::initializeObjectParent(LevelObject* levelObject)
+{
+	if (levelObject->parentId) 
+	{
+		LevelObject* parent = level->levelObjects[levelObject->parentId];
+
+		levelObject->node->setParent(parent->node);
+		parent->childrenId.emplace(levelObject->id);
+	}
 }
 
 bool LevelManager::indexAdvance(float time) const
@@ -400,23 +417,4 @@ void LevelManager::spawnObject(LevelObject* levelObject) const
 	node->renderer = renderer;
 
 	levelObject->node = node;
-}
-
-void LevelManager::recursivelyInitializeObjectTree(nlohmann::json j, LevelObject* parent, Level* level) const
-{
-	LevelObject* obj = new LevelObject(j);
-
-	level->levelObjects.push_back(obj);
-	spawnObject(obj);
-
-	obj->setParent(parent);
-
-	if (j.contains("children"))
-	{
-		nlohmann::json::array_t children = j["children"].get<nlohmann::json::array_t>();
-		for (const nlohmann::json& child : children)
-		{
-			recursivelyInitializeObjectTree(child, obj, level);
-		}
-	}
 }

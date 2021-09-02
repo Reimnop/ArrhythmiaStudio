@@ -580,6 +580,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y</Command>
     <ClInclude Include="include\nlohmann\ordered_map.hpp" />
     <ClInclude Include="include\nlohmann\thirdparty\hedley\hedley.hpp" />
     <ClInclude Include="include\nlohmann\thirdparty\hedley\hedley_undef.hpp" />
+    <ClInclude Include="include\utils.h" />
     <ClInclude Include="src\logic\AnimationChannelType.h" />
     <ClInclude Include="src\logic\AnimationChannel.h" />
     <ClInclude Include="src\logic\animation\Color.h" />

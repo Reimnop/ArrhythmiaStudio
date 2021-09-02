@@ -4,7 +4,7 @@
 
 #include "rendering/Renderer.h"
 
-#ifndef NDEBUG
+#ifdef _DEBUG
 // #define SHOW_NON_IMPORTANT
 #define THROW_GL_ERROR
 #endif

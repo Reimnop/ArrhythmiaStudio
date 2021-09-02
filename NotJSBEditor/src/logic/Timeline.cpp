@@ -141,6 +141,14 @@ void Timeline::onLayout()
 				Properties::inst->reset();
 			}
 
+			if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_A))
+			{
+				for (const std::pair<uint64_t, LevelObject*> x : levelManager->level->levelObjects)
+				{
+					levelManager->selectedObjects.emplace(x.second);
+				}
+			}
+
 			bool stripDragging = false;
 
 			Level* level = levelManager->level;
@@ -432,6 +440,8 @@ void Timeline::onLayout()
 								levelManager->initializeObjectParent(obj);
 							}
 
+							levelManager->recalculateActionIndex(levelManager->time);
+
 							GlobalUnlock(pGlobal);
 						}
 					}
@@ -473,6 +483,7 @@ void Timeline::onLayout()
 					newObject->killTime = levelManager->time + 5.0f;
 
 					levelManager->insertObject(newObject);
+					levelManager->recalculateActionIndex(levelManager->time);
 				}
 
 				ImGui::EndPopup();

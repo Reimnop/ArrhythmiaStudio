@@ -98,9 +98,8 @@ void LevelManager::loadLevel(const std::string& levelPath)
 
 	Logger::info("Loaded " + std::to_string(newLevel->levelObjects.size()) + " objects");
 
-	recalculateAllObjectActions();
-	recalculateActionIndex(time);
 	updateLevel(0.0f);
+	recalculateActionIndex(time);
 
 	audioClip = new AudioClip(songFilePath.generic_string());
 
@@ -327,8 +326,6 @@ void LevelManager::insertObject(LevelObject* levelObject)
 
 	spawnObject(levelObject);
 	level->levelObjects.emplace(levelObject->id, levelObject);
-
-	recalculateActionIndex(time);
 }
 
 void LevelManager::removeObject(LevelObject* levelObject)

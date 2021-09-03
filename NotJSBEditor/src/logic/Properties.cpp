@@ -12,6 +12,7 @@
 #include "GlobalConstants.h"
 #include "ShapeManager.h"
 #include "animation/Easing.h"
+#include "imgui/imgui_editorlib.h"
 
 Properties* Properties::inst;
 
@@ -182,6 +183,37 @@ void Properties::onLayout()
 						drawList->AddText(labelMin, textCol, channelName.c_str());
 					}
 
+					// Timeline move and zoom
+					if (ImGui::IsWindowFocused() && ImGui::IntersectAABB(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + EDITOR_BIN_HEIGHT), io.MousePos))
+					{
+						float length = selectedObject->killTime - selectedObject->startTime;
+
+						float visibleLength = endTime - startTime;
+						float currentPos = (startTime + endTime) * 0.5f;
+
+						float zoom = visibleLength / length;
+
+						zoom -= io.MouseWheel * 0.05f;
+
+						if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
+						{
+							currentPos -= io.MouseDelta.x / availX * visibleLength;
+						}
+
+						float minZoom = 2.0f / length;
+						zoom = std::clamp(zoom, minZoom, 1.0f);
+
+						float newVisibleLength = zoom * length;
+
+						float minPos = newVisibleLength * 0.5f;
+						float maxPos = length - minPos;
+
+						currentPos = std::clamp(currentPos, minPos, maxPos);
+
+						startTime = currentPos - newVisibleLength * 0.5f;
+						endTime = currentPos + newVisibleLength * 0.5f;
+					}
+
 					// Draw the keyframes
 					int id = 0;
 					for (int i = 0; i < selectedObject->animationChannels.size(); i++)
@@ -286,40 +318,6 @@ void Properties::onLayout()
 						}
 
 						ImGui::PopID();
-					}
-
-					// Timeline move and zoom
-					ImGui::SetCursorScreenPos(timelineMin);
-					ImGui::InvisibleButton("##TimelineFillButton", clipSize);
-
-					if (ImGui::IsWindowFocused() && ImGui::IsItemHovered())
-					{
-						float length = selectedObject->killTime - selectedObject->startTime;
-
-						float visibleLength = endTime - startTime;
-						float currentPos = (startTime + endTime) * 0.5f;
-
-						float zoom = visibleLength / length;
-
-						zoom -= io.MouseWheel * 0.05f;
-
-						if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
-						{
-							currentPos -= io.MouseDelta.x / availX * visibleLength;
-						}
-
-						float minZoom = 2.0f / length;
-						zoom = std::clamp(zoom, minZoom, 1.0f);
-
-						float newVisibleLength = zoom * length;
-
-						float minPos = newVisibleLength * 0.5f;
-						float maxPos = length - minPos;
-
-						currentPos = std::clamp(currentPos, minPos, maxPos);
-
-						startTime = currentPos - newVisibleLength * 0.5f;
-						endTime = currentPos + newVisibleLength * 0.5f;
 					}
 
 					// Draw timeline border

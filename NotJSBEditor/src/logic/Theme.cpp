@@ -10,6 +10,8 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
+#include "imgui/imgui_editorlib.h"
+
 Theme::Theme()
 {
 	startTime = 0.0f;
@@ -67,6 +69,37 @@ void Theme::onLayout()
 					ImVec2(timelineMin.x, timelineMin.y),
 					ImVec2(timelineMin.x + availX, timelineMin.y + EDITOR_BIN_HEIGHT),
 					EDITOR_BIN_PRIMARY_COL);
+
+				// Timeline move and zoom
+				if (ImGui::IsWindowFocused() && ImGui::IntersectAABB(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + EDITOR_BIN_HEIGHT), io.MousePos))
+				{
+					float songLength = levelManager->audioClip->getLength();
+
+					float visibleLength = endTime - startTime;
+					float currentPos = (startTime + endTime) * 0.5f;
+
+					float zoom = visibleLength / songLength;
+
+					zoom -= io.MouseWheel * 0.05f;
+
+					if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
+					{
+						currentPos -= io.MouseDelta.x / availX * visibleLength;
+					}
+
+					float minZoom = 2.0f / songLength;
+					zoom = std::clamp(zoom, minZoom, 1.0f);
+
+					float newVisibleLength = zoom * songLength;
+
+					float minPos = newVisibleLength * 0.5f;
+					float maxPos = songLength - minPos;
+
+					currentPos = std::clamp(currentPos, minPos, maxPos);
+
+					startTime = currentPos - newVisibleLength * 0.5f;
+					endTime = currentPos + newVisibleLength * 0.5f;
+				}
 
 				// Draw keyframes
 				ColorSlot* slot = levelManager->level->colorSlots[selectedSlotIndex];
@@ -158,40 +191,6 @@ void Theme::onLayout()
 
 						selectedKeyframe = kf;
 					}
-				}
-
-				// Timeline move and zoom
-				ImGui::SetCursorScreenPos(timelineMin);
-				ImGui::InvisibleButton("##TimelineFillButton", clipSize);
-
-				if (ImGui::IsWindowFocused() && ImGui::IsItemHovered())
-				{
-					float songLength = levelManager->audioClip->getLength();
-
-					float visibleLength = endTime - startTime;
-					float currentPos = (startTime + endTime) * 0.5f;
-
-					float zoom = visibleLength / songLength;
-
-					zoom -= io.MouseWheel * 0.05f;
-
-					if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
-					{
-						currentPos -= io.MouseDelta.x / availX * visibleLength;
-					}
-
-					float minZoom = 2.0f / songLength;
-					zoom = std::clamp(zoom, minZoom, 1.0f);
-
-					float newVisibleLength = zoom * songLength;
-
-					float minPos = newVisibleLength * 0.5f;
-					float maxPos = songLength - minPos;
-
-					currentPos = std::clamp(currentPos, minPos, maxPos);
-
-					startTime = currentPos - newVisibleLength * 0.5f;
-					endTime = currentPos + newVisibleLength * 0.5f;
 				}
 
 				// Draw borders of the timeline

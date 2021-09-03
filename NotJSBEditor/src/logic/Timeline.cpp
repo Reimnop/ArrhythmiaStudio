@@ -134,6 +134,37 @@ void Timeline::onLayout()
 
 			bool isTimelineHovered = ImGui::IntersectAABB(timelineMin, timelineMax, io.MousePos);
 
+			// Timeline move and zoom
+			if (ImGui::IsWindowFocused() && isTimelineHovered)
+			{
+				float songLength = levelManager->audioClip->getLength();
+
+				float visibleLength = endTime - startTime;
+				float currentPos = (startTime + endTime) * 0.5f;
+
+				float zoom = visibleLength / songLength;
+
+				zoom -= io.MouseWheel * 0.05f;
+
+				if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
+				{
+					currentPos -= io.MouseDelta.x / availX * visibleLength;
+				}
+
+				float minZoom = 2.0f / songLength;
+				zoom = std::clamp(zoom, minZoom, 1.0f);
+
+				float newVisibleLength = zoom * songLength;
+
+				float minPos = newVisibleLength * 0.5f;
+				float maxPos = songLength - minPos;
+
+				currentPos = std::clamp(currentPos, minPos, maxPos);
+
+				startTime = currentPos - newVisibleLength * 0.5f;
+				endTime = currentPos + newVisibleLength * 0.5f;
+			}
+
 			// Deselect
 			if (isTimelineHovered && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL))
 			{
@@ -229,37 +260,6 @@ void Timeline::onLayout()
 				const char* name = levelObject->name.c_str();
 
 				ImGui::EditorStripVisualPass(name, stripMin, stripMax, levelObject->timelineHighlighted);
-			}
-
-			// Timeline move and zoom
-			if (ImGui::IsWindowFocused() && isTimelineHovered)
-			{
-				float songLength = levelManager->audioClip->getLength();
-
-				float visibleLength = endTime - startTime;
-				float currentPos = (startTime + endTime) * 0.5f;
-
-				float zoom = visibleLength / songLength;
-
-				zoom -= io.MouseWheel * 0.05f;
-
-				if (ImGui::IsMouseDragging(ImGuiMouseButton_Middle))
-				{
-					currentPos -= io.MouseDelta.x / availX * visibleLength;
-				}
-
-				float minZoom = 2.0f / songLength;
-				zoom = std::clamp(zoom, minZoom, 1.0f);
-
-				float newVisibleLength = zoom * songLength;
-
-				float minPos = newVisibleLength * 0.5f;
-				float maxPos = songLength - minPos;
-
-				currentPos = std::clamp(currentPos, minPos, maxPos);
-
-				startTime = currentPos - newVisibleLength * 0.5f;
-				endTime = currentPos + newVisibleLength * 0.5f;
 			}
 
 			// Timeline borders

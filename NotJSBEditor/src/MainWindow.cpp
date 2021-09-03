@@ -9,10 +9,9 @@ void glfwErrorCallback(int error_code, const char* description)
 	Logger::error("GLFW: " + std::string(description));
 }
 
-void APIENTRY glDebugCallback(GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length,
-                              const char* message, const void* userParam)
+void glDebugCallback(GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length, const char* message, const void* userParam)
 {
-	std::string msgStr = std::string(message);
+	std::string msgStr = std::string(message, length);
 
 	switch (severity)
 	{
@@ -82,9 +81,12 @@ MainWindow::MainWindow()
 	glfwSwapInterval(1);
 
 	// Intialize OpenGL debug callback
-	glEnable(GL_DEBUG_OUTPUT);
-	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(glDebugCallback, nullptr);
+
+	glEnable(GL_DEBUG_OUTPUT);
+#ifdef DEBUG_CALLBACK_SYNCHRONOUS
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+#endif
 
 	// Initialize audio
 	BASS_Init(-1, 44100, BASS_DEVICE_STEREO, NULL, NULL);

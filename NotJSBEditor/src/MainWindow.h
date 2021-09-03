@@ -7,6 +7,7 @@
 #ifdef _DEBUG
 // #define SHOW_NON_IMPORTANT
 #define THROW_GL_ERROR
+#define DEBUG_CALLBACK_SYNCHRONOUS
 #endif
 
 class GameManager;

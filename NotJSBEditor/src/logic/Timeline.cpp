@@ -92,6 +92,10 @@ void Timeline::onLayout()
 			}
 		}
 
+		ImGui::SameLine();
+
+		ImGui::DragFloat("Instantiation Offset", &instantiationOffset, 0.1f);
+
 		glm::ivec2 timelineSize;
 
 		// Draw the timeline (huge code!)
@@ -418,8 +422,8 @@ void Timeline::onLayout()
 
 							for (nlohmann::json objJson : objsJson) 
 							{
-								objJson["start"] = objJson["start"].get<float>() + levelManager->time;
-								objJson["kill"] = objJson["kill"].get<float>() + levelManager->time;
+								objJson["start"] = objJson["start"].get<float>() + levelManager->time + instantiationOffset;
+								objJson["kill"] = objJson["kill"].get<float>() + levelManager->time + instantiationOffset;
 
 								LevelObject* newObject = new LevelObject(objJson);
 
@@ -474,8 +478,8 @@ void Timeline::onLayout()
 				if (ImGui::Selectable("New Object"))
 				{
 					LevelObject* newObject = new LevelObject();
-					newObject->startTime = levelManager->time;
-					newObject->killTime = levelManager->time + 5.0f;
+					newObject->startTime = levelManager->time + instantiationOffset;
+					newObject->killTime = levelManager->time + 5.0f + instantiationOffset;
 
 					levelManager->insertObject(newObject);
 					levelManager->recalculateActionIndex(levelManager->time);

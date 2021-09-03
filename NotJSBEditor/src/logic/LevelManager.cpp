@@ -98,8 +98,11 @@ void LevelManager::loadLevel(const std::string& levelPath)
 
 	Logger::info("Loaded " + std::to_string(newLevel->levelObjects.size()) + " objects");
 
+	actionIndex = 0;
+	time = 0.0f;
+
+	recalculateActionIndex(0.0f);
 	updateLevel(0.0f);
-	recalculateActionIndex(time);
 
 	audioClip = new AudioClip(songFilePath.generic_string());
 

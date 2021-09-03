@@ -17,6 +17,8 @@ public:
 	Timeline();
 	void genBuffer(AudioClip* clip);
 private:
+	float instantiationOffset = 0.0f;
+
 	float startTime;
 	float endTime;
 

@@ -184,7 +184,7 @@ void Properties::onLayout()
 					}
 
 					// Timeline move and zoom
-					if (ImGui::IsWindowFocused() && ImGui::IntersectAABB(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + EDITOR_BIN_HEIGHT), io.MousePos))
+					if (ImGui::IsWindowFocused() && ImGui::IntersectAABB(timelineMin, ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y), io.MousePos))
 					{
 						float length = selectedObject->killTime - selectedObject->startTime;
 

@@ -35,9 +35,9 @@ public:
 	void update();
 
 	void updateLevel(float time);
-	void updateColorSlot(ColorSlot* colorSlot) const;
-	void updateLevelEvent(LevelEvent* levelEvent) const;
-	void updateObject(LevelObject* levelObject) const;
+	void updateColorSlot(ColorSlot* colorSlot);
+	void updateLevelEvent(LevelEvent* levelEvent);
+	void updateObject(LevelObject* levelObject);
 
 	void recalculateAllObjectActions();
 	void recalculateObjectAction(LevelObject* levelObject);
@@ -46,7 +46,8 @@ public:
 	void insertObject(LevelObject* levelObject);
 	void removeObject(LevelObject* levelObject);
 
-	void initializeObjectParent(LevelObject* levelObject);
+	// Returns false if initialization failed
+	bool initializeObjectParent(LevelObject* levelObject);
 private:
 	Timeline* timeline;
 	Properties* properties;

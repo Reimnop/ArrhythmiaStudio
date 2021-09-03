@@ -189,12 +189,12 @@ void LevelManager::updateLevel(float time)
 	}
 }
 
-void LevelManager::updateColorSlot(ColorSlot* colorSlot) const
+void LevelManager::updateColorSlot(ColorSlot* colorSlot)
 {
 	colorSlot->update(time);
 }
 
-void LevelManager::updateLevelEvent(LevelEvent* levelEvent) const
+void LevelManager::updateLevelEvent(LevelEvent* levelEvent)
 {
 	Camera* camera = Renderer::inst->camera;
 
@@ -223,7 +223,7 @@ void LevelManager::updateLevelEvent(LevelEvent* levelEvent) const
 	}
 }
 
-void LevelManager::updateObject(LevelObject* levelObject) const
+void LevelManager::updateObject(LevelObject* levelObject)
 {
 	for (AnimationChannel* channel : levelObject->animationChannels)
 	{
@@ -353,22 +353,19 @@ void LevelManager::removeObject(LevelObject* levelObject)
 	recalculateActionIndex(time);
 }
 
-void LevelManager::initializeObjectParent(LevelObject* levelObject)
+bool LevelManager::initializeObjectParent(LevelObject* levelObject)
 {
-	if (levelObject->parentId)
+	if (levelObject->parentId && level->levelObjects.count(levelObject->parentId))
 	{
-		if (level->levelObjects.count(levelObject->parentId)) 
-		{
-			LevelObject* parent = level->levelObjects[levelObject->parentId];
+		LevelObject* parent = level->levelObjects[levelObject->parentId];
 
-			levelObject->node->setParent(parent->node);
-			parent->childrenId.emplace(levelObject->id);
-		}
-		else
-		{
-			levelObject->parentId = 0;
-		}
+		levelObject->node->setParent(parent->node);
+		parent->childrenId.emplace(levelObject->id);
+
+		return true;
 	}
+
+	return false;
 }
 
 bool LevelManager::indexAdvance(float time) const

@@ -429,7 +429,10 @@ void Timeline::onLayout()
 
 							for (LevelObject* obj : newObjects)
 							{
-								levelManager->initializeObjectParent(obj);
+								if (!levelManager->initializeObjectParent(obj))
+								{
+									obj->parentId = 0;
+								}
 							}
 
 							levelManager->recalculateActionIndex(levelManager->time);

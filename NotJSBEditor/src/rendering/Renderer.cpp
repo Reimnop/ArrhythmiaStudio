@@ -32,7 +32,7 @@ Renderer::Renderer(GLFWwindow* window)
 	lastViewportWidth = viewportWidth;
 	lastViewportHeight = viewportHeight;
 
-	// Generate color texture
+	// Generate render texture
 	glGenTextures(1, &renderTexture);
 	glBindTexture(GL_TEXTURE_2D, renderTexture);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_R11F_G11F_B10F, viewportWidth, viewportHeight, 0, GL_RGB, GL_FLOAT, nullptr);
@@ -42,18 +42,33 @@ Renderer::Renderer(GLFWwindow* window)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	// Generate render texture
-	glGenRenderbuffers(1, &depthBuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, viewportWidth, viewportHeight);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-
-	// Initialize framebuffer to render into
-	glGenFramebuffers(1, &framebuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+	// Initialize framebuffer to copy from multisample framebuffer
+	glGenFramebuffers(1, &finalFramebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, finalFramebuffer);
 
 	// Attach generated resources to framebuffer
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderTexture, 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// Generate multisample color texture
+	glGenTextures(1, &multisampleTexture);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, multisampleTexture);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, MSAA_SAMPLES, GL_R11F_G11F_B10F, viewportWidth, viewportHeight, GL_TRUE);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+
+	// Generate render texture
+	glGenRenderbuffers(1, &depthBuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, MSAA_SAMPLES, GL_DEPTH_COMPONENT, viewportWidth, viewportHeight);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	// Initialize framebuffer to render into
+	glGenFramebuffers(1, &multisampleFramebuffer);
+	glBindFramebuffer(GL_FRAMEBUFFER, multisampleFramebuffer);
+
+	// Attach generated resources to framebuffer
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, multisampleTexture, 0);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthBuffer);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -76,10 +91,13 @@ void Renderer::update()
 		// Resize all framebuffer attachments
 		glBindTexture(GL_TEXTURE_2D, renderTexture);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_R11F_G11F_B10F, viewportWidth, viewportHeight, 0, GL_RGB, GL_FLOAT, nullptr);
-		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, multisampleTexture);
+		glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, MSAA_SAMPLES, GL_R11F_G11F_B10F, viewportWidth, viewportHeight, GL_TRUE);
+		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 
 		glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, viewportWidth, viewportHeight);
+		glRenderbufferStorageMultisample(GL_RENDERBUFFER, MSAA_SAMPLES, GL_DEPTH_COMPONENT, viewportWidth, viewportHeight);
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 		lastViewportWidth = viewportWidth;
@@ -94,7 +112,7 @@ void Renderer::render()
 	camera->calculateViewProjection(aspect, &view, &projection);
 	recursivelyRenderNodes(Scene::inst->rootNode, glm::mat4(1.0f), view, projection);
 
-	FramebufferStack::push(framebuffer);
+	FramebufferStack::push(multisampleFramebuffer);
 
 	glViewport(0, 0, viewportWidth, viewportHeight);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -123,6 +141,13 @@ void Renderer::render()
 	glDepthMask(GL_TRUE);
 
 	FramebufferStack::pop();
+
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, multisampleFramebuffer);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, finalFramebuffer);
+
+	glBlitFramebuffer(0, 0, viewportWidth, viewportHeight, 0, 0, viewportWidth, viewportHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	bloom->processImage(renderTexture, viewportWidth, viewportHeight);
 	// tonemapping->processImage(renderTexture, viewportWidth, viewportHeight);

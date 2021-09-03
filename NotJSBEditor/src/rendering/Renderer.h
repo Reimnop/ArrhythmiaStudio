@@ -37,8 +37,11 @@ private:
 	uint32_t lastVertexArray = 0;
 	uint32_t lastShader = 0;
 
-	uint32_t framebuffer;
+	uint32_t finalFramebuffer;
 	uint32_t renderTexture;
+
+	uint32_t multisampleFramebuffer;
+	uint32_t multisampleTexture;
 	uint32_t depthBuffer;
 
 	std::vector<OutputDrawData*> queuedDrawDataOpaque;

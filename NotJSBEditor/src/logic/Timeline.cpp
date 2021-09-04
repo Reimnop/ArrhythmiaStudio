@@ -93,7 +93,11 @@ void Timeline::onLayout()
 		}
 
 		ImGui::SameLine();
+		ImGui::SetNextItemWidth(150.0f);
+		ImGui::DragInt("Layer", &layer, 1, 0, INT_MAX);
 
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(150.0f);
 		ImGui::DragFloat("Instantiation Offset", &instantiationOffset, 0.1f);
 
 		glm::ivec2 timelineSize;
@@ -185,6 +189,11 @@ void Timeline::onLayout()
 			{
 				LevelObject* levelObject = it->second;
 
+				if (levelObject->layer != layer)
+				{
+					continue;
+				}
+
 				if (levelObject->killTime < startTime || levelObject->startTime > endTime)
 				{
 					continue;
@@ -247,6 +256,11 @@ void Timeline::onLayout()
 			for (auto it = level->levelObjects.begin(); it != level->levelObjects.end(); it++)
 			{
 				LevelObject* levelObject = it->second;
+
+				if (levelObject->layer != layer)
+				{
+					continue;
+				}
 
 				if (levelObject->killTime < startTime || levelObject->startTime > endTime)
 				{

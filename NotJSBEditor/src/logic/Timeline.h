@@ -22,6 +22,8 @@ private:
 	float startTime;
 	float endTime;
 
+	int layer = 0;
+
 	glm::ivec2 oldWaveformSize = glm::ivec2(0);
 
 	uint32_t audioBuffer;

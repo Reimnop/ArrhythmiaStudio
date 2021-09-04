@@ -22,6 +22,11 @@ LevelObject::LevelObject(nlohmann::json j)
 	colorSlotIndex = j["color_slot"].get<int>();
 	editorBinIndex = j["editor_bin"].get<int>();
 
+	if (j.contains("layer"))
+	{
+		layer = j["layer"].get<int>();
+	}
+
 	nlohmann::json::array_t arr = j["channels"].get<nlohmann::json::array_t>();
 	for (int i = 0; i < arr.size(); i++)
 	{
@@ -139,6 +144,7 @@ nlohmann::ordered_json LevelObject::toJson()
 	j["shape"] = shapeIndex;
 	j["color_slot"] = colorSlotIndex;
 	j["editor_bin"] = editorBinIndex;
+	j["layer"] = layer;
 
 	j["channels"] = nlohmann::json::array();
 	for (int i = 0; i < animationChannels.size(); i++)

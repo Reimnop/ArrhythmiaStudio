@@ -18,6 +18,7 @@ public:
 	int editorBinIndex = 0;
 	int colorSlotIndex = 0;
 	float depth = 0.0f;
+	int layer = 0;
 
 	// Editor data do not touch
 	bool timelineHighlighted = false;

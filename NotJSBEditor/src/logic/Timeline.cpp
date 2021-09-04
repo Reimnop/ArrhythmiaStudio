@@ -77,7 +77,6 @@ void Timeline::onLayout()
 		ImGui::Text(time.c_str());
 
 		ImGui::SameLine();
-
 		if (playButton(levelManager->audioClip->isPlaying()))
 		{
 			AudioClip* clip = levelManager->audioClip;
@@ -90,6 +89,17 @@ void Timeline::onLayout()
 			{
 				clip->play();
 			}
+		}
+
+		ImGui::SameLine();
+		ImGui::SetNextItemWidth(150.0f);
+
+		float speed = levelManager->audioClip->getSpeed();
+		ImGui::SliderFloat("Speed", &speed, 0.25f, 4.0f);
+
+		if (ImGui::IsItemEdited())
+		{
+			levelManager->audioClip->setSpeed(speed);
 		}
 
 		ImGui::SameLine();
@@ -494,6 +504,7 @@ void Timeline::onLayout()
 					LevelObject* newObject = new LevelObject();
 					newObject->startTime = levelManager->time + instantiationOffset;
 					newObject->killTime = levelManager->time + 5.0f + instantiationOffset;
+					newObject->layer = layer;
 
 					levelManager->insertObject(newObject);
 					levelManager->recalculateActionIndex(levelManager->time);

@@ -23,6 +23,9 @@ public:
 
 	float getLength() const;
 	float getPosition() const;
+	float getSpeed() const;
+
+	void setSpeed(float value) const;
 
 	void seek(float time) const;
 private:

@@ -60,6 +60,18 @@ float AudioClip::getPosition() const
 	return (float)BASS_ChannelBytes2Seconds(channel, bytePos);
 }
 
+float AudioClip::getSpeed() const
+{
+	float value;
+	BASS_ChannelGetAttribute(channel, BASS_ATTRIB_FREQ, &value);
+	return value / frequency;
+}
+
+void AudioClip::setSpeed(float value) const
+{
+	BASS_ChannelSetAttribute(channel, BASS_ATTRIB_FREQ, value * frequency);
+}
+
 void AudioClip::seek(float time) const
 {
 	QWORD bytePos = BASS_ChannelSeconds2Bytes(channel, time);

@@ -1,55 +1,102 @@
 #pragma once
 
 #include <nlohmann/json.hpp>
+#include <utils.h>
 
 #include "EaseType.h"
 
 struct Keyframe
 {
 	float time;
-	float value;
+	bool random;
+	float values[2];
 	EaseType easing;
+
+	float evaluatedValue;
 
 	Keyframe()
 	{
 		time = 0.0f;
-		value = 0.0f;
+		random = false;
+		values[0] = 0.0f;
+		values[1] = 0.0f;
 		easing = EaseType_Linear;
+
+		evaluatedValue = 0.0f;
 	}
 
 	Keyframe(nlohmann::json j)
 	{
-		time = j[0].get<float>();
-		value = j[1].get<float>();
-
-		if (j.size() > 2)
+		time = j["time"].get<float>();
+		random = j["value"].is_array();
+		if (random)
 		{
-			easing = j[2].get<EaseType>();
+			values[0] = j["value"][0].get<float>();
+			values[1] = j["value"][1].get<float>();
 		}
 		else
 		{
-			easing = EaseType_Linear;
+			values[0] = j["value"].get<float>();
+			values[1] = values[0];
 		}
+
+		easing = j["ease"].get<EaseType>();
 	}
 
 	Keyframe(float time, float value, EaseType easing = EaseType_Linear)
 	{
+		random = false;
+
 		this->time = time;
-		this->value = value;
+		this->values[0] = value;
+		this->values[1] = value;
 		this->easing = easing;
+	}
+
+	Keyframe(float time, float values[2], EaseType easing = EaseType_Linear)
+	{
+		random = true;
+
+		this->time = time;
+		this->values[0] = values[0];
+		this->values[1] = values[1];
+		this->easing = easing;
+	}
+
+	void evaluateValue()
+	{
+		if (random)
+		{
+			const float l = values[1] - values[0];
+			evaluatedValue = values[0] + Utils::random() * l;
+		}
+		else
+		{
+			evaluatedValue = values[0];
+		}
 	}
 
 	bool operator==(Keyframe other) const
 	{
-		return time == other.time && value == other.value && easing == other.easing;
+		return time == other.time && random == other.random && values[0] == other.values[0] && values[1] == other.values[1] && easing == other.easing;
 	}
 
-	nlohmann::json toJson()
+	nlohmann::ordered_json toJson()
 	{
-		nlohmann::json j;
-		j[0] = time;
-		j[1] = value;
-		j[2] = easing;
+		nlohmann::ordered_json j;
+		j["time"] = time;
+
+		if (random)
+		{
+			j["value"][0] = values[0];
+			j["value"][1] = values[1];
+		}
+		else
+		{
+			j["value"] = values[0];
+		}
+
+		j["ease"] = easing;
 
 		return j;
 	}

@@ -199,9 +199,7 @@ void Events::onLayout()
 
 					if (kfTime > 0.0f)
 					{
-						Keyframe kf = Keyframe();
-						kf.time = kfTime;
-						kf.value = 0.0f;
+						Keyframe kf = Keyframe(kfTime, 0.0f);
 
 						selectedEvent->sequence->insertKeyframe(kf);
 						selectedEvent->update(levelManager->time);
@@ -298,8 +296,21 @@ void Events::onLayout()
 					bool kfChanged = false;
 					ImGui::DragFloat("Keyframe Time", &kf.time, 0.1f, 0.0f, levelManager->audioClip->getLength());
 					kfChanged = kfChanged || ImGui::IsItemEdited();
-					ImGui::DragFloat("Keyframe Value", &kf.value, 0.1f);
+
+					ImGui::Checkbox("Keyframe Random", &kf.random);
 					kfChanged = kfChanged || ImGui::IsItemEdited();
+					if (kf.random)
+					{
+						ImGui::DragFloat("Keyframe Min Value", &kf.values[0], 0.1f);
+						kfChanged = kfChanged || ImGui::IsItemEdited();
+						ImGui::DragFloat("Keyframe Max Value", &kf.values[1], 0.1f);
+						kfChanged = kfChanged || ImGui::IsItemEdited();
+					}
+					else
+					{
+						ImGui::DragFloat("Keyframe Value", &kf.values[0], 0.1f);
+						kfChanged = kfChanged || ImGui::IsItemEdited();
+					}
 
 					std::string currentEaseName = Easing::getEaseName(kf.easing);
 					if (ImGui::BeginCombo("Easing", currentEaseName.c_str()))
@@ -319,6 +330,8 @@ void Events::onLayout()
 
 					if (kfChanged)
 					{
+						kf.evaluateValue();
+
 						std::vector<Keyframe>::iterator it = std::find(
 							selectedEvent->sequence->keyframes.begin(),
 							selectedEvent->sequence->keyframes.end(),
@@ -351,9 +364,7 @@ void Events::insertEventSelectable(LevelEventType type, float defaultValue) cons
 
 	if (!level->hasLevelEvent(type) && ImGui::Selectable(channelName.c_str()))
 	{
-		Keyframe first = Keyframe();
-		first.time = 0.0f;
-		first.value = defaultValue;
+		Keyframe first = Keyframe(0.0f, defaultValue);
 
 		LevelEvent* levelEvent = new LevelEvent(type, 1, &first);
 

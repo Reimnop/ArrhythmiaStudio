@@ -200,8 +200,16 @@ void Properties::onLayout()
 							currentPos -= io.MouseDelta.x / availX * visibleLength;
 						}
 
-						float minZoom = 2.0f / length;
-						zoom = std::clamp(zoom, minZoom, 1.0f);
+						float minZoom = 0.25f / length;
+
+						if (minZoom < 1.0f) 
+						{
+							zoom = std::clamp(zoom, minZoom, 1.0f);
+						}
+						else
+						{
+							zoom = 1.0f;
+						}
 
 						float newVisibleLength = zoom * length;
 
@@ -308,9 +316,7 @@ void Properties::onLayout()
 
 							if (kfTime > 0.0f)
 							{
-								Keyframe kf = Keyframe();
-								kf.time = kfTime;
-								kf.value = 0.0f;
+								Keyframe kf = Keyframe(kfTime, 0.0f);
 
 								channel->sequence->insertKeyframe(kf);
 								levelManager->updateObject(selectedObject);
@@ -410,8 +416,21 @@ void Properties::onLayout()
 						bool kfChanged = false;
 						ImGui::DragFloat("Keyframe Time", &kf.time, 0.1f, 0.0f, selectedObject->killTime - selectedObject->startTime);
 						kfChanged = kfChanged || ImGui::IsItemEdited();
-						ImGui::DragFloat("Keyframe Value", &kf.value, 0.1f);
+
+						ImGui::Checkbox("Keyframe Random", &kf.random);
 						kfChanged = kfChanged || ImGui::IsItemEdited();
+						if (kf.random)
+						{
+							ImGui::DragFloat("Keyframe Min Value", &kf.values[0], 0.1f);
+							kfChanged = kfChanged || ImGui::IsItemEdited();
+							ImGui::DragFloat("Keyframe Max Value", &kf.values[1], 0.1f);
+							kfChanged = kfChanged || ImGui::IsItemEdited();
+						}
+						else
+						{
+							ImGui::DragFloat("Keyframe Value", &kf.values[0], 0.1f);
+							kfChanged = kfChanged || ImGui::IsItemEdited();
+						}
 
 						std::string currentEaseName = Easing::getEaseName(kf.easing);
 						if (ImGui::BeginCombo("Easing", currentEaseName.c_str()))
@@ -466,9 +485,7 @@ void Properties::insertChannelSelectable(LevelObject* levelObject, AnimationChan
 	const std::string channelName = getChannelName(channelType);
 	if (!levelObject->hasChannel(channelType) && ImGui::Selectable(channelName.c_str()))
 	{
-		Keyframe first = Keyframe();
-		first.time = 0.0f;
-		first.value = defaultValue;
+		Keyframe first = Keyframe(0.0f, defaultValue);
 
 		AnimationChannel* channel = new AnimationChannel(channelType, 1, &first);
 

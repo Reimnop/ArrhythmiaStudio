@@ -23,6 +23,8 @@ Sequence::Sequence(nlohmann::json j)
 
 void Sequence::insertKeyframe(Keyframe keyframe)
 {
+	keyframe.evaluateValue();
+
 	if (keyframes.empty())
 	{
 		keyframes.push_back(keyframe);
@@ -53,17 +55,17 @@ float Sequence::update(float time)
 
 	if (keyframes.size() == 1)
 	{
-		return keyframes.front().value;
+		return keyframes.front().evaluatedValue;
 	}
 
 	if (time < keyframes.front().time)
 	{
-		return keyframes.front().value;
+		return keyframes.front().evaluatedValue;
 	}
 
 	if (time >= keyframes.back().time)
 	{
-		return keyframes.back().value;
+		return keyframes.back().evaluatedValue;
 	}
 
 	// If time is not out of bounds, find left and right keyframes
@@ -99,7 +101,7 @@ float Sequence::update(float time)
 	const float t = (time - left.time) / (right.time - left.time);
 	const float easedT = ease(t);
 
-	return lerp(left.value, right.value, easedT);
+	return lerp(left.evaluatedValue, right.evaluatedValue, easedT);
 }
 
 nlohmann::json Sequence::toJson()

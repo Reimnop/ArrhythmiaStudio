@@ -9,10 +9,19 @@ public:
 
 	static uint64_t randomId()
 	{
-		return dist(rng);
+		return distId(rngId);
+	}
+
+	static float random()
+	{
+		return distF(rngF);
 	}
 private:
 	static inline std::random_device rd;
-	static inline std::mt19937_64 rng = std::mt19937_64(rd());
-	static inline std::uniform_int_distribution<uint64_t> dist;
+
+	static inline std::mt19937_64 rngId = std::mt19937_64(rd());
+	static inline std::uniform_int_distribution<uint64_t> distId;
+
+	static inline std::mt19937_64 rngF = std::mt19937_64(rd());
+	static inline std::uniform_real_distribution<float> distF;
 };

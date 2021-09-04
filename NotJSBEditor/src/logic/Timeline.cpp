@@ -94,7 +94,7 @@ void Timeline::onLayout()
 
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(150.0f);
-		ImGui::DragInt("Layer", &layer, 1, 0, INT_MAX);
+		ImGui::SliderInt("Layer", &layer, 0, EDITOR_MAX_OBJECT_LAYER);
 
 		ImGui::SameLine();
 		ImGui::SetNextItemWidth(150.0f);

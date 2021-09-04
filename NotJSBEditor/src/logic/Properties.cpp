@@ -103,7 +103,7 @@ void Properties::onLayout()
 				ImGui::SliderInt("Editor bin", &editorBin, 1, EDITOR_TIMELINE_BIN_COUNT);
 				selectedObject->editorBinIndex = editorBin - 1;
 
-				ImGui::DragInt("Layer", &selectedObject->layer, 1, 0, INT_MAX);
+				ImGui::SliderInt("Layer", &selectedObject->layer, 0, EDITOR_MAX_OBJECT_LAYER);
 
 				Level* level = levelManager->level;
 

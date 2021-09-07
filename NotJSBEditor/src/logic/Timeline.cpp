@@ -48,8 +48,8 @@ void Timeline::genBuffer(AudioClip* clip)
 		float t1 = i / (float)pixCount;
 		float t2 = (i + 1) / (float)pixCount;
 
-		int i1 = (int)lerp(0.0f, clip->samplesCount - 1, t1);
-		int i2 = (int)lerp(0.0f, clip->samplesCount - 1, t2);
+		int i1 = (int)std::lerp(0.0f, clip->samplesCount - 1, t1);
+		int i2 = (int)std::lerp(0.0f, clip->samplesCount - 1, t2);
 
 		float s = 0.0f;
 		for (int j = i1; j < i2; j++)
@@ -591,9 +591,4 @@ std::string Timeline::timeToString(float time) const
 	std::string hoursStr = hours < 10 ? "0" + std::to_string(hours) : std::to_string(hours);
 
 	return hoursStr + ":" + minutesStr + ":" + secondsStr + "." + millisecondsStr;
-}
-
-float Timeline::lerp(float a, float b, float t)
-{
-	return (a * (1.0f - t)) + (b * t);
 }

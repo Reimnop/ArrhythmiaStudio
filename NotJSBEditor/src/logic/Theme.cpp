@@ -355,8 +355,3 @@ bool Theme::colorSlotButton(std::string label, Color color, bool selected) const
 
 	return clicked;
 }
-
-float Theme::lerp(float a, float b, float t)
-{
-	return (a * (1.0f - t)) + (b * t);
-}

@@ -392,8 +392,3 @@ std::string Events::getEventName(LevelEventType type) const
 
 	return "Unknown event";
 }
-
-float Events::lerp(float a, float b, float t)
-{
-	return (a * (1.0f - t)) + (b * t);
-}

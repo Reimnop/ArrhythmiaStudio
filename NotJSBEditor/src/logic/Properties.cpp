@@ -515,8 +515,3 @@ std::string Properties::getChannelName(AnimationChannelType channelType) const
 
 	return "Unknown type";
 }
-
-float Properties::lerp(float a, float b, float t) const
-{
-	return (a * (1.0f - t)) + (b * t);
-}

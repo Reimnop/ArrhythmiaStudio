@@ -33,6 +33,4 @@ private:
 	void onLayout();
 	bool playButton(bool playing);
 	std::string timeToString(float time) const;
-
-	float lerp(float a, float b, float t);
 };

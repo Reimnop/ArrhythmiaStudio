@@ -101,7 +101,7 @@ float Sequence::update(float time)
 	const float t = (time - left.time) / (right.time - left.time);
 	const float easedT = ease(t);
 
-	return lerp(left.evaluatedValue, right.evaluatedValue, easedT);
+	return std::lerp(left.evaluatedValue, right.evaluatedValue, easedT);
 }
 
 nlohmann::json Sequence::toJson()
@@ -113,9 +113,4 @@ nlohmann::json Sequence::toJson()
 	}
 
 	return j;
-}
-
-float Sequence::lerp(float a, float b, float t)
-{
-	return (a * (1.0f - t)) + (b * t);
 }

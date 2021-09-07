@@ -99,9 +99,9 @@ Color ColorChannel::update(float time)
 	const float t = (time - left.time) / (right.time - left.time);
 	const float easedT = ease(t);
 
-	const float r = lerp(left.color.r, right.color.r, easedT);
-	const float g = lerp(left.color.g, right.color.g, easedT);
-	const float b = lerp(left.color.b, right.color.b, easedT);
+	const float r = std::lerp(left.color.r, right.color.r, easedT);
+	const float g = std::lerp(left.color.g, right.color.g, easedT);
+	const float b = std::lerp(left.color.b, right.color.b, easedT);
 	return Color(r, g, b);
 }
 
@@ -115,9 +115,4 @@ nlohmann::ordered_json ColorChannel::toJson()
 	}
 
 	return j;
-}
-
-float ColorChannel::lerp(float a, float b, float t)
-{
-	return (a * (1.0f - t)) + (b * t);
 }

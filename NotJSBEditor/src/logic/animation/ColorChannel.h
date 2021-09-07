@@ -19,6 +19,4 @@ public:
 	nlohmann::ordered_json toJson();
 private:
 	float lastIndex;
-
-	float lerp(float a, float b, float t);
 };

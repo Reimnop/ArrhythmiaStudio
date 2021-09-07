@@ -21,5 +21,4 @@ private:
 	void onLayout();
 	std::string getEventName(LevelEventType type) const;
 	void insertEventSelectable(LevelEventType type, float defaultValue) const;
-	float lerp(float a, float b, float t);
 };

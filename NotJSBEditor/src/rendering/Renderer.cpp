@@ -143,8 +143,11 @@ void Renderer::render()
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 
-	for (const OutputDrawData* drawData : queuedDrawDataOpaque)
+	while (!queuedDrawDataOpaque.empty())
 	{
+		const OutputDrawData* drawData = queuedDrawDataOpaque.top();
+		queuedDrawDataOpaque.pop();
+
 		addToBatch(drawData);
 
 		delete drawData;
@@ -205,8 +208,11 @@ void Renderer::render()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	for (const OutputDrawData* drawData : queuedDrawDataTransparent)
+	while (!queuedDrawDataTransparent.empty())
 	{
+		const OutputDrawData* drawData = queuedDrawDataTransparent.top();
+		queuedDrawDataTransparent.pop();
+
 		if (!drawData->mesh || !drawData->material)
 		{
 			continue;
@@ -255,9 +261,6 @@ void Renderer::render()
 	// tonemapping->processImage(renderTexture, viewportWidth, viewportHeight);
 
 	// Clean up
-	queuedDrawDataOpaque.clear();
-	queuedDrawDataTransparent.clear();
-
 	batches.clear();
 	batchVertexBuffer.clear();
 	batchIndexBuffer.clear();
@@ -294,25 +297,11 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 		{
 			if (output->drawTransparent)
 			{
-				const std::vector<OutputDrawData*>::iterator it = std::lower_bound(
-					queuedDrawDataTransparent.begin(), queuedDrawDataTransparent.end(), output,
-					[](const OutputDrawData* a, const OutputDrawData* b)
-					{
-						return a->drawDepth < b->drawDepth;
-					});
-
-				queuedDrawDataTransparent.insert(it, output);
+				queuedDrawDataTransparent.push(output);
 			}
 			else
 			{
-				const std::vector<OutputDrawData*>::iterator it = std::lower_bound(
-					queuedDrawDataOpaque.begin(), queuedDrawDataOpaque.end(), output,
-					[](const OutputDrawData* a, const OutputDrawData* b)
-					{
-						return a->material < b->material;
-					});
-
-				queuedDrawDataOpaque.insert(it, output);
+				queuedDrawDataOpaque.push(output);
 			}
 		}
 	}

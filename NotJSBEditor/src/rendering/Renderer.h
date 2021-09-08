@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <vector>
+#include <queue>
 
 #include "Batch.h"
 #include "../logic/Scene.h"
@@ -57,12 +58,20 @@ private:
 	std::vector<glm::vec3> batchVertexBuffer;
 	std::vector<uint32_t> batchIndexBuffer;
 
-	std::vector<GLsizei> batchCounts;
-	std::vector<void*> batchIndices;
-	std::vector<GLint> batchBaseVertices;
+	bool(*opaqueComp)(const OutputDrawData*, const OutputDrawData*) =
+	[](const OutputDrawData* a, const OutputDrawData* b)
+	{
+		return a->material < b->material;
+	};
 
-	std::vector<OutputDrawData*> queuedDrawDataOpaque;
-	std::vector<OutputDrawData*> queuedDrawDataTransparent;
+	bool(*transparentComp)(const OutputDrawData*, const OutputDrawData*) = 
+	[](const OutputDrawData* a, const OutputDrawData* b)
+	{
+		return a->drawDepth < b->drawDepth;
+	};
+
+	std::priority_queue<OutputDrawData*, std::vector<OutputDrawData*>, decltype(opaqueComp)> queuedDrawDataOpaque = std::priority_queue<OutputDrawData*, std::vector<OutputDrawData*>, decltype(opaqueComp)>(opaqueComp);
+	std::priority_queue<OutputDrawData*, std::vector<OutputDrawData*>, decltype(transparentComp)> queuedDrawDataTransparent = std::priority_queue<OutputDrawData*, std::vector<OutputDrawData*>, decltype(transparentComp)>(transparentComp);
 
 	GLFWwindow* mainWindow;
 	ImGuiController* imGuiController;

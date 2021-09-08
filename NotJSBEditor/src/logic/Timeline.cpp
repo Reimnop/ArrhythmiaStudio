@@ -193,7 +193,7 @@ void Timeline::onLayout()
 			bool stripDragging = false;
 
 			Level* level = levelManager->level;
-
+			
 			// Editor strips input pass
 			for (auto it = level->levelObjects.rbegin(); it != level->levelObjects.rend(); it++)
 			{
@@ -289,7 +289,7 @@ void Timeline::onLayout()
 
 				ImGui::EditorStripVisualPass(name, stripMin, stripMax, levelObject->timelineHighlighted);
 			}
-
+			
 			// Timeline borders
 			ImU32 borderCol = ImGui::GetColorU32(ImGuiCol_Border);
 			drawList->AddRect(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + timelineHeight), borderCol);

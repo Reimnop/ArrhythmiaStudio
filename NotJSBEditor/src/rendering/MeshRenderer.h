@@ -17,8 +17,6 @@ public:
 
 	bool render(InputDrawData input, OutputDrawData** output) override;
 private:
-	uint32_t uniformBuffers[2];
-
 	// Check if rendering is possible
 	bool canRender() const;
 };

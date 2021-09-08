@@ -1,6 +1,5 @@
 #include "Renderer.h"
 
-#include "DrawElementsCommand.h"
 #include "PostProcessing/Bloom.h"
 #include "GlobalConstants.h"
 
@@ -73,6 +72,28 @@ Renderer::Renderer(GLFWwindow* window)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	// Initialize batch resources
+	glGenVertexArrays(1, &batchVAO);
+	glBindVertexArray(batchVAO);
+
+	glGenBuffers(1, &batchVBO);
+	glBindBuffer(GL_ARRAY_BUFFER, batchVBO);
+	glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
+
+	glGenBuffers(1, &batchEBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, batchEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
+	glEnableVertexAttribArray(0);
+
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	lastVertexBatchBufferSize = 0;
+	lastIndexBatchBufferSize = 0;
+
 	mainWindow = window;
 
 	camera = new Camera();
@@ -112,6 +133,8 @@ void Renderer::render()
 	camera->calculateViewProjection(aspect, &view, &projection);
 	recursivelyRenderNodes(Scene::inst->rootNode, glm::mat4(1.0f), view, projection);
 
+	glm::mat4 viewProjection = projection * view;
+
 	FramebufferStack::push(multisampleFramebuffer);
 
 	glViewport(0, 0, viewportWidth, viewportHeight);
@@ -122,9 +145,60 @@ void Renderer::render()
 
 	for (const OutputDrawData* drawData : queuedDrawDataOpaque)
 	{
-		processDrawData(drawData);
+		addToBatch(drawData);
 
 		delete drawData;
+	}
+
+	// Upload batch vertex buffer
+	glBindBuffer(GL_ARRAY_BUFFER, batchVBO);
+
+	const size_t vSize = sizeof(glm::vec3) * batchVertexBuffer.size();
+	if (vSize > lastVertexBatchBufferSize)
+	{
+		glBufferData(GL_ARRAY_BUFFER, vSize, batchVertexBuffer.data(), GL_DYNAMIC_DRAW);
+		lastVertexBatchBufferSize = vSize;
+	}
+	else
+	{
+		glBufferSubData(GL_ARRAY_BUFFER, 0, vSize, batchVertexBuffer.data());
+	}
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	// Upload batch index buffer
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, batchEBO);
+
+	const size_t iSize = sizeof(uint32_t) * batchIndexBuffer.size();
+	if (iSize > lastIndexBatchBufferSize)
+	{
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, iSize, batchIndexBuffer.data(), GL_DYNAMIC_DRAW);
+		lastIndexBatchBufferSize = iSize;
+	}
+	else
+	{
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, iSize, batchIndexBuffer.data());
+	}
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	// Draw batches
+	glBindVertexArray(batchVAO);
+
+	int vtx = 0;
+	int idx = 0;
+	for (const Batch& batch : batches)
+	{
+		glUseProgram(batch.material->getShader()->getHandle());
+		glBindBufferBase(GL_UNIFORM_BUFFER, 0, batch.material->getUniformBuffer());
+
+		glUniformMatrix4fv(0, 1, false, &viewProjection[0][0]);
+		glUniform1f(1, 1.0f);
+
+		glDrawElementsBaseVertex(GL_TRIANGLES, batch.indicesCount, GL_UNSIGNED_INT, (void*)(sizeof(uint32_t) * idx), vtx);
+
+		vtx += batch.verticesCount;
+		idx += batch.indicesCount;
 	}
 
 	glDepthMask(GL_FALSE);
@@ -133,7 +207,35 @@ void Renderer::render()
 
 	for (const OutputDrawData* drawData : queuedDrawDataTransparent)
 	{
-		processDrawData(drawData);
+		if (!drawData->mesh || !drawData->material)
+		{
+			continue;
+		}
+
+		const Material* material = drawData->material;
+		const Shader* shader = material->getShader();
+		const Mesh* mesh = drawData->mesh;
+
+		if (lastShader != shader->getHandle())
+		{
+			glUseProgram(shader->getHandle());
+			lastShader = shader->getHandle();
+		}
+
+		if (lastVertexArray != mesh->getVao())
+		{
+			glBindVertexArray(mesh->getVao());
+			lastVertexArray = mesh->getVao();
+		}
+
+		glm::mat4 mvp = viewProjection * drawData->transform;
+
+		glBindBufferBase(GL_UNIFORM_BUFFER, 0, material->getUniformBuffer());
+
+		glUniformMatrix4fv(0, 1, false, &mvp[0][0]);
+		glUniform1f(1, drawData->opacity);
+
+		glDrawElements(GL_TRIANGLES, mesh->indicesCount, GL_UNSIGNED_INT, nullptr);
 
 		delete drawData;
 	}
@@ -155,6 +257,10 @@ void Renderer::render()
 	// Clean up
 	queuedDrawDataOpaque.clear();
 	queuedDrawDataTransparent.clear();
+
+	batches.clear();
+	batchVertexBuffer.clear();
+	batchIndexBuffer.clear();
 
 	lastVertexArray = 0;
 	lastShader = 0;
@@ -194,7 +300,7 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 		{
 			if (output->drawTransparent)
 			{
-				std::vector<OutputDrawData*>::iterator it = std::lower_bound(
+				const std::vector<OutputDrawData*>::iterator it = std::lower_bound(
 					queuedDrawDataTransparent.begin(), queuedDrawDataTransparent.end(), output,
 					[](const OutputDrawData* a, const OutputDrawData* b)
 					{
@@ -205,7 +311,14 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 			}
 			else
 			{
-				queuedDrawDataOpaque.push_back(output);
+				const std::vector<OutputDrawData*>::iterator it = std::lower_bound(
+					queuedDrawDataOpaque.begin(), queuedDrawDataOpaque.end(), output,
+					[](const OutputDrawData* a, const OutputDrawData* b)
+					{
+						return a->material < b->material;
+					});
+
+				queuedDrawDataOpaque.insert(it, output);
 			}
 		}
 	}
@@ -216,38 +329,40 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 	}
 }
 
-void Renderer::processDrawData(const OutputDrawData* drawData)
+void Renderer::addToBatch(const OutputDrawData* drawData)
 {
-	if (drawData->vao != lastVertexArray)
+	if (!drawData->mesh || !drawData->material)
 	{
-		glBindVertexArray(drawData->vao);
-		lastVertexArray = drawData->vao;
+		return;
+	}
+	
+	if (batches.empty() || batches.back().material != drawData->material)
+	{
+		Batch batch = Batch();
+		batch.material = drawData->material;
+		batch.verticesCount = 0;
+		batch.indicesCount = 0;
+
+		batches.push_back(batch);
 	}
 
-	if (drawData->shader != lastShader)
+	Batch& currentBatch = batches.back();
+
+	const Mesh* mesh = drawData->mesh;
+
+	for (int i = 0; i < mesh->verticesCount; i++)
 	{
-		glUseProgram(drawData->shader);
-		lastShader = drawData->shader;
+		glm::vec3 aPos = mesh->vertices[i];
+		glm::vec3 transformedPos = glm::vec3(drawData->transform * glm::vec4(aPos, 1.0f));
+
+		batchVertexBuffer.push_back(transformedPos);
 	}
 
-	// Bind all uniform buffers
-	if (drawData->uniformBuffers)
+	for (int i = 0; i < mesh->indicesCount; i++)
 	{
-		for (int i = 0; i < drawData->uniformBuffersCount; i++)
-		{
-			glBindBufferBase(GL_UNIFORM_BUFFER, i, drawData->uniformBuffers[i]);
-		}
+		batchIndexBuffer.push_back(currentBatch.verticesCount + mesh->indices[i]);
 	}
 
-	drawData->renderCallback();
-
-	switch (drawData->commandType)
-	{
-	case DrawCommandType_DrawElements:
-		const DrawElementsCommand* drawElementsCommand = (DrawElementsCommand*)drawData->drawCommand;
-		glDrawElements(GL_TRIANGLES, drawElementsCommand->count, GL_UNSIGNED_INT, (void*)drawElementsCommand->offset);
-		break;
-	}
-
-	delete drawData->drawCommand;
+	currentBatch.verticesCount += mesh->verticesCount;
+	currentBatch.indicesCount += mesh->indicesCount;
 }

@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+#include "Batch.h"
 #include "../logic/Scene.h"
 #include "OutputDrawData.h"
 #include "Camera.h"
@@ -44,6 +45,15 @@ private:
 	uint32_t multisampleTexture;
 	uint32_t depthBuffer;
 
+	// Batch rendering buffers
+	uint32_t batchVAO;
+	uint32_t batchVBO;
+
+	size_t lastBatchBufferSize;
+
+	std::vector<Batch> batches;
+	std::vector<glm::vec3> batchBuffer;
+
 	std::vector<OutputDrawData*> queuedDrawDataOpaque;
 	std::vector<OutputDrawData*> queuedDrawDataTransparent;
 
@@ -51,5 +61,5 @@ private:
 	ImGuiController* imGuiController;
 
 	void recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform, glm::mat4 view, glm::mat4 projection);
-	void processDrawData(const OutputDrawData* drawData);
+	void addToBatch(const OutputDrawData* drawData);
 };

@@ -78,7 +78,7 @@ MainWindow::MainWindow()
 		throw std::runtime_error("GLAD initialization failed!");
 	}
 
-	glfwSwapInterval(1);
+	glfwSwapInterval(0);
 
 	// Intialize OpenGL debug callback
 	glDebugMessageCallback(glDebugCallback, nullptr);

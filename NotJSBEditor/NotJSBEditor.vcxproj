@@ -117,7 +117,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLFW_INCLUDE_NONE;NOMINMAX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
@@ -614,11 +614,9 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y</Command>
     <ClInclude Include="src\logic\Timeline.h" />
     <ClInclude Include="src\logic\Transform.h" />
     <ClInclude Include="src\MainWindow.h" />
+    <ClInclude Include="src\rendering\Batch.h" />
     <ClInclude Include="src\rendering\Camera.h" />
     <ClInclude Include="src\rendering\ComputeShader.h" />
-    <ClInclude Include="src\rendering\DrawCommand.h" />
-    <ClInclude Include="src\rendering\DrawCommandType.h" />
-    <ClInclude Include="src\rendering\DrawElementsCommand.h" />
     <ClInclude Include="src\rendering\FramebufferStack.h" />
     <ClInclude Include="src\rendering\GlobalConstants.h" />
     <ClInclude Include="src\rendering\ImGuiController.h" />

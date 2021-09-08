@@ -193,7 +193,7 @@ void Timeline::onLayout()
 			bool stripDragging = false;
 
 			Level* level = levelManager->level;
-
+			/*
 			// Editor strips input pass
 			for (auto it = level->levelObjects.rbegin(); it != level->levelObjects.rend(); it++)
 			{
@@ -289,7 +289,7 @@ void Timeline::onLayout()
 
 				ImGui::EditorStripVisualPass(name, stripMin, stripMax, levelObject->timelineHighlighted);
 			}
-
+			*/
 			// Timeline borders
 			ImU32 borderCol = ImGui::GetColorU32(ImGuiCol_Border);
 			drawList->AddRect(timelineMin, ImVec2(timelineMin.x + availX, timelineMin.y + timelineHeight), borderCol);
@@ -501,12 +501,26 @@ void Timeline::onLayout()
 			{
 				if (ImGui::Selectable("New Object"))
 				{
-					LevelObject* newObject = new LevelObject();
-					newObject->startTime = levelManager->time + instantiationOffset;
-					newObject->killTime = levelManager->time + 5.0f + instantiationOffset;
-					newObject->layer = layer;
+					for (int i = 0; i < 4000; i++) 
+					{
+						LevelObject* newObject = new LevelObject();
+						newObject->startTime = levelManager->time + instantiationOffset;
+						newObject->killTime = levelManager->time + 5.0f + instantiationOffset;
+						newObject->layer = layer;
 
-					levelManager->insertObject(newObject);
+						Keyframe kfX;
+						kfX.values[0] = std::rand() / (float)RAND_MAX * 16.0f - 8.0f;
+
+						Keyframe kfY;
+						kfY.values[0] = std::rand() / (float)RAND_MAX * 16.0f - 8.0f;
+
+						newObject->insertChannel(new AnimationChannel(AnimationChannelType_PositionX, 1, &kfX));
+						newObject->insertChannel(new AnimationChannel(AnimationChannelType_PositionY, 1, &kfY));
+
+						newObject->shapeIndex = 2;
+
+						levelManager->insertObject(newObject);
+					}
 					levelManager->recalculateActionIndex(levelManager->time);
 				}
 

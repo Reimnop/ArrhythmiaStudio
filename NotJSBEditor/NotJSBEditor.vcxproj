@@ -620,7 +620,6 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y</Command>
     <ClInclude Include="src\rendering\FramebufferStack.h" />
     <ClInclude Include="src\rendering\GlobalConstants.h" />
     <ClInclude Include="src\rendering\ImGuiController.h" />
-    <ClInclude Include="src\rendering\InputDrawData.h" />
     <ClInclude Include="src\rendering\Material.h" />
     <ClInclude Include="src\rendering\MaterialProperty.h" />
     <ClInclude Include="src\rendering\MaterialPropertyType.h" />

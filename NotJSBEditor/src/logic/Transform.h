@@ -12,5 +12,14 @@ public:
 
 	Transform();
 
-	glm::mat4 getLocalMatrix() const;
+	bool transformChanged() const;
+	glm::mat4 getLocalMatrix();
+private:
+	glm::mat4 localMatrix;
+
+	glm::vec3 lastPosition;
+	glm::vec3 lastScale;
+	glm::quat lastRotation;
+
+	void calculateLocalMatrix();
 };

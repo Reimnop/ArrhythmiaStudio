@@ -57,12 +57,16 @@ private:
 	std::vector<glm::vec3> batchVertexBuffer;
 	std::vector<uint32_t> batchIndexBuffer;
 
+	std::vector<GLsizei> batchCounts;
+	std::vector<void*> batchIndices;
+	std::vector<GLint> batchBaseVertices;
+
 	std::vector<OutputDrawData*> queuedDrawDataOpaque;
 	std::vector<OutputDrawData*> queuedDrawDataTransparent;
 
 	GLFWwindow* mainWindow;
 	ImGuiController* imGuiController;
 
-	void recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform, glm::mat4 view, glm::mat4 projection);
+	void recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform);
 	void addToBatch(const OutputDrawData* drawData);
 };

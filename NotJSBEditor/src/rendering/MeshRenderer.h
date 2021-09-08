@@ -15,7 +15,7 @@ public:
 
 	float opacity = 1.0f;
 
-	bool render(InputDrawData input, OutputDrawData** output) override;
+	bool render(glm::mat4 transform, OutputDrawData** output) override;
 private:
 	// Check if rendering is possible
 	bool canRender() const;

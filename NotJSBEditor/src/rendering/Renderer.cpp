@@ -131,7 +131,7 @@ void Renderer::render()
 	float aspect = viewportWidth / (float)viewportHeight;
 	glm::mat4 view, projection;
 	camera->calculateViewProjection(aspect, &view, &projection);
-	recursivelyRenderNodes(Scene::inst->rootNode, glm::mat4(1.0f), view, projection);
+	recursivelyRenderNodes(Scene::inst->rootNode, glm::mat4(1.0f));
 
 	glm::mat4 viewProjection = projection * view;
 
@@ -277,7 +277,7 @@ uint32_t Renderer::getRenderTexture() const
 	return renderTexture;
 }
 
-void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform, glm::mat4 view, glm::mat4 projection)
+void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform)
 {
 	if (!node->getActive())
 	{
@@ -289,14 +289,8 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 
 	if (node->renderer)
 	{
-		InputDrawData drawData;
-		drawData.model = globalTransform;
-		drawData.view = view;
-		drawData.projection = projection;
-		drawData.modelViewProjection = projection * view * globalTransform;
-
 		OutputDrawData* output;
-		if (node->renderer->render(drawData, &output))
+		if (node->renderer->render(globalTransform, &output))
 		{
 			if (output->drawTransparent)
 			{
@@ -325,7 +319,7 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 
 	for (SceneNode* child : node->activeChildren)
 	{
-		recursivelyRenderNodes(child, globalTransform, view, projection);
+		recursivelyRenderNodes(child, globalTransform);
 	}
 }
 

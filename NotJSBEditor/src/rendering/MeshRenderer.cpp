@@ -9,7 +9,7 @@ MeshRenderer::~MeshRenderer()
 {
 }
 
-bool MeshRenderer::render(InputDrawData input, OutputDrawData** output)
+bool MeshRenderer::render(glm::mat4 transform, OutputDrawData** output)
 {
 	if (!canRender())
 	{
@@ -21,15 +21,12 @@ bool MeshRenderer::render(InputDrawData input, OutputDrawData** output)
 		return false;
 	}
 
-	// Decompose matrix
-	glm::vec3 translation = input.model[3];
-
 	// Construct the draw data for rendering
 	OutputDrawData* drawData = new OutputDrawData();
 	drawData->mesh = mesh;
 	drawData->material = material;
-	drawData->transform = input.model;
-	drawData->drawDepth = translation.z;
+	drawData->transform = transform;
+	drawData->drawDepth = transform[3].z;
 	drawData->drawTransparent = (opacity < 1.0f);
 	drawData->opacity = opacity;
 

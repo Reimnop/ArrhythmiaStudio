@@ -73,20 +73,26 @@ Renderer::Renderer(GLFWwindow* window)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// Initialize batch resources
+	glGenVertexArrays(1, &batchVAO);
+	glBindVertexArray(batchVAO);
+
 	glGenBuffers(1, &batchVBO);
 	glBindBuffer(GL_ARRAY_BUFFER, batchVBO);
 	glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
 
-	glGenVertexArrays(1, &batchVAO);
-	glBindVertexArray(batchVAO);
+	glGenBuffers(1, &batchEBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, batchEBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
 	glEnableVertexAttribArray(0);
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	lastBatchBufferSize = 0;
+	lastVertexBatchBufferSize = 0;
+	lastIndexBatchBufferSize = 0;
 
 	mainWindow = window;
 
@@ -128,7 +134,6 @@ void Renderer::render()
 	recursivelyRenderNodes(Scene::inst->rootNode, glm::mat4(1.0f), view, projection);
 
 	glm::mat4 viewProjection = projection * view;
-	glm::mat4 identity = glm::mat4(1.0f);
 
 	FramebufferStack::push(multisampleFramebuffer);
 
@@ -145,25 +150,42 @@ void Renderer::render()
 		delete drawData;
 	}
 
-	// Upload batch buffer
+	// Upload batch vertex buffer
 	glBindBuffer(GL_ARRAY_BUFFER, batchVBO);
 
-	const size_t size = sizeof(glm::vec3) * batchBuffer.size();
-	if (size > lastBatchBufferSize) 
+	const size_t vSize = sizeof(glm::vec3) * batchVertexBuffer.size();
+	if (vSize > lastVertexBatchBufferSize)
 	{
-		glBufferData(GL_ARRAY_BUFFER, size, batchBuffer.data(), GL_DYNAMIC_DRAW);
-		lastBatchBufferSize = size;
+		glBufferData(GL_ARRAY_BUFFER, vSize, batchVertexBuffer.data(), GL_DYNAMIC_DRAW);
+		lastVertexBatchBufferSize = vSize;
 	}
 	else
 	{
-		glBufferSubData(GL_ARRAY_BUFFER, 0, size, batchBuffer.data());
+		glBufferSubData(GL_ARRAY_BUFFER, 0, vSize, batchVertexBuffer.data());
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+	// Upload batch index buffer
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, batchEBO);
+
+	const size_t iSize = sizeof(uint32_t) * batchIndexBuffer.size();
+	if (iSize > lastIndexBatchBufferSize)
+	{
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, iSize, batchIndexBuffer.data(), GL_DYNAMIC_DRAW);
+		lastIndexBatchBufferSize = iSize;
+	}
+	else
+	{
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, iSize, batchIndexBuffer.data());
+	}
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
 	// Draw batches
 	glBindVertexArray(batchVAO);
 
+	int vtx = 0;
 	int idx = 0;
 	for (const Batch& batch : batches)
 	{
@@ -171,12 +193,12 @@ void Renderer::render()
 		glBindBufferBase(GL_UNIFORM_BUFFER, 0, batch.material->getUniformBuffer());
 
 		glUniformMatrix4fv(0, 1, false, &viewProjection[0][0]);
-		glUniformMatrix4fv(1, 1, false, &identity[0][0]);
-		glUniform1f(2, 1.0f);
+		glUniform1f(1, 1.0f);
 
-		glDrawArrays(GL_TRIANGLES, idx, batch.count);
+		glDrawElementsBaseVertex(GL_TRIANGLES, batch.indicesCount, GL_UNSIGNED_INT, (void*)(sizeof(uint32_t) * idx), vtx);
 
-		idx += batch.count;
+		vtx += batch.verticesCount;
+		idx += batch.indicesCount;
 	}
 
 	glDepthMask(GL_FALSE);
@@ -206,11 +228,12 @@ void Renderer::render()
 			lastVertexArray = mesh->getVao();
 		}
 
+		glm::mat4 mvp = viewProjection * drawData->transform;
+
 		glBindBufferBase(GL_UNIFORM_BUFFER, 0, material->getUniformBuffer());
 
-		glUniformMatrix4fv(0, 1, false, &viewProjection[0][0]);
-		glUniformMatrix4fv(1, 1, false, &drawData->transform[0][0]);
-		glUniform1f(2, drawData->opacity);
+		glUniformMatrix4fv(0, 1, false, &mvp[0][0]);
+		glUniform1f(1, drawData->opacity);
 
 		glDrawElements(GL_TRIANGLES, mesh->indicesCount, GL_UNSIGNED_INT, nullptr);
 
@@ -236,7 +259,8 @@ void Renderer::render()
 	queuedDrawDataTransparent.clear();
 
 	batches.clear();
-	batchBuffer.clear();
+	batchVertexBuffer.clear();
+	batchIndexBuffer.clear();
 
 	lastVertexArray = 0;
 	lastShader = 0;
@@ -314,22 +338,31 @@ void Renderer::addToBatch(const OutputDrawData* drawData)
 	
 	if (batches.empty() || batches.back().material != drawData->material)
 	{
-		Batch batch;
+		Batch batch = Batch();
 		batch.material = drawData->material;
-		batch.count = 0;
+		batch.verticesCount = 0;
+		batch.indicesCount = 0;
 
 		batches.push_back(batch);
 	}
 
+	Batch& currentBatch = batches.back();
+
 	const Mesh* mesh = drawData->mesh;
-	for (int i = 0; i < mesh->indicesCount; i++)
+
+	for (int i = 0; i < mesh->verticesCount; i++)
 	{
-		const int index = mesh->indices[i];
-		glm::vec3 aPos = mesh->vertices[index];
+		glm::vec3 aPos = mesh->vertices[i];
 		glm::vec3 transformedPos = glm::vec3(drawData->transform * glm::vec4(aPos, 1.0f));
 
-		batchBuffer.push_back(transformedPos);
+		batchVertexBuffer.push_back(transformedPos);
 	}
 
-	batches.back().count += mesh->indicesCount;
+	for (int i = 0; i < mesh->indicesCount; i++)
+	{
+		batchIndexBuffer.push_back(currentBatch.verticesCount + mesh->indices[i]);
+	}
+
+	currentBatch.verticesCount += mesh->verticesCount;
+	currentBatch.indicesCount += mesh->indicesCount;
 }

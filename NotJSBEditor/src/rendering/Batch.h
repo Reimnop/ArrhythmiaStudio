@@ -4,6 +4,7 @@
 
 struct Batch
 {
-	int count;
+	int verticesCount;
+	int indicesCount;
 	Material* material;
 };

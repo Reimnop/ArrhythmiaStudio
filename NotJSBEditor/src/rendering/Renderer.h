@@ -48,11 +48,14 @@ private:
 	// Batch rendering buffers
 	uint32_t batchVAO;
 	uint32_t batchVBO;
+	uint32_t batchEBO;
 
-	size_t lastBatchBufferSize;
+	size_t lastVertexBatchBufferSize;
+	size_t lastIndexBatchBufferSize;
 
 	std::vector<Batch> batches;
-	std::vector<glm::vec3> batchBuffer;
+	std::vector<glm::vec3> batchVertexBuffer;
+	std::vector<uint32_t> batchIndexBuffer;
 
 	std::vector<OutputDrawData*> queuedDrawDataOpaque;
 	std::vector<OutputDrawData*> queuedDrawDataTransparent;

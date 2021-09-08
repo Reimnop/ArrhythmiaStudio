@@ -183,66 +183,24 @@ void Renderer::render()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	// Draw batches
-	if (!batches.empty()) 
+	glBindVertexArray(batchVAO);
+
+	int vtx = 0;
+	int idx = 0;
+	for (const Batch& batch : batches)
 	{
-		std::sort(batches.begin(), batches.end(),
-			[](const Batch& a, const Batch& b)
-			{
-				return a.material < b.material;
-			});
-
-		glBindVertexArray(batchVAO);
-
-		int drawCount = 0;
-		Material* currentMat = batches.front().material;
-		for (int i = 0; i < batches.size() - 1; i++)
-		{
-			drawCount++;
-
-			batchCounts.push_back(batches[i].indicesCount);
-			batchIndices.push_back((void*)(sizeof(uint32_t) * batches[i].idxOffset));
-			batchBaseVertices.push_back(batches[i].vtxOffset);
-
-			if (batches[i + 1].material != currentMat)
-			{
-				glUseProgram(currentMat->getShader()->getHandle());
-				glBindBufferBase(GL_UNIFORM_BUFFER, 0, currentMat->getUniformBuffer());
-
-				glUniformMatrix4fv(0, 1, false, &viewProjection[0][0]);
-				glUniform1f(1, 1.0f);
-
-				glMultiDrawElementsBaseVertex(GL_TRIANGLES, batchCounts.data(), GL_UNSIGNED_INT, batchIndices.data(), drawCount, batchBaseVertices.data());
-
-				batchCounts.clear();
-				batchIndices.clear();
-				batchBaseVertices.clear();
-
-				drawCount = 0;
-
-				currentMat = batches[i + 1].material;
-			}
-		}
-
-		drawCount++;
-
-		batchCounts.push_back(batches.back().indicesCount);
-		batchIndices.push_back((void*)(sizeof(uint32_t) * batches.back().idxOffset));
-		batchBaseVertices.push_back(batches.back().vtxOffset);
-
-		glUseProgram(currentMat->getShader()->getHandle());
-		glBindBufferBase(GL_UNIFORM_BUFFER, 0, currentMat->getUniformBuffer());
+		glUseProgram(batch.material->getShader()->getHandle());
+		glBindBufferBase(GL_UNIFORM_BUFFER, 0, batch.material->getUniformBuffer());
 
 		glUniformMatrix4fv(0, 1, false, &viewProjection[0][0]);
 		glUniform1f(1, 1.0f);
 
-		glMultiDrawElementsBaseVertex(GL_TRIANGLES, batchCounts.data(), GL_UNSIGNED_INT, batchIndices.data(), drawCount, batchBaseVertices.data());
+		glDrawElementsBaseVertex(GL_TRIANGLES, batch.indicesCount, GL_UNSIGNED_INT, (void*)(sizeof(uint32_t) * idx), vtx);
 
-		batchCounts.clear();
-		batchIndices.clear();
-		batchBaseVertices.clear();
+		vtx += batch.verticesCount;
+		idx += batch.indicesCount;
 	}
 
-	// Draw transparent
 	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -347,7 +305,14 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 			}
 			else
 			{
-				queuedDrawDataOpaque.push_back(output);
+				const std::vector<OutputDrawData*>::iterator it = std::lower_bound(
+					queuedDrawDataOpaque.begin(), queuedDrawDataOpaque.end(), output,
+					[](const OutputDrawData* a, const OutputDrawData* b)
+					{
+						return a->material < b->material;
+					});
+
+				queuedDrawDataOpaque.insert(it, output);
 			}
 		}
 	}
@@ -371,18 +336,6 @@ void Renderer::addToBatch(const OutputDrawData* drawData)
 		batch.material = drawData->material;
 		batch.verticesCount = 0;
 		batch.indicesCount = 0;
-
-		if (batches.empty())
-		{
-			batch.vtxOffset = 0;
-			batch.idxOffset = 0;
-		}
-		else
-		{
-			const Batch& lastBatch = batches.back();
-			batch.vtxOffset = lastBatch.vtxOffset + lastBatch.verticesCount;
-			batch.idxOffset = lastBatch.idxOffset + lastBatch.indicesCount;
-		}
 
 		batches.push_back(batch);
 	}

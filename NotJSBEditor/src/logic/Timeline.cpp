@@ -190,6 +190,14 @@ void Timeline::onLayout()
 				Properties::inst->reset();
 			}
 
+			if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_A))
+			{
+				for (const std::pair<uint64_t, LevelObject*> x : levelManager->level->levelObjects)
+				{
+					levelManager->selectedObjects.emplace(x.second);
+				}
+			}
+
 			bool stripDragging = false;
 
 			Level* level = levelManager->level;
@@ -444,7 +452,7 @@ void Timeline::onLayout()
 
 							std::vector<LevelObject*> newObjects;
 
-							for (nlohmann::json objJson : objsJson) 
+							for (nlohmann::json objJson : objsJson)
 							{
 								objJson["start"] = objJson["start"].get<float>() + levelManager->time + instantiationOffset;
 								objJson["kill"] = objJson["kill"].get<float>() + levelManager->time + instantiationOffset;

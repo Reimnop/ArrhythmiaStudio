@@ -192,6 +192,9 @@
     <ClCompile Include="src\logic\imgui\imgui_editorlib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\logic\DebugMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
@@ -1413,6 +1416,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\rendering\Batch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\DebugMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

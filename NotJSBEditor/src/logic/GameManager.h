@@ -7,6 +7,7 @@
 #include "LevelManager.h"
 #include "ShapeManager.h"
 #include "DataManager.h"
+#include "DebugMenu.h"
 #include "DiscordManager.h"
 
 class MainWindow;
@@ -24,6 +25,7 @@ private:
 	ShapeManager* shapeManager;
 	DataManager* dataManager;
 	DiscordManager* discordManager;
+	DebugMenu* debug;
 
 	bool welcomeOpened = false;
 	float editTimeElapsed = 0.0f;

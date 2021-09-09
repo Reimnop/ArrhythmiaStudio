@@ -193,6 +193,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y</Command>
     <ClCompile Include="src\logic\AnimationChannel.cpp" />
     <ClCompile Include="src\logic\animation\ColorChannel.cpp" />
     <ClCompile Include="src\logic\animation\Easing.h" />
+    <ClCompile Include="src\logic\DebugMenu.cpp" />
     <ClCompile Include="src\logic\Events.cpp" />
     <ClCompile Include="src\logic\imgui\imgui_editorlib.cpp" />
     <ClCompile Include="src\logic\LevelEvent.cpp" />
@@ -530,6 +531,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y</Command>
     <ClInclude Include="include\glm\vec3.hpp" />
     <ClInclude Include="include\glm\vec4.hpp" />
     <ClInclude Include="include\glm\vector_relational.hpp" />
+    <ClInclude Include="include\helper.h" />
     <ClInclude Include="include\imgui\imconfig.h" />
     <ClInclude Include="include\imgui\imgui.h" />
     <ClInclude Include="include\imgui\imgui_impl_glfw.h" />
@@ -592,6 +594,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y</Command>
     <ClInclude Include="src\logic\AudioClip.h" />
     <ClInclude Include="src\logic\ColorSlot.h" />
     <ClInclude Include="src\logic\DataManager.h" />
+    <ClInclude Include="src\logic\DebugMenu.h" />
     <ClInclude Include="src\logic\DiscordManager.h" />
     <ClInclude Include="src\logic\Events.h" />
     <ClInclude Include="src\logic\GlobalConstants.h" />

@@ -19,6 +19,7 @@ GameManager::GameManager(GLFWwindow* window)
 	dataManager = new DataManager();
 	discordManager = new DiscordManager();
 	levelManager = new LevelManager();
+	debug = new DebugMenu();
 }
 
 void GameManager::update() const

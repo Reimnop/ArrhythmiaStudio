@@ -144,7 +144,7 @@ void Renderer::render()
 
 	while (!queuedDrawDataOpaque.empty())
 	{
-		const OutputDrawData* drawData = queuedDrawDataOpaque.front();
+		const OutputDrawData* drawData = queuedDrawDataOpaque.top();
 		queuedDrawDataOpaque.pop();
 
 		queueCommand(drawData);
@@ -188,12 +188,6 @@ void Renderer::render()
 
 		// Draw commands
 		glBindVertexArray(mdVAO);
-
-		std::sort(commands.begin(), commands.end(),
-			[](const DrawCommand& a, const DrawCommand& b)
-			{
-				return a.material < b.material;
-			});
 
 		Material* material = commands.front().material;
 		int drawCount = 0;
@@ -363,9 +357,36 @@ void Renderer::queueCommand(const OutputDrawData* drawData)
 		return;
 	}
 
-	DrawCommand cmd = DrawCommand();
-
 	const Mesh* mesh = drawData->mesh;
+
+	if (commands.empty() || 
+		commands.back().material != drawData->material || 
+		commands.back().verticesCount >= EST_MAX_BATCH_VERTICES || 
+		commands.back().indicesCount >= EST_MAX_BATCH_INDICES)
+	{
+		DrawCommand newCmd = DrawCommand();
+
+		newCmd.verticesCount = 0;
+		newCmd.indicesCount = 0;
+
+		if (commands.empty())
+		{
+			newCmd.vertexOffset = 0;
+			newCmd.indexOffset = 0;
+		}
+		else
+		{
+			const DrawCommand& lastCmd = commands.back();
+			newCmd.vertexOffset = lastCmd.vertexOffset + lastCmd.verticesCount;
+			newCmd.indexOffset = lastCmd.indexOffset + lastCmd.indicesCount;
+		}
+
+		newCmd.material = drawData->material;
+
+		commands.push_back(newCmd);
+	}
+
+	DrawCommand& cmd = commands.back();
 
 	for (int i = 0; i < mesh->verticesCount; i++)
 	{
@@ -377,26 +398,9 @@ void Renderer::queueCommand(const OutputDrawData* drawData)
 
 	for (int i = 0; i < mesh->indicesCount; i++)
 	{
-		cmdIndexBuffer.push_back(mesh->indices[i]);
+		cmdIndexBuffer.push_back(cmd.verticesCount + mesh->indices[i]);
 	}
 
 	cmd.verticesCount += mesh->verticesCount;
 	cmd.indicesCount += mesh->indicesCount;
-
-	if (commands.empty())
-	{
-		cmd.vertexOffset = 0;
-		cmd.indexOffset = 0;
-	}
-	else
-	{
-		const DrawCommand& lastCmd = commands.back();
-
-		cmd.vertexOffset = lastCmd.vertexOffset + lastCmd.verticesCount;
-		cmd.indexOffset = lastCmd.indexOffset + lastCmd.indicesCount;
-	}
-
-	cmd.material = drawData->material;
-
-	commands.push_back(cmd);
 }

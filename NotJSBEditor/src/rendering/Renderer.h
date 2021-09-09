@@ -62,13 +62,19 @@ private:
 	std::vector<void*> cmdIndices;
 	std::vector<GLint> cmdBaseVertices;
 
-	bool(*transparentComp)(const OutputDrawData*, const OutputDrawData*) = 
-	[](const OutputDrawData* a, const OutputDrawData* b)
-	{
-		return a->drawDepth < b->drawDepth;
-	};
+	bool(*opaqueComp)(const OutputDrawData*, const OutputDrawData*) =
+		[](const OutputDrawData* a, const OutputDrawData* b)
+		{
+			return a->material < b->material;
+		};
 
-	std::queue<OutputDrawData*> queuedDrawDataOpaque;
+	bool(*transparentComp)(const OutputDrawData*, const OutputDrawData*) = 
+		[](const OutputDrawData* a, const OutputDrawData* b)
+		{
+			return a->drawDepth < b->drawDepth;
+		};
+
+	std::priority_queue<OutputDrawData*, std::vector<OutputDrawData*>, decltype(opaqueComp)> queuedDrawDataOpaque = std::priority_queue<OutputDrawData*, std::vector<OutputDrawData*>, decltype(opaqueComp)>(opaqueComp);
 	std::priority_queue<OutputDrawData*, std::vector<OutputDrawData*>, decltype(transparentComp)> queuedDrawDataTransparent = std::priority_queue<OutputDrawData*, std::vector<OutputDrawData*>, decltype(transparentComp)>(transparentComp);
 
 	GLFWwindow* mainWindow;

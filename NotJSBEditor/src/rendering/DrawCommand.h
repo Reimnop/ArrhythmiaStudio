@@ -2,9 +2,11 @@
 
 #include "Material.h"
 
-struct Batch
+struct DrawCommand
 {
 	int verticesCount;
 	int indicesCount;
+	int vertexOffset;
+	int indexOffset;
 	Material* material;
 };

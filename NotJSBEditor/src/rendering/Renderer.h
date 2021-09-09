@@ -5,7 +5,7 @@
 #include <vector>
 #include <queue>
 
-#include "Batch.h"
+#include "DrawCommand.h"
 #include "../logic/Scene.h"
 #include "OutputDrawData.h"
 #include "Camera.h"
@@ -46,23 +46,21 @@ private:
 	uint32_t multisampleTexture;
 	uint32_t depthBuffer;
 
-	// Batch rendering buffers
-	uint32_t batchVAO;
-	uint32_t batchVBO;
-	uint32_t batchEBO;
+	// MultiDraw rendering
+	uint32_t mdVAO;
+	uint32_t mdVBO;
+	uint32_t mdEBO;
 
-	size_t lastVertexBatchBufferSize;
-	size_t lastIndexBatchBufferSize;
+	size_t lastVertexBufferSize;
+	size_t lastIndexBufferSize;
 
-	std::vector<Batch> batches;
-	std::vector<glm::vec3> batchVertexBuffer;
-	std::vector<uint32_t> batchIndexBuffer;
+	std::vector<DrawCommand> commands;
+	std::vector<glm::vec3> cmdVertexBuffer;
+	std::vector<uint32_t> cmdIndexBuffer;
 
-	bool(*opaqueComp)(const OutputDrawData*, const OutputDrawData*) =
-	[](const OutputDrawData* a, const OutputDrawData* b)
-	{
-		return a->material < b->material;
-	};
+	std::vector<GLsizei> cmdCounts;
+	std::vector<void*> cmdIndices;
+	std::vector<GLint> cmdBaseVertices;
 
 	bool(*transparentComp)(const OutputDrawData*, const OutputDrawData*) = 
 	[](const OutputDrawData* a, const OutputDrawData* b)
@@ -70,12 +68,12 @@ private:
 		return a->drawDepth < b->drawDepth;
 	};
 
-	std::priority_queue<OutputDrawData*, std::vector<OutputDrawData*>, decltype(opaqueComp)> queuedDrawDataOpaque = std::priority_queue<OutputDrawData*, std::vector<OutputDrawData*>, decltype(opaqueComp)>(opaqueComp);
+	std::queue<OutputDrawData*> queuedDrawDataOpaque;
 	std::priority_queue<OutputDrawData*, std::vector<OutputDrawData*>, decltype(transparentComp)> queuedDrawDataTransparent = std::priority_queue<OutputDrawData*, std::vector<OutputDrawData*>, decltype(transparentComp)>(transparentComp);
 
 	GLFWwindow* mainWindow;
 	ImGuiController* imGuiController;
 
 	void recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform);
-	void addToBatch(const OutputDrawData* drawData);
+	void queueCommand(const OutputDrawData* drawData);
 };

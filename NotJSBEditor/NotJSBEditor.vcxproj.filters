@@ -1415,7 +1415,7 @@
     <ClInclude Include="include\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Batch.h">
+    <ClInclude Include="src\rendering\DrawCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\DebugMenu.h">

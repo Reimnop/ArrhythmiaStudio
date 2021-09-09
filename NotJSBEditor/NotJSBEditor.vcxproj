@@ -617,7 +617,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y</Command>
     <ClInclude Include="src\logic\Timeline.h" />
     <ClInclude Include="src\logic\Transform.h" />
     <ClInclude Include="src\MainWindow.h" />
-    <ClInclude Include="src\rendering\Batch.h" />
+    <ClInclude Include="src\rendering\DrawCommand.h" />
     <ClInclude Include="src\rendering\Camera.h" />
     <ClInclude Include="src\rendering\ComputeShader.h" />
     <ClInclude Include="src\rendering\FramebufferStack.h" />

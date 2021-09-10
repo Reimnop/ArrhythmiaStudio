@@ -130,9 +130,12 @@ void Renderer::render()
 	float aspect = viewportWidth / (float)viewportHeight;
 	glm::mat4 view, projection;
 	camera->calculateViewProjection(aspect, &view, &projection);
+	glm::mat4 viewProjection = projection * view;
+
 	recursivelyRenderNodes(Scene::inst->rootNode, glm::mat4(1.0f));
 
-	glm::mat4 viewProjection = projection * view;
+	std::sort(queuedDrawDataOpaque.begin(), queuedDrawDataOpaque.end(), opaqueComp);
+	std::sort(queuedDrawDataTransparent.begin(), queuedDrawDataTransparent.end(), transparentComp);
 
 	FramebufferStack::push(multisampleFramebuffer);
 
@@ -142,11 +145,8 @@ void Renderer::render()
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 
-	while (!queuedDrawDataOpaque.empty())
+	for (const OutputDrawData* drawData : queuedDrawDataOpaque)
 	{
-		const OutputDrawData* drawData = queuedDrawDataOpaque.top();
-		queuedDrawDataOpaque.pop();
-
 		queueCommand(drawData);
 
 		delete drawData;
@@ -246,11 +246,8 @@ void Renderer::render()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	while (!queuedDrawDataTransparent.empty())
+	for (const OutputDrawData* drawData : queuedDrawDataTransparent)
 	{
-		const OutputDrawData* drawData = queuedDrawDataTransparent.top();
-		queuedDrawDataTransparent.pop();
-
 		if (!drawData->mesh || !drawData->material)
 		{
 			continue;
@@ -299,6 +296,9 @@ void Renderer::render()
 	// tonemapping->processImage(renderTexture, viewportWidth, viewportHeight);
 
 	// Clean up
+	queuedDrawDataOpaque.clear();
+	queuedDrawDataTransparent.clear();
+
 	commands.clear();
 	cmdVertexBuffer.clear();
 	cmdIndexBuffer.clear();
@@ -335,11 +335,11 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 		{
 			if (output->drawTransparent)
 			{
-				queuedDrawDataTransparent.push(output);
+				queuedDrawDataTransparent.push_back(output);
 			}
 			else
 			{
-				queuedDrawDataOpaque.push(output);
+				queuedDrawDataOpaque.push_back(output);
 			}
 		}
 	}

@@ -74,8 +74,8 @@ private:
 			return a->drawDepth < b->drawDepth;
 		};
 
-	std::priority_queue<OutputDrawData*, std::vector<OutputDrawData*>, decltype(opaqueComp)> queuedDrawDataOpaque = std::priority_queue<OutputDrawData*, std::vector<OutputDrawData*>, decltype(opaqueComp)>(opaqueComp);
-	std::priority_queue<OutputDrawData*, std::vector<OutputDrawData*>, decltype(transparentComp)> queuedDrawDataTransparent = std::priority_queue<OutputDrawData*, std::vector<OutputDrawData*>, decltype(transparentComp)>(transparentComp);
+	std::vector<OutputDrawData*> queuedDrawDataOpaque;
+	std::vector<OutputDrawData*> queuedDrawDataTransparent;
 
 	GLFWwindow* mainWindow;
 	ImGuiController* imGuiController;

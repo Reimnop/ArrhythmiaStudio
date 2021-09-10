@@ -38,11 +38,10 @@ void ImGui::EditorStripVisualPass(const char* label, const ImVec2& min, const Im
 
 bool ImGui::IntersectAABB(const ImVec2& min, const ImVec2& max, const ImVec2& pos)
 {
-	if (pos.x > min.x && pos.x < max.x &&
-		pos.y > min.y && pos.y < max.y)
-	{
-		return true;
-	}
+	return pos.x > min.x && pos.x < max.x && pos.y > min.y && pos.y < max.y;
+}
 
-	return false;
+bool ImGui::IntersectAABB(const ImVec2& min1, const ImVec2& max1, const ImVec2& min2, const ImVec2& max2)
+{
+	return min1.x < max2.x && min1.y < max2.y && max1.x > min2.x && max2.y > min2.y;
 }

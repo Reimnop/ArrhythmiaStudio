@@ -8,4 +8,5 @@ namespace ImGui
 	void EditorStripVisualPass(const char* label, const ImVec2& min, const ImVec2& max, bool highlighted);
 
 	bool IntersectAABB(const ImVec2& min, const ImVec2& max, const ImVec2& pos);
+	bool IntersectAABB(const ImVec2& min1, const ImVec2& max1, const ImVec2& min2, const ImVec2& max2);
 }

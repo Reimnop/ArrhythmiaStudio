@@ -2,7 +2,7 @@
 
 layout(local_size_x = 8, local_size_y = 8) in;
 
-layout(r11f_g11f_b10f, binding = 0) uniform image2D img_output;
+layout(rgba16f, binding = 0) uniform image2D img_output;
 layout(location = 0) uniform sampler2D source;
 
 void main() {

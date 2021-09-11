@@ -5,17 +5,17 @@
 
 AudioClip::AudioClip(std::filesystem::path path)
 {
-	sample = BASS_SampleLoad(false, path.c_str(), 0, 0, 1, BASS_SAMPLE_FLOAT);
+	sample = BASS_SampleLoad(false, path.c_str(), 0, 0, 1, 0);
 	channel = BASS_SampleGetChannel(sample, 0);
 
 	BASS_SAMPLE info;
 	BASS_SampleGetInfo(sample, &info);
 
-	samplesCount = info.length / sizeof(float);
+	samplesCount = info.length / sizeof(int16_t);
 	channelsCount = info.chans;
 	frequency = info.freq;
 
-	samples = new float[samplesCount];
+	samples = new int16_t[samplesCount];
 	BASS_SampleGetData(sample, samples);
 }
 

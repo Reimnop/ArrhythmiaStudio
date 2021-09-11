@@ -29,7 +29,9 @@ public:
 
 	Renderer(GLFWwindow* window);
 	void update();
+	void resizeViewport();
 	void render();
+	void renderViewport();
 
 	uint32_t getRenderTexture() const;
 private:

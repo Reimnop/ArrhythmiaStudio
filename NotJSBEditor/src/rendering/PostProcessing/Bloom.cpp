@@ -14,7 +14,7 @@ Bloom::Bloom()
 	lastHeight = RENDERER_INITIAL_HEIGHT;
 
 	genMips(RENDERER_INITIAL_WIDTH, RENDERER_INITIAL_HEIGHT);
-	bloomTex = new Texture2D(RENDERER_INITIAL_WIDTH, RENDERER_INITIAL_HEIGHT, GL_R11F_G11F_B10F, GL_RGB, GL_FLOAT);
+	bloomTex = new Texture2D(RENDERER_INITIAL_WIDTH, RENDERER_INITIAL_HEIGHT, GL_RGBA16F, GL_RGB, GL_FLOAT);
 }
 
 void Bloom::processImage(uint32_t image, int width, int height)
@@ -41,7 +41,7 @@ void Bloom::processImage(uint32_t image, int width, int height)
 		// Horizontal gaussian blur
 		glUseProgram(blurHorizontal->getHandle());
 
-		glBindImageTexture(0, mipChain[i]->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_R11F_G11F_B10F);
+		glBindImageTexture(0, mipChain[i]->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
 		glBindTexture(GL_TEXTURE_2D, i == 0 ? image : mipChain[i - 1]->getHandle());
 
 		glDispatchCompute(std::ceil(mipWidths[i] / 8.0f), std::ceil(mipHeights[i] / 8.0f), 1);
@@ -51,7 +51,7 @@ void Bloom::processImage(uint32_t image, int width, int height)
 		// Vertical gaussian blur
 		glUseProgram(blurVertical->getHandle());
 
-		glBindImageTexture(0, mipChain[i]->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_R11F_G11F_B10F);
+		glBindImageTexture(0, mipChain[i]->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
 		glBindTexture(GL_TEXTURE_2D, mipChain[i]->getHandle());
 
 		glDispatchCompute(std::ceil(mipWidths[i] / 8.0f), std::ceil(mipHeights[i] / 8.0f), 1);
@@ -70,7 +70,7 @@ void Bloom::processImage(uint32_t image, int width, int height)
 	{
 		const int j = 2 * MIP_CHAIN_SIZE - i - 2;
 
-		glBindImageTexture(0, mipChain[i]->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_R11F_G11F_B10F);
+		glBindImageTexture(0, mipChain[i]->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, mipChain[i - 1]->getHandle());
@@ -83,7 +83,7 @@ void Bloom::processImage(uint32_t image, int width, int height)
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 	}
 
-	glBindImageTexture(0, bloomTex->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_R11F_G11F_B10F);
+	glBindImageTexture(0, bloomTex->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, mipChain.back()->getHandle());
@@ -102,7 +102,7 @@ void Bloom::processImage(uint32_t image, int width, int height)
 	glUniform1i(1, 1);
 	glUniform1f(2, intensity);
 
-	glBindImageTexture(0, image, 0, false, 0, GL_WRITE_ONLY, GL_R11F_G11F_B10F);
+	glBindImageTexture(0, image, 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, image);
@@ -137,13 +137,13 @@ void Bloom::genMips(int width, int height)
 
 	for (int i = 0; i < MIP_CHAIN_SIZE; i++)
 	{
-		mipChain.push_back(new Texture2D(mipWidths[i], mipHeights[i], GL_R11F_G11F_B10F, GL_RGB, GL_FLOAT));
+		mipChain.push_back(new Texture2D(mipWidths[i], mipHeights[i], GL_RGBA16F, GL_RGB, GL_FLOAT));
 	}
 
 	for (int i = MIP_CHAIN_SIZE; i < MIP_CHAIN_SIZE * 2 - 1; i++)
 	{
 		const int j = 2 * MIP_CHAIN_SIZE - i - 2;
-		mipChain.push_back(new Texture2D(mipWidths[j], mipHeights[j], GL_R11F_G11F_B10F, GL_RGB, GL_FLOAT));
+		mipChain.push_back(new Texture2D(mipWidths[j], mipHeights[j], GL_RGBA16F, GL_RGB, GL_FLOAT));
 	}
 }
 

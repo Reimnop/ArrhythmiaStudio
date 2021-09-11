@@ -7,7 +7,7 @@
 class AudioClip
 {
 public:
-	float* samples;
+	int16_t* samples;
 	uint64_t samplesCount;
 	uint32_t channelsCount;
 	uint32_t frequency;

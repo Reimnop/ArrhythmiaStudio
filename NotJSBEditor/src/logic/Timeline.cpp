@@ -54,7 +54,7 @@ void Timeline::genBuffer(AudioClip* clip)
 		float s = 0.0f;
 		for (int j = i1; j < i2; j++)
 		{
-			s += std::abs(clip->samples[j]);
+			s += std::abs(clip->samples[j] / 32768.0f);
 		}
 		samples[i] = s / (i2 - i1);
 	}

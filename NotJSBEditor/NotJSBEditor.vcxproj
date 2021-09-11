@@ -115,12 +115,11 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLFW_INCLUDE_NONE;NOMINMAX</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;STB_IMAGE_WRITE_IMPLEMENTATION;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLFW_INCLUDE_NONE;NOMINMAX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>
-      </DisableSpecificWarnings>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
@@ -139,12 +138,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;GLFW_INCLUDE_NONE;GLM_FORCE_SSE42;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;STB_IMAGE_WRITE_IMPLEMENTATION;NDEBUG;_CONSOLE;GLFW_INCLUDE_NONE;GLM_FORCE_SSE42;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <DisableSpecificWarnings>
-      </DisableSpecificWarnings>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
       <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
@@ -158,15 +156,37 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib;discord_game_sdk.dll.lib</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;avcodec.lib;avdevice.lib;avfilter.lib;avformat.lib;avutil.lib;swresample.lib;swscale.lib;discord_game_sdk.dll.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(ProjectDir)Assets" "$(OutDir)Assets" /e /i /y
 xcopy "$(ProjectDir)bass.dll" "$(OutDir)" /y
-xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y</Command>
+xcopy "$(ProjectDir)avcodec-58.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)avdevice-58.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)avfilter-7.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)avformat-58.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)avutil-56.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)swresample-3.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)swscale-5.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\AudioFormatConverter.cpp" />
+    <ClCompile Include="include\CodecDeducer.cpp" />
+    <ClCompile Include="include\Codecs\AudioCodec.cpp" />
+    <ClCompile Include="include\Codecs\Codec.cpp" />
+    <ClCompile Include="include\Codecs\H264NVEncCodec.cpp" />
+    <ClCompile Include="include\Codecs\H265NVEncCodec.cpp" />
+    <ClCompile Include="include\Codecs\JPGCodec.cpp" />
+    <ClCompile Include="include\Codecs\PNGCodec.cpp" />
+    <ClCompile Include="include\Codecs\VideoCodec.cpp" />
+    <ClCompile Include="include\Codecs\VP9Codec.cpp" />
+    <ClCompile Include="include\Demuxing\AudioInputStream.cpp" />
+    <ClCompile Include="include\Demuxing\InputStream.cpp" />
+    <ClCompile Include="include\Demuxing\StreamData.cpp" />
+    <ClCompile Include="include\Demuxing\VideoInputStream.cpp" />
     <ClCompile Include="include\discord\achievement_manager.cpp" />
     <ClCompile Include="include\discord\activity_manager.cpp" />
     <ClCompile Include="include\discord\application_manager.cpp" />
@@ -181,6 +201,15 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y</Command>
     <ClCompile Include="include\discord\types.cpp" />
     <ClCompile Include="include\discord\user_manager.cpp" />
     <ClCompile Include="include\discord\voice_manager.cpp" />
+    <ClCompile Include="include\FFmpegException.cpp" />
+    <ClCompile Include="include\Frame Sinks\AudioEncoder.cpp" />
+    <ClCompile Include="include\Frame Sinks\AudioFilter.cpp" />
+    <ClCompile Include="include\Frame Sinks\Filter.cpp" />
+    <ClCompile Include="include\Frame Sinks\FrameSinkStream.cpp" />
+    <ClCompile Include="include\Frame Sinks\OneInputFrameSink.cpp" />
+    <ClCompile Include="include\Frame Sinks\VideoEncoder.cpp" />
+    <ClCompile Include="include\Frame Sinks\VideoFilterInput.cpp" />
+    <ClCompile Include="include\FrameContainer.cpp" />
     <ClCompile Include="include\glm\detail\glm.cpp" />
     <ClCompile Include="include\imgui\imgui.cpp" />
     <ClCompile Include="include\imgui\imgui_demo.cpp" />
@@ -191,6 +220,19 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y</Command>
     <ClCompile Include="include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="include\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="include\glad\glad.c" />
+    <ClCompile Include="include\Muxing\AudioOutputStream.cpp" />
+    <ClCompile Include="include\Muxing\Muxer.cpp" />
+    <ClCompile Include="include\Muxing\OutputStream.cpp" />
+    <ClCompile Include="include\Muxing\VideoOutputStream.cpp" />
+    <ClCompile Include="include\OpenCodec.cpp" />
+    <ClCompile Include="include\Sources\Demuxer.cpp" />
+    <ClCompile Include="include\Sources\EncodedFileSource.cpp" />
+    <ClCompile Include="include\Sources\RawAudioDataSource.cpp" />
+    <ClCompile Include="include\Sources\RawAudioFileSource.cpp" />
+    <ClCompile Include="include\Sources\RawVideoDataSource.cpp" />
+    <ClCompile Include="include\Sources\RawVideoFileSource.cpp" />
+    <ClCompile Include="include\stb\stb_vorbis.c" />
+    <ClCompile Include="include\VideoFormatConverter.cpp" />
     <ClCompile Include="src\logic\AnimationChannel.cpp" />
     <ClCompile Include="src\logic\animation\ColorChannel.cpp" />
     <ClCompile Include="src\logic\animation\Easing.h" />
@@ -229,7 +271,22 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y</Command>
     <ClCompile Include="src\rendering\Texture2D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\AudioFormatConverter.h" />
     <ClInclude Include="include\bass\bass.h" />
+    <ClInclude Include="include\CodecDeducer.h" />
+    <ClInclude Include="include\Codecs\AudioCodec.h" />
+    <ClInclude Include="include\Codecs\Codec.h" />
+    <ClInclude Include="include\Codecs\H264NVEncCodec.h" />
+    <ClInclude Include="include\Codecs\H265NVEncCodec.h" />
+    <ClInclude Include="include\Codecs\JPGCodec.h" />
+    <ClInclude Include="include\Codecs\PNGCodec.h" />
+    <ClInclude Include="include\Codecs\VideoCodec.h" />
+    <ClInclude Include="include\Codecs\VP9Codec.h" />
+    <ClInclude Include="include\ConvertedAudioProcessor.h" />
+    <ClInclude Include="include\Demuxing\AudioInputStream.h" />
+    <ClInclude Include="include\Demuxing\InputStream.h" />
+    <ClInclude Include="include\Demuxing\StreamData.h" />
+    <ClInclude Include="include\Demuxing\VideoInputStream.h" />
     <ClInclude Include="include\discord\achievement_manager.h" />
     <ClInclude Include="include\discord\activity_manager.h" />
     <ClInclude Include="include\discord\application_manager.h" />
@@ -247,6 +304,148 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y</Command>
     <ClInclude Include="include\discord\types.h" />
     <ClInclude Include="include\discord\user_manager.h" />
     <ClInclude Include="include\discord\voice_manager.h" />
+    <ClInclude Include="include\ffmpeg.h" />
+    <ClInclude Include="include\ffmpegcpp.h" />
+    <ClInclude Include="include\FFmpegException.h" />
+    <ClInclude Include="include\Frame Sinks\AudioEncoder.h" />
+    <ClInclude Include="include\Frame Sinks\AudioFilter.h" />
+    <ClInclude Include="include\Frame Sinks\AudioFrameSink.h" />
+    <ClInclude Include="include\Frame Sinks\Filter.h" />
+    <ClInclude Include="include\Frame Sinks\FrameSink.h" />
+    <ClInclude Include="include\Frame Sinks\FrameSinkStream.h" />
+    <ClInclude Include="include\Frame Sinks\FrameWriter.h" />
+    <ClInclude Include="include\Frame Sinks\OneInputFrameSink.h" />
+    <ClInclude Include="include\Frame Sinks\VideoEncoder.h" />
+    <ClInclude Include="include\Frame Sinks\VideoFilterInput.h" />
+    <ClInclude Include="include\Frame Sinks\VideoFrameSink.h" />
+    <ClInclude Include="include\FrameContainer.h" />
+    <ClInclude Include="include\Info\AudioStreamInfo.h" />
+    <ClInclude Include="include\Info\ContainerInfo.h" />
+    <ClInclude Include="include\Info\VideoStreamInfo.h" />
+    <ClInclude Include="include\libavcodec\ac3_parser.h" />
+    <ClInclude Include="include\libavcodec\adts_parser.h" />
+    <ClInclude Include="include\libavcodec\avcodec.h" />
+    <ClInclude Include="include\libavcodec\avdct.h" />
+    <ClInclude Include="include\libavcodec\avfft.h" />
+    <ClInclude Include="include\libavcodec\bsf.h" />
+    <ClInclude Include="include\libavcodec\codec.h" />
+    <ClInclude Include="include\libavcodec\codec_desc.h" />
+    <ClInclude Include="include\libavcodec\codec_id.h" />
+    <ClInclude Include="include\libavcodec\codec_par.h" />
+    <ClInclude Include="include\libavcodec\d3d11va.h" />
+    <ClInclude Include="include\libavcodec\dirac.h" />
+    <ClInclude Include="include\libavcodec\dv_profile.h" />
+    <ClInclude Include="include\libavcodec\dxva2.h" />
+    <ClInclude Include="include\libavcodec\jni.h" />
+    <ClInclude Include="include\libavcodec\mediacodec.h" />
+    <ClInclude Include="include\libavcodec\packet.h" />
+    <ClInclude Include="include\libavcodec\qsv.h" />
+    <ClInclude Include="include\libavcodec\vaapi.h" />
+    <ClInclude Include="include\libavcodec\vdpau.h" />
+    <ClInclude Include="include\libavcodec\version.h" />
+    <ClInclude Include="include\libavcodec\videotoolbox.h" />
+    <ClInclude Include="include\libavcodec\vorbis_parser.h" />
+    <ClInclude Include="include\libavcodec\xvmc.h" />
+    <ClInclude Include="include\libavdevice\avdevice.h" />
+    <ClInclude Include="include\libavdevice\version.h" />
+    <ClInclude Include="include\libavfilter\avfilter.h" />
+    <ClInclude Include="include\libavfilter\buffersink.h" />
+    <ClInclude Include="include\libavfilter\buffersrc.h" />
+    <ClInclude Include="include\libavfilter\version.h" />
+    <ClInclude Include="include\libavformat\avformat.h" />
+    <ClInclude Include="include\libavformat\avio.h" />
+    <ClInclude Include="include\libavformat\version.h" />
+    <ClInclude Include="include\libavutil\adler32.h" />
+    <ClInclude Include="include\libavutil\aes.h" />
+    <ClInclude Include="include\libavutil\aes_ctr.h" />
+    <ClInclude Include="include\libavutil\attributes.h" />
+    <ClInclude Include="include\libavutil\audio_fifo.h" />
+    <ClInclude Include="include\libavutil\avassert.h" />
+    <ClInclude Include="include\libavutil\avconfig.h" />
+    <ClInclude Include="include\libavutil\avstring.h" />
+    <ClInclude Include="include\libavutil\avutil.h" />
+    <ClInclude Include="include\libavutil\base64.h" />
+    <ClInclude Include="include\libavutil\blowfish.h" />
+    <ClInclude Include="include\libavutil\bprint.h" />
+    <ClInclude Include="include\libavutil\bswap.h" />
+    <ClInclude Include="include\libavutil\buffer.h" />
+    <ClInclude Include="include\libavutil\camellia.h" />
+    <ClInclude Include="include\libavutil\cast5.h" />
+    <ClInclude Include="include\libavutil\channel_layout.h" />
+    <ClInclude Include="include\libavutil\common.h" />
+    <ClInclude Include="include\libavutil\cpu.h" />
+    <ClInclude Include="include\libavutil\crc.h" />
+    <ClInclude Include="include\libavutil\des.h" />
+    <ClInclude Include="include\libavutil\dict.h" />
+    <ClInclude Include="include\libavutil\display.h" />
+    <ClInclude Include="include\libavutil\dovi_meta.h" />
+    <ClInclude Include="include\libavutil\downmix_info.h" />
+    <ClInclude Include="include\libavutil\encryption_info.h" />
+    <ClInclude Include="include\libavutil\error.h" />
+    <ClInclude Include="include\libavutil\eval.h" />
+    <ClInclude Include="include\libavutil\ffversion.h" />
+    <ClInclude Include="include\libavutil\fifo.h" />
+    <ClInclude Include="include\libavutil\file.h" />
+    <ClInclude Include="include\libavutil\film_grain_params.h" />
+    <ClInclude Include="include\libavutil\frame.h" />
+    <ClInclude Include="include\libavutil\hash.h" />
+    <ClInclude Include="include\libavutil\hdr_dynamic_metadata.h" />
+    <ClInclude Include="include\libavutil\hmac.h" />
+    <ClInclude Include="include\libavutil\hwcontext.h" />
+    <ClInclude Include="include\libavutil\hwcontext_cuda.h" />
+    <ClInclude Include="include\libavutil\hwcontext_d3d11va.h" />
+    <ClInclude Include="include\libavutil\hwcontext_drm.h" />
+    <ClInclude Include="include\libavutil\hwcontext_dxva2.h" />
+    <ClInclude Include="include\libavutil\hwcontext_mediacodec.h" />
+    <ClInclude Include="include\libavutil\hwcontext_opencl.h" />
+    <ClInclude Include="include\libavutil\hwcontext_qsv.h" />
+    <ClInclude Include="include\libavutil\hwcontext_vaapi.h" />
+    <ClInclude Include="include\libavutil\hwcontext_vdpau.h" />
+    <ClInclude Include="include\libavutil\hwcontext_videotoolbox.h" />
+    <ClInclude Include="include\libavutil\hwcontext_vulkan.h" />
+    <ClInclude Include="include\libavutil\imgutils.h" />
+    <ClInclude Include="include\libavutil\intfloat.h" />
+    <ClInclude Include="include\libavutil\intreadwrite.h" />
+    <ClInclude Include="include\libavutil\lfg.h" />
+    <ClInclude Include="include\libavutil\log.h" />
+    <ClInclude Include="include\libavutil\lzo.h" />
+    <ClInclude Include="include\libavutil\macros.h" />
+    <ClInclude Include="include\libavutil\mastering_display_metadata.h" />
+    <ClInclude Include="include\libavutil\mathematics.h" />
+    <ClInclude Include="include\libavutil\md5.h" />
+    <ClInclude Include="include\libavutil\mem.h" />
+    <ClInclude Include="include\libavutil\motion_vector.h" />
+    <ClInclude Include="include\libavutil\murmur3.h" />
+    <ClInclude Include="include\libavutil\opt.h" />
+    <ClInclude Include="include\libavutil\parseutils.h" />
+    <ClInclude Include="include\libavutil\pixdesc.h" />
+    <ClInclude Include="include\libavutil\pixelutils.h" />
+    <ClInclude Include="include\libavutil\pixfmt.h" />
+    <ClInclude Include="include\libavutil\random_seed.h" />
+    <ClInclude Include="include\libavutil\rational.h" />
+    <ClInclude Include="include\libavutil\rc4.h" />
+    <ClInclude Include="include\libavutil\replaygain.h" />
+    <ClInclude Include="include\libavutil\ripemd.h" />
+    <ClInclude Include="include\libavutil\samplefmt.h" />
+    <ClInclude Include="include\libavutil\sha.h" />
+    <ClInclude Include="include\libavutil\sha512.h" />
+    <ClInclude Include="include\libavutil\spherical.h" />
+    <ClInclude Include="include\libavutil\stereo3d.h" />
+    <ClInclude Include="include\libavutil\tea.h" />
+    <ClInclude Include="include\libavutil\threadmessage.h" />
+    <ClInclude Include="include\libavutil\time.h" />
+    <ClInclude Include="include\libavutil\timecode.h" />
+    <ClInclude Include="include\libavutil\timestamp.h" />
+    <ClInclude Include="include\libavutil\tree.h" />
+    <ClInclude Include="include\libavutil\twofish.h" />
+    <ClInclude Include="include\libavutil\tx.h" />
+    <ClInclude Include="include\libavutil\version.h" />
+    <ClInclude Include="include\libavutil\video_enc_params.h" />
+    <ClInclude Include="include\libavutil\xtea.h" />
+    <ClInclude Include="include\libswresample\swresample.h" />
+    <ClInclude Include="include\libswresample\version.h" />
+    <ClInclude Include="include\libswscale\swscale.h" />
+    <ClInclude Include="include\libswscale\version.h" />
     <ClInclude Include="include\glad\glad.h" />
     <ClInclude Include="include\GLFW\glfw3.h" />
     <ClInclude Include="include\GLFW\glfw3native.h" />
@@ -544,6 +743,10 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y</Command>
     <ClInclude Include="include\imgui\imgui_stdlib.h" />
     <ClInclude Include="include\KHR\khrplatform.h" />
     <ClInclude Include="include\logger.h" />
+    <ClInclude Include="include\Muxing\AudioOutputStream.h" />
+    <ClInclude Include="include\Muxing\Muxer.h" />
+    <ClInclude Include="include\Muxing\OutputStream.h" />
+    <ClInclude Include="include\Muxing\VideoOutputStream.h" />
     <ClInclude Include="include\nlohmann\adl_serializer.hpp" />
     <ClInclude Include="include\nlohmann\byte_container_with_subtype.hpp" />
     <ClInclude Include="include\nlohmann\detail\conversions\from_json.hpp" />
@@ -583,7 +786,36 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y</Command>
     <ClInclude Include="include\nlohmann\ordered_map.hpp" />
     <ClInclude Include="include\nlohmann\thirdparty\hedley\hedley.hpp" />
     <ClInclude Include="include\nlohmann\thirdparty\hedley\hedley_undef.hpp" />
+    <ClInclude Include="include\OpenCodec.h" />
+    <ClInclude Include="include\Sources\Demuxer.h" />
+    <ClInclude Include="include\Sources\EncodedFileSource.h" />
+    <ClInclude Include="include\Sources\InputSource.h" />
+    <ClInclude Include="include\Sources\RawAudioDataSource.h" />
+    <ClInclude Include="include\Sources\RawAudioFileSource.h" />
+    <ClInclude Include="include\Sources\RawVideoDataSource.h" />
+    <ClInclude Include="include\Sources\RawVideoFileSource.h" />
+    <ClInclude Include="include\stb\stb_connected_components.h" />
+    <ClInclude Include="include\stb\stb_c_lexer.h" />
+    <ClInclude Include="include\stb\stb_divide.h" />
+    <ClInclude Include="include\stb\stb_ds.h" />
+    <ClInclude Include="include\stb\stb_dxt.h" />
+    <ClInclude Include="include\stb\stb_easy_font.h" />
+    <ClInclude Include="include\stb\stb_herringbone_wang_tile.h" />
+    <ClInclude Include="include\stb\stb_hexwave.h" />
+    <ClInclude Include="include\stb\stb_image.h" />
+    <ClInclude Include="include\stb\stb_image_resize.h" />
+    <ClInclude Include="include\stb\stb_image_write.h" />
+    <ClInclude Include="include\stb\stb_include.h" />
+    <ClInclude Include="include\stb\stb_leakcheck.h" />
+    <ClInclude Include="include\stb\stb_rect_pack.h" />
+    <ClInclude Include="include\stb\stb_sprintf.h" />
+    <ClInclude Include="include\stb\stb_textedit.h" />
+    <ClInclude Include="include\stb\stb_tilemap_editor.h" />
+    <ClInclude Include="include\stb\stb_truetype.h" />
+    <ClInclude Include="include\stb\stb_voxel_render.h" />
+    <ClInclude Include="include\std.h" />
     <ClInclude Include="include\utils.h" />
+    <ClInclude Include="include\VideoFormatConverter.h" />
     <ClInclude Include="src\logic\AnimationChannelType.h" />
     <ClInclude Include="src\logic\AnimationChannel.h" />
     <ClInclude Include="src\logic\animation\Color.h" />
@@ -650,6 +882,11 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y</Command>
     <None Include="Assets\Shaders\waveform.comp" />
     <None Include="Assets\Shapes\circle.shp" />
     <None Include="Assets\Shapes\square.shp" />
+    <None Include="avcodec-58.dll" />
+    <None Include="avdevice-58.dll" />
+    <None Include="avfilter-7.dll" />
+    <None Include="avformat-58.dll" />
+    <None Include="avutil-56.dll" />
     <None Include="bass.dll" />
     <None Include="discord_game_sdk.dll" />
     <None Include="include\glm\detail\func_common.inl" />
@@ -788,14 +1025,23 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y</Command>
     <None Include="include\glm\gtx\vector_angle.inl" />
     <None Include="include\glm\gtx\vector_query.inl" />
     <None Include="include\glm\gtx\wrap.inl" />
+    <None Include="swresample-3.dll" />
+    <None Include="swscale-5.dll" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\Inconsolata.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <Library Include="libs\avcodec.lib" />
+    <Library Include="libs\avdevice.lib" />
+    <Library Include="libs\avfilter.lib" />
+    <Library Include="libs\avformat.lib" />
+    <Library Include="libs\avutil.lib" />
     <Library Include="libs\bass.lib" />
     <Library Include="libs\discord_game_sdk.dll.lib" />
     <Library Include="libs\glfw3.lib" />
+    <Library Include="libs\swresample.lib" />
+    <Library Include="libs\swscale.lib" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\Shapes\shapes_list.txt" />

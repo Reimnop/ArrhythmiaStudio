@@ -33,7 +33,7 @@ Renderer::Renderer(GLFWwindow* window)
 	// Generate render texture
 	glGenTextures(1, &renderTexture);
 	glBindTexture(GL_TEXTURE_2D, renderTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_R11F_G11F_B10F, viewportWidth, viewportHeight, 0, GL_RGB, GL_FLOAT, nullptr);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, viewportWidth, viewportHeight, 0, GL_RGBA, GL_FLOAT, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -52,7 +52,7 @@ Renderer::Renderer(GLFWwindow* window)
 	// Generate multisample color texture
 	glGenTextures(1, &multisampleTexture);
 	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, multisampleTexture);
-	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, MSAA_SAMPLES, GL_R11F_G11F_B10F, viewportWidth, viewportHeight, GL_TRUE);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, MSAA_SAMPLES, GL_RGBA16F, viewportWidth, viewportHeight, GL_TRUE);
 	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 
 	// Generate render texture
@@ -106,14 +106,19 @@ void Renderer::update()
 {
 	imGuiController->update();
 
+	resizeViewport();
+}
+
+void Renderer::resizeViewport()
+{
 	if (viewportWidth != lastViewportWidth || viewportHeight != lastViewportHeight)
 	{
 		// Resize all framebuffer attachments
 		glBindTexture(GL_TEXTURE_2D, renderTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_R11F_G11F_B10F, viewportWidth, viewportHeight, 0, GL_RGB, GL_FLOAT, nullptr);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, viewportWidth, viewportHeight, 0, GL_RGB, GL_FLOAT, nullptr);
 
 		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, multisampleTexture);
-		glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, MSAA_SAMPLES, GL_R11F_G11F_B10F, viewportWidth, viewportHeight, GL_TRUE);
+		glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, MSAA_SAMPLES, GL_RGBA16F, viewportWidth, viewportHeight, GL_TRUE);
 		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 
 		glBindRenderbuffer(GL_RENDERBUFFER, depthBuffer);
@@ -126,6 +131,14 @@ void Renderer::update()
 }
 
 void Renderer::render()
+{
+	renderViewport();
+
+	// Render ImGui last
+	imGuiController->renderImGui();
+}
+
+void Renderer::renderViewport()
 {
 	float aspect = viewportWidth / (float)viewportHeight;
 	glm::mat4 view, projection;
@@ -140,6 +153,7 @@ void Renderer::render()
 	FramebufferStack::push(multisampleFramebuffer);
 
 	glViewport(0, 0, viewportWidth, viewportHeight);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glEnable(GL_DEPTH_TEST);
@@ -308,9 +322,6 @@ void Renderer::render()
 
 	glBindVertexArray(0);
 	glUseProgram(0);
-
-	// Render ImGui last
-	imGuiController->renderImGui();
 }
 
 uint32_t Renderer::getRenderTexture() const

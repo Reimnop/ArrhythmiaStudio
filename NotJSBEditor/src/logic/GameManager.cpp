@@ -31,7 +31,7 @@ void GameManager::update() const
 
 void GameManager::onLayout()
 {
-	// Welcome popup to block the user from doing anything on the startup level
+	// Welcome popup
 	ImGui::SetNextWindowSize(ImVec2(320.0f, 140.0f));
 	if (ImGui::BeginPopupModal("Welcome", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings))
 	{
@@ -48,7 +48,7 @@ void GameManager::onLayout()
 
 	// Level creation popup
 	if (ImGui::BeginPopupModal("New Level", nullptr,
-	                           ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize |
+	                           ImGuiWindowFlags_AlwaysAutoResize |
 	                           ImGuiWindowFlags_NoSavedSettings))
 	{
 		ImGui::SetNextItemWidth(318.0f);
@@ -131,7 +131,7 @@ void GameManager::onLayout()
 		ImGui::EndPopup();
 	}
 
-	if (ImGui::BeginPopupModal("Export Configuration", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	if (ImGui::BeginPopupModal("Export Configuration", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings))
 	{
 		if (ImGui::Button("Browse"))
 		{
@@ -196,8 +196,20 @@ void GameManager::onLayout()
 		ImGui::EndPopup();
 	}
 
+	ImGui::SetNextWindowSize(ImVec2(320.0f, 100.0f));
+	if (ImGui::BeginPopupModal("About", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings))
+	{
+		ImGui::TextWrapped("This software uses libraries from the FFmpeg project under the LGPLv2.1");
+		if (ImGui::Button("Close"))
+		{
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::EndPopup();
+	}
+
 	bool doOpenLevelPopup = false;
 	bool doExportVideoPopup = false;
+	bool doAboutPopup = false;
 
 	// Menu bar
 	if (ImGui::BeginMainMenuBar())
@@ -232,6 +244,14 @@ void GameManager::onLayout()
 				doExportVideoPopup = true;
 			}
 
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Help"))
+		{
+			if (ImGui::MenuItem("About"))
+			{
+				doAboutPopup = true;
+			}
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
@@ -272,6 +292,11 @@ void GameManager::onLayout()
 	if (doExportVideoPopup)
 	{
 		ImGui::OpenPopup("Export Configuration");
+	}
+
+	if (doAboutPopup)
+	{
+		ImGui::OpenPopup("About");
 	}
 
 	// Open welcome popup

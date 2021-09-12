@@ -4,12 +4,12 @@
 namespace ffmpegcpp
 {
 
-	RawAudioDataSource::RawAudioDataSource(AVSampleFormat sampleFormat, int sampleRate, int channels, FrameSink* output)
-		: RawAudioDataSource(sampleFormat, sampleRate, channels, av_get_default_channel_layout(channels), output)
+	RawAudioDataSource::RawAudioDataSource(AVSampleFormat sampleFormat, int sampleRate, int channels, int samplesPerFrame, FrameSink* output)
+		: RawAudioDataSource(sampleFormat, sampleRate, channels, samplesPerFrame, av_get_default_channel_layout(channels), output)
 	{
 	}
 
-	RawAudioDataSource::RawAudioDataSource(AVSampleFormat sampleFormat, int sampleRate, int channels, int64_t channelLayout, FrameSink* output)
+	RawAudioDataSource::RawAudioDataSource(AVSampleFormat sampleFormat, int sampleRate, int channels, int samplesPerFrame, int64_t channelLayout, FrameSink* output)
 	{
 		this->output = output->CreateStream();
 
@@ -27,7 +27,7 @@ namespace ffmpegcpp
 		frame->sample_rate = sampleRate;
 		frame->channels = channels;
 		frame->channel_layout = channelLayout;
-		frame->nb_samples = 735;
+		frame->nb_samples = samplesPerFrame;
 
 		// allocate the buffers for the frame data
 		ret = av_frame_get_buffer(frame, 0);

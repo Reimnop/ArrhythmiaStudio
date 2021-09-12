@@ -256,6 +256,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="src\logic\Theme.cpp" />
     <ClCompile Include="src\logic\Timeline.cpp" />
     <ClCompile Include="src\logic\Transform.cpp" />
+    <ClCompile Include="src\logic\VideoExporter.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\MainWindow.cpp" />
     <ClCompile Include="src\rendering\Camera.cpp" />
@@ -849,6 +850,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\logic\Theme.h" />
     <ClInclude Include="src\logic\Timeline.h" />
     <ClInclude Include="src\logic\Transform.h" />
+    <ClInclude Include="src\logic\VideoExporter.h" />
     <ClInclude Include="src\MainWindow.h" />
     <ClInclude Include="src\rendering\DrawCommand.h" />
     <ClInclude Include="src\rendering\Camera.h" />

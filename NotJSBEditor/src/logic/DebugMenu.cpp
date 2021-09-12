@@ -2,17 +2,15 @@
 
 #include <GLFW/glfw3.h>
 #include <imgui/imgui.h>
+#include <imgui/imgui_stdlib.h>
 #include <string>
-#include <stb/stb_image_write.h>
-#include <logger.h>
 #include <helper.h>
-#include <fstream>
+#include <ShlObj.h>
 
 #include "../rendering/ImGuiController.h"
 #include "../MainWindow.h"
 #include "LevelManager.h"
-
-#include <ffmpegcpp.h>
+#include "VideoExporter.h"
 
 DebugMenu::DebugMenu()
 {
@@ -58,124 +56,65 @@ void DebugMenu::onLayout()
 			glfwSwapInterval(interval);
 		}
 
-		if (ImGui::Button("Export to Frame Sequence"))
+		if (ImGui::BeginPopupModal("Export Configuration", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
 		{
-			Renderer* renderer = Renderer::inst;
-			LevelManager* levelManager = LevelManager::inst;
-
-			// Store those so we can restore later
-			const int oldWidth = renderer->viewportWidth;
-			const int oldHeight = renderer->viewportHeight;
-			const float oldTime = levelManager->time;
-
-			// Resize so we get good quality images
-			renderer->viewportWidth = 1920;
-			renderer->viewportHeight = 1080;
-
-			renderer->resizeViewport();
-
-			// Prepare encoder
-			ffmpegcpp::Muxer* muxer = new ffmpegcpp::Muxer("video.mp4");
-
-			ffmpegcpp::VideoCodec* codec = new ffmpegcpp::VideoCodec("h264_nvenc");
-			codec->SetQualityScale(22);
-
-			ffmpegcpp::VideoEncoder* encoder = new ffmpegcpp::VideoEncoder(codec, muxer);
-
-			// Prepare audio stream
-			const AudioClip* clip = LevelManager::inst->audioClip;
-			const int samplesPerFrame = clip->frequency / 60;
-
-			ffmpegcpp::AudioCodec* audioCodec = new ffmpegcpp::AudioCodec(AV_CODEC_ID_VORBIS);
-			ffmpegcpp::AudioEncoder* audioEncoder = new ffmpegcpp::AudioEncoder(audioCodec, muxer);
-
-			ffmpegcpp::RawAudioDataSource* audioStream = new ffmpegcpp::RawAudioDataSource(AV_SAMPLE_FMT_S16, clip->frequency, 1, audioEncoder);
-
-			// Convert to mono (I'm too dumb for stereo)
-			const int newSamplesLength = clip->samplesCount / clip->channelsCount;
-			int16_t* samples = new int16_t[newSamplesLength];
-
-			for (int i = 0; i < newSamplesLength; i++)
+			if (ImGui::Button("Browse"))
 			{
-				int16_t newSample = 0;
-				for (int j = 0; j < clip->channelsCount; j++)
+				COMDLG_FILTERSPEC filter;
+				filter.pszName = L"MP4 file";
+				filter.pszSpec = L"*.mp4";
+
+				IFileDialog* fd;
+				CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&fd));
+
+				DWORD dwFlags;
+				fd->GetOptions(&dwFlags);
+				fd->SetOptions(dwFlags | FOS_FORCEFILESYSTEM);
+				fd->SetFileTypes(1, &filter);
+				fd->Show(NULL);
+
+				IShellItem* psiResult;
+				if (SUCCEEDED(fd->GetResult(&psiResult)))
 				{
-					newSample += clip->samples[i * clip->channelsCount + j] / clip->channelsCount;
+					PWSTR pszFilePath = NULL;
+					psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+					std::wstring ws(pszFilePath);
+					videoPath = std::string(ws.begin(), ws.end());
+
+					CoTaskMemFree(pszFilePath);
 				}
 
-				samples[i] = newSample;
+				fd->Release();
 			}
+			ImGui::SameLine();
+			ImGui::InputText("Video path", &videoPath);
 
-			// Prepare frame stream
-			ffmpegcpp::FrameSinkStream* videoStream = encoder->CreateStream();
+			ImGui::InputInt("Width", &videoWidth);
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 45);
+			ImGui::InputInt("Height", &videoHeight);
 
-			// Prepare video metadata
-			ffmpegcpp::StreamData videoMetadata = ffmpegcpp::StreamData();
-			videoMetadata.timeBase = { 1, 60 };
-			videoMetadata.frameRate = { 60, 1 };
-			videoMetadata.type = AVMEDIA_TYPE_VIDEO;
+			ImGui::InputInt("Framerate", &videoFramerate);
 
-			AVFrame* frame = av_frame_alloc();
+			ImGui::InputInt("Start frame", &videoStartFrame);
+			ImGui::SameLine();
+			ImGui::InputInt("End frame", &videoEndFrame);
 
-			frame->width = renderer->viewportWidth;
-			frame->height = renderer->viewportHeight;
-			frame->format = AV_PIX_FMT_YUV444P;
-
-			av_frame_get_buffer(frame, 0);
-
-			// Make a buffer to copy our rendered textures into
-			uint8_t* colorBuffer = new uint8_t[renderer->viewportWidth * renderer->viewportHeight * 4];
-
-			// Rendering
-			for (int i = 0; i < 3000; i++)
+			if (ImGui::Button("Render"))
 			{
-				Logger::info("Rendering frame " + std::to_string(i));
+				const VideoExporter* exporter = new VideoExporter(videoWidth, videoHeight, videoFramerate, videoStartFrame, videoEndFrame, new ffmpegcpp::VideoCodec("h264_nvenc"), new ffmpegcpp::AudioCodec(AV_CODEC_ID_AAC));
+				exporter->exportToVideo(videoPath);
 
-				// Update and render
-				levelManager->updateLevel(i / 60.0f);
-				renderer->renderViewport();
-
-				glBindTexture(GL_TEXTURE_2D, renderer->getRenderTexture());
-				glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, colorBuffer);
-				glBindTexture(GL_TEXTURE_2D, 0);
-
-				for (int y = 0; y < renderer->viewportHeight; y++)
-				{
-					for (int x = 0; x < renderer->viewportWidth; x++)
-					{
-						const int bufIndex = (renderer->viewportHeight - y - 1) * renderer->viewportWidth + x;
-						const int index = y * renderer->viewportWidth + x;
-
-						double Yd, Ud, Vd;
-						YUVfromRGB(Yd, Ud, Vd, colorBuffer[bufIndex * 4 + 0], colorBuffer[bufIndex * 4 + 1], colorBuffer[bufIndex * 4 + 2]);
-
-						frame->data[0][index] = Yd;
-						frame->data[1][index] = Ud;
-						frame->data[2][index] = Vd;
-					}
-				}
-
-				videoStream->WriteFrame(frame, &videoMetadata);
-				audioStream->WriteData(&samples[i * samplesPerFrame], samplesPerFrame);
+				delete exporter;
 			}
 
-			av_frame_free(&frame);
+			ImGui::EndPopup();
+		}
 
-			delete[] colorBuffer;
-			delete[] samples;
-			
-			videoStream->Close();
-			audioStream->Close();
-			muxer->Close();
-
-			// Restore resolution
-			renderer->viewportWidth = oldWidth;
-			renderer->viewportHeight = oldHeight;
-
-			// Restore timeline pos
-			levelManager->updateLevel(oldTime);
-
-			renderer->resizeViewport();
+		if (ImGui::Button("Export to Video"))
+		{
+			ImGui::OpenPopup("Export Configuration");
 		}
 
 		ImGui::End();

@@ -2,6 +2,7 @@
 
 #include "../rendering/ImGuiController.h"
 #include "../rendering/Renderer.h"
+#include "VideoExporter.h"
 
 #include <fstream>
 #include <functional>
@@ -130,7 +131,71 @@ void GameManager::onLayout()
 		ImGui::EndPopup();
 	}
 
+	if (ImGui::BeginPopupModal("Export Configuration", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		if (ImGui::Button("Browse"))
+		{
+			COMDLG_FILTERSPEC filter;
+			filter.pszName = L"MKV file";
+			filter.pszSpec = L"*.mkv";
+
+			IFileDialog* fd;
+			CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&fd));
+
+			DWORD dwFlags;
+			fd->GetOptions(&dwFlags);
+			fd->SetOptions(dwFlags | FOS_FORCEFILESYSTEM);
+			fd->SetFileTypes(1, &filter);
+			fd->Show(NULL);
+
+			IShellItem* psiResult;
+			if (SUCCEEDED(fd->GetResult(&psiResult)))
+			{
+				PWSTR pszFilePath = NULL;
+				psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+				std::wstring ws(pszFilePath);
+				videoPath = std::string(ws.begin(), ws.end());
+
+				CoTaskMemFree(pszFilePath);
+			}
+
+			fd->Release();
+		}
+		ImGui::SameLine();
+		ImGui::InputText("Video path", &videoPath);
+
+		ImGui::InputInt("Width", &videoWidth);
+		ImGui::SameLine();
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 45);
+		ImGui::InputInt("Height", &videoHeight);
+
+		ImGui::InputInt("Framerate", &videoFramerate);
+
+		ImGui::InputInt("Start frame", &videoStartFrame);
+		ImGui::SameLine();
+		ImGui::InputInt("End frame", &videoEndFrame);
+
+		if (ImGui::Button("Render"))
+		{
+			const VideoExporter* exporter = new VideoExporter(videoWidth, videoHeight, videoFramerate, videoStartFrame, videoEndFrame, new ffmpegcpp::VideoCodec(AV_CODEC_ID_VP9), new ffmpegcpp::AudioCodec(AV_CODEC_ID_AAC));
+			exporter->exportToVideo(videoPath);
+
+			delete exporter;
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("Cancel"))
+		{
+			ImGui::CloseCurrentPopup();
+		}
+
+		ImGui::EndPopup();
+	}
+
 	bool doOpenLevelPopup = false;
+	bool doExportVideoPopup = false;
 
 	// Menu bar
 	if (ImGui::BeginMainMenuBar())
@@ -158,6 +223,11 @@ void GameManager::onLayout()
 			if (ImGui::MenuItem("Open", "Ctrl+O"))
 			{
 				dataManager->openLevel();
+			}
+
+			if (ImGui::MenuItem("Export to Video"))
+			{
+				doExportVideoPopup = true;
 			}
 
 			ImGui::EndMenu();
@@ -195,6 +265,11 @@ void GameManager::onLayout()
 		currentCreateInfo = LevelCreateInfo();
 
 		ImGui::OpenPopup("New Level");
+	}
+
+	if (doExportVideoPopup)
+	{
+		ImGui::OpenPopup("Export Configuration");
 	}
 
 	// Open welcome popup

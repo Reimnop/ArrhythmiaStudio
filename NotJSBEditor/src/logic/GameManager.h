@@ -32,6 +32,13 @@ private:
 
 	LevelCreateInfo currentCreateInfo;
 
+	std::string videoPath;
+	int videoWidth = 1920;
+	int videoHeight = 1080;
+	int videoFramerate = 60;
+	int videoStartFrame = 0;
+	int videoEndFrame = 300;
+
 	void onLayout();
 	void calculateViewportRect(ImVec2 size, float* width, float* height);
 	std::string timeToString(float time) const;

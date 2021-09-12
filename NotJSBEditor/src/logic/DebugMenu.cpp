@@ -109,6 +109,11 @@ void DebugMenu::onLayout()
 				delete exporter;
 			}
 
+			if (ImGui::Button("Cancel"))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+
 			ImGui::EndPopup();
 		}
 

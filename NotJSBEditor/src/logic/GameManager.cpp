@@ -182,6 +182,8 @@ void GameManager::onLayout()
 			exporter->exportToVideo(videoPath);
 
 			delete exporter;
+
+			ImGui::CloseCurrentPopup();
 		}
 
 		ImGui::SameLine();

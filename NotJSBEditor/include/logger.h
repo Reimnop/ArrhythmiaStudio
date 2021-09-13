@@ -24,7 +24,6 @@ public:
 		const time_t time = std::time(nullptr);
 
 		struct tm buf;
-		char dateString[32];
 		localtime_s(&buf, &time);
 
 		std::stringstream ss;

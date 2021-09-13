@@ -1,6 +1,7 @@
 #include "DataManager.h"
 
 #include "LevelManager.h"
+#include "logger.h"
 
 #include <fstream>
 #include <filesystem>
@@ -31,6 +32,7 @@ void DataManager::newLevel(LevelCreateInfo createInfo)
 
 void DataManager::saveLevel(bool saveAs)
 {
+	Logger::info("Trying to save level " + LevelManager::inst->level->name);
 	if (saveAs || levelDir.empty())
 	{
 		IFileDialog* fd;
@@ -50,6 +52,8 @@ void DataManager::saveLevel(bool saveAs)
 			std::wstring ws(pszFilePath);
 			std::string newLevelDir(ws.begin(), ws.end());
 
+			Logger::info("New level path: " + newLevelDir);
+
 			std::filesystem::copy(levelDir, newLevelDir);
 			levelDir = newLevelDir;
 
@@ -65,6 +69,8 @@ void DataManager::saveLevel(bool saveAs)
 	std::ofstream s(levelFilePath);
 	s << LevelManager::inst->level->toJson();
 	s.close();
+
+	Logger::info("Level saved successfully");
 }
 
 void DataManager::openLevel()

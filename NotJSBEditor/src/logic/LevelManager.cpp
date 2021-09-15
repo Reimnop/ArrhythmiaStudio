@@ -352,8 +352,6 @@ void LevelManager::removeObject(LevelObject* levelObject)
 
 	// Remove object
 	level->levelObjects.erase(id);
-
-	recalculateActionIndex(time);
 }
 
 bool LevelManager::initializeObjectParent(LevelObject* levelObject)

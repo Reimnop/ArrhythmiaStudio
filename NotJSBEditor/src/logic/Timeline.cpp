@@ -367,6 +367,7 @@ void Timeline::onLayout()
 					{
 						levelManager->removeObject(obj);
 					}
+					levelManager->recalculateActionIndex(levelManager->time);
 
 					levelManager->selectedObjects.clear();
 				}

@@ -3,6 +3,7 @@
 
 #include "ShapeManager.h"
 #include "DiscordManager.h"
+#include "UndoRedoManager.h"
 #include "../rendering/Renderer.h"
 #include "../rendering/MeshRenderer.h"
 
@@ -110,6 +111,8 @@ void LevelManager::loadLevel(const std::string& levelPath)
 	theme->reset();
 	events->reset();
 	timeline->genBuffer(audioClip);
+
+	UndoRedoManager::inst->reset();
 
 	std::string stateStr = "Editing " + newLevel->name;
 

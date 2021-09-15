@@ -10,6 +10,7 @@
 
 #include "../rendering/ImGuiController.h"
 #include "GlobalConstants.h"
+#include "UndoRedoManager.h"
 #include "utils.h"
 #include "imgui/imgui_editorlib.h"
 
@@ -365,6 +366,12 @@ void Timeline::onLayout()
 				{
 					for (LevelObject* obj : levelManager->selectedObjects) 
 					{
+						UndoAction action = UndoAction();
+						action.type = UndoActionType_RemoveObject;
+						action.data = obj->toJson();
+
+						UndoRedoManager::inst->push(action);
+
 						levelManager->removeObject(obj);
 					}
 					levelManager->recalculateActionIndex(levelManager->time);
@@ -517,6 +524,12 @@ void Timeline::onLayout()
 
 					levelManager->insertObject(newObject);
 					levelManager->recalculateActionIndex(levelManager->time);
+
+					UndoAction action = UndoAction();
+					action.type = UndoActionType_AddObject;
+					action.data = newObject->toJson();
+
+					UndoRedoManager::inst->push(action);
 				}
 
 				ImGui::EndPopup();

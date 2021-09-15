@@ -9,6 +9,7 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_stdlib.h>
 #include <ShlObj.h>
+#include <logger.h>
 
 GameManager::GameManager(GLFWwindow* window)
 {
@@ -20,6 +21,7 @@ GameManager::GameManager(GLFWwindow* window)
 	dataManager = new DataManager();
 	discordManager = new DiscordManager();
 	levelManager = new LevelManager();
+	undoRedoManager = new UndoRedoManager();
 	debug = new DebugMenu();
 }
 
@@ -47,9 +49,7 @@ void GameManager::onLayout()
 	}
 
 	// Level creation popup
-	if (ImGui::BeginPopupModal("New Level", nullptr,
-	                           ImGuiWindowFlags_AlwaysAutoResize |
-	                           ImGuiWindowFlags_NoSavedSettings))
+	if (ImGui::BeginPopupModal("New Level", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings))
 	{
 		ImGui::SetNextItemWidth(318.0f);
 		ImGui::InputText("Level name", &currentCreateInfo.levelName);
@@ -280,6 +280,16 @@ void GameManager::onLayout()
 	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_O))
 	{
 		dataManager->openLevel();
+	}
+
+	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_Z))
+	{
+		undoRedoManager->undo();
+	}
+
+	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_Y))
+	{
+		undoRedoManager->redo();
 	}
 
 	if (doOpenLevelPopup)

@@ -9,6 +9,7 @@
 #include "DataManager.h"
 #include "DebugMenu.h"
 #include "DiscordManager.h"
+#include "UndoRedoManager.h"
 
 class MainWindow;
 
@@ -25,6 +26,7 @@ private:
 	ShapeManager* shapeManager;
 	DataManager* dataManager;
 	DiscordManager* discordManager;
+	UndoRedoManager* undoRedoManager;
 	DebugMenu* debug;
 
 	bool welcomeOpened = false;

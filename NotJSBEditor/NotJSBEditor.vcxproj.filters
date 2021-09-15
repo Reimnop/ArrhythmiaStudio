@@ -306,6 +306,9 @@
     <ClCompile Include="src\logic\VideoExporter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\logic\UndoRedoManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
@@ -2106,6 +2109,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\VideoExporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\UndoRedoManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\UndoAction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\UndoActionType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

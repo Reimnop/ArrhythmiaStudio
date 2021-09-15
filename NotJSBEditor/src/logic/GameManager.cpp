@@ -20,8 +20,8 @@ GameManager::GameManager(GLFWwindow* window)
 	shapeManager = new ShapeManager();
 	dataManager = new DataManager();
 	discordManager = new DiscordManager();
-	levelManager = new LevelManager();
 	undoRedoManager = new UndoRedoManager();
+	levelManager = new LevelManager();
 	debug = new DebugMenu();
 }
 
@@ -244,6 +244,18 @@ void GameManager::onLayout()
 				doExportVideoPopup = true;
 			}
 
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Edit"))
+		{
+			if (ImGui::MenuItem("Undo", "Ctrl+Z"))
+			{
+				undoRedoManager->undo();
+			}
+			if (ImGui::MenuItem("Redo", "Ctrl+Y"))
+			{
+				undoRedoManager->redo();
+			}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Help"))

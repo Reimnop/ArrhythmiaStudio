@@ -53,6 +53,20 @@ void UndoRedoManager::undo()
 			levelManager->recalculateActionIndex(levelManager->time);
 		}
 		break;
+		case UndoActionType_StartTimeEdit:
+		{
+			const uint64_t id = action.data["id"].get<uint64_t>();
+			LevelObject* obj = level->levelObjects[id];
+			obj->startTime = action.data["old"].get<float>();
+		}
+		break;
+		case UndoActionType_KillTimeEdit:
+		{
+			const uint64_t id = action.data["id"].get<uint64_t>();
+			LevelObject* obj = level->levelObjects[id];
+			obj->killTime = action.data["old"].get<float>();
+		}
+		break;
 		}
 	}
 }
@@ -81,6 +95,20 @@ void UndoRedoManager::redo()
 			const uint64_t id = action.data["id"].get<uint64_t>();
 			levelManager->removeObject(level->levelObjects[id]);
 			levelManager->recalculateActionIndex(levelManager->time);
+		}
+		break;
+		case UndoActionType_StartTimeEdit:
+		{
+			const uint64_t id = action.data["id"].get<uint64_t>();
+			LevelObject* obj = level->levelObjects[id];
+			obj->startTime = action.data["new"].get<float>();
+		}
+		break;
+		case UndoActionType_KillTimeEdit:
+		{
+			const uint64_t id = action.data["id"].get<uint64_t>();
+			LevelObject* obj = level->levelObjects[id];
+			obj->killTime = action.data["new"].get<float>();
 		}
 		break;
 		}
@@ -127,6 +155,10 @@ std::string UndoRedoManager::undoActionTypeToString(UndoActionType type) const
 		return "Add object";
 	case UndoActionType_RemoveObject:
 		return "Remove object";
+	case UndoActionType_StartTimeEdit:
+		return "Start time edit";
+	case UndoActionType_KillTimeEdit:
+		return "Kill time edit";
 	}
 
 	return "Unknown action";

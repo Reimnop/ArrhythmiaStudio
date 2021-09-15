@@ -11,6 +11,7 @@
 #include "../rendering/MeshRenderer.h"
 #include "GlobalConstants.h"
 #include "ShapeManager.h"
+#include "UndoRedoManager.h"
 #include "animation/Easing.h"
 #include "imgui/imgui_editorlib.h"
 
@@ -57,8 +58,47 @@ void Properties::onLayout()
 				bool objTimeRangeChanged = false;
 				ImGui::DragFloat("Start Time", &selectedObject->startTime, 0.1f);
 				objTimeRangeChanged = objTimeRangeChanged || ImGui::IsItemEdited();
+
+				if (ImGui::IsItemActivated())
+				{
+					oldObjectStartTime = selectedObject->startTime;
+				}
+
+				if (ImGui::IsItemDeactivatedAfterEdit())
+				{
+					nlohmann::json j;
+					j["id"] = selectedObject->id;
+					j["old"] = oldObjectStartTime;
+					j["new"] = selectedObject->startTime;
+
+					UndoAction action = UndoAction();
+					action.type = UndoActionType_StartTimeEdit;
+					action.data = j;
+
+					UndoRedoManager::inst->push(action);
+				}
+
 				ImGui::DragFloat("Kill Time", &selectedObject->killTime, 0.1f);
 				objTimeRangeChanged = objTimeRangeChanged || ImGui::IsItemEdited();
+
+				if (ImGui::IsItemActivated())
+				{
+					oldObjectKillTime = selectedObject->killTime;
+				}
+
+				if (ImGui::IsItemDeactivatedAfterEdit())
+				{
+					nlohmann::json j;
+					j["id"] = selectedObject->id;
+					j["old"] = oldObjectKillTime;
+					j["new"] = selectedObject->killTime;
+
+					UndoAction action = UndoAction();
+					action.type = UndoActionType_KillTimeEdit;
+					action.data = j;
+
+					UndoRedoManager::inst->push(action);
+				}
 
 				if (objTimeRangeChanged)
 				{

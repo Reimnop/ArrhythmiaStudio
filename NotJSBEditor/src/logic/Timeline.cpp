@@ -374,14 +374,12 @@ void Timeline::onLayout()
 					}
 					UndoRedoManager::inst->push(new MultiUndoCmd(cmds));
 
-					for (LevelObject* obj : levelManager->selectedObjects)
+					while (!levelManager->selectedObjects.empty())
 					{
-						levelManager->removeObject(obj);
+						levelManager->removeObject(*levelManager->selectedObjects.begin());
 					}
 
 					levelManager->recalculateActionIndex(levelManager->time);
-
-					levelManager->selectedObjects.clear();
 				}
 			}
 

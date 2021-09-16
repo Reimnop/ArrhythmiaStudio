@@ -15,6 +15,7 @@
 #include "animation/Easing.h"
 #include "imgui/imgui_editorlib.h"
 #include "undo_commands/EditObjectCmd.h"
+#include "undo_commands/ChangeParentCmd.h"
 
 Properties* Properties::inst;
 
@@ -143,7 +144,14 @@ void Properties::onLayout()
 				{
 					if (ImGui::Selectable("None", selectedObject->parentId == 0))
 					{
+						LevelObject* oldParent = nullptr;
+						if (selectedObject->parentId)
+						{
+							oldParent = level->levelObjects[selectedObject->parentId];
+						}
 						selectedObject->setParent(nullptr);
+
+						UndoRedoManager::inst->push(new ChangeParentCmd(selectedObject, oldParent, nullptr));
 					}
 
 					for (const std::pair<uint64_t, LevelObject*> x : level->levelObjects)
@@ -152,7 +160,14 @@ void Properties::onLayout()
 
 						if (obj != selectedObject && ImGui::Selectable(obj->name.c_str(), obj->id == selectedObject->parentId))
 						{
+							LevelObject* oldParent = nullptr;
+							if (selectedObject->parentId)
+							{
+								oldParent = level->levelObjects[selectedObject->parentId];
+							}
 							selectedObject->setParent(obj);
+
+							UndoRedoManager::inst->push(new ChangeParentCmd(selectedObject, oldParent, obj));
 						}
 					}
 

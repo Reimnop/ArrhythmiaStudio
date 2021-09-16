@@ -257,6 +257,8 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="src\logic\Timeline.cpp" />
     <ClCompile Include="src\logic\Transform.cpp" />
     <ClCompile Include="src\logic\UndoRedoManager.cpp" />
+    <ClCompile Include="src\logic\undo_commands\AddObjectCmd.cpp" />
+    <ClCompile Include="src\logic\undo_commands\RemoveObjectCmd.cpp" />
     <ClCompile Include="src\logic\VideoExporter.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\MainWindow.cpp" />
@@ -851,9 +853,11 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\logic\Theme.h" />
     <ClInclude Include="src\logic\Timeline.h" />
     <ClInclude Include="src\logic\Transform.h" />
-    <ClInclude Include="src\logic\UndoAction.h" />
-    <ClInclude Include="src\logic\UndoActionType.h" />
+    <ClInclude Include="src\logic\UndoCommand.h" />
     <ClInclude Include="src\logic\UndoRedoManager.h" />
+    <ClInclude Include="src\logic\undo_commands\AddObjectCmd.h" />
+    <ClInclude Include="src\logic\undo_commands\MultiUndoCmd.h" />
+    <ClInclude Include="src\logic\undo_commands\RemoveObjectCmd.h" />
     <ClInclude Include="src\logic\VideoExporter.h" />
     <ClInclude Include="src\MainWindow.h" />
     <ClInclude Include="src\rendering\DrawCommand.h" />

@@ -59,7 +59,7 @@ void Properties::onLayout()
 				ImGui::DragFloat("Start Time", &selectedObject->startTime, 0.1f);
 				objTimeRangeChanged = objTimeRangeChanged || ImGui::IsItemEdited();
 
-				if (ImGui::IsItemActivated())
+				/*if (ImGui::IsItemActivated())
 				{
 					oldObjectStartTime = selectedObject->startTime;
 				}
@@ -71,17 +71,17 @@ void Properties::onLayout()
 					j["old"] = oldObjectStartTime;
 					j["new"] = selectedObject->startTime;
 
-					UndoAction action = UndoAction();
+					UndoCommand action = UndoCommand();
 					action.type = UndoActionType_StartTimeEdit;
 					action.data = j;
 
 					UndoRedoManager::inst->push(action);
-				}
+				}*/
 
 				ImGui::DragFloat("Kill Time", &selectedObject->killTime, 0.1f);
 				objTimeRangeChanged = objTimeRangeChanged || ImGui::IsItemEdited();
 
-				if (ImGui::IsItemActivated())
+				/*if (ImGui::IsItemActivated())
 				{
 					oldObjectKillTime = selectedObject->killTime;
 				}
@@ -93,12 +93,12 @@ void Properties::onLayout()
 					j["old"] = oldObjectKillTime;
 					j["new"] = selectedObject->killTime;
 
-					UndoAction action = UndoAction();
+					UndoCommand action = UndoCommand();
 					action.type = UndoActionType_KillTimeEdit;
 					action.data = j;
 
 					UndoRedoManager::inst->push(action);
-				}
+				}*/
 
 				if (objTimeRangeChanged)
 				{

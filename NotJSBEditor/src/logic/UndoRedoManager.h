@@ -1,9 +1,8 @@
 #pragma once
 
-#include <string>
 #include <vector>
 
-#include "UndoAction.h"
+#include "UndoCommand.h"
 
 class UndoRedoManager
 {
@@ -12,16 +11,14 @@ public:
 
 	UndoRedoManager();
 
-	void push(const UndoAction& action);
+	void push(UndoCommand* action);
 	void reset();
 	void undo();
 	void redo();
 private:
-	std::vector<UndoAction> undoStack;
-	std::vector<UndoAction> redoStack;
+	std::vector<UndoCommand*> undoStack;
+	std::vector<UndoCommand*> redoStack;
 
-	bool popUndo(UndoAction* action);
-	bool popRedo(UndoAction* action);
-
-	std::string undoActionTypeToString(UndoActionType type) const;
+	bool popUndo(UndoCommand** action);
+	bool popRedo(UndoCommand** action);
 };

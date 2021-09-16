@@ -13,6 +13,9 @@
 #include "UndoRedoManager.h"
 #include "utils.h"
 #include "imgui/imgui_editorlib.h"
+#include "undo_commands/AddObjectCmd.h"
+#include "undo_commands/RemoveObjectCmd.h"
+#include "undo_commands/MultiUndoCmd.h"
 
 Timeline* Timeline::inst;
 
@@ -364,16 +367,18 @@ void Timeline::onLayout()
 			{
 				if (!levelManager->selectedObjects.empty())
 				{
+					std::vector<RemoveObjectCmd*> cmds;
 					for (LevelObject* obj : levelManager->selectedObjects) 
 					{
-						UndoAction action = UndoAction();
-						action.type = UndoActionType_RemoveObject;
-						action.data = obj->toJson();
+						cmds.push_back(new RemoveObjectCmd(obj));
+					}
+					UndoRedoManager::inst->push(new MultiUndoCmd(cmds));
 
-						UndoRedoManager::inst->push(action);
-
+					for (LevelObject* obj : levelManager->selectedObjects)
+					{
 						levelManager->removeObject(obj);
 					}
+
 					levelManager->recalculateActionIndex(levelManager->time);
 
 					levelManager->selectedObjects.clear();
@@ -525,11 +530,7 @@ void Timeline::onLayout()
 					levelManager->insertObject(newObject);
 					levelManager->recalculateActionIndex(levelManager->time);
 
-					UndoAction action = UndoAction();
-					action.type = UndoActionType_AddObject;
-					action.data = newObject->toJson();
-
-					UndoRedoManager::inst->push(action);
+					UndoRedoManager::inst->push(new AddObjectCmd(newObject));
 				}
 
 				ImGui::EndPopup();

@@ -309,6 +309,12 @@
     <ClCompile Include="src\logic\UndoRedoManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\logic\undo_commands\AddObjectCmd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\undo_commands\RemoveObjectCmd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
@@ -2114,10 +2120,16 @@
     <ClInclude Include="src\logic\UndoRedoManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\UndoAction.h">
+    <ClInclude Include="src\logic\UndoCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\UndoActionType.h">
+    <ClInclude Include="src\logic\undo_commands\AddObjectCmd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\undo_commands\RemoveObjectCmd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\undo_commands\MultiUndoCmd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

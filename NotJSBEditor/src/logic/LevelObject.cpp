@@ -1,8 +1,10 @@
 #include "LevelObject.h"
 
-#include "LevelManager.h"
-
 #include <utils.h>
+
+#include "LevelManager.h"
+#include "../rendering/MeshRenderer.h"
+#include "ShapeManager.h"
 
 LevelObject::LevelObject()
 {
@@ -66,6 +68,51 @@ LevelObject::~LevelObject()
 	}
 
 	delete node;
+}
+
+LevelObjectProperties LevelObject::dumpProperties() const
+{
+	LevelObjectProperties properties = LevelObjectProperties();
+	properties.startTime = startTime;
+	properties.killTime = killTime;
+	properties.shapeIndex = shapeIndex;
+	properties.editorBinIndex = editorBinIndex;
+	properties.colorSlotIndex = colorSlotIndex;
+	properties.depth = depth;
+	properties.layer = layer;
+
+	return properties;
+}
+
+void LevelObject::applyProperties(const LevelObjectProperties& properties)
+{
+	LevelManager* levelManager = LevelManager::inst;
+	const Level* level = levelManager->level;
+
+	// This check is not necessary but it's good to have it there because re-insertion is expensive
+	if (properties.startTime != startTime || properties.killTime != killTime)
+	{
+		startTime = properties.startTime;
+		killTime = properties.killTime;
+
+		levelManager->recalculateObjectAction(this);
+		levelManager->recalculateActionIndex(levelManager->time);
+	}
+
+	shapeIndex = properties.shapeIndex;
+	editorBinIndex = properties.editorBinIndex;
+	colorSlotIndex = properties.colorSlotIndex;
+	depth = properties.depth;
+	layer = properties.layer;
+
+	if (node)
+	{
+		MeshRenderer* renderer = (MeshRenderer*)node->renderer;
+		renderer->mesh = ShapeManager::inst->shapes[shapeIndex].mesh;
+		renderer->material = level->colorSlots[colorSlotIndex]->material;
+
+		levelManager->updateObject(this);
+	}
 }
 
 void LevelObject::setParent(LevelObject* newParent)

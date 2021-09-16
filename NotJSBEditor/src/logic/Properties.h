@@ -19,8 +19,7 @@ private:
 	float startTime;
 	float endTime;
 
-	float oldObjectStartTime;
-	float oldObjectKillTime;
+	LevelObjectProperties oldObjectState;
 
 	std::optional<Keyframe> selectedKeyframe;
 	AnimationChannel* selectedChannel;

@@ -347,6 +347,9 @@ void LevelManager::removeObject(LevelObject* levelObject)
 	// Remove from alive objects
 	aliveObjects.erase(levelObject);
 
+	// Also remove from selected objects
+	selectedObjects.erase(levelObject);
+
 	// We cache the id as it will not be available after deleting the object
 	const uint64_t id = levelObject->id;
 

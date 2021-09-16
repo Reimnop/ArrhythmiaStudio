@@ -14,6 +14,7 @@
 #include "UndoRedoManager.h"
 #include "animation/Easing.h"
 #include "imgui/imgui_editorlib.h"
+#include "undo_commands/EditObjectCmd.h"
 
 Properties* Properties::inst;
 
@@ -56,49 +57,17 @@ void Properties::onLayout()
 				ImGui::InputText("Object Name", &selectedObject->name);
 
 				bool objTimeRangeChanged = false;
+				bool shouldRecordObjectState = false;
+				bool shouldPushUndo = false;
 				ImGui::DragFloat("Start Time", &selectedObject->startTime, 0.1f);
 				objTimeRangeChanged = objTimeRangeChanged || ImGui::IsItemEdited();
-
-				/*if (ImGui::IsItemActivated())
-				{
-					oldObjectStartTime = selectedObject->startTime;
-				}
-
-				if (ImGui::IsItemDeactivatedAfterEdit())
-				{
-					nlohmann::json j;
-					j["id"] = selectedObject->id;
-					j["old"] = oldObjectStartTime;
-					j["new"] = selectedObject->startTime;
-
-					UndoCommand action = UndoCommand();
-					action.type = UndoActionType_StartTimeEdit;
-					action.data = j;
-
-					UndoRedoManager::inst->push(action);
-				}*/
+				shouldRecordObjectState = shouldRecordObjectState || ImGui::IsItemActivated();
+				shouldPushUndo = shouldPushUndo || ImGui::IsItemDeactivatedAfterEdit();
 
 				ImGui::DragFloat("Kill Time", &selectedObject->killTime, 0.1f);
 				objTimeRangeChanged = objTimeRangeChanged || ImGui::IsItemEdited();
-
-				/*if (ImGui::IsItemActivated())
-				{
-					oldObjectKillTime = selectedObject->killTime;
-				}
-
-				if (ImGui::IsItemDeactivatedAfterEdit())
-				{
-					nlohmann::json j;
-					j["id"] = selectedObject->id;
-					j["old"] = oldObjectKillTime;
-					j["new"] = selectedObject->killTime;
-
-					UndoCommand action = UndoCommand();
-					action.type = UndoActionType_KillTimeEdit;
-					action.data = j;
-
-					UndoRedoManager::inst->push(action);
-				}*/
+				shouldRecordObjectState = shouldRecordObjectState || ImGui::IsItemActivated();
+				shouldPushUndo = shouldPushUndo || ImGui::IsItemDeactivatedAfterEdit();
 
 				if (objTimeRangeChanged)
 				{
@@ -113,9 +82,13 @@ void Properties::onLayout()
 					{
 						if (ImGui::Selectable(shapes[i].name.c_str(), i == selectedObject->shapeIndex))
 						{
+							LevelObjectProperties oldState = selectedObject->dumpProperties();
+
 							selectedObject->shapeIndex = i;
 							MeshRenderer* mr = (MeshRenderer*)selectedObject->node->renderer;
 							mr->mesh = shapes[i].mesh;
+
+							UndoRedoManager::inst->push(new EditObjectCmd(selectedObject, oldState, selectedObject->dumpProperties()));
 						}
 					}
 
@@ -133,6 +106,9 @@ void Properties::onLayout()
 				ImGui::SliderInt("Color slot", &colorSlot, 1, 30);
 				selectedObject->colorSlotIndex = colorSlot - 1;
 
+				shouldRecordObjectState = shouldRecordObjectState || ImGui::IsItemActivated();
+				shouldPushUndo = shouldPushUndo || ImGui::IsItemDeactivatedAfterEdit();
+
 				if (ImGui::IsItemEdited())
 				{
 					MeshRenderer* mr = (MeshRenderer*)selectedObject->node->renderer;
@@ -143,7 +119,23 @@ void Properties::onLayout()
 				ImGui::SliderInt("Editor bin", &editorBin, 1, EDITOR_TIMELINE_BIN_COUNT);
 				selectedObject->editorBinIndex = editorBin - 1;
 
+				shouldRecordObjectState = shouldRecordObjectState || ImGui::IsItemActivated();
+				shouldPushUndo = shouldPushUndo || ImGui::IsItemDeactivatedAfterEdit();
+
 				ImGui::SliderInt("Layer", &selectedObject->layer, 0, EDITOR_MAX_OBJECT_LAYER);
+
+				shouldRecordObjectState = shouldRecordObjectState || ImGui::IsItemActivated();
+				shouldPushUndo = shouldPushUndo || ImGui::IsItemDeactivatedAfterEdit();
+
+				if (shouldRecordObjectState)
+				{
+					oldObjectState = selectedObject->dumpProperties();
+				}
+
+				if (shouldPushUndo)
+				{
+					UndoRedoManager::inst->push(new EditObjectCmd(selectedObject, oldObjectState, selectedObject->dumpProperties()));
+				}
 
 				Level* level = levelManager->level;
 

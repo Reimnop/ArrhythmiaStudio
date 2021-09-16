@@ -7,6 +7,7 @@
 #include "AnimationChannel.h"
 #include "ObjectAction.h"
 #include "SceneNode.h"
+#include "LevelObjectProperties.h"
 
 class LevelObject
 {
@@ -37,6 +38,9 @@ public:
 	LevelObject();
 	LevelObject(nlohmann::json j);
 	~LevelObject();
+
+	LevelObjectProperties dumpProperties() const;
+	void applyProperties(const LevelObjectProperties& properties);
 
 	void setParent(LevelObject* newParent);
 

@@ -315,6 +315,9 @@
     <ClCompile Include="src\logic\undo_commands\RemoveObjectCmd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\logic\undo_commands\EditObjectCmd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
@@ -2130,6 +2133,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\undo_commands\MultiUndoCmd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\LevelObjectProperties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\undo_commands\EditObjectCmd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

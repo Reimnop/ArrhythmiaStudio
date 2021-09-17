@@ -16,6 +16,7 @@
 #include "imgui/imgui_editorlib.h"
 #include "undo_commands/EditObjectCmd.h"
 #include "undo_commands/ChangeParentCmd.h"
+#include "undo_commands/ObjectKeyframeEditCmd.h"
 
 Properties* Properties::inst;
 
@@ -447,7 +448,8 @@ void Properties::onLayout()
 				ImGui::Separator();
 				if (selectedKeyframe.has_value() && selectedChannel != nullptr)
 				{
-					Keyframe kf = selectedKeyframe.value();
+					Keyframe& kf = selectedKeyframe.value();
+					Keyframe oldKf = kf;
 
 					if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 					{
@@ -499,13 +501,12 @@ void Properties::onLayout()
 
 						if (kfChanged)
 						{
-							std::vector<Keyframe>::iterator it = std::find(selectedChannel->sequence->keyframes.begin(),
-								selectedChannel->sequence->keyframes.end(),
-								selectedKeyframe.value());
+							Sequence* sequence = selectedChannel->sequence;
 
-							selectedChannel->sequence->keyframes.erase(it);
-							selectedChannel->sequence->insertKeyframe(kf);
-							selectedKeyframe = kf;
+							std::vector<Keyframe>::iterator it = std::find(sequence->keyframes.begin(), sequence->keyframes.end(), oldKf);
+
+							sequence->keyframes.erase(it);
+							sequence->insertKeyframe(kf);
 
 							levelManager->updateObject(selectedObject);
 						}

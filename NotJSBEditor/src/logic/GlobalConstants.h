@@ -18,7 +18,7 @@ constexpr float EDITOR_STRIP_TEXT_LEFT_MARGIN = 4.0f;
 constexpr float EDITOR_PROP_LABEL_TEXT_LEFT_MARGIN = 8.0f;
 constexpr float EDITOR_WAVEFORM_FREQ = 50.0f;
 constexpr float EDITOR_THEME_COLOR_SLOT_HEIGHT = 20.0f;
-constexpr int EDITOR_MAX_OBJECT_LAYER = 10;
+constexpr int EDITOR_MAX_OBJECT_LAYER = 20;
 
 constexpr uint32_t EDITOR_PLAY_BUTTON_COL = 0xFFBABABA;
 constexpr uint32_t EDITOR_BIN_PRIMARY_COL = 0xFF1F1F1F;

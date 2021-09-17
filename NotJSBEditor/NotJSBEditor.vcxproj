@@ -260,6 +260,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="src\logic\undo_commands\AddObjectCmd.cpp" />
     <ClCompile Include="src\logic\undo_commands\ChangeParentCmd.cpp" />
     <ClCompile Include="src\logic\undo_commands\EditObjectCmd.cpp" />
+    <ClCompile Include="src\logic\undo_commands\ObjectKeyframeEditCmd.cpp" />
     <ClCompile Include="src\logic\undo_commands\RemoveObjectCmd.cpp" />
     <ClCompile Include="src\logic\VideoExporter.cpp" />
     <ClCompile Include="src\Main.cpp" />
@@ -862,6 +863,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\logic\undo_commands\ChangeParentCmd.h" />
     <ClInclude Include="src\logic\undo_commands\EditObjectCmd.h" />
     <ClInclude Include="src\logic\undo_commands\MultiUndoCmd.h" />
+    <ClInclude Include="src\logic\undo_commands\ObjectKeyframeEditCmd.h" />
     <ClInclude Include="src\logic\undo_commands\RemoveObjectCmd.h" />
     <ClInclude Include="src\logic\VideoExporter.h" />
     <ClInclude Include="src\MainWindow.h" />

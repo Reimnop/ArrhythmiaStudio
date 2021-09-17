@@ -22,6 +22,7 @@ private:
 	LevelObjectProperties oldObjectState;
 
 	std::optional<Keyframe> selectedKeyframe;
+	Keyframe keyframeOldState;
 	AnimationChannel* selectedChannel;
 
 	void onLayout();

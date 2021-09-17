@@ -217,7 +217,13 @@ void Renderer::renderViewport()
 
 			if (commands[i + 1].material != material)
 			{
-				glUseProgram(material->getShader()->getHandle());
+				const Shader* shader = material->getShader();
+				if (lastShader != shader->getHandle())
+				{
+					glUseProgram(shader->getHandle());
+					lastShader = shader->getHandle();
+				}
+
 				glBindBufferBase(GL_UNIFORM_BUFFER, 0, material->getUniformBuffer());
 
 				glUniformMatrix4fv(0, 1, false, &viewProjection[0][0]);
@@ -243,7 +249,13 @@ void Renderer::renderViewport()
 
 		drawCount++;
 
-		glUseProgram(material->getShader()->getHandle());
+		const Shader* shader = material->getShader();
+		if (lastShader != shader->getHandle())
+		{
+			glUseProgram(shader->getHandle());
+			lastShader = shader->getHandle();
+		}
+
 		glBindBufferBase(GL_UNIFORM_BUFFER, 0, material->getUniformBuffer());
 
 		glUniformMatrix4fv(0, 1, false, &viewProjection[0][0]);

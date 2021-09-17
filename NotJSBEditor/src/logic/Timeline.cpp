@@ -14,6 +14,7 @@
 #include "utils.h"
 #include "imgui/imgui_editorlib.h"
 #include "undo_commands/AddObjectCmd.h"
+#include "undo_commands/EditObjectCmd.h"
 #include "undo_commands/RemoveObjectCmd.h"
 #include "undo_commands/MultiUndoCmd.h"
 
@@ -202,7 +203,7 @@ void Timeline::onLayout()
 				}
 			}
 
-			bool stripDragging = false;
+			bool stripsDragging = false;
 
 			Level* level = levelManager->level;
 
@@ -241,7 +242,7 @@ void Timeline::onLayout()
 
 					if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 					{
-						stripDragging = true;
+						stripsDragging = true;
 					}
 				}
 
@@ -250,8 +251,33 @@ void Timeline::onLayout()
 				ImGui::PopID();
 			}
 
+			// Prepare undo data if we just started dragging
+			if (!stripsDraggingLastFrame && stripsDragging)
+			{
+				for (LevelObject* obj : levelManager->selectedObjects)
+				{
+					undoDataOldState.push_back(obj->dumpProperties());
+				}
+			}
+
+			// Push undo if we finished dragging
+			if (stripsDraggingLastFrame && !stripsDragging)
+			{
+				std::vector<LevelObjectProperties>::iterator it = undoDataOldState.begin();
+				std::vector<EditObjectCmd*> cmds;
+				for (LevelObject* obj : levelManager->selectedObjects)
+				{
+					cmds.push_back(new EditObjectCmd(obj, *it, obj->dumpProperties()));
+					++it;
+				}
+
+				UndoRedoManager::inst->push(new MultiUndoCmd(cmds));
+
+				undoDataOldState.clear();
+			}
+
 			// Dragging strips
-			if (stripDragging) 
+			if (stripsDragging) 
 			{
 				float minSt = INFINITY;
 				for (LevelObject* obj : levelManager->selectedObjects)
@@ -273,6 +299,8 @@ void Timeline::onLayout()
 
 				levelManager->recalculateActionIndex(levelManager->time);
 			}
+
+			stripsDraggingLastFrame = stripsDragging;
 
 			// Editor strips visual pass
 			for (auto it = level->levelObjects.begin(); it != level->levelObjects.end(); it++)

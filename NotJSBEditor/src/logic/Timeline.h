@@ -6,6 +6,7 @@
 #include "../rendering/ComputeShader.h"
 #include "../rendering/Texture2D.h"
 #include "AudioClip.h"
+#include "LevelObjectProperties.h"
 
 class LevelManager;
 
@@ -23,6 +24,9 @@ private:
 	float endTime;
 
 	int layer = 0;
+
+	std::vector<LevelObjectProperties> undoDataOldState;
+	bool stripsDraggingLastFrame = false;
 
 	glm::ivec2 oldWaveformSize = glm::ivec2(0);
 

@@ -112,50 +112,57 @@ void Theme::onLayout()
 						EDITOR_KEYFRAME_OFFSET + timelineMin.x + (kf.time - startTime) / (endTime - startTime) * availX,
 						timelineMin.y + EDITOR_BIN_HEIGHT * 0.5f);
 
-					ImGui::PushID(i + 1);
+					ImGuiID id = kf.id;
+					ImGui::PushID(id);
 
 					ImVec2 btnMin = ImVec2(kfPos.x - EDITOR_KEYFRAME_SIZE * 0.5f, timelineMin.y);
+					ImVec2 btnMax = ImVec2(btnMin.x + EDITOR_KEYFRAME_SIZE, btnMin.y + EDITOR_BIN_HEIGHT);
 
-					ImGui::SetCursorScreenPos(btnMin);
-					if (ImGui::InvisibleButton("##Keyframe", ImVec2(EDITOR_KEYFRAME_SIZE, EDITOR_BIN_HEIGHT)))
+					bool kfHovered = ImGui::IntersectAABB(btnMin, btnMax, io.MousePos) && ImGui::IsWindowHovered();
+
+					if (kfHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 					{
+						ImGui::SetActiveID(id, ImGui::GetCurrentWindow());
+
 						selectedKeyframe = kf;
 					}
 
-					bool kfActive;
-					if (ImGui::IsItemHovered())
+					bool kfActive = kfHovered;
+
+					if (ImGui::GetActiveID() == id)
 					{
-						kfActive = true;
+						if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
+						{
+							ImGui::SetActiveID(id, ImGui::GetCurrentWindow());
+						}
+
+						if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+						{
+							// Dragging
+							ImVec2 delta = io.MouseDelta;
+							float timeDelta = (delta.x / availX) * (endTime - startTime);
+
+							kf.time += timeDelta;
+							kf.time = std::max(kf.time, 0.0f);
+
+							std::vector<ColorKeyframe>::iterator it = std::remove_if(
+								slot->channel->keyframes.begin(),
+								slot->channel->keyframes.end(),
+								[kf](const ColorKeyframe& a)
+								{
+									return a.id == kf.id;
+								});
+
+							slot->channel->keyframes.erase(it);
+							slot->channel->insertKeyframe(kf);
+
+							selectedKeyframe = kf;
+
+							levelManager->updateColorSlot(slot);
+						}
 					}
-					else
-					{
-						kfActive = false;
-					}
 
-					if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
-					{
-						selectedKeyframe = kf;
-
-						// Dragging
-						ImVec2 delta = io.MouseDelta;
-						float timeDelta = (delta.x / availX) * (endTime - startTime);
-
-						kf.time += timeDelta;
-						kf.time = std::max(kf.time, 0.0f);
-
-						std::vector<ColorKeyframe>::iterator it = std::find(
-							slot->channel->keyframes.begin(),
-							slot->channel->keyframes.end(),
-							selectedKeyframe.value());
-						slot->channel->keyframes.erase(it);
-
-						slot->channel->insertKeyframe(kf);
-						selectedKeyframe = kf;
-
-						levelManager->updateColorSlot(slot);
-					}
-
-					if (selectedKeyframe.has_value() && selectedKeyframe.value() == kf)
+					if (selectedKeyframe.has_value() && selectedKeyframe.value().id == kf.id)
 					{
 						kfActive = true;
 					}
@@ -170,7 +177,7 @@ void Theme::onLayout()
 						kfActive ? EDITOR_KEYFRAME_ACTIVE_COL : EDITOR_KEYFRAME_INACTIVE_COL);
 				}
 
-				float btnMinX = EDITOR_KEYFRAME_OFFSET + cursorPos.x;
+				const float btnMinX = EDITOR_KEYFRAME_OFFSET + cursorPos.x;
 
 				ImGui::SetCursorScreenPos(ImVec2(btnMinX, timelineMin.y));
 				ImGui::InvisibleButton("##KeyframeBin", ImVec2(availX, EDITOR_BIN_HEIGHT));
@@ -267,10 +274,13 @@ void Theme::onLayout()
 
 				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 				{
-					std::vector<ColorKeyframe>::iterator it = std::find(
-						currentSlot->channel->keyframes.begin(),
-						currentSlot->channel->keyframes.end(),
-						selectedKeyframe.value());
+					std::vector<ColorKeyframe>::iterator it = std::remove_if(
+						currentSlot->channel->keyframes.begin(), currentSlot->channel->keyframes.end(),
+						[kf](const ColorKeyframe& a)
+						{
+							return a.id == kf.id;
+						});
+
 					currentSlot->channel->keyframes.erase(it);
 					levelManager->updateColorSlot(currentSlot);
 
@@ -302,10 +312,13 @@ void Theme::onLayout()
 
 					if (kfChanged)
 					{
-						std::vector<ColorKeyframe>::iterator it = std::find(
-							currentSlot->channel->keyframes.begin(),
-							currentSlot->channel->keyframes.end(),
-							selectedKeyframe.value());
+						std::vector<ColorKeyframe>::iterator it = std::remove_if(
+							currentSlot->channel->keyframes.begin(), currentSlot->channel->keyframes.end(),
+							[kf](const ColorKeyframe& a)
+							{
+								return a.id == kf.id;
+							});
+
 						currentSlot->channel->keyframes.erase(it);
 						currentSlot->channel->insertKeyframe(kf);
 						selectedKeyframe = kf;

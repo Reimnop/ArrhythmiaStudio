@@ -233,8 +233,10 @@ void Properties::onLayout()
 						drawList->AddText(labelMin, textCol, channelName.c_str());
 					}
 
+					bool timelineHovered = ImGui::IntersectAABB(timelineMin, ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y), io.MousePos) && ImGui::IsWindowHovered();
+
 					// Timeline move and zoom
-					if (ImGui::IsWindowFocused() && ImGui::IntersectAABB(timelineMin, ImVec2(timelineMin.x + clipSize.x, timelineMin.y + clipSize.y), io.MousePos))
+					if (ImGui::IsWindowFocused() && timelineHovered)
 					{
 						float length = selectedObject->killTime - selectedObject->startTime;
 
@@ -272,8 +274,14 @@ void Properties::onLayout()
 						endTime = currentPos + newVisibleLength * 0.5f;
 					}
 
+					// Deselect
+					if (timelineHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+					{
+						selectedChannel = nullptr;
+						selectedKeyframe.reset();
+					}
+
 					// Draw the keyframes
-					int id = 0;
 					for (int i = 0; i < selectedObject->animationChannels.size(); i++)
 					{
 						AnimationChannel* channel = selectedObject->animationChannels[i];
@@ -290,54 +298,56 @@ void Properties::onLayout()
 								EDITOR_KEYFRAME_OFFSET + binMin.x + (kf.time - startTime) / (endTime - startTime) * availX,
 								binMin.y + EDITOR_BIN_HEIGHT * 0.5f);
 
-							id++;
-							ImGui::PushID(id);
+							ImGuiID id = kf.id;
+							ImGui::PushOverrideID(id);
 
 							ImVec2 btnMin = ImVec2(kfPos.x - EDITOR_KEYFRAME_SIZE * 0.5f, binMin.y);
+							ImVec2 btnMax = ImVec2(btnMin.x + EDITOR_KEYFRAME_SIZE, btnMin.y + EDITOR_BIN_HEIGHT);
 
-							ImGui::SetCursorScreenPos(btnMin);
-							if (ImGui::InvisibleButton("##Keyframe", ImVec2(EDITOR_KEYFRAME_SIZE, EDITOR_BIN_HEIGHT)))
+							bool kfHovered = ImGui::IntersectAABB(btnMin, btnMax, io.MousePos) && ImGui::IsWindowHovered();
+
+							if (kfHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 							{
+								ImGui::SetActiveID(id, ImGui::GetCurrentWindow());
+
 								selectedKeyframe = kf;
 								selectedChannel = channel;
 							}
 
-							bool kfActive;
-							if (ImGui::IsItemHovered())
+							bool kfActive = kfHovered;
+
+							if (ImGui::GetActiveID() == id)
 							{
-								kfActive = true;
-							}
-							else
-							{
-								kfActive = false;
-							}
+								if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) 
+								{
+									ImGui::SetActiveID(id, ImGui::GetCurrentWindow());
+								}
 
-							if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
-							{
-								selectedKeyframe = kf;
-								selectedChannel = channel;
+								if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+								{
+									// Dragging
+									ImVec2 delta = io.MouseDelta;
+									float timeDelta = (delta.x / availX) * (endTime - startTime);
 
-								// Dragging
-								ImVec2 delta = io.MouseDelta;
-								float timeDelta = (delta.x / availX) * (endTime - startTime);
+									kf.time += timeDelta;
+									kf.time = std::clamp(kf.time, 0.0f, selectedObject->killTime - selectedObject->startTime);
 
-								kf.time += timeDelta;
-								kf.time = std::clamp(kf.time, 0.0f, selectedObject->killTime - selectedObject->startTime);
+									std::vector<Keyframe>::iterator it = std::remove_if(
+										sequence->keyframes.begin(), sequence->keyframes.end(),
+										[kf](const Keyframe& a)
+										{
+											return a.id == kf.id;
+										});
+									sequence->keyframes.erase(it);
 
-								std::vector<Keyframe>::iterator it = std::find(
-									sequence->keyframes.begin(),
-									sequence->keyframes.end(),
-									selectedKeyframe.value());
-								sequence->keyframes.erase(it);
+									sequence->insertKeyframe(kf);
+									selectedKeyframe = kf;
 
-								sequence->insertKeyframe(kf);
-								selectedKeyframe = kf;
-
-								levelManager->updateObject(selectedObject);
+									levelManager->updateObject(selectedObject);
+								}
 							}
 
-							if (selectedKeyframe.has_value() && selectedKeyframe.value() == kf && selectedChannel ==
-								channel)
+							if (selectedKeyframe.has_value() && selectedKeyframe.value().id == kf.id && selectedChannel == channel)
 							{
 								kfActive = true;
 							}
@@ -356,10 +366,8 @@ void Properties::onLayout()
 
 						float btnMinX = EDITOR_KEYFRAME_OFFSET + binMin.x;
 
-						ImGui::SetCursorScreenPos(ImVec2(btnMinX, binMin.y));
-						ImGui::InvisibleButton("##KeyframeBin", ImVec2(availX, EDITOR_BIN_HEIGHT));
-
-						if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+						bool binHovered = ImGui::IntersectAABB(ImVec2(btnMinX, binMin.y), ImVec2(btnMinX + availX, binMin.y + EDITOR_BIN_HEIGHT), io.MousePos) && ImGui::IsWindowHovered();
+						if (binHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 						{
 							float kfTime = startTime + ((io.MousePos.x - btnMinX) / availX) * (endTime -
 								startTime);
@@ -449,13 +457,16 @@ void Properties::onLayout()
 				if (selectedKeyframe.has_value() && selectedChannel != nullptr)
 				{
 					Keyframe& kf = selectedKeyframe.value();
-					Keyframe oldKf = kf;
 
 					if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 					{
-						std::vector<Keyframe>::iterator it = std::find(selectedChannel->sequence->keyframes.begin(),
-							selectedChannel->sequence->keyframes.end(),
-							selectedKeyframe.value());
+						std::vector<Keyframe>::iterator it = std::remove_if(
+							selectedChannel->sequence->keyframes.begin(), selectedChannel->sequence->keyframes.end(),
+							[kf](const Keyframe& a)
+							{
+								return a.id == kf.id;
+							});
+
 						selectedChannel->sequence->keyframes.erase(it);
 						selectedChannel->update(levelManager->time);
 
@@ -503,8 +514,14 @@ void Properties::onLayout()
 						{
 							Sequence* sequence = selectedChannel->sequence;
 
-							std::vector<Keyframe>::iterator it = std::find(sequence->keyframes.begin(), sequence->keyframes.end(), oldKf);
+							std::vector<Keyframe>::iterator it = std::remove_if(
+								sequence->keyframes.begin(), sequence->keyframes.end(), 
+								[kf](const Keyframe& a)
+								{
+									return a.id == kf.id;
+								});
 
+							// Re-insert for sorted list
 							sequence->keyframes.erase(it);
 							sequence->insertKeyframe(kf);
 

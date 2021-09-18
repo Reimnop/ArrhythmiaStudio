@@ -211,7 +211,7 @@ typedef int ImGuiWindowFlags;       // -> enum ImGuiWindowFlags_     // Flags: f
 #ifndef ImTextureID                 // ImTextureID [configurable type: override in imconfig.h with '#define ImTextureID xxx']
 typedef void* ImTextureID;          // User data for rendering backend to identify a texture. This is whatever to you want it to be! read the FAQ about ImTextureID for details.
 #endif
-typedef unsigned int ImGuiID;       // A unique ID used by widgets, typically hashed from a stack of string.
+typedef unsigned long long ImGuiID;       // A unique ID used by widgets, typically hashed from a stack of string.
 typedef int (*ImGuiInputTextCallback)(ImGuiInputTextCallbackData* data);    // Callback function for ImGui::InputText()
 typedef void (*ImGuiSizeCallback)(ImGuiSizeCallbackData* data);             // Callback function for ImGui::SetNextWindowSizeConstraints()
 typedef void* (*ImGuiMemAllocFunc)(size_t sz, void* user_data);             // Function signature for ImGui::SetAllocatorFunctions()

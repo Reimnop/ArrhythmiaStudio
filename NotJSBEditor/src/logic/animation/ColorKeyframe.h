@@ -1,18 +1,21 @@
 #pragma once
 
 #include <nlohmann/json.hpp>
+#include <utils.h>
 
 #include "Color.h"
 #include "EaseType.h"
 
 struct ColorKeyframe
 {
+	uint64_t id;
 	float time;
 	Color color;
 	EaseType easing;
 
 	ColorKeyframe()
 	{
+		id = Utils::randomId();
 		time = 0.0f;
 		color = Color(1.0f, 1.0f, 1.0f);
 		easing = EaseType_Linear;
@@ -20,6 +23,7 @@ struct ColorKeyframe
 
 	ColorKeyframe(nlohmann::json j)
 	{
+		id = Utils::randomId();
 		time = j["time"].get<float>();
 		color.r = j["color"][0].get<float>();
 		color.g = j["color"][1].get<float>();

@@ -8818,7 +8818,7 @@ void ImGui::OpenPopupEx(ImGuiID id, ImGuiPopupFlags popup_flags)
     const int current_stack_size = g.BeginPopupStack.Size;
 
     if (popup_flags & ImGuiPopupFlags_NoOpenOverExistingPopup)
-        if (IsPopupOpen(0u, ImGuiPopupFlags_AnyPopupId))
+        if (IsPopupOpen((ImGuiID)0, ImGuiPopupFlags_AnyPopupId))
             return;
 
     ImGuiPopupData popup_ref; // Tagged as new ref as Window will be set back to NULL if we write this into OpenPopupStack.

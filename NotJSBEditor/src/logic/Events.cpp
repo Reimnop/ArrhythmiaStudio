@@ -129,50 +129,55 @@ void Events::onLayout()
 						EDITOR_KEYFRAME_OFFSET + timelineMin.x + (kf.time - startTime) / (endTime - startTime) * availX,
 						timelineMin.y + EDITOR_BIN_HEIGHT * 0.5f);
 
-					ImGui::PushID(i + 1);
+					ImGuiID id = kf.id;
+					ImGui::PushOverrideID(id);
 
 					ImVec2 btnMin = ImVec2(kfPos.x - EDITOR_KEYFRAME_SIZE * 0.5f, timelineMin.y);
+					ImVec2 btnMax = ImVec2(btnMin.x + EDITOR_KEYFRAME_SIZE, btnMin.y + EDITOR_BIN_HEIGHT);
 
-					ImGui::SetCursorScreenPos(btnMin);
-					if (ImGui::InvisibleButton("##Keyframe", ImVec2(EDITOR_KEYFRAME_SIZE, EDITOR_BIN_HEIGHT)))
+					bool kfHovered = ImGui::IntersectAABB(btnMin, btnMax, io.MousePos) && ImGui::IsWindowHovered();
+
+					if (kfHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 					{
+						ImGui::SetActiveID(id, ImGui::GetCurrentWindow());
+
 						selectedKeyframe = kf;
 					}
 
-					bool kfActive;
-					if (ImGui::IsItemHovered())
+					bool kfActive = kfHovered;
+
+					if (ImGui::GetActiveID() == id)
 					{
-						kfActive = true;
+						if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
+						{
+							ImGui::SetActiveID(id, ImGui::GetCurrentWindow());
+						}
+
+						if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+						{
+							// Dragging
+							ImVec2 delta = io.MouseDelta;
+							float timeDelta = (delta.x / availX) * (endTime - startTime);
+
+							kf.time += timeDelta;
+							kf.time = std::max(kf.time, 0.0f);
+
+							std::vector<Keyframe>::iterator it = std::remove_if(
+								selectedEvent->sequence->keyframes.begin(), selectedEvent->sequence->keyframes.end(),
+								[kf](const Keyframe& a)
+								{
+									return a.id == kf.id;
+								});
+
+							selectedEvent->sequence->keyframes.erase(it);
+							selectedEvent->sequence->insertKeyframe(kf);
+
+							selectedKeyframe = kf;
+							levelManager->updateLevelEvent(selectedEvent);
+						}
 					}
-					else
-					{
-						kfActive = false;
-					}
 
-					if (ImGui::IsItemActive() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
-					{
-						selectedKeyframe = kf;
-
-						// Dragging
-						ImVec2 delta = io.MouseDelta;
-						float timeDelta = (delta.x / availX) * (endTime - startTime);
-
-						kf.time += timeDelta;
-						kf.time = std::max(kf.time, 0.0f);
-
-						std::vector<Keyframe>::iterator it = std::find(
-							selectedEvent->sequence->keyframes.begin(),
-							selectedEvent->sequence->keyframes.end(),
-							selectedKeyframe.value());
-						selectedEvent->sequence->keyframes.erase(it);
-
-						selectedEvent->sequence->insertKeyframe(kf);
-						selectedKeyframe = kf;
-
-						levelManager->updateLevelEvent(selectedEvent);
-					}
-
-					if (selectedKeyframe.has_value() && selectedKeyframe.value() == kf)
+					if (selectedKeyframe.has_value() && selectedKeyframe.value().id == kf.id)
 					{
 						kfActive = true;
 					}
@@ -282,10 +287,13 @@ void Events::onLayout()
 
 				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 				{
-					std::vector<Keyframe>::iterator it = std::find(
-						selectedEvent->sequence->keyframes.begin(),
-						selectedEvent->sequence->keyframes.end(),
-						selectedKeyframe.value());
+					std::vector<Keyframe>::iterator it = std::remove_if(
+						selectedEvent->sequence->keyframes.begin(), selectedEvent->sequence->keyframes.end(),
+						[kf](const Keyframe& a)
+						{
+							return a.id == kf.id;
+						});
+
 					selectedEvent->sequence->keyframes.erase(it);
 					levelManager->updateLevelEvent(selectedEvent);
 
@@ -332,12 +340,16 @@ void Events::onLayout()
 					{
 						kf.evaluateValue();
 
-						std::vector<Keyframe>::iterator it = std::find(
-							selectedEvent->sequence->keyframes.begin(),
-							selectedEvent->sequence->keyframes.end(),
-							selectedKeyframe.value());
+						std::vector<Keyframe>::iterator it = std::find_if(
+							selectedEvent->sequence->keyframes.begin(), selectedEvent->sequence->keyframes.end(),
+							[kf](const Keyframe& a)
+							{
+								return a.id == kf.id;
+							});
+
 						selectedEvent->sequence->keyframes.erase(it);
 						selectedEvent->sequence->insertKeyframe(kf);
+
 						selectedKeyframe = kf;
 
 						levelManager->updateLevelEvent(selectedEvent);

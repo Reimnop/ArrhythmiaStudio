@@ -272,7 +272,7 @@ void Theme::onLayout()
 				ColorSlot* currentSlot = levelManager->level->colorSlots[selectedSlotIndex];
 				ColorKeyframe kf = selectedKeyframe.value();
 
-				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
+				if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 				{
 					std::vector<ColorKeyframe>::iterator it = std::remove_if(
 						currentSlot->channel->keyframes.begin(), currentSlot->channel->keyframes.end(),

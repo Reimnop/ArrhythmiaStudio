@@ -1,7 +1,7 @@
 #include "Theme.h"
 
 #include "../rendering/ImGuiController.h"
-#include "animation/ColorChannel.h"
+#include "animation/ColorSequence.h"
 #include "LevelManager.h"
 #include "GlobalConstants.h"
 #include "animation/Easing.h"
@@ -23,7 +23,7 @@ Theme::Theme()
 void Theme::reset()
 {
 	selectedSlotIndex = -1;
-	selectedKeyframe.reset();
+	selectedKeyframeIndex = -1;
 }
 
 void Theme::onLayout()
@@ -41,7 +41,7 @@ void Theme::onLayout()
 				                    levelManager->level->colorSlots[i]->currentColor, selectedSlotIndex == i))
 				{
 					selectedSlotIndex = i;
-					selectedKeyframe.reset();
+					selectedKeyframeIndex = -1;
 				}
 			}
 		}
@@ -104,15 +104,15 @@ void Theme::onLayout()
 				// Draw keyframes
 				ColorSlot* slot = levelManager->level->colorSlots[selectedSlotIndex];
 
-				for (int i = 0; i < slot->channel->keyframes.size(); i++)
+				for (int i = 0; i < slot->keyframes.size(); i++)
 				{
-					ColorKeyframe kf = slot->channel->keyframes[i];
+					ColorKeyframe& kf = slot->keyframes[i];
 
 					ImVec2 kfPos = ImVec2(
 						EDITOR_KEYFRAME_OFFSET + timelineMin.x + (kf.time - startTime) / (endTime - startTime) * availX,
 						timelineMin.y + EDITOR_BIN_HEIGHT * 0.5f);
 
-					ImGuiID id = kf.id;
+					int id = i + 1;
 					ImGui::PushID(id);
 
 					ImVec2 btnMin = ImVec2(kfPos.x - EDITOR_KEYFRAME_SIZE * 0.5f, timelineMin.y);
@@ -124,12 +124,12 @@ void Theme::onLayout()
 					{
 						ImGui::SetActiveID(id, ImGui::GetCurrentWindow());
 
-						selectedKeyframe = kf;
+						selectedKeyframeIndex = i;
 					}
 
 					bool kfActive = kfHovered;
 
-					if (ImGui::GetActiveID() == id)
+					if (ImGui::GetActiveID() == id && ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows))
 					{
 						if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
 						{
@@ -138,31 +138,22 @@ void Theme::onLayout()
 
 						if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 						{
+							slot->sequence->eraseKeyframe(kf);
+
 							// Dragging
 							ImVec2 delta = io.MouseDelta;
 							float timeDelta = (delta.x / availX) * (endTime - startTime);
 
 							kf.time += timeDelta;
 							kf.time = std::max(kf.time, 0.0f);
-
-							std::vector<ColorKeyframe>::iterator it = std::remove_if(
-								slot->channel->keyframes.begin(),
-								slot->channel->keyframes.end(),
-								[kf](const ColorKeyframe& a)
-								{
-									return a.id == kf.id;
-								});
-
-							slot->channel->keyframes.erase(it);
-							slot->channel->insertKeyframe(kf);
-
-							selectedKeyframe = kf;
+							
+							slot->sequence->insertKeyframe(kf);
 
 							levelManager->updateColorSlot(slot);
 						}
 					}
 
-					if (selectedKeyframe.has_value() && selectedKeyframe.value().id == kf.id)
+					if (selectedKeyframeIndex == i)
 					{
 						kfActive = true;
 					}
@@ -193,10 +184,8 @@ void Theme::onLayout()
 						kf.time = kfTime;
 						kf.color = Color(1.0f, 1.0f, 1.0f);
 
-						slot->channel->insertKeyframe(kf);
+						slot->insertKeyframe(kf);
 						slot->update(levelManager->time);
-
-						selectedKeyframe = kf;
 					}
 				}
 
@@ -267,24 +256,18 @@ void Theme::onLayout()
 			}
 
 			ImGui::Separator();
-			if (selectedKeyframe.has_value() && selectedSlotIndex != -1)
+			if (selectedKeyframeIndex != -1 && selectedSlotIndex != -1)
 			{
 				ColorSlot* currentSlot = levelManager->level->colorSlots[selectedSlotIndex];
-				ColorKeyframe kf = selectedKeyframe.value();
+				ColorKeyframe& kf = currentSlot->keyframes[selectedKeyframeIndex];
+				ColorKeyframe kfOldState = kf;
 
 				if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 				{
-					std::vector<ColorKeyframe>::iterator it = std::remove_if(
-						currentSlot->channel->keyframes.begin(), currentSlot->channel->keyframes.end(),
-						[kf](const ColorKeyframe& a)
-						{
-							return a.id == kf.id;
-						});
-
-					currentSlot->channel->keyframes.erase(it);
+					currentSlot->eraseKeyframe(kf);
 					levelManager->updateColorSlot(currentSlot);
 
-					selectedKeyframe.reset();
+					selectedKeyframeIndex = -1;
 				}
 				else
 				{
@@ -312,16 +295,8 @@ void Theme::onLayout()
 
 					if (kfChanged)
 					{
-						std::vector<ColorKeyframe>::iterator it = std::remove_if(
-							currentSlot->channel->keyframes.begin(), currentSlot->channel->keyframes.end(),
-							[kf](const ColorKeyframe& a)
-							{
-								return a.id == kf.id;
-							});
-
-						currentSlot->channel->keyframes.erase(it);
-						currentSlot->channel->insertKeyframe(kf);
-						selectedKeyframe = kf;
+						currentSlot->sequence->eraseKeyframe(kfOldState);
+						currentSlot->sequence->insertKeyframe(kf);
 
 						levelManager->updateColorSlot(currentSlot);
 					}

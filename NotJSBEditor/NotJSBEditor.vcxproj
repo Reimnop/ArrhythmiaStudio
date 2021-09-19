@@ -234,7 +234,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="include\stb\stb_vorbis.c" />
     <ClCompile Include="include\VideoFormatConverter.cpp" />
     <ClCompile Include="src\logic\AnimationChannel.cpp" />
-    <ClCompile Include="src\logic\animation\ColorChannel.cpp" />
+    <ClCompile Include="src\logic\animation\ColorSequence.cpp" />
     <ClCompile Include="src\logic\animation\Easing.h" />
     <ClCompile Include="src\logic\DebugMenu.cpp" />
     <ClCompile Include="src\logic\Events.cpp" />
@@ -826,7 +826,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\logic\AnimationChannelType.h" />
     <ClInclude Include="src\logic\AnimationChannel.h" />
     <ClInclude Include="src\logic\animation\Color.h" />
-    <ClInclude Include="src\logic\animation\ColorChannel.h" />
+    <ClInclude Include="src\logic\animation\ColorSequence.h" />
     <ClInclude Include="src\logic\animation\ColorKeyframe.h" />
     <ClInclude Include="src\logic\animation\EaseType.h" />
     <ClInclude Include="src\logic\animation\Keyframe.h" />

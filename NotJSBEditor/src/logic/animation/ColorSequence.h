@@ -6,17 +6,17 @@
 #include "ColorKeyframe.h"
 #include "Color.h"
 
-class ColorChannel
+class ColorSequence
 {
 public:
-	std::vector<ColorKeyframe> keyframes;
-
-	ColorChannel(int count, ColorKeyframe* keyframes);
-	ColorChannel(nlohmann::json j);
+	ColorSequence(int count, ColorKeyframe* keyframes);
 
 	void insertKeyframe(ColorKeyframe keyframe);
+	void eraseKeyframe(ColorKeyframe keyframe);
+
 	Color update(float time);
-	nlohmann::ordered_json toJson();
 private:
 	float lastIndex;
+
+	std::vector<ColorKeyframe> keyframes;
 };

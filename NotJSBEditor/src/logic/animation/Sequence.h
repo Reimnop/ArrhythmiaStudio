@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <nlohmann/json.hpp>
 
 #include "Keyframe.h"
 
@@ -9,14 +8,14 @@
 class Sequence
 {
 public:
+	Sequence(int count, Keyframe* keyframes);
+	
+	void insertKeyframe(Keyframe keyframe);
+	void eraseKeyframe(Keyframe keyframe);
+
+	float update(float time);
+private:
 	std::vector<Keyframe> keyframes;
 
-	Sequence(int count, Keyframe* keyframes);
-	Sequence(nlohmann::json j);
-
-	void insertKeyframe(Keyframe keyframe);
-	float update(float time);
-	nlohmann::json toJson();
-private:
 	float lastIndex;
 };

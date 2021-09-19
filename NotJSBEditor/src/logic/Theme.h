@@ -1,6 +1,5 @@
 #pragma once
 
-#include <optional>
 #include <string>
 
 #include "animation/ColorKeyframe.h"
@@ -16,7 +15,7 @@ private:
 	float endTime;
 
 	int selectedSlotIndex = -1;
-	std::optional<ColorKeyframe> selectedKeyframe;
+	int selectedKeyframeIndex = -1;
 
 	void onLayout();
 	bool colorSlotButton(std::string label, Color color, bool selected) const;

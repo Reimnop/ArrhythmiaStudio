@@ -7,7 +7,6 @@
 
 struct Keyframe
 {
-	uint64_t id;
 	float time;
 	bool random;
 	float values[2];
@@ -17,7 +16,6 @@ struct Keyframe
 
 	Keyframe()
 	{
-		id = Utils::randomId();
 		time = 0.0f;
 		random = false;
 		values[0] = 0.0f;
@@ -29,7 +27,6 @@ struct Keyframe
 
 	Keyframe(nlohmann::json j)
 	{
-		id = Utils::randomId();
 		time = j["time"].get<float>();
 		random = j["value"].is_array();
 		if (random)
@@ -48,7 +45,6 @@ struct Keyframe
 
 	Keyframe(float time, float value, EaseType easing = EaseType_Linear)
 	{
-		id = Utils::randomId();
 		random = false;
 
 		this->time = time;
@@ -59,7 +55,6 @@ struct Keyframe
 
 	Keyframe(float time, float values[2], EaseType easing = EaseType_Linear)
 	{
-		id = Utils::randomId();
 		random = true;
 
 		this->time = time;

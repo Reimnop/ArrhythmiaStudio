@@ -1,8 +1,8 @@
-#include "ColorChannel.h"
+#include "ColorSequence.h"
 
 #include "Easing.h"
 
-ColorChannel::ColorChannel(int count, ColorKeyframe* keyframes)
+ColorSequence::ColorSequence(int count, ColorKeyframe* keyframes)
 {
 	for (int i = 0; i < count; i++)
 	{
@@ -12,16 +12,7 @@ ColorChannel::ColorChannel(int count, ColorKeyframe* keyframes)
 	lastIndex = 0;
 }
 
-ColorChannel::ColorChannel(nlohmann::json j)
-{
-	nlohmann::json::array_t keyframes = j["keyframes"].get<nlohmann::json::array_t>();
-	for (int i = 0; i < keyframes.size(); i++)
-	{
-		insertKeyframe(ColorKeyframe(keyframes[i]));
-	}
-}
-
-void ColorChannel::insertKeyframe(ColorKeyframe keyframe)
+void ColorSequence::insertKeyframe(ColorKeyframe keyframe)
 {
 	if (keyframes.empty())
 	{
@@ -35,15 +26,21 @@ void ColorChannel::insertKeyframe(ColorKeyframe keyframe)
 		return;
 	}
 
-	std::vector<ColorKeyframe>::iterator it = std::lower_bound(keyframes.begin(), keyframes.end(), keyframe,
-	                                                           [](ColorKeyframe a, ColorKeyframe b)
-	                                                           {
-		                                                           return a.time < b.time;
-	                                                           });
+	const std::vector<ColorKeyframe>::iterator it = std::lower_bound(keyframes.begin(), keyframes.end(), keyframe,
+																	[](ColorKeyframe a, ColorKeyframe b)
+																	{
+																	    return a.time < b.time;
+																	});
 	keyframes.insert(it, keyframe);
 }
 
-Color ColorChannel::update(float time)
+void ColorSequence::eraseKeyframe(ColorKeyframe keyframe)
+{
+	const std::vector<ColorKeyframe>::iterator it = std::remove(keyframes.begin(), keyframes.end(), keyframe);
+	keyframes.erase(it);
+}
+
+Color ColorSequence::update(float time)
 {
 	// Bounds checking
 	if (keyframes.empty())
@@ -103,16 +100,4 @@ Color ColorChannel::update(float time)
 	const float g = std::lerp(left.color.g, right.color.g, easedT);
 	const float b = std::lerp(left.color.b, right.color.b, easedT);
 	return Color(r, g, b);
-}
-
-nlohmann::ordered_json ColorChannel::toJson()
-{
-	nlohmann::ordered_json j;
-	j["keyframes"] = nlohmann::json::array();
-	for (int i = 0; i < keyframes.size(); i++)
-	{
-		j["keyframes"][i] = keyframes[i].toJson();
-	}
-
-	return j;
 }

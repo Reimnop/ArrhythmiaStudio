@@ -1,8 +1,6 @@
 #pragma once
 
-#include <optional>
-
-#include "LevelEventType.h"
+#include "LevelEvent.h"
 #include "animation/Keyframe.h"
 
 class Events
@@ -15,8 +13,8 @@ private:
 	float startTime;
 	float endTime;
 
-	int selectedEventIndex = -1;
-	std::optional<Keyframe> selectedKeyframe;
+	LevelEvent* selectedEvent;
+	int selectedKeyframeIndex = -1;
 
 	void onLayout();
 	std::string getEventName(LevelEventType type) const;

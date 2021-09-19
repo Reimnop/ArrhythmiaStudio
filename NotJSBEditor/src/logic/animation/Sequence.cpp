@@ -12,15 +12,6 @@ Sequence::Sequence(int count, Keyframe* keyframes)
 	lastIndex = 0;
 }
 
-Sequence::Sequence(nlohmann::json j)
-{
-	nlohmann::json::array_t arr = j.get<nlohmann::json::array_t>();
-	for (int i = 0; i < arr.size(); i++)
-	{
-		insertKeyframe(Keyframe(arr[i]));
-	}
-}
-
 void Sequence::insertKeyframe(Keyframe keyframe)
 {
 	keyframe.evaluateValue();
@@ -37,12 +28,18 @@ void Sequence::insertKeyframe(Keyframe keyframe)
 		return;
 	}
 
-	std::vector<Keyframe>::iterator it = std::lower_bound(keyframes.begin(), keyframes.end(), keyframe,
-	                                                      [](Keyframe a, Keyframe b)
-	                                                      {
-		                                                      return a.time < b.time;
-	                                                      });
+	const std::vector<Keyframe>::iterator it = std::lower_bound(keyframes.begin(), keyframes.end(), keyframe,
+																[](Keyframe a, Keyframe b)
+																{
+																    return a.time < b.time;
+																});
 	keyframes.insert(it, keyframe);
+}
+
+void Sequence::eraseKeyframe(Keyframe keyframe)
+{
+	const std::vector<Keyframe>::iterator it = std::remove(keyframes.begin(), keyframes.end(), keyframe);
+	keyframes.erase(it);
 }
 
 float Sequence::update(float time)
@@ -102,15 +99,4 @@ float Sequence::update(float time)
 	const float easedT = ease(t);
 
 	return std::lerp(left.evaluatedValue, right.evaluatedValue, easedT);
-}
-
-nlohmann::json Sequence::toJson()
-{
-	nlohmann::json j = nlohmann::json::array();
-	for (int i = 0; i < keyframes.size(); i++)
-	{
-		j[i] = keyframes[i].toJson();
-	}
-
-	return j;
 }

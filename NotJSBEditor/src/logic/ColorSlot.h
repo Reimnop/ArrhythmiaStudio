@@ -3,14 +3,16 @@
 #include <nlohmann/json.hpp>
 
 #include "animation/Color.h"
-#include "animation/ColorChannel.h"
+#include "animation/ColorSequence.h"
 #include "../rendering/Shader.h"
 #include "../rendering/Material.h"
 
 class ColorSlot
 {
 public:
-	ColorChannel* channel;
+	std::vector<ColorKeyframe> keyframes;
+
+	ColorSequence* sequence;
 	Material* material;
 
 	Color currentColor;
@@ -21,8 +23,11 @@ public:
 	ColorSlot(nlohmann::json j);
 	~ColorSlot();
 
+	void insertKeyframe(const ColorKeyframe& kf);
+	void eraseKeyframe(const ColorKeyframe& kf);
+
 	void update(float time);
-	nlohmann::ordered_json toJson() const;
+	nlohmann::json toJson() const;
 private:
 	static Shader* shader;
 };

@@ -8,14 +8,12 @@
 
 struct ColorKeyframe
 {
-	uint64_t id;
 	float time;
 	Color color;
 	EaseType easing;
 
 	ColorKeyframe()
 	{
-		id = Utils::randomId();
 		time = 0.0f;
 		color = Color(1.0f, 1.0f, 1.0f);
 		easing = EaseType_Linear;
@@ -23,7 +21,6 @@ struct ColorKeyframe
 
 	ColorKeyframe(nlohmann::json j)
 	{
-		id = Utils::randomId();
 		time = j["time"].get<float>();
 		color.r = j["color"][0].get<float>();
 		color.g = j["color"][1].get<float>();
@@ -44,7 +41,7 @@ struct ColorKeyframe
 		return time == other.time && color == other.color && easing == other.easing;
 	}
 
-	nlohmann::ordered_json toJson()
+	nlohmann::ordered_json toJson() const
 	{
 		nlohmann::ordered_json j;
 		j["time"] = time;

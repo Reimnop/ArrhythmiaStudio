@@ -1,6 +1,7 @@
 #include "ObjectKeyframeEditCmd.h"
 #include "../LevelManager.h"
 
+#if 0
 ObjectKeyframeEditCmd::ObjectKeyframeEditCmd(const LevelObject* obj, const AnimationChannelType channelType, const Keyframe& oldKf, const Keyframe& newKf)
 {
 	id = obj->id;
@@ -44,3 +45,4 @@ void ObjectKeyframeEditCmd::redo()
 	sequence->insertKeyframe(newKf);
 	levelManager->updateObject(obj);
 }
+#endif

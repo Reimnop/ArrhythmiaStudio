@@ -1,7 +1,5 @@
 #pragma once
 
-#include <optional>
-
 #include "AnimationChannel.h"
 #include "LevelObject.h"
 
@@ -21,8 +19,7 @@ private:
 
 	LevelObjectProperties oldObjectState;
 
-	std::optional<Keyframe> selectedKeyframe;
-	Keyframe keyframeOldState;
+	int selectedKeyframeIndex = -1;
 	AnimationChannel* selectedChannel;
 
 	void onLayout();

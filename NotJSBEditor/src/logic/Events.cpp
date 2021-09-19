@@ -22,8 +22,8 @@ Events::Events()
 
 void Events::reset()
 {
-	selectedEventIndex = -1;
-	selectedKeyframe.reset();
+	selectedEvent = nullptr;
+	selectedKeyframeIndex = -1;
 }
 
 void Events::onLayout()
@@ -54,18 +54,19 @@ void Events::onLayout()
 		{
 			for (int i = 0; i < levelManager->level->levelEvents.size(); i++)
 			{
-				std::string label = getEventName(levelManager->level->levelEvents[i]->type);
+				LevelEvent* levelEvent = levelManager->level->levelEvents[i];
+				std::string label = getEventName(levelEvent->type);
 
-				if (ImGui::Selectable(label.c_str(), selectedEventIndex == i))
+				if (ImGui::Selectable(label.c_str(), selectedEvent == levelEvent))
 				{
-					selectedEventIndex = i;
-					selectedKeyframe.reset();
+					selectedEvent = levelEvent;
+					selectedKeyframeIndex = -1;
 				}
 			}
 		}
 		ImGui::EndChild();
 
-		if (selectedEventIndex != -1)
+		if (selectedEvent != nullptr)
 		{
 			{
 				ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -119,18 +120,16 @@ void Events::onLayout()
 				}
 
 				// Draw keyframes
-				LevelEvent* selectedEvent = levelManager->level->levelEvents[selectedEventIndex];
-
-				for (int i = 0; i < selectedEvent->sequence->keyframes.size(); i++)
+				for (int i = 0; i < selectedEvent->keyframes.size(); i++)
 				{
-					Keyframe kf = selectedEvent->sequence->keyframes[i];
+					Keyframe& kf = selectedEvent->keyframes[i];
 
 					ImVec2 kfPos = ImVec2(
 						EDITOR_KEYFRAME_OFFSET + timelineMin.x + (kf.time - startTime) / (endTime - startTime) * availX,
 						timelineMin.y + EDITOR_BIN_HEIGHT * 0.5f);
 
-					ImGuiID id = kf.id;
-					ImGui::PushOverrideID(id);
+					int id = i + 1;
+					ImGui::PushID(id);
 
 					ImVec2 btnMin = ImVec2(kfPos.x - EDITOR_KEYFRAME_SIZE * 0.5f, timelineMin.y);
 					ImVec2 btnMax = ImVec2(btnMin.x + EDITOR_KEYFRAME_SIZE, btnMin.y + EDITOR_BIN_HEIGHT);
@@ -141,12 +140,12 @@ void Events::onLayout()
 					{
 						ImGui::SetActiveID(id, ImGui::GetCurrentWindow());
 
-						selectedKeyframe = kf;
+						selectedKeyframeIndex = i;
 					}
 
 					bool kfActive = kfHovered;
 
-					if (ImGui::GetActiveID() == id)
+					if (ImGui::GetActiveID() == id && ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows))
 					{
 						if (ImGui::IsMouseDown(ImGuiMouseButton_Left))
 						{
@@ -155,6 +154,8 @@ void Events::onLayout()
 
 						if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 						{
+							selectedEvent->sequence->eraseKeyframe(kf);
+
 							// Dragging
 							ImVec2 delta = io.MouseDelta;
 							float timeDelta = (delta.x / availX) * (endTime - startTime);
@@ -162,22 +163,13 @@ void Events::onLayout()
 							kf.time += timeDelta;
 							kf.time = std::max(kf.time, 0.0f);
 
-							std::vector<Keyframe>::iterator it = std::remove_if(
-								selectedEvent->sequence->keyframes.begin(), selectedEvent->sequence->keyframes.end(),
-								[kf](const Keyframe& a)
-								{
-									return a.id == kf.id;
-								});
-
-							selectedEvent->sequence->keyframes.erase(it);
 							selectedEvent->sequence->insertKeyframe(kf);
 
-							selectedKeyframe = kf;
 							levelManager->updateLevelEvent(selectedEvent);
 						}
 					}
 
-					if (selectedKeyframe.has_value() && selectedKeyframe.value().id == kf.id)
+					if (selectedKeyframeIndex == i)
 					{
 						kfActive = true;
 					}
@@ -206,10 +198,8 @@ void Events::onLayout()
 					{
 						Keyframe kf = Keyframe(kfTime, 0.0f);
 
-						selectedEvent->sequence->insertKeyframe(kf);
-						selectedEvent->update(levelManager->time);
-
-						selectedKeyframe = kf;
+						selectedEvent->insertKeyframe(kf);
+						levelManager->updateLevelEvent(selectedEvent);
 					}
 				}
 
@@ -280,24 +270,17 @@ void Events::onLayout()
 			}
 
 			ImGui::Separator();
-			if (selectedKeyframe.has_value() && selectedEventIndex != -1)
+			if (selectedKeyframeIndex != -1 && selectedEvent != nullptr)
 			{
-				LevelEvent* selectedEvent = levelManager->level->levelEvents[selectedEventIndex];
-				Keyframe kf = selectedKeyframe.value();
+				Keyframe& kf = selectedEvent->keyframes[selectedKeyframeIndex];
+				Keyframe kfOldState = kf;
 
 				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 				{
-					std::vector<Keyframe>::iterator it = std::remove_if(
-						selectedEvent->sequence->keyframes.begin(), selectedEvent->sequence->keyframes.end(),
-						[kf](const Keyframe& a)
-						{
-							return a.id == kf.id;
-						});
-
-					selectedEvent->sequence->keyframes.erase(it);
+					selectedEvent->eraseKeyframe(kf);
 					levelManager->updateLevelEvent(selectedEvent);
 
-					selectedKeyframe.reset();
+					selectedKeyframeIndex = -1;
 				}
 				else
 				{
@@ -340,17 +323,8 @@ void Events::onLayout()
 					{
 						kf.evaluateValue();
 
-						std::vector<Keyframe>::iterator it = std::find_if(
-							selectedEvent->sequence->keyframes.begin(), selectedEvent->sequence->keyframes.end(),
-							[kf](const Keyframe& a)
-							{
-								return a.id == kf.id;
-							});
-
-						selectedEvent->sequence->keyframes.erase(it);
+						selectedEvent->sequence->eraseKeyframe(kfOldState);
 						selectedEvent->sequence->insertKeyframe(kf);
-
-						selectedKeyframe = kf;
 
 						levelManager->updateLevelEvent(selectedEvent);
 					}

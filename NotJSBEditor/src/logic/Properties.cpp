@@ -39,7 +39,7 @@ Properties::Properties()
 
 void Properties::reset()
 {
-	selectedKeyframe.reset();
+	selectedKeyframeIndex = -1;
 	selectedChannel = nullptr;
 }
 
@@ -277,9 +277,10 @@ void Properties::onLayout()
 					// Deselect
 					if (timelineHovered && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 					{
-						selectedChannel = nullptr;
-						selectedKeyframe.reset();
+						reset();
 					}
+
+					int id = 0;
 
 					// Draw the keyframes
 					for (int i = 0; i < selectedObject->animationChannels.size(); i++)
@@ -289,17 +290,17 @@ void Properties::onLayout()
 
 						ImVec2 binMin = ImVec2(timelineMin.x, timelineMin.y + EDITOR_BIN_HEIGHT * i);
 						ImGui::SetCursorScreenPos(binMin);
-
-						for (int j = 0; j < sequence->keyframes.size(); j++)
+						
+						for (int j = 0; j < channel->keyframes.size(); j++)
 						{
-							Keyframe kf = sequence->keyframes[j];
+							Keyframe& kf = channel->keyframes[j];
 
 							ImVec2 kfPos = ImVec2(
 								EDITOR_KEYFRAME_OFFSET + binMin.x + (kf.time - startTime) / (endTime - startTime) * availX,
 								binMin.y + EDITOR_BIN_HEIGHT * 0.5f);
 
-							ImGuiID id = kf.id;
-							ImGui::PushOverrideID(id);
+							id++;
+							ImGui::PushID(id);
 
 							ImVec2 btnMin = ImVec2(kfPos.x - EDITOR_KEYFRAME_SIZE * 0.5f, binMin.y);
 							ImVec2 btnMax = ImVec2(btnMin.x + EDITOR_KEYFRAME_SIZE, btnMin.y + EDITOR_BIN_HEIGHT);
@@ -310,13 +311,13 @@ void Properties::onLayout()
 							{
 								ImGui::SetActiveID(id, ImGui::GetCurrentWindow());
 
-								selectedKeyframe = kf;
+								selectedKeyframeIndex = j;
 								selectedChannel = channel;
 							}
 
 							bool kfActive = kfHovered;
 
-							if (ImGui::GetActiveID() == id)
+							if (ImGui::GetActiveID() == id && ImGui::IsWindowFocused())
 							{
 								if (ImGui::IsMouseDown(ImGuiMouseButton_Left)) 
 								{
@@ -325,29 +326,22 @@ void Properties::onLayout()
 
 								if (ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 								{
+									sequence->eraseKeyframe(kf);
+
 									// Dragging
 									ImVec2 delta = io.MouseDelta;
 									float timeDelta = (delta.x / availX) * (endTime - startTime);
 
 									kf.time += timeDelta;
 									kf.time = std::clamp(kf.time, 0.0f, selectedObject->killTime - selectedObject->startTime);
-
-									std::vector<Keyframe>::iterator it = std::remove_if(
-										sequence->keyframes.begin(), sequence->keyframes.end(),
-										[kf](const Keyframe& a)
-										{
-											return a.id == kf.id;
-										});
-									sequence->keyframes.erase(it);
-
+									
 									sequence->insertKeyframe(kf);
-									selectedKeyframe = kf;
 
 									levelManager->updateObject(selectedObject);
 								}
 							}
 
-							if (selectedKeyframe.has_value() && selectedKeyframe.value().id == kf.id && selectedChannel == channel)
+							if (selectedKeyframeIndex == j && selectedChannel == channel)
 							{
 								kfActive = true;
 							}
@@ -376,7 +370,7 @@ void Properties::onLayout()
 							{
 								Keyframe kf = Keyframe(kfTime, 0.0f);
 
-								channel->sequence->insertKeyframe(kf);
+								channel->insertKeyframe(kf);
 								levelManager->updateObject(selectedObject);
 							}
 						}
@@ -454,24 +448,17 @@ void Properties::onLayout()
 
 				// Draw keyframe editor
 				ImGui::Separator();
-				if (selectedKeyframe.has_value() && selectedChannel != nullptr)
+				if (selectedKeyframeIndex != -1 && selectedChannel != nullptr)
 				{
-					Keyframe& kf = selectedKeyframe.value();
+					Keyframe& kf = selectedChannel->keyframes[selectedKeyframeIndex];
+					Keyframe kfOldState = kf;
 
 					if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 					{
-						std::vector<Keyframe>::iterator it = std::remove_if(
-							selectedChannel->sequence->keyframes.begin(), selectedChannel->sequence->keyframes.end(),
-							[kf](const Keyframe& a)
-							{
-								return a.id == kf.id;
-							});
-
-						selectedChannel->sequence->keyframes.erase(it);
+						selectedChannel->eraseKeyframe(kf);
 						selectedChannel->update(levelManager->time);
 
-						selectedKeyframe.reset();
-						selectedChannel = nullptr;
+						reset();
 					}
 					else
 					{
@@ -514,15 +501,8 @@ void Properties::onLayout()
 						{
 							Sequence* sequence = selectedChannel->sequence;
 
-							std::vector<Keyframe>::iterator it = std::remove_if(
-								sequence->keyframes.begin(), sequence->keyframes.end(), 
-								[kf](const Keyframe& a)
-								{
-									return a.id == kf.id;
-								});
-
 							// Re-insert for sorted list
-							sequence->keyframes.erase(it);
+							sequence->eraseKeyframe(kfOldState);
 							sequence->insertKeyframe(kf);
 
 							levelManager->updateObject(selectedObject);

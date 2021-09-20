@@ -22,6 +22,8 @@ private:
 	int selectedKeyframeIndex = -1;
 	AnimationChannel* selectedChannel;
 
+	Keyframe kfUndoState;
+
 	void onLayout();
 	void insertChannelSelectable(LevelObject* levelObject, AnimationChannelType channelType, float defaultValue);
 	std::string getChannelName(AnimationChannelType channelType) const;

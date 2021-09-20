@@ -46,6 +46,7 @@ public:
 
 	void genActionPair(ObjectAction* spawnAction, ObjectAction* killAction);
 	void insertChannel(AnimationChannel* value);
+	void eraseChannel(AnimationChannelType type);
 	bool hasChannel(AnimationChannelType channelType);
 	nlohmann::ordered_json toJson();
 private:

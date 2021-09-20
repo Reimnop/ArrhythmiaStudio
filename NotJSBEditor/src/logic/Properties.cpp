@@ -16,6 +16,7 @@
 #include "imgui/imgui_editorlib.h"
 #include "undo_commands/EditObjectCmd.h"
 #include "undo_commands/ChangeParentCmd.h"
+#include "undo_commands/ObjectAddChannelCmd.h"
 #include "undo_commands/ObjectKeyframeEditCmd.h"
 
 Properties* Properties::inst;
@@ -463,22 +464,35 @@ void Properties::onLayout()
 					else
 					{
 						bool kfChanged = false;
+						bool kfRecordUndo = false;
+						bool kfPushUndo = false;
+
 						ImGui::DragFloat("Keyframe Time", &kf.time, 0.1f, 0.0f, selectedObject->killTime - selectedObject->startTime);
 						kfChanged = kfChanged || ImGui::IsItemEdited();
+						kfRecordUndo = kfRecordUndo || ImGui::IsItemActivated();
+						kfPushUndo = kfPushUndo || ImGui::IsItemDeactivatedAfterEdit();
 
 						ImGui::Checkbox("Keyframe Random", &kf.random);
 						kfChanged = kfChanged || ImGui::IsItemEdited();
+						kfRecordUndo = kfRecordUndo || ImGui::IsItemActivated();
+						kfPushUndo = kfPushUndo || ImGui::IsItemDeactivatedAfterEdit();
 						if (kf.random)
 						{
 							ImGui::DragFloat("Keyframe Min Value", &kf.values[0], 0.1f);
 							kfChanged = kfChanged || ImGui::IsItemEdited();
+							kfRecordUndo = kfRecordUndo || ImGui::IsItemActivated();
+							kfPushUndo = kfPushUndo || ImGui::IsItemDeactivatedAfterEdit();
 							ImGui::DragFloat("Keyframe Max Value", &kf.values[1], 0.1f);
 							kfChanged = kfChanged || ImGui::IsItemEdited();
+							kfRecordUndo = kfRecordUndo || ImGui::IsItemActivated();
+							kfPushUndo = kfPushUndo || ImGui::IsItemDeactivatedAfterEdit();
 						}
 						else
 						{
 							ImGui::DragFloat("Keyframe Value", &kf.values[0], 0.1f);
 							kfChanged = kfChanged || ImGui::IsItemEdited();
+							kfRecordUndo = kfRecordUndo || ImGui::IsItemActivated();
+							kfPushUndo = kfPushUndo || ImGui::IsItemDeactivatedAfterEdit();
 						}
 
 						std::string currentEaseName = Easing::getEaseName(kf.easing);
@@ -491,6 +505,8 @@ void Properties::onLayout()
 								{
 									kf.easing = (EaseType)i;
 									kfChanged = true;
+
+									UndoRedoManager::inst->push(new ObjectKeyframeEditCmd(selectedObject, selectedChannel->type, kfOldState, kf));
 								}
 							}
 
@@ -506,6 +522,16 @@ void Properties::onLayout()
 							sequence->insertKeyframe(kf);
 
 							levelManager->updateObject(selectedObject);
+						}
+
+						if (kfRecordUndo)
+						{
+							kfUndoState = kfOldState;
+						}
+
+						if (kfPushUndo)
+						{
+							UndoRedoManager::inst->push(new ObjectKeyframeEditCmd(selectedObject, selectedChannel->type, kfUndoState, kf));
 						}
 					}
 				}
@@ -537,6 +563,8 @@ void Properties::insertChannelSelectable(LevelObject* levelObject, AnimationChan
 		AnimationChannel* channel = new AnimationChannel(channelType, 1, &first);
 
 		levelObject->insertChannel(channel);
+
+		UndoRedoManager::inst->push(new ObjectAddChannelCmd(levelObject, channel));
 	}
 }
 

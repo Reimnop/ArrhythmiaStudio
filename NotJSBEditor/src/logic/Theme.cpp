@@ -220,9 +220,7 @@ void Theme::onLayout()
 				}
 
 				// Drawing the time pointer
-				drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX,
-				                                         cursorPos.y + EDITOR_BIN_HEIGHT + EDITOR_TIME_POINTER_HEIGHT),
-				                       true);
+				drawList->PushClipRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_BIN_HEIGHT + EDITOR_TIME_POINTER_HEIGHT), true);
 
 				// Draw frame
 				drawList->AddRect(cursorPos, ImVec2(cursorPos.x + availX, cursorPos.y + EDITOR_TIME_POINTER_HEIGHT),

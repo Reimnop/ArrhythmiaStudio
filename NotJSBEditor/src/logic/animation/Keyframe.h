@@ -76,12 +76,12 @@ struct Keyframe
 		}
 	}
 
-	bool operator==(Keyframe other) const
+	bool operator==(const Keyframe& other) const
 	{
 		return time == other.time && random == other.random && values[0] == other.values[0] && values[1] == other.values[1] && easing == other.easing;
 	}
 
-	nlohmann::ordered_json toJson()
+	nlohmann::ordered_json toJson() const
 	{
 		nlohmann::ordered_json j;
 		j["time"] = time;

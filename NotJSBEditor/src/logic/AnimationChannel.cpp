@@ -46,7 +46,7 @@ float AnimationChannel::update(float time) const
 	return sequence->update(time);
 }
 
-nlohmann::ordered_json AnimationChannel::toJson()
+nlohmann::ordered_json AnimationChannel::toJson() const
 {
 	nlohmann::ordered_json j;
 	j["type"] = type;

@@ -19,5 +19,5 @@ public:
 	void eraseKeyframe(const Keyframe& kf);
 
 	float update(float time) const;
-	nlohmann::ordered_json toJson();
+	nlohmann::ordered_json toJson() const;
 };

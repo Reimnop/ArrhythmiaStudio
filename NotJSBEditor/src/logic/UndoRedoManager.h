@@ -1,8 +1,13 @@
 #pragma once
 
+#include <tuple>
 #include <vector>
+#include <functional>
 
 #include "UndoCommand.h"
+
+typedef std::function<void()> GenericCallback;
+typedef std::tuple<UndoCommand*, GenericCallback, GenericCallback> CmdCallbacks;
 
 class UndoRedoManager
 {
@@ -11,14 +16,14 @@ public:
 
 	UndoRedoManager();
 
-	void push(UndoCommand* action);
+	void push(UndoCommand* action, GenericCallback undoCallback = nullptr, GenericCallback redoCallback = nullptr);
 	void reset();
 	void undo();
 	void redo();
 private:
-	std::vector<UndoCommand*> undoStack;
-	std::vector<UndoCommand*> redoStack;
+	std::vector<CmdCallbacks> undoStack;
+	std::vector<CmdCallbacks> redoStack;
 
-	bool popUndo(UndoCommand** action);
-	bool popRedo(UndoCommand** action);
+	bool popUndo(CmdCallbacks* action);
+	bool popRedo(CmdCallbacks* action);
 };

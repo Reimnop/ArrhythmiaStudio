@@ -17,6 +17,7 @@
 #include "undo_commands/EditObjectCmd.h"
 #include "undo_commands/ChangeParentCmd.h"
 #include "undo_commands/ObjectAddChannelCmd.h"
+#include "undo_commands/ObjectAddKeyframeCmd.h"
 #include "undo_commands/ObjectKeyframeEditCmd.h"
 
 Properties* Properties::inst;
@@ -373,6 +374,8 @@ void Properties::onLayout()
 
 								channel->insertKeyframe(kf);
 								levelManager->updateObject(selectedObject);
+
+								UndoRedoManager::inst->push(new ObjectAddKeyframeCmd(selectedObject, channel->type, kf), [this]() { reset(); });
 							}
 						}
 
@@ -564,7 +567,7 @@ void Properties::insertChannelSelectable(LevelObject* levelObject, AnimationChan
 
 		levelObject->insertChannel(channel);
 
-		UndoRedoManager::inst->push(new ObjectAddChannelCmd(levelObject, channel));
+		UndoRedoManager::inst->push(new ObjectAddChannelCmd(levelObject, channel), [this]() { reset(); });
 	}
 }
 

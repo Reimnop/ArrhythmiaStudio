@@ -11,14 +11,18 @@ ObjectAddChannelCmd::ObjectAddChannelCmd(const LevelObject* obj, const Animation
 
 void ObjectAddChannelCmd::undo()
 {
-	const LevelManager* levelManager = LevelManager::inst;
+	LevelManager* levelManager = LevelManager::inst;
 	LevelObject* obj = levelManager->level->levelObjects[id];
 	obj->eraseChannel(type);
+
+	levelManager->updateObject(obj);
 }
 
 void ObjectAddChannelCmd::redo()
 {
-	const LevelManager* levelManager = LevelManager::inst;
+	LevelManager* levelManager = LevelManager::inst;
 	LevelObject* obj = levelManager->level->levelObjects[id];
 	obj->insertChannel(new AnimationChannel(data));
+
+	levelManager->updateObject(obj);
 }

@@ -180,14 +180,28 @@ void LevelObject::eraseChannel(AnimationChannelType type)
                                                                        {
                                                                            return a->type == type;
                                                                        });
+
+    delete (*it);
+
     animationChannels.erase(it);
 
     animationChannelLookup[type] = false;
 }
 
-bool LevelObject::hasChannel(AnimationChannelType channelType)
+AnimationChannel* LevelObject::getChannel(AnimationChannelType type)
 {
-    return animationChannelLookup[channelType];
+    const std::vector<AnimationChannel*>::iterator it = std::find_if(animationChannels.begin(), animationChannels.end(),
+                                                                     [type](const AnimationChannel* a)
+                                                                     {
+                                                                         return a->type == type;
+                                                                     });
+
+    return *it;
+}
+
+bool LevelObject::hasChannel(AnimationChannelType type)
+{
+    return animationChannelLookup[type];
 }
 
 nlohmann::ordered_json LevelObject::toJson()

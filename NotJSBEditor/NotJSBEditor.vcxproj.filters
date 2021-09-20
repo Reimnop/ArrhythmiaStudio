@@ -327,6 +327,9 @@
     <ClCompile Include="src\logic\undo_commands\ObjectAddChannelCmd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\logic\undo_commands\ObjectAddKeyframeCmd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
@@ -2157,6 +2160,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\undo_commands\ObjectAddChannelCmd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\undo_commands\ObjectAddKeyframeCmd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

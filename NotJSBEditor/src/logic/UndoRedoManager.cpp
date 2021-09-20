@@ -1,8 +1,6 @@
 #include "UndoRedoManager.h"
 #include "LevelManager.h"
 
-#include <logger.h>
-
 UndoRedoManager* UndoRedoManager::inst;
 
 UndoRedoManager::UndoRedoManager()
@@ -15,27 +13,27 @@ UndoRedoManager::UndoRedoManager()
 	inst = this;
 }
 
-void UndoRedoManager::push(UndoCommand* action)
+void UndoRedoManager::push(UndoCommand* action, GenericCallback undoCallback, GenericCallback redoCallback)
 {
-	for (const UndoCommand* x : redoStack)
+	for (const CmdCallbacks x : redoStack)
 	{
-		delete x;
+		delete std::get<0>(x);
 	}
 
 	redoStack.clear();
-	undoStack.push_back(action);
+	undoStack.push_back(std::make_tuple(action, undoCallback, redoCallback));
 }
 
 void UndoRedoManager::reset()
 {
-	for (const UndoCommand* x : undoStack)
+	for (const CmdCallbacks x : undoStack)
 	{
-		delete x;
+		delete std::get<0>(x);
 	}
 
-	for (const UndoCommand* x : redoStack)
+	for (const CmdCallbacks x : redoStack)
 	{
-		delete x;
+		delete std::get<0>(x);
 	}
 
 	undoStack.clear();
@@ -44,30 +42,46 @@ void UndoRedoManager::reset()
 
 void UndoRedoManager::undo()
 {
-	UndoCommand* cmd;
+	CmdCallbacks cmd;
 	if (popUndo(&cmd))
 	{
-		cmd->undo();
+		UndoCommand* undoCommand = std::get<0>(cmd);
+		const GenericCallback undoCallback = std::get<1>(cmd);
+
+		undoCommand->undo();
+
+		if (undoCallback)
+		{
+			undoCallback();
+		}
 	}
 }
 
 void UndoRedoManager::redo()
 {
-	UndoCommand* cmd;
+	CmdCallbacks cmd;
 	if (popRedo(&cmd))
 	{
-		cmd->redo();
+		UndoCommand* undoCommand = std::get<0>(cmd);
+		const GenericCallback redoCallback = std::get<1>(cmd);
+
+		undoCommand->redo();
+
+		if (redoCallback)
+		{
+			redoCallback();
+		}
 	}
 }
 
-bool UndoRedoManager::popUndo(UndoCommand** action)
+bool UndoRedoManager::popUndo(CmdCallbacks* action)
 {
 	if (undoStack.empty())
 	{
 		return false;
 	}
 
-	UndoCommand* a = undoStack.back();
+	const CmdCallbacks a = undoStack.back();
 
 	*action = a;
 	redoStack.push_back(a);
@@ -76,14 +90,14 @@ bool UndoRedoManager::popUndo(UndoCommand** action)
 	return true;
 }
 
-bool UndoRedoManager::popRedo(UndoCommand** action)
+bool UndoRedoManager::popRedo(CmdCallbacks* action)
 {
 	if (redoStack.empty())
 	{
 		return false;
 	}
 
-	UndoCommand* a = redoStack.back();
+	const CmdCallbacks a = redoStack.back();
 
 	*action = a;
 	undoStack.push_back(a);

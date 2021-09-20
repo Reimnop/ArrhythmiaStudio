@@ -2,6 +2,9 @@
 
 #include <sstream>
 
+#define H_STR(x) #x
+#define STRINGIFY(x) H_STR(x)
+
 namespace std
 {
     template <typename T>

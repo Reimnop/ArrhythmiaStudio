@@ -1,6 +1,7 @@
 #include "MainWindow.h"
 #include "logic/GameManager.h"
 
+#include <helper.h>
 #include <logger.h>
 #include <bass/bass.h>
 
@@ -64,7 +65,7 @@ MainWindow::MainWindow()
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 
-	window = glfwCreateWindow(1600, 900, "Not JSB Editor", NULL, NULL);
+	window = glfwCreateWindow(1600, 900, STRINGIFY(PROJECT_NAME), NULL, NULL);
 
 	if (!window)
 	{

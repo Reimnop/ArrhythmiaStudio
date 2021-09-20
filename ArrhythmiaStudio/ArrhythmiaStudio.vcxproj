@@ -22,9 +22,9 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{c89a783e-173e-4816-ac3f-83714cd7ab6a}</ProjectGuid>
-    <RootNamespace>NotJSBEditorcpp</RootNamespace>
+    <RootNamespace>ArrhythmiaStudio</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>NotJSBEditor</ProjectName>
+    <ProjectName>Arrhythmia Studio</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

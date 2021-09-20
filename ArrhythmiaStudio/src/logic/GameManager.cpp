@@ -9,7 +9,10 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_stdlib.h>
 #include <ShlObj.h>
+#include <helper.h>
 #include <logger.h>
+
+#define WELCOME_MSG Welcome to PROJECT_NAME!
 
 GameManager::GameManager(GLFWwindow* window)
 {
@@ -37,7 +40,7 @@ void GameManager::onLayout()
 	ImGui::SetNextWindowSize(ImVec2(320.0f, 140.0f));
 	if (ImGui::BeginPopupModal("Welcome", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings))
 	{
-		ImGui::Text("Welcome to Not JSB Editor!");
+		ImGui::Text(STRINGIFY(WELCOME_MSG));
 		ImGui::TextWrapped("Before continuing, please create a new level with File->New (Ctrl+N) or open a new level with File->Open (Ctrl+O).");
 
 		if (ImGui::Button("OK"))

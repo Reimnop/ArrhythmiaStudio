@@ -6,7 +6,7 @@
 class ObjectAddChannelCmd : public UndoCommand
 {
 public:
-	ObjectAddChannelCmd(const LevelObject* obj, const AnimationChannel* channel);
+	ObjectAddChannelCmd(const uint64_t objectId, const AnimationChannel* channel);
 	~ObjectAddChannelCmd() override = default;
 
 	void undo() override;

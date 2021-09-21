@@ -6,7 +6,7 @@
 class ObjectKeyframeEditCmd : public UndoCommand
 {
 public:
-	ObjectKeyframeEditCmd(const LevelObject* obj, const AnimationChannelType channelType, const Keyframe& oldKf, const Keyframe& newKf);
+	ObjectKeyframeEditCmd(const uint64_t objectId, const AnimationChannelType channelType, const Keyframe& oldKf, const Keyframe& newKf);
 	~ObjectKeyframeEditCmd() override = default;
 
 	void undo() override;

@@ -2,9 +2,9 @@
 
 #include "../LevelManager.h"
 
-ObjectAddChannelCmd::ObjectAddChannelCmd(const LevelObject* obj, const AnimationChannel* channel)
+ObjectAddChannelCmd::ObjectAddChannelCmd(const uint64_t objectId, const AnimationChannel* channel)
 {
-	id = obj->id;
+	id = objectId;
 	type = channel->type;
 	data = channel->toJson();
 }

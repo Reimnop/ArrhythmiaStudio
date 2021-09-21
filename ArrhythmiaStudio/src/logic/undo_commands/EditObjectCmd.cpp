@@ -1,9 +1,9 @@
 #include "EditObjectCmd.h"
 #include "../LevelManager.h"
 
-EditObjectCmd::EditObjectCmd(const LevelObject* obj, const LevelObjectProperties& oldState, const LevelObjectProperties& newState)
+EditObjectCmd::EditObjectCmd(const uint64_t objectId, const LevelObjectProperties& oldState, const LevelObjectProperties& newState)
 {
-	id = obj->id;
+	id = objectId;
 	this->oldState = oldState;
 	this->newState = newState;
 }

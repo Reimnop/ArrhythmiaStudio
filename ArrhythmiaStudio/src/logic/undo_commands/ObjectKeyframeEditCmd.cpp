@@ -1,9 +1,9 @@
 #include "ObjectKeyframeEditCmd.h"
 #include "../LevelManager.h"
 
-ObjectKeyframeEditCmd::ObjectKeyframeEditCmd(const LevelObject* obj, const AnimationChannelType channelType, const Keyframe& oldKf, const Keyframe& newKf)
+ObjectKeyframeEditCmd::ObjectKeyframeEditCmd(const uint64_t objectId, const AnimationChannelType channelType, const Keyframe& oldKf, const Keyframe& newKf)
 {
-	id = obj->id;
+	id = objectId;
 	type = channelType;
 	this->oldKf = oldKf;
 	this->newKf = newKf;

@@ -2,9 +2,9 @@
 
 #include "../LevelManager.h"
 
-ObjectAddKeyframeCmd::ObjectAddKeyframeCmd(const LevelObject* obj, const AnimationChannelType type, const Keyframe kf)
+ObjectAddKeyframeCmd::ObjectAddKeyframeCmd(const uint64_t objectId, const AnimationChannelType type, const Keyframe kf)
 {
-	id = obj->id;
+	id = objectId;
 	this->type = type;
 	data = kf.toJson();
 }

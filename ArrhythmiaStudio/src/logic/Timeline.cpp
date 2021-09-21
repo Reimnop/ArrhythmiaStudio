@@ -267,7 +267,7 @@ void Timeline::onLayout()
 				std::vector<EditObjectCmd*> cmds;
 				for (LevelObject* obj : levelManager->selectedObjects)
 				{
-					cmds.push_back(new EditObjectCmd(obj, *it, obj->dumpProperties()));
+					cmds.push_back(new EditObjectCmd(obj->id, *it, obj->dumpProperties()));
 					++it;
 				}
 

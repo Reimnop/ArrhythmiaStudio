@@ -93,7 +93,7 @@ void Properties::onLayout()
 							MeshRenderer* mr = (MeshRenderer*)selectedObject->node->renderer;
 							mr->mesh = shapes[i].mesh;
 
-							UndoRedoManager::inst->push(new EditObjectCmd(selectedObject, oldState, selectedObject->dumpProperties()));
+							UndoRedoManager::inst->push(new EditObjectCmd(selectedObject->id, oldState, selectedObject->dumpProperties()));
 						}
 					}
 
@@ -139,7 +139,7 @@ void Properties::onLayout()
 
 				if (shouldPushUndo)
 				{
-					UndoRedoManager::inst->push(new EditObjectCmd(selectedObject, oldObjectState, selectedObject->dumpProperties()));
+					UndoRedoManager::inst->push(new EditObjectCmd(selectedObject->id, oldObjectState, selectedObject->dumpProperties()));
 				}
 
 				Level* level = levelManager->level;
@@ -155,7 +155,7 @@ void Properties::onLayout()
 						}
 						selectedObject->setParent(nullptr);
 
-						UndoRedoManager::inst->push(new ChangeParentCmd(selectedObject, oldParent, nullptr));
+						UndoRedoManager::inst->push(new ChangeParentCmd(selectedObject->id, oldParent, nullptr));
 					}
 
 					for (const std::pair<uint64_t, LevelObject*> x : level->levelObjects)
@@ -171,7 +171,7 @@ void Properties::onLayout()
 							}
 							selectedObject->setParent(obj);
 
-							UndoRedoManager::inst->push(new ChangeParentCmd(selectedObject, oldParent, obj));
+							UndoRedoManager::inst->push(new ChangeParentCmd(selectedObject->id, oldParent, obj));
 						}
 					}
 
@@ -376,7 +376,7 @@ void Properties::onLayout()
 								channel->insertKeyframe(kf);
 								levelManager->updateObject(selectedObject);
 
-								UndoRedoManager::inst->push(new ObjectAddKeyframeCmd(selectedObject, channel->type, kf), [this]() { reset(); });
+								UndoRedoManager::inst->push(new ObjectAddKeyframeCmd(selectedObject->id, channel->type, kf), [this]() { reset(); });
 							}
 						}
 
@@ -460,7 +460,7 @@ void Properties::onLayout()
 
 					if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 					{
-						UndoRedoManager::inst->push(new ObjectRemoveKeyframeCmd(selectedObject, selectedChannel->type, kf));
+						UndoRedoManager::inst->push(new ObjectRemoveKeyframeCmd(selectedObject->id, selectedChannel->type, kf));
 
 						selectedChannel->eraseKeyframe(kf);
 						selectedChannel->update(levelManager->time);
@@ -512,7 +512,7 @@ void Properties::onLayout()
 									kf.easing = (EaseType)i;
 									kfChanged = true;
 
-									UndoRedoManager::inst->push(new ObjectKeyframeEditCmd(selectedObject, selectedChannel->type, kfOldState, kf));
+									UndoRedoManager::inst->push(new ObjectKeyframeEditCmd(selectedObject->id, selectedChannel->type, kfOldState, kf));
 								}
 							}
 
@@ -537,7 +537,7 @@ void Properties::onLayout()
 
 						if (kfPushUndo)
 						{
-							UndoRedoManager::inst->push(new ObjectKeyframeEditCmd(selectedObject, selectedChannel->type, kfUndoState, kf));
+							UndoRedoManager::inst->push(new ObjectKeyframeEditCmd(selectedObject->id, selectedChannel->type, kfUndoState, kf));
 						}
 					}
 				}
@@ -570,7 +570,7 @@ void Properties::insertChannelSelectable(LevelObject* levelObject, AnimationChan
 
 		levelObject->insertChannel(channel);
 
-		UndoRedoManager::inst->push(new ObjectAddChannelCmd(levelObject, channel), [this]() { reset(); });
+		UndoRedoManager::inst->push(new ObjectAddChannelCmd(levelObject->id, channel), [this]() { reset(); });
 	}
 }
 

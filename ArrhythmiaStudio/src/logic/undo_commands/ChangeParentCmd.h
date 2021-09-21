@@ -6,7 +6,7 @@
 class ChangeParentCmd : public UndoCommand
 {
 public:
-	ChangeParentCmd(const LevelObject* obj, const LevelObject* oldParent, const LevelObject* newParent);
+	ChangeParentCmd(const uint64_t objectId, const LevelObject* oldParent, const LevelObject* newParent);
 	~ChangeParentCmd() override = default;
 
 	void undo() override;

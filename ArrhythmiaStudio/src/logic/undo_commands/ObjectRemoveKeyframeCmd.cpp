@@ -1,8 +1,8 @@
 #include "ObjectRemoveKeyframeCmd.h"
 
-ObjectRemoveKeyframeCmd::ObjectRemoveKeyframeCmd(const LevelObject* obj, const AnimationChannelType type, const Keyframe kf)
+ObjectRemoveKeyframeCmd::ObjectRemoveKeyframeCmd(const uint64_t objectId, const AnimationChannelType type, const Keyframe kf)
 {
-	addKfCmd = std::make_unique<ObjectAddKeyframeCmd>(obj, type, kf);
+	addKfCmd = std::make_unique<ObjectAddKeyframeCmd>(objectId, type, kf);
 }
 
 void ObjectRemoveKeyframeCmd::undo()

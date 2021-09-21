@@ -1,6 +1,6 @@
 #include "EventKeyframeRemoveCmd.h"
 
-EventKeyframeRemoveCmd::EventKeyframeRemoveCmd(const LevelEventType type, const Keyframe kf)
+EventKeyframeRemoveCmd::EventKeyframeRemoveCmd(LevelEventType type, Keyframe kf)
 {
 	addCmd = std::make_unique<EventKeyframeAddCmd>(type, kf);
 }

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "../UndoCommand.h"
-#include "../LevelObject.h"
+#include "../AnimationChannel.h"
 
 class ObjectAddKeyframeCmd : public UndoCommand
 {
 public:
-	ObjectAddKeyframeCmd(const uint64_t objectId, const AnimationChannelType type, const Keyframe kf);
+	ObjectAddKeyframeCmd(uint64_t objectId, AnimationChannelType type, Keyframe kf);
 	~ObjectAddKeyframeCmd() override = default;
 
 	void undo() override;

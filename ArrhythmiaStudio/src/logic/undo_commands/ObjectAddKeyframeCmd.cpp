@@ -2,7 +2,7 @@
 
 #include "../LevelManager.h"
 
-ObjectAddKeyframeCmd::ObjectAddKeyframeCmd(const uint64_t objectId, const AnimationChannelType type, const Keyframe kf)
+ObjectAddKeyframeCmd::ObjectAddKeyframeCmd(uint64_t objectId, AnimationChannelType type, Keyframe kf)
 {
 	id = objectId;
 	this->type = type;

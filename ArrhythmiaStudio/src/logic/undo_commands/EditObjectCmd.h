@@ -6,7 +6,7 @@
 class EditObjectCmd : public UndoCommand
 {
 public:
-	EditObjectCmd(const uint64_t objectId, const LevelObjectProperties& oldState, const LevelObjectProperties& newState);
+	EditObjectCmd(uint64_t objectId, LevelObjectProperties oldState, LevelObjectProperties newState);
 	~EditObjectCmd() override = default;
 
 	void undo() override;

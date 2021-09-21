@@ -342,6 +342,12 @@
     <ClCompile Include="src\logic\undo_commands\EventKeyframeRemoveCmd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\logic\undo_commands\EventKeyframeEditCmd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\undo_commands\ColorAddKeyframeCmd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
@@ -2187,6 +2193,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\undo_commands\EventKeyframeRemoveCmd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\undo_commands\EventKeyframeEditCmd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\undo_commands\ColorAddKeyframeCmd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

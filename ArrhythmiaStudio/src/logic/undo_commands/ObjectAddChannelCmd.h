@@ -1,12 +1,12 @@
 #pragma once
 
 #include "../UndoCommand.h"
-#include "../LevelObject.h"
+#include "../AnimationChannel.h"
 
 class ObjectAddChannelCmd : public UndoCommand
 {
 public:
-	ObjectAddChannelCmd(const uint64_t objectId, const AnimationChannel* channel);
+	ObjectAddChannelCmd(uint64_t objectId, const AnimationChannel* channel);
 	~ObjectAddChannelCmd() override = default;
 
 	void undo() override;

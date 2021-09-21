@@ -2,7 +2,7 @@
 
 #include "../LevelManager.h"
 
-ObjectAddChannelCmd::ObjectAddChannelCmd(const uint64_t objectId, const AnimationChannel* channel)
+ObjectAddChannelCmd::ObjectAddChannelCmd(uint64_t objectId, const AnimationChannel* channel)
 {
 	id = objectId;
 	type = channel->type;

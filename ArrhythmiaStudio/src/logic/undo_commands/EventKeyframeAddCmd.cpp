@@ -2,7 +2,7 @@
 
 #include "../LevelManager.h"
 
-EventKeyframeAddCmd::EventKeyframeAddCmd(const LevelEventType type, const Keyframe kf)
+EventKeyframeAddCmd::EventKeyframeAddCmd(LevelEventType type, Keyframe kf)
 {
 	this->type = type;
 	data = kf.toJson();

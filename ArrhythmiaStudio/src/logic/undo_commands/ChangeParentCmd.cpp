@@ -1,7 +1,7 @@
 #include "ChangeParentCmd.h"
 #include "../LevelManager.h"
 
-ChangeParentCmd::ChangeParentCmd(const uint64_t objectId, const LevelObject* oldParent, const LevelObject* newParent)
+ChangeParentCmd::ChangeParentCmd(uint64_t objectId, const LevelObject* oldParent, const LevelObject* newParent)
 {
 	id = objectId;
 

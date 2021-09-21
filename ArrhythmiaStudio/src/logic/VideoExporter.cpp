@@ -22,7 +22,7 @@ VideoExporter::~VideoExporter()
 	delete audioCodec;
 }
 
-void VideoExporter::exportToVideo(const std::filesystem::path& path) const
+void VideoExporter::exportToVideo(std::filesystem::path path) const
 {
 	Renderer* renderer = Renderer::inst;
 	LevelManager* levelManager = LevelManager::inst;

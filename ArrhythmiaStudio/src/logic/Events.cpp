@@ -14,6 +14,7 @@
 #include "imgui/imgui_editorlib.h"
 #include "undo_commands/AddLevelEventCmd.h"
 #include "undo_commands/EventKeyframeAddCmd.h"
+#include "undo_commands/EventKeyframeEditCmd.h"
 #include "undo_commands/EventKeyframeRemoveCmd.h"
 
 Events::Events()
@@ -277,7 +278,7 @@ void Events::onLayout()
 			ImGui::Separator();
 			if (selectedKeyframeIndex != -1 && selectedEvent != nullptr)
 			{
-				Keyframe kf = selectedEvent->keyframes[selectedKeyframeIndex];
+				Keyframe& kf = selectedEvent->keyframes[selectedKeyframeIndex];
 				Keyframe kfOldState = kf;
 
 				if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
@@ -292,22 +293,34 @@ void Events::onLayout()
 				else
 				{
 					bool kfChanged = false;
+					bool kfRecordUndo = false;
+					bool kfPushUndo = false;
 					ImGui::DragFloat("Keyframe Time", &kf.time, 0.1f, 0.0f, levelManager->audioClip->getLength());
 					kfChanged = kfChanged || ImGui::IsItemEdited();
+					kfRecordUndo = kfRecordUndo || ImGui::IsItemActivated();
+					kfPushUndo = kfPushUndo || ImGui::IsItemDeactivatedAfterEdit();
 
 					ImGui::Checkbox("Keyframe Random", &kf.random);
 					kfChanged = kfChanged || ImGui::IsItemEdited();
+					kfRecordUndo = kfRecordUndo || ImGui::IsItemActivated();
+					kfPushUndo = kfPushUndo || ImGui::IsItemDeactivatedAfterEdit();
 					if (kf.random)
 					{
 						ImGui::DragFloat("Keyframe Min Value", &kf.values[0], 0.1f);
 						kfChanged = kfChanged || ImGui::IsItemEdited();
+						kfRecordUndo = kfRecordUndo || ImGui::IsItemActivated();
+						kfPushUndo = kfPushUndo || ImGui::IsItemDeactivatedAfterEdit();
 						ImGui::DragFloat("Keyframe Max Value", &kf.values[1], 0.1f);
 						kfChanged = kfChanged || ImGui::IsItemEdited();
+						kfRecordUndo = kfRecordUndo || ImGui::IsItemActivated();
+						kfPushUndo = kfPushUndo || ImGui::IsItemDeactivatedAfterEdit();
 					}
 					else
 					{
 						ImGui::DragFloat("Keyframe Value", &kf.values[0], 0.1f);
 						kfChanged = kfChanged || ImGui::IsItemEdited();
+						kfRecordUndo = kfRecordUndo || ImGui::IsItemActivated();
+						kfPushUndo = kfPushUndo || ImGui::IsItemDeactivatedAfterEdit();
 					}
 
 					std::string currentEaseName = Easing::getEaseName(kf.easing);
@@ -320,6 +333,8 @@ void Events::onLayout()
 							{
 								kf.easing = (EaseType)i;
 								kfChanged = true;
+
+								UndoRedoManager::inst->push(new EventKeyframeEditCmd(selectedEvent->type, kfOldState, kf));
 							}
 						}
 
@@ -334,6 +349,16 @@ void Events::onLayout()
 						selectedEvent->sequence->insertKeyframe(kf);
 
 						levelManager->updateLevelEvent(selectedEvent);
+					}
+
+					if (kfRecordUndo)
+					{
+						kfUndoState = kfOldState;
+					}
+
+					if (kfPushUndo)
+					{
+						UndoRedoManager::inst->push(new EventKeyframeEditCmd(selectedEvent->type, kfUndoState, kf));
 					}
 				}
 			}

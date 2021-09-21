@@ -9,7 +9,7 @@
 class ObjectRemoveKeyframeCmd : public UndoCommand
 {
 public:
-	ObjectRemoveKeyframeCmd(const uint64_t objectId, const AnimationChannelType type, const Keyframe kf);
+	ObjectRemoveKeyframeCmd(uint64_t objectId, AnimationChannelType type, Keyframe kf);
 	~ObjectRemoveKeyframeCmd() override = default;
 
 	void undo() override;

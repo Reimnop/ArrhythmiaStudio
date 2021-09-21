@@ -23,8 +23,8 @@ public:
 	ColorSlot(nlohmann::json j);
 	~ColorSlot();
 
-	void insertKeyframe(const ColorKeyframe& kf);
-	void eraseKeyframe(const ColorKeyframe& kf);
+	void insertKeyframe(ColorKeyframe kf);
+	void eraseKeyframe(ColorKeyframe kf);
 
 	void update(float time);
 	nlohmann::json toJson() const;

@@ -84,7 +84,7 @@ LevelObjectProperties LevelObject::dumpProperties() const
     return properties;
 }
 
-void LevelObject::applyProperties(const LevelObjectProperties& properties)
+void LevelObject::applyProperties(LevelObjectProperties properties)
 {
     LevelManager* levelManager = LevelManager::inst;
     const Level* level = levelManager->level;

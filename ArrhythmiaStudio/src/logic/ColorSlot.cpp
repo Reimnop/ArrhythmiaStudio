@@ -50,13 +50,13 @@ ColorSlot::~ColorSlot()
 }
 
 
-void ColorSlot::insertKeyframe(const ColorKeyframe& kf)
+void ColorSlot::insertKeyframe(ColorKeyframe kf)
 {
 	keyframes.push_back(kf);
 	sequence->insertKeyframe(kf);
 }
 
-void ColorSlot::eraseKeyframe(const ColorKeyframe& kf)
+void ColorSlot::eraseKeyframe(ColorKeyframe kf)
 {
 	const std::vector<ColorKeyframe>::iterator it = std::remove(keyframes.begin(), keyframes.end(), kf);
 	keyframes.erase(it);

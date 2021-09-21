@@ -30,7 +30,7 @@ public:
 
 	LevelManager();
 
-	void loadLevel(const std::string& levelPath);
+	void loadLevel(std::string levelPath);
 
 	void update();
 

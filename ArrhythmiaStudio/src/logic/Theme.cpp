@@ -1,16 +1,17 @@
 #include "Theme.h"
 
+#include <functional>
+#include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
+
 #include "../rendering/ImGuiController.h"
 #include "animation/ColorSequence.h"
 #include "LevelManager.h"
 #include "GlobalConstants.h"
 #include "animation/Easing.h"
-
-#include <functional>
-#include <imgui/imgui.h>
-#include <imgui/imgui_internal.h>
-
 #include "imgui/imgui_editorlib.h"
+#include "UndoRedoManager.h"
+#include "undo_commands/ColorAddKeyframeCmd.h"
 
 Theme::Theme()
 {
@@ -175,8 +176,7 @@ void Theme::onLayout()
 
 				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 				{
-					float kfTime = startTime + ((io.MousePos.x - btnMinX) / availX) * (endTime -
-						startTime);
+					const float kfTime = startTime + ((io.MousePos.x - btnMinX) / availX) * (endTime - startTime);
 
 					if (kfTime > 0.0f)
 					{
@@ -186,6 +186,8 @@ void Theme::onLayout()
 
 						slot->insertKeyframe(kf);
 						slot->update(levelManager->time);
+
+						UndoRedoManager::inst->push(new ColorAddKeyframeCmd(selectedSlotIndex, kf), [this]() { selectedKeyframeIndex = -1; });
 					}
 				}
 

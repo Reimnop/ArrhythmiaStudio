@@ -8,7 +8,7 @@ class MultiUndoCmd : public UndoCommand
 {
 	static_assert(std::is_pointer_v<T>, "Expected a pointer");
 public:
-	MultiUndoCmd(const std::vector<T>& cmds)
+	MultiUndoCmd(std::vector<T> cmds)
 	{
 		commands = std::vector<T>(cmds);
 	}

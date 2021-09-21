@@ -6,7 +6,7 @@
 class EventKeyframeAddCmd : public UndoCommand
 {
 public:
-	EventKeyframeAddCmd(const LevelEventType type, const Keyframe kf);
+	EventKeyframeAddCmd(LevelEventType type, Keyframe kf);
 	~EventKeyframeAddCmd() override = default;
 
 	void undo() override;

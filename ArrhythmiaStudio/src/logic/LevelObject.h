@@ -40,7 +40,7 @@ public:
 	~LevelObject();
 
 	LevelObjectProperties dumpProperties() const;
-	void applyProperties(const LevelObjectProperties& properties);
+	void applyProperties(LevelObjectProperties properties);
 
 	void setParent(LevelObject* newParent);
 

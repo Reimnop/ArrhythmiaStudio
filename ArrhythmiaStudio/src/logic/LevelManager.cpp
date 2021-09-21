@@ -33,7 +33,7 @@ LevelManager::LevelManager()
 	loadLevel("Assets/StartupLevel");
 }
 
-void LevelManager::loadLevel(const std::string& levelPath)
+void LevelManager::loadLevel(std::string levelPath)
 {
 	// Cleanup old level
 	if (level)

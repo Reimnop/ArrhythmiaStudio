@@ -460,7 +460,7 @@ void Properties::onLayout()
 
 					if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 					{
-						UndoRedoManager::inst->push(new ObjectRemoveKeyframeCmd(selectedObject->id, selectedChannel->type, kf));
+						UndoRedoManager::inst->push(new ObjectRemoveKeyframeCmd(selectedObject->id, selectedChannel->type, kf), nullptr, [this]() { reset(); });
 
 						selectedChannel->eraseKeyframe(kf);
 						selectedChannel->update(levelManager->time);

@@ -19,6 +19,7 @@
 #include "undo_commands/ObjectAddChannelCmd.h"
 #include "undo_commands/ObjectAddKeyframeCmd.h"
 #include "undo_commands/ObjectKeyframeEditCmd.h"
+#include "undo_commands/ObjectRemoveKeyframeCmd.h"
 
 Properties* Properties::inst;
 
@@ -459,6 +460,8 @@ void Properties::onLayout()
 
 					if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 					{
+						UndoRedoManager::inst->push(new ObjectRemoveKeyframeCmd(selectedObject, selectedChannel->type, kf));
+
 						selectedChannel->eraseKeyframe(kf);
 						selectedChannel->update(levelManager->time);
 

@@ -3,12 +3,7 @@
 
 RemoveObjectCmd::RemoveObjectCmd(LevelObject* obj)
 {
-	addCmd = new AddObjectCmd(obj);
-}
-
-RemoveObjectCmd::~RemoveObjectCmd()
-{
-	delete addCmd;
+	addCmd = std::make_unique<AddObjectCmd>(obj);
 }
 
 void RemoveObjectCmd::undo()

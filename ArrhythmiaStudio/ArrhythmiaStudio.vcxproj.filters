@@ -333,6 +333,9 @@
     <ClCompile Include="src\logic\undo_commands\ObjectRemoveKeyframeCmd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\logic\undo_commands\AddLevelEventCmd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
@@ -2169,6 +2172,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\undo_commands\ObjectRemoveKeyframeCmd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\undo_commands\AddLevelEventCmd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

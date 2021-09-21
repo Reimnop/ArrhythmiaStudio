@@ -46,7 +46,7 @@ float LevelEvent::update(float time) const
 	return sequence->update(time);
 }
 
-nlohmann::ordered_json LevelEvent::toJson()
+nlohmann::ordered_json LevelEvent::toJson() const
 {
 	nlohmann::ordered_json j;
 	j["type"] = type;

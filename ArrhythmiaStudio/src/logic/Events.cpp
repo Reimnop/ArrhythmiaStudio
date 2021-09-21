@@ -10,7 +10,9 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
+#include "UndoRedoManager.h"
 #include "imgui/imgui_editorlib.h"
+#include "undo_commands/AddLevelEventCmd.h"
 
 Events::Events()
 {
@@ -343,7 +345,7 @@ void Events::onLayout()
 	ImGui::End();
 }
 
-void Events::insertEventSelectable(LevelEventType type, float defaultValue) const
+void Events::insertEventSelectable(LevelEventType type, float defaultValue)
 {
 	const std::string channelName = getEventName(type);
 	Level* level = LevelManager::inst->level;
@@ -355,6 +357,8 @@ void Events::insertEventSelectable(LevelEventType type, float defaultValue) cons
 		LevelEvent* levelEvent = new LevelEvent(type, 1, &first);
 
 		level->insertLevelEvent(levelEvent);
+
+		UndoRedoManager::inst->push(new AddLevelEventCmd(levelEvent), [this]() { reset(); });
 	}
 }
 

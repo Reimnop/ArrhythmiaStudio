@@ -175,14 +175,12 @@ void LevelObject::insertChannel(AnimationChannel* value)
 
 void LevelObject::eraseChannel(AnimationChannelType type)
 {
-    const std::vector<AnimationChannel*>::iterator it = std::remove_if(animationChannels.begin(), animationChannels.end(),
-                                                                       [type](const AnimationChannel* a)
-                                                                       {
-                                                                           return a->type == type;
-                                                                       });
-
+    const std::vector<AnimationChannel*>::iterator it = std::find_if(animationChannels.begin(), animationChannels.end(),
+                                                                     [type](const AnimationChannel* a)
+                                                                     {
+                                                                         return a->type == type;
+                                                                     });
     delete (*it);
-
     animationChannels.erase(it);
 
     animationChannelLookup[type] = false;

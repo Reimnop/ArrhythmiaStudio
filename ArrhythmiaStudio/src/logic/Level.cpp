@@ -25,15 +25,28 @@ void Level::insertLevelEvent(LevelEvent* value)
 		return;
 	}
 
-	std::vector<LevelEvent*>::iterator it = std::lower_bound(levelEvents.begin(), levelEvents.end(),
-	                                                         value,
-	                                                         [](const LevelEvent* a, const LevelEvent* b)
-	                                                         {
-		                                                         return a->type < b->type;
-	                                                         });
+	const std::vector<LevelEvent*>::iterator it = std::lower_bound(levelEvents.begin(), levelEvents.end(), value,
+																   [](const LevelEvent* a, const LevelEvent* b)
+																   {
+																       return a->type < b->type;
+																   });
 	levelEvents.insert(it, value);
 
 	levelEventLookup[value->type] = true;
+}
+
+void Level::eraseLevelEvent(LevelEventType type)
+{
+	const std::vector<LevelEvent*>::iterator it = std::find_if(levelEvents.begin(), levelEvents.end(),
+															   [type](const LevelEvent* a)
+															   {
+															       return a->type == type;
+															   });
+
+	delete (*it);
+	levelEvents.erase(it);
+
+	levelEventLookup[type] = false;
 }
 
 bool Level::hasLevelEvent(LevelEventType type)

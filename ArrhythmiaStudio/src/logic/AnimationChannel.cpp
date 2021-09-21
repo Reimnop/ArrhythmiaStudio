@@ -27,13 +27,13 @@ AnimationChannel::~AnimationChannel()
 	delete sequence;
 }
 
-void AnimationChannel::insertKeyframe(const Keyframe& kf)
+void AnimationChannel::insertKeyframe(Keyframe kf)
 {
 	keyframes.push_back(kf);
 	sequence->insertKeyframe(kf);
 }
 
-void AnimationChannel::eraseKeyframe(const Keyframe& kf)
+void AnimationChannel::eraseKeyframe(Keyframe kf)
 {
 	const std::vector<Keyframe>::iterator it = std::remove(keyframes.begin(), keyframes.end(), kf);
 	keyframes.erase(it);

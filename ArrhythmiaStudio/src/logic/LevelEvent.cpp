@@ -27,13 +27,13 @@ LevelEvent::~LevelEvent()
 	delete sequence;
 }
 
-void LevelEvent::insertKeyframe(const Keyframe& keyframe)
+void LevelEvent::insertKeyframe(Keyframe keyframe)
 {
 	keyframes.push_back(keyframe);
 	sequence->insertKeyframe(keyframe);
 }
 
-void LevelEvent::eraseKeyframe(const Keyframe& keyframe)
+void LevelEvent::eraseKeyframe(Keyframe keyframe)
 {
 	const std::vector<Keyframe>::iterator it = std::remove(keyframes.begin(), keyframes.end(), keyframe);
 	keyframes.erase(it);

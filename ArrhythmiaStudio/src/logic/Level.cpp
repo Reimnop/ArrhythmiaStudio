@@ -49,6 +49,16 @@ void Level::eraseLevelEvent(LevelEventType type)
 	levelEventLookup[type] = false;
 }
 
+LevelEvent* Level::getLevelEvent(LevelEventType type)
+{
+	const std::vector<LevelEvent*>::iterator it = std::find_if(levelEvents.begin(), levelEvents.end(),
+															   [type](const LevelEvent* a)
+															   {
+															   	   return a->type == type;
+															   });
+	return *it;
+}
+
 bool Level::hasLevelEvent(LevelEventType type)
 {
 	return levelEventLookup[type];

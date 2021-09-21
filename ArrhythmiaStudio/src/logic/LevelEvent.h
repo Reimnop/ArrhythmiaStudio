@@ -15,8 +15,8 @@ public:
 	LevelEvent(nlohmann::json j);
 	~LevelEvent();
 
-	void insertKeyframe(const Keyframe& keyframe);
-	void eraseKeyframe(const Keyframe& keyframe);
+	void insertKeyframe(Keyframe keyframe);
+	void eraseKeyframe(Keyframe keyframe);
 
 	float update(float time) const;
 	nlohmann::ordered_json toJson() const;

@@ -13,6 +13,8 @@
 #include "UndoRedoManager.h"
 #include "imgui/imgui_editorlib.h"
 #include "undo_commands/AddLevelEventCmd.h"
+#include "undo_commands/EventKeyframeAddCmd.h"
+#include "undo_commands/EventKeyframeRemoveCmd.h"
 
 Events::Events()
 {
@@ -193,15 +195,16 @@ void Events::onLayout()
 
 				if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 				{
-					float kfTime = startTime + ((io.MousePos.x - btnMinX) / availX) * (endTime -
-						startTime);
+					const float kfTime = startTime + ((io.MousePos.x - btnMinX) / availX) * (endTime - startTime);
 
 					if (kfTime > 0.0f)
 					{
-						Keyframe kf = Keyframe(kfTime, 0.0f);
+						const Keyframe kf = Keyframe(kfTime, 0.0f);
 
 						selectedEvent->insertKeyframe(kf);
 						levelManager->updateLevelEvent(selectedEvent);
+
+						UndoRedoManager::inst->push(new EventKeyframeAddCmd(selectedEvent->type, kf), [this]() { selectedKeyframeIndex = -1; });
 					}
 				}
 
@@ -274,11 +277,13 @@ void Events::onLayout()
 			ImGui::Separator();
 			if (selectedKeyframeIndex != -1 && selectedEvent != nullptr)
 			{
-				Keyframe& kf = selectedEvent->keyframes[selectedKeyframeIndex];
+				Keyframe kf = selectedEvent->keyframes[selectedKeyframeIndex];
 				Keyframe kfOldState = kf;
 
-				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
+				if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 				{
+					UndoRedoManager::inst->push(new EventKeyframeRemoveCmd(selectedEvent->type, kf), nullptr, [this]() { selectedKeyframeIndex = -1; });
+
 					selectedEvent->eraseKeyframe(kf);
 					levelManager->updateLevelEvent(selectedEvent);
 

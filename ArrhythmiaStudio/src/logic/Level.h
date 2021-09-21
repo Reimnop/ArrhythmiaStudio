@@ -18,6 +18,7 @@ public:
 
 	void insertLevelEvent(LevelEvent* value);
 	void eraseLevelEvent(LevelEventType type);
+	LevelEvent* getLevelEvent(LevelEventType type);
 	bool hasLevelEvent(LevelEventType type);
 	nlohmann::ordered_json toJson();
 private:

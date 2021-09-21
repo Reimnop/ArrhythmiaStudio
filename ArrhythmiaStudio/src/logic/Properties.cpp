@@ -455,7 +455,7 @@ void Properties::onLayout()
 				ImGui::Separator();
 				if (selectedKeyframeIndex != -1 && selectedChannel != nullptr)
 				{
-					Keyframe& kf = selectedChannel->keyframes[selectedKeyframeIndex];
+					Keyframe kf = selectedChannel->keyframes[selectedKeyframeIndex];
 					Keyframe kfOldState = kf;
 
 					if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE))

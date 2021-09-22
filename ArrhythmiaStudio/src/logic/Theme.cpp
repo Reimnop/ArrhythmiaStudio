@@ -12,6 +12,8 @@
 #include "imgui/imgui_editorlib.h"
 #include "UndoRedoManager.h"
 #include "undo_commands/ColorAddKeyframeCmd.h"
+#include "undo_commands/ColorKeyframeEditCmd.h"
+#include "undo_commands/ColorRemoveKeyframeCmd.h"
 
 Theme::Theme()
 {
@@ -264,6 +266,8 @@ void Theme::onLayout()
 
 				if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootAndChildWindows) && ImGui::IsKeyPressed(GLFW_KEY_DELETE))
 				{
+					UndoRedoManager::inst->push(new ColorRemoveKeyframeCmd(selectedSlotIndex, kf), nullptr, [this]() { selectedKeyframeIndex = -1; });
+
 					currentSlot->eraseKeyframe(kf);
 					levelManager->updateColorSlot(currentSlot);
 
@@ -272,10 +276,16 @@ void Theme::onLayout()
 				else
 				{
 					bool kfChanged = false;
+					bool kfRecordUndo = false;
+					bool kfPushUndo = false;
 					ImGui::DragFloat("Keyframe Time", &kf.time, 0.1f, 0.0f, levelManager->audioClip->getLength());
 					kfChanged = kfChanged || ImGui::IsItemEdited();
+					kfRecordUndo = kfRecordUndo || ImGui::IsItemActivated();
+					kfPushUndo = kfPushUndo || ImGui::IsItemDeactivatedAfterEdit();
 					ImGui::ColorEdit3("Keyframe Color", &kf.color.r);
 					kfChanged = kfChanged || ImGui::IsItemEdited();
+					kfRecordUndo = kfRecordUndo || ImGui::IsItemActivated();
+					kfPushUndo = kfPushUndo || ImGui::IsItemDeactivatedAfterEdit();
 
 					std::string currentEaseName = Easing::getEaseName(kf.easing);
 					if (ImGui::BeginCombo("Easing", currentEaseName.c_str()))
@@ -287,6 +297,8 @@ void Theme::onLayout()
 							{
 								kf.easing = (EaseType)i;
 								kfChanged = true;
+
+								UndoRedoManager::inst->push(new ColorKeyframeEditCmd(selectedSlotIndex, kfOldState, kf));
 							}
 						}
 
@@ -299,6 +311,16 @@ void Theme::onLayout()
 						currentSlot->sequence->insertKeyframe(kf);
 
 						levelManager->updateColorSlot(currentSlot);
+					}
+
+					if (kfRecordUndo)
+					{
+						kfUndoState = kfOldState;
+					}
+
+					if (kfPushUndo)
+					{
+						UndoRedoManager::inst->push(new ColorKeyframeEditCmd(selectedSlotIndex, kfUndoState, kf));
 					}
 				}
 			}

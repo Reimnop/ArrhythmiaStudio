@@ -261,6 +261,8 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="src\logic\undo_commands\AddObjectCmd.cpp" />
     <ClCompile Include="src\logic\undo_commands\ChangeParentCmd.cpp" />
     <ClCompile Include="src\logic\undo_commands\ColorAddKeyframeCmd.cpp" />
+    <ClCompile Include="src\logic\undo_commands\ColorKeyframeEditCmd.cpp" />
+    <ClCompile Include="src\logic\undo_commands\ColorRemoveKeyframeCmd.cpp" />
     <ClCompile Include="src\logic\undo_commands\EditObjectCmd.cpp" />
     <ClCompile Include="src\logic\undo_commands\EventKeyframeAddCmd.cpp" />
     <ClCompile Include="src\logic\undo_commands\EventKeyframeEditCmd.cpp" />
@@ -871,6 +873,8 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\logic\undo_commands\AddObjectCmd.h" />
     <ClInclude Include="src\logic\undo_commands\ChangeParentCmd.h" />
     <ClInclude Include="src\logic\undo_commands\ColorAddKeyframeCmd.h" />
+    <ClInclude Include="src\logic\undo_commands\ColorKeyframeEditCmd.h" />
+    <ClInclude Include="src\logic\undo_commands\ColorRemoveKeyframeCmd.h" />
     <ClInclude Include="src\logic\undo_commands\EditObjectCmd.h" />
     <ClInclude Include="src\logic\undo_commands\EventKeyframeAddCmd.h" />
     <ClInclude Include="src\logic\undo_commands\EventKeyframeEditCmd.h" />

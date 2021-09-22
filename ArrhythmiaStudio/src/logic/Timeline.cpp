@@ -489,8 +489,9 @@ void Timeline::onLayout()
 								}
 							}
 
-							std::vector<LevelObject*> newObjects;
+							std::vector<AddObjectCmd*> cmds;
 
+							std::vector<LevelObject*> newObjects;
 							for (nlohmann::json objJson : objsJson)
 							{
 								objJson["start"] = objJson["start"].get<float>() + levelManager->time + instantiationOffset;
@@ -500,7 +501,11 @@ void Timeline::onLayout()
 
 								levelManager->insertObject(newObject);
 								newObjects.push_back(newObject);
+
+								cmds.push_back(new AddObjectCmd(newObject));
 							}
+
+							UndoRedoManager::inst->push(new MultiUndoCmd(cmds));
 
 							for (LevelObject* obj : newObjects)
 							{

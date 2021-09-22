@@ -17,6 +17,8 @@ private:
 	int selectedSlotIndex = -1;
 	int selectedKeyframeIndex = -1;
 
+	ColorKeyframe kfUndoState;
+
 	void onLayout();
 	bool colorSlotButton(std::string label, Color color, bool selected) const;
 };

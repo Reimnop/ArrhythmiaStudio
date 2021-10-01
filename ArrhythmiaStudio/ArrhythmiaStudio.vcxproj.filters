@@ -2642,6 +2642,16 @@
     <None Include="avformat-58.dll" />
     <None Include="swresample-3.dll" />
     <None Include="swscale-5.dll" />
+    <None Include="Assets\Shapes\circle_quarter.shp" />
+    <None Include="Assets\Shapes\hexagon.shp" />
+    <None Include="Assets\Shapes\hollow_circle.shp" />
+    <None Include="Assets\Shapes\hollow_circle_quarter.shp" />
+    <None Include="Assets\Shapes\hollow_hexagon.shp" />
+    <None Include="Assets\Shapes\hollow_pentagon.shp" />
+    <None Include="Assets\Shapes\hollow_square.shp" />
+    <None Include="Assets\Shapes\pentagon.shp" />
+    <None Include="Assets\Shapes\right_angled_triangle.shp" />
+    <None Include="Assets\Shapes\triangle.shp" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\Inconsolata.ttf" />

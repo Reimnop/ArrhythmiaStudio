@@ -918,7 +918,17 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <None Include="Assets\Shaders\unlit.vert" />
     <None Include="Assets\Shaders\waveform.comp" />
     <None Include="Assets\Shapes\circle.shp" />
+    <None Include="Assets\Shapes\circle_quarter.shp" />
+    <None Include="Assets\Shapes\hexagon.shp" />
+    <None Include="Assets\Shapes\hollow_circle.shp" />
+    <None Include="Assets\Shapes\hollow_circle_quarter.shp" />
+    <None Include="Assets\Shapes\hollow_hexagon.shp" />
+    <None Include="Assets\Shapes\hollow_pentagon.shp" />
+    <None Include="Assets\Shapes\hollow_square.shp" />
+    <None Include="Assets\Shapes\pentagon.shp" />
+    <None Include="Assets\Shapes\right_angled_triangle.shp" />
     <None Include="Assets\Shapes\square.shp" />
+    <None Include="Assets\Shapes\triangle.shp" />
     <None Include="avcodec-58.dll" />
     <None Include="avdevice-58.dll" />
     <None Include="avfilter-7.dll" />

@@ -226,6 +226,9 @@ void LevelManager::updateLevelEvent(LevelEvent* levelEvent)
 	case LevelEventType_BloomScatter:
 		Renderer::inst->bloom->scatter = levelEvent->update(time);
 		break;
+	case LevelEventType_BloomThreshold:
+		Renderer::inst->bloom->threshold = levelEvent->update(time);
+		break;
 	}
 }
 

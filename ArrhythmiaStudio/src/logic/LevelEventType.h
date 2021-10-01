@@ -8,5 +8,6 @@ enum LevelEventType
 	LevelEventType_CameraRotation,
 	LevelEventType_BloomIntensity,
 	LevelEventType_BloomScatter,
+	LevelEventType_BloomThreshold,
 	LevelEventType_Count
 };

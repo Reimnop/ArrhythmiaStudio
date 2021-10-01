@@ -9,12 +9,14 @@ Bloom::Bloom()
 	blurVertical = new ComputeShader("Assets/Shaders/PostProcessing/bloom-blur-vertical.comp");
 	upsampleShader = new ComputeShader("Assets/Shaders/PostProcessing/bloom-upsample.comp");
 	combineShader = new ComputeShader("Assets/Shaders/PostProcessing/bloom-combine.comp");
+	thresholdShader = new ComputeShader("Assets/Shaders/PostProcessing/bloom-threshold.comp");
 
 	lastWidth = RENDERER_INITIAL_WIDTH;
 	lastHeight = RENDERER_INITIAL_HEIGHT;
 
 	genMips(RENDERER_INITIAL_WIDTH, RENDERER_INITIAL_HEIGHT);
 	bloomTex = new Texture2D(RENDERER_INITIAL_WIDTH, RENDERER_INITIAL_HEIGHT, GL_RGBA16F, GL_RGB, GL_FLOAT);
+	thresholdTex = new Texture2D(RENDERER_INITIAL_WIDTH, RENDERER_INITIAL_HEIGHT, GL_RGBA16F, GL_RGB, GL_FLOAT);
 }
 
 void Bloom::processImage(uint32_t image, int width, int height)
@@ -28,10 +30,23 @@ void Bloom::processImage(uint32_t image, int width, int height)
 	{
 		resizeMips(width, height);
 		bloomTex->resize(width, height);
+		thresholdTex->resize(width, height);
 
 		lastWidth = width;
 		lastHeight = height;
 	}
+
+	// Thresholding
+	glUseProgram(thresholdShader->getHandle());
+
+	glBindImageTexture(0, thresholdTex->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
+	glBindTexture(GL_TEXTURE_2D, image);
+
+	glUniform1f(1, threshold);
+
+	glDispatchCompute(std::ceil(width / 8.0f), std::ceil(height / 8.0f), 1);
+
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
 	// Downsampling
 	glActiveTexture(GL_TEXTURE0);
@@ -42,7 +57,7 @@ void Bloom::processImage(uint32_t image, int width, int height)
 		glUseProgram(blurHorizontal->getHandle());
 
 		glBindImageTexture(0, mipChain[i]->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_RGBA16F);
-		glBindTexture(GL_TEXTURE_2D, i == 0 ? image : mipChain[i - 1]->getHandle());
+		glBindTexture(GL_TEXTURE_2D, i == 0 ? thresholdTex->getHandle() : mipChain[i - 1]->getHandle());
 
 		glDispatchCompute(std::ceil(mipWidths[i] / 8.0f), std::ceil(mipHeights[i] / 8.0f), 1);
 

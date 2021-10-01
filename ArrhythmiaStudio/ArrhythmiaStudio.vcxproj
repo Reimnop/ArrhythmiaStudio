@@ -912,6 +912,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <None Include="Assets\Shaders\PostProcessing\bloom-blur-horizontal.comp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-blur-vertical.comp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-combine.comp" />
+    <None Include="Assets\Shaders\PostProcessing\bloom-threshold.comp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-upsample.comp" />
     <None Include="Assets\Shaders\PostProcessing\tonemapping.comp" />
     <None Include="Assets\Shaders\unlit.frag" />

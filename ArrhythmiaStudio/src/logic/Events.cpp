@@ -50,6 +50,7 @@ void Events::onLayout()
 			insertEventSelectable(LevelEventType_CameraRotation, 0.0f);
 			insertEventSelectable(LevelEventType_BloomIntensity, 0.0f);
 			insertEventSelectable(LevelEventType_BloomScatter, 0.9f);
+			insertEventSelectable(LevelEventType_BloomThreshold, 0.8f);
 
 			ImGui::EndPopup();
 		}
@@ -408,6 +409,8 @@ std::string Events::getEventName(LevelEventType type) const
 		return "Bloom Intensity";
 	case LevelEventType_BloomScatter:
 		return "Bloom Scatter";
+	case LevelEventType_BloomThreshold:
+		return "Bloom Threshold";
 	}
 
 	return "Unknown event";

@@ -2652,6 +2652,7 @@
     <None Include="Assets\Shapes\pentagon.shp" />
     <None Include="Assets\Shapes\right_angled_triangle.shp" />
     <None Include="Assets\Shapes\triangle.shp" />
+    <None Include="Assets\Shaders\PostProcessing\bloom-threshold.comp" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\Inconsolata.ttf" />

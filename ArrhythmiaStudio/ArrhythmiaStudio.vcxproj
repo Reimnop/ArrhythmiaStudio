@@ -115,7 +115,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;STB_IMAGE_WRITE_IMPLEMENTATION;PROJECT_NAME=$(ProjectName);_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLFW_INCLUDE_NONE;NOMINMAX</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;STB_IMAGE_IMPLEMENTATION;PROJECT_NAME=$(ProjectName);_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLFW_INCLUDE_NONE;NOMINMAX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -138,7 +138,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;STB_IMAGE_WRITE_IMPLEMENTATION;PROJECT_NAME=$(ProjectName);NDEBUG;_CONSOLE;GLFW_INCLUDE_NONE;GLM_FORCE_SSE42;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;STB_IMAGE_IMPLEMENTATION;PROJECT_NAME=$(ProjectName);NDEBUG;_CONSOLE;GLFW_INCLUDE_NONE;GLM_FORCE_SSE42;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>$(ProjectDir)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -237,6 +237,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="src\logic\animation\ColorSequence.cpp" />
     <ClCompile Include="src\logic\animation\Easing.h" />
     <ClCompile Include="src\logic\DebugMenu.cpp" />
+    <ClCompile Include="src\logic\DocManager.cpp" />
     <ClCompile Include="src\logic\Events.cpp" />
     <ClCompile Include="src\logic\imgui\imgui_editorlib.cpp" />
     <ClCompile Include="src\logic\LevelEvent.cpp" />
@@ -336,6 +337,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="include\Frame Sinks\VideoFilterInput.h" />
     <ClInclude Include="include\Frame Sinks\VideoFrameSink.h" />
     <ClInclude Include="include\FrameContainer.h" />
+    <ClInclude Include="include\imgui\imgui_markdown.h" />
     <ClInclude Include="include\Info\AudioStreamInfo.h" />
     <ClInclude Include="include\Info\ContainerInfo.h" />
     <ClInclude Include="include\Info\VideoStreamInfo.h" />
@@ -846,6 +848,8 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\logic\DataManager.h" />
     <ClInclude Include="src\logic\DebugMenu.h" />
     <ClInclude Include="src\logic\DiscordManager.h" />
+    <ClInclude Include="src\logic\DocManager.h" />
+    <ClInclude Include="src\logic\DocPage.h" />
     <ClInclude Include="src\logic\Events.h" />
     <ClInclude Include="src\logic\GlobalConstants.h" />
     <ClInclude Include="src\logic\imgui\imgui_editorlib.h" />
@@ -909,6 +913,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\rendering\VertexAttrib.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Documentation\general_usage.md" />
     <None Include="Assets\Shaders\PostProcessing\bloom-blur-horizontal.comp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-blur-vertical.comp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-combine.comp" />
@@ -930,6 +935,8 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <None Include="Assets\Shapes\right_angled_triangle.shp" />
     <None Include="Assets\Shapes\square.shp" />
     <None Include="Assets\Shapes\triangle.shp" />
+    <None Include="Assets\StartupLevel\level.njelv" />
+    <None Include="Assets\StartupLevel\song.ogg" />
     <None Include="avcodec-58.dll" />
     <None Include="avdevice-58.dll" />
     <None Include="avfilter-7.dll" />
@@ -1077,9 +1084,6 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <None Include="swscale-5.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="Assets\Inconsolata.ttf" />
-  </ItemGroup>
-  <ItemGroup>
     <Library Include="libs\avcodec.lib" />
     <Library Include="libs\avdevice.lib" />
     <Library Include="libs\avfilter.lib" />
@@ -1092,7 +1096,12 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <Library Include="libs\swscale.lib" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="Assets\Documentation\doc_list.txt" />
     <Text Include="Assets\Shapes\shapes_list.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Assets\Inconsolata-Bold.ttf" />
+    <Font Include="Assets\Inconsolata-Regular.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -8,6 +8,7 @@
 #include <functional>
 #include <imgui/imgui.h>
 #include <imgui/imgui_stdlib.h>
+#include <imgui/imgui_markdown.h>
 #include <ShlObj.h>
 #include <helper.h>
 #include <logger.h>
@@ -25,6 +26,7 @@ GameManager::GameManager(GLFWwindow* window)
 	discordManager = new DiscordManager();
 	undoRedoManager = new UndoRedoManager();
 	levelManager = new LevelManager();
+	docManager = new DocManager();
 	debug = new DebugMenu();
 }
 
@@ -263,6 +265,11 @@ void GameManager::onLayout()
 		}
 		if (ImGui::BeginMenu("Help"))
 		{
+			if (ImGui::MenuItem("Documentation"))
+			{
+				docManager->isOpen = true;
+			}
+
 			if (ImGui::MenuItem("About"))
 			{
 				doAboutPopup = true;

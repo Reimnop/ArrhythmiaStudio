@@ -354,6 +354,9 @@
     <ClCompile Include="src\logic\undo_commands\ColorKeyframeEditCmd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\logic\DocManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
@@ -2213,6 +2216,15 @@
     <ClInclude Include="src\logic\undo_commands\ColorKeyframeEditCmd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\imgui\imgui_markdown.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\DocManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\DocPage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\glm\ext\matrix_clip_space.inl">
@@ -2653,9 +2665,9 @@
     <None Include="Assets\Shapes\right_angled_triangle.shp" />
     <None Include="Assets\Shapes\triangle.shp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-threshold.comp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Font Include="Assets\Inconsolata.ttf" />
+    <None Include="Assets\StartupLevel\level.njelv" />
+    <None Include="Assets\StartupLevel\song.ogg" />
+    <None Include="Assets\Documentation\general_usage.md" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs\glfw3.lib" />
@@ -2671,5 +2683,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\Shapes\shapes_list.txt" />
+    <Text Include="Assets\Documentation\doc_list.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Assets\Inconsolata-Bold.ttf" />
+    <Font Include="Assets\Inconsolata-Regular.ttf" />
   </ItemGroup>
 </Project>

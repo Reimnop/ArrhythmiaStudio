@@ -5,6 +5,7 @@
 
 #include "LevelCreateInfo.h"
 #include "LevelManager.h"
+#include "DocManager.h"
 #include "ShapeManager.h"
 #include "DataManager.h"
 #include "DebugMenu.h"
@@ -23,6 +24,7 @@ public:
 private:
 	GLFWwindow* mainWindow;
 	LevelManager* levelManager;
+	DocManager* docManager;
 	ShapeManager* shapeManager;
 	DataManager* dataManager;
 	DiscordManager* discordManager;

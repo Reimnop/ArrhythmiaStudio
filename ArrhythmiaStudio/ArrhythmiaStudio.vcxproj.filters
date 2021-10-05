@@ -2668,6 +2668,7 @@
     <None Include="Assets\StartupLevel\level.njelv" />
     <None Include="Assets\StartupLevel\song.ogg" />
     <None Include="Assets\Documentation\general_usage.md" />
+    <None Include="Assets\Documentation\testing.md" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs\glfw3.lib" />

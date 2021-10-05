@@ -10,4 +10,3 @@ Hold **middle mouse button** and move to drag around in the timeline
 **Ctrl + S** to save level
 **Ctrl + Shift + S** to save level as
 **Ctrl + N** to create new level
-[Click here for more info](https://www.youtube.com/watch?v=dQw4w9WgXcQ)

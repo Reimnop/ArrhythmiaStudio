@@ -3,7 +3,6 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <vector>
-#include <queue>
 
 #include "DrawCommand.h"
 #include "../logic/Scene.h"
@@ -11,7 +10,8 @@
 #include "Camera.h"
 #include "ImGuiController.h"
 #include "FramebufferStack.h"
-#include "PostProcessing/Bloom.h"
+#include "post_processing/Bloom.h"
+#include "text/SampleTextRenderer.h"
 // #include "PostProcessing/Tonemapping.h"
 
 class Renderer
@@ -84,4 +84,6 @@ private:
 
 	void recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform);
 	void queueCommand(const OutputDrawData* drawData);
+
+	SampleTextRenderer* textRenderer;
 };

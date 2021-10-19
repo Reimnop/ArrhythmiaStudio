@@ -48,7 +48,7 @@ void LevelManager::loadLevel(std::string levelPath)
 
 	// Parse new level json
 	std::filesystem::path levelDir = levelPath;
-	std::filesystem::path levelFilePath = levelDir / "level.njelv";
+	std::filesystem::path levelFilePath = levelDir / "level.aslv";
 	std::filesystem::path songFilePath = levelDir / "song.ogg";
 
 	std::ifstream s(levelFilePath);

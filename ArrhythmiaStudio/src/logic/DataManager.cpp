@@ -64,7 +64,7 @@ void DataManager::saveLevel(bool saveAs)
 	}
 
 	std::filesystem::path levelFilePath(levelDir);
-	levelFilePath /= "level.njelv";
+	levelFilePath /= "level.aslv";
 
 	std::ofstream s(levelFilePath);
 	s << LevelManager::inst->level->toJson();
@@ -117,7 +117,7 @@ void DataManager::genLevelFiles(LevelCreateInfo createInfo) const
 	}
 
 	std::filesystem::path levelFilePath(createInfo.levelPath);
-	levelFilePath /= "level.njelv";
+	levelFilePath /= "level.aslv";
 	std::filesystem::path songFilePath(createInfo.levelPath);
 	songFilePath /= "song.ogg";
 

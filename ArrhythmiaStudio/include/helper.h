@@ -41,3 +41,14 @@ template <class F>
 inline typename lambda_traits<F>::pointer cify(F&& f) {
     return lambda_traits<F>::cify(std::forward<F>(f));
 }
+
+struct pair_hash
+{
+    template <typename T, typename U>
+    std::size_t operator()(const std::pair<T, U>& x) const
+    {
+        const size_t lhs = std::hash<T>()(x.first);
+        const size_t rhs = std::hash<U>()(x.second);
+        return lhs ^ (rhs + 0x9e3779b9 + (lhs << 6) + (lhs >> 2));
+    }
+};

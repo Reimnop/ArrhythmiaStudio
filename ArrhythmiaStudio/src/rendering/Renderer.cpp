@@ -1,9 +1,11 @@
-#include "Renderer.h"
+﻿#include "Renderer.h"
 
-#include "PostProcessing/Bloom.h"
+#include "post_processing/Bloom.h"
 #include "GlobalConstants.h"
 
 #include <logger.h>
+
+#include "../MainWindow.h"
 
 Renderer* Renderer::inst;
 
@@ -100,6 +102,9 @@ Renderer::Renderer(GLFWwindow* window)
 
 	bloom = new Bloom();
 	// tonemapping = new Tonemapping();
+
+	textRenderer = new SampleTextRenderer("Assets/Inconsolata.asfont");
+	textRenderer->setText(L"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed a rhoncus urna, nec pellentesque est.\nCurabitur quis magna eget odio malesuada iaculis. Ut dapibus iaculis urna, vitae sollicitudin diam ultrices\net.");
 }
 
 void Renderer::update()
@@ -271,6 +276,8 @@ void Renderer::renderViewport()
 	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	// textRenderer->draw(viewProjection);
 
 	for (const OutputDrawData* drawData : queuedDrawDataTransparent)
 	{

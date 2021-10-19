@@ -282,11 +282,14 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="src\rendering\Material.cpp" />
     <ClCompile Include="src\rendering\Mesh.cpp" />
     <ClCompile Include="src\rendering\MeshRenderer.cpp" />
-    <ClCompile Include="src\rendering\PostProcessing\Bloom.cpp" />
-    <ClCompile Include="src\rendering\PostProcessing\Tonemapping.cpp" />
+    <ClCompile Include="src\rendering\post_processing\Bloom.cpp" />
+    <ClCompile Include="src\rendering\post_processing\Tonemapping.cpp" />
     <ClCompile Include="src\rendering\Renderer.cpp" />
     <ClCompile Include="src\rendering\Shader.cpp" />
     <ClCompile Include="src\rendering\Texture2D.cpp" />
+    <ClCompile Include="src\rendering\text\Font.cpp" />
+    <ClCompile Include="src\rendering\text\SampleTextRenderer.cpp" />
+    <ClCompile Include="src\rendering\text\TextMeshGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AudioFormatConverter.h" />
@@ -903,24 +906,38 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\rendering\Mesh.h" />
     <ClInclude Include="src\rendering\MeshRenderer.h" />
     <ClInclude Include="src\rendering\OutputDrawData.h" />
-    <ClInclude Include="src\rendering\PostProcessing\Bloom.h" />
-    <ClInclude Include="src\rendering\PostProcessing\PostProcessor.h" />
-    <ClInclude Include="src\rendering\PostProcessing\Tonemapping.h" />
+    <ClInclude Include="src\rendering\post_processing\Bloom.h" />
+    <ClInclude Include="src\rendering\post_processing\PostProcessor.h" />
+    <ClInclude Include="src\rendering\post_processing\Tonemapping.h" />
     <ClInclude Include="src\rendering\Renderer.h" />
     <ClInclude Include="src\rendering\RendererComponent.h" />
     <ClInclude Include="src\rendering\Shader.h" />
     <ClInclude Include="src\rendering\Texture2D.h" />
+    <ClInclude Include="src\rendering\text\AtlasInfo.h" />
+    <ClInclude Include="src\rendering\text\Bounds.h" />
+    <ClInclude Include="src\rendering\text\Font.h" />
+    <ClInclude Include="src\rendering\text\Glyph.h" />
+    <ClInclude Include="src\rendering\text\Metrics.h" />
+    <ClInclude Include="src\rendering\text\SampleTextRenderer.h" />
+    <ClInclude Include="src\rendering\text\TextMeshGenerator.h" />
+    <ClInclude Include="src\rendering\text\TextVertex.h" />
     <ClInclude Include="src\rendering\VertexAttrib.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Documentation\general_usage.md" />
     <None Include="Assets\Documentation\testing.md" />
+    <None Include="Assets\Impact.asfont" />
+    <None Include="Assets\Inconsolata.asfont" />
+    <None Include="Assets\PinyonScript.asfont" />
+    <None Include="Assets\PlayfairDisplay.asfont" />
     <None Include="Assets\Shaders\PostProcessing\bloom-blur-horizontal.comp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-blur-vertical.comp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-combine.comp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-threshold.comp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-upsample.comp" />
     <None Include="Assets\Shaders\PostProcessing\tonemapping.comp" />
+    <None Include="Assets\Shaders\text.frag" />
+    <None Include="Assets\Shaders\text.vert" />
     <None Include="Assets\Shaders\unlit.frag" />
     <None Include="Assets\Shaders\unlit.vert" />
     <None Include="Assets\Shaders\waveform.comp" />
@@ -936,7 +953,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <None Include="Assets\Shapes\right_angled_triangle.shp" />
     <None Include="Assets\Shapes\square.shp" />
     <None Include="Assets\Shapes\triangle.shp" />
-    <None Include="Assets\StartupLevel\level.njelv" />
+    <None Include="Assets\StartupLevel\level.aslv" />
     <None Include="Assets\StartupLevel\song.ogg" />
     <None Include="avcodec-58.dll" />
     <None Include="avdevice-58.dll" />

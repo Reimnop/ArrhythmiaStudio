@@ -183,10 +183,10 @@
     <ClCompile Include="src\logic\animation\Easing.h">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\PostProcessing\Bloom.cpp">
+    <ClCompile Include="src\rendering\post_processing\Bloom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\PostProcessing\Tonemapping.cpp">
+    <ClCompile Include="src\rendering\post_processing\Tonemapping.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\logic\imgui\imgui_editorlib.cpp">
@@ -355,6 +355,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\logic\DocManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\text\Font.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\text\TextMeshGenerator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\text\SampleTextRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1559,16 +1568,16 @@
     <ClInclude Include="src\logic\animation\EaseType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\PostProcessing\Bloom.h">
+    <ClInclude Include="src\rendering\post_processing\Bloom.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\PostProcessing\PostProcessor.h">
+    <ClInclude Include="src\rendering\post_processing\PostProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\rendering\GlobalConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\PostProcessing\Tonemapping.h">
+    <ClInclude Include="src\rendering\post_processing\Tonemapping.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\imgui\imgui_editorlib.h">
@@ -2225,6 +2234,30 @@
     <ClInclude Include="src\logic\DocPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\rendering\text\Font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\text\AtlasInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\text\Metrics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\text\Glyph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\text\Bounds.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\text\TextMeshGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\text\TextVertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\text\SampleTextRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\glm\ext\matrix_clip_space.inl">
@@ -2665,10 +2698,16 @@
     <None Include="Assets\Shapes\right_angled_triangle.shp" />
     <None Include="Assets\Shapes\triangle.shp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-threshold.comp" />
-    <None Include="Assets\StartupLevel\level.njelv" />
+    <None Include="Assets\StartupLevel\level.aslv" />
     <None Include="Assets\StartupLevel\song.ogg" />
     <None Include="Assets\Documentation\general_usage.md" />
     <None Include="Assets\Documentation\testing.md" />
+    <None Include="Assets\Shaders\text.vert" />
+    <None Include="Assets\Shaders\text.frag" />
+    <None Include="Assets\Inconsolata.asfont" />
+    <None Include="Assets\PinyonScript.asfont" />
+    <None Include="Assets\PlayfairDisplay.asfont" />
+    <None Include="Assets\Impact.asfont" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs\glfw3.lib" />

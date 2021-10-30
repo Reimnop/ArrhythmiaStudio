@@ -108,7 +108,7 @@ void Properties::onLayout()
 
 				if (selectedObject->isText)
 				{
-					ImGui::InputText("Text", &selectedObject->text);
+					ImGui::InputTextMultiline("Text", &selectedObject->text);
 
 					shouldRecordObjectState = shouldRecordObjectState || ImGui::IsItemActivated();
 					shouldPushUndo = shouldPushUndo || ImGui::IsItemDeactivatedAfterEdit();

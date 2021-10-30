@@ -13,11 +13,15 @@
 #include "ColorSlot.h"
 #include "Level.h"
 #include "../rendering/Shader.h"
+#include "../rendering/TextRenderer.h"
 
 class LevelManager
 {
 public:
 	static LevelManager* inst;
+
+	Font* mainFont;
+	Shader* unlitShader;
 
 	AudioClip* audioClip;
 
@@ -52,8 +56,6 @@ private:
 	Properties* properties;
 	Theme* theme;
 	Events* events;
-
-	Shader* unlitShader;
 
 	float lastTime = 0.0f;
 

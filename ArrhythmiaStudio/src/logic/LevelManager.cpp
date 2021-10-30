@@ -29,15 +29,9 @@ LevelManager::LevelManager()
 	theme = new Theme();
 	events = new Events();
 	unlitShader = new Shader("Assets/Shaders/unlit.vert", "Assets/Shaders/unlit.frag");
+	mainFont = new Font("Assets/Inconsolata.asfont");
 
 	loadLevel("Assets/StartupLevel");
-
-	SceneNode* node = new SceneNode("debug", Scene::inst->rootNode);
-	TextRenderer* renderer = new TextRenderer(new Font("Assets/Inconsolata.asfont"));
-	renderer->material = level->colorSlots[0]->material;
-	renderer->setText(L"Hello, world!");
-	node->renderer = renderer;
-	node->setActive(true);
 }
 
 void LevelManager::loadLevel(std::string levelPath)
@@ -263,8 +257,16 @@ void LevelManager::updateObject(LevelObject* levelObject)
 				glm::vec3(0.0f, 0.0f, -1.0f));
 			break;
 		case AnimationChannelType_Opacity:
-			MeshRenderer* mr = (MeshRenderer*)levelObject->node->renderer;
-			mr->opacity = std::clamp(channel->update(time - levelObject->startTime), 0.0f, 1.0f);
+			if (levelObject->isText)
+			{
+				TextRenderer* tr = (TextRenderer*)levelObject->node->renderer;
+				tr->opacity = std::clamp(channel->update(time - levelObject->startTime), 0.0f, 1.0f);
+			}
+			else 
+			{
+				MeshRenderer* mr = (MeshRenderer*)levelObject->node->renderer;
+				mr->opacity = std::clamp(channel->update(time - levelObject->startTime), 0.0f, 1.0f);
+			}
 			break;
 		}
 	}
@@ -428,12 +430,23 @@ void LevelManager::spawnObject(LevelObject* levelObject) const
 	SceneNode* node = new SceneNode(levelObject->name);
 	node->setActive(false);
 
-	MeshRenderer* renderer = new MeshRenderer();
-	renderer->mesh = ShapeManager::inst->shapes[levelObject->shapeIndex].mesh;
-	renderer->material = level->colorSlots[levelObject->colorSlotIndex]->material;
-	renderer->shader = unlitShader;
+	if (levelObject->isText) 
+	{
+		TextRenderer* renderer = new TextRenderer(mainFont);
+		renderer->material = level->colorSlots[levelObject->colorSlotIndex]->material;
+		renderer->setText(levelObject->text);
 
-	node->renderer = renderer;
+		node->renderer = renderer;
+	}
+	else
+	{
+		MeshRenderer* renderer = new MeshRenderer();
+		renderer->mesh = ShapeManager::inst->shapes[levelObject->shapeIndex].mesh;
+		renderer->material = level->colorSlots[levelObject->colorSlotIndex]->material;
+		renderer->shader = unlitShader;
+
+		node->renderer = renderer;
+	}
 
 	levelObject->node = node;
 }

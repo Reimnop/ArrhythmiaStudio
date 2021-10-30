@@ -20,7 +20,15 @@ LevelObject::LevelObject(nlohmann::json j)
     startTime = j["start"].get<float>();
     killTime = j["kill"].get<float>();
     depth = j["depth"].get<float>();
-    shapeIndex = j["shape"].get<int>();
+    isText = j.contains("is_text") && j["is_text"].get<bool>();
+    if (isText) 
+    {
+        text = j["text"].get<std::string>();
+    }
+    else
+    {
+        shapeIndex = j["shape"].get<int>();
+    }
     colorSlotIndex = j["color_slot"].get<int>();
     editorBinIndex = j["editor_bin"].get<int>();
 
@@ -75,6 +83,8 @@ LevelObjectProperties LevelObject::dumpProperties() const
     LevelObjectProperties properties = LevelObjectProperties();
     properties.startTime = startTime;
     properties.killTime = killTime;
+    properties.isText = isText;
+    properties.text = text;
     properties.shapeIndex = shapeIndex;
     properties.editorBinIndex = editorBinIndex;
     properties.colorSlotIndex = colorSlotIndex;
@@ -99,6 +109,8 @@ void LevelObject::applyProperties(LevelObjectProperties properties)
         levelManager->recalculateActionIndex(levelManager->time);
     }
 
+    isText = properties.isText;
+    text = properties.text;
     shapeIndex = properties.shapeIndex;
     editorBinIndex = properties.editorBinIndex;
     colorSlotIndex = properties.colorSlotIndex;
@@ -107,9 +119,25 @@ void LevelObject::applyProperties(LevelObjectProperties properties)
 
     if (node)
     {
-        MeshRenderer* renderer = (MeshRenderer*)node->renderer;
-        renderer->mesh = ShapeManager::inst->shapes[shapeIndex].mesh;
-        renderer->material = level->colorSlots[colorSlotIndex]->material;
+        delete node->renderer;
+
+        if (isText)
+        {
+            TextRenderer* renderer = new TextRenderer(LevelManager::inst->mainFont);
+            renderer->material = level->colorSlots[colorSlotIndex]->material;
+            renderer->setText(text);
+
+            node->renderer = renderer;
+        }
+        else
+        {
+            MeshRenderer* renderer = new MeshRenderer();
+            renderer->mesh = ShapeManager::inst->shapes[shapeIndex].mesh;
+            renderer->material = level->colorSlots[colorSlotIndex]->material;
+            renderer->shader = LevelManager::inst->unlitShader;
+
+            node->renderer = renderer;
+        }
 
         levelManager->updateObject(this);
     }
@@ -211,7 +239,15 @@ nlohmann::ordered_json LevelObject::toJson()
     j["start"] = startTime;
     j["kill"] = killTime;
     j["depth"] = depth;
-    j["shape"] = shapeIndex;
+    j["is_text"] = isText;
+    if (isText)
+    {
+        j["text"] = text;
+    }
+    else
+    {
+        j["shape"] = shapeIndex;
+    }
     j["color_slot"] = colorSlotIndex;
     j["editor_bin"] = editorBinIndex;
     j["layer"] = layer;

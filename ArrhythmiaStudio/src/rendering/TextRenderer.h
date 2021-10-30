@@ -14,7 +14,7 @@ public:
 
 	float opacity = 1.0f;
 
-	void setText(std::wstring text);
+	void setText(std::string text);
 	bool tryRender(glm::mat4 transform, RenderCommand** command) override;
 private:
 	static Shader* shader;

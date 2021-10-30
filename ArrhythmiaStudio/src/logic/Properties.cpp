@@ -80,24 +80,66 @@ void Properties::onLayout()
 					levelManager->recalculateActionIndex(levelManager->time);
 				}
 
-				std::vector<Shape> shapes = ShapeManager::inst->shapes;
-				if (ImGui::BeginCombo("Shape", shapes[selectedObject->shapeIndex].name.c_str()))
+				ImGui::Checkbox("Is Text", &selectedObject->isText);
+
+				shouldRecordObjectState = shouldRecordObjectState || ImGui::IsItemActivated();
+				shouldPushUndo = shouldPushUndo || ImGui::IsItemDeactivatedAfterEdit();
+
+				if (ImGui::IsItemEdited())
 				{
-					for (int i = 0; i < shapes.size(); i++)
+					if (selectedObject->isText)
 					{
-						if (ImGui::Selectable(shapes[i].name.c_str(), i == selectedObject->shapeIndex))
-						{
-							LevelObjectProperties oldState = selectedObject->dumpProperties();
+						TextRenderer* renderer = new TextRenderer(LevelManager::inst->mainFont);
+						renderer->material = LevelManager::inst->level->colorSlots[selectedObject->colorSlotIndex]->material;
+						renderer->setText(selectedObject->text);
 
-							selectedObject->shapeIndex = i;
-							MeshRenderer* mr = (MeshRenderer*)selectedObject->node->renderer;
-							mr->mesh = shapes[i].mesh;
-
-							UndoRedoManager::inst->push(new EditObjectCmd(selectedObject->id, oldState, selectedObject->dumpProperties()));
-						}
+						selectedObject->node->renderer = renderer;
 					}
+					else
+					{
+						MeshRenderer* renderer = new MeshRenderer();
+						renderer->mesh = ShapeManager::inst->shapes[selectedObject->shapeIndex].mesh;
+						renderer->material = LevelManager::inst->level->colorSlots[selectedObject->colorSlotIndex]->material;
+						renderer->shader = LevelManager::inst->unlitShader;
 
-					ImGui::EndCombo();
+						selectedObject->node->renderer = renderer;
+					}
+				}
+
+				if (selectedObject->isText)
+				{
+					ImGui::InputText("Text", &selectedObject->text);
+
+					shouldRecordObjectState = shouldRecordObjectState || ImGui::IsItemActivated();
+					shouldPushUndo = shouldPushUndo || ImGui::IsItemDeactivatedAfterEdit();
+
+					if (ImGui::IsItemEdited())
+					{
+						TextRenderer* renderer = (TextRenderer*)selectedObject->node->renderer;
+						renderer->setText(selectedObject->text);
+					}
+				}
+				else
+				{
+					std::vector<Shape> shapes = ShapeManager::inst->shapes;
+					if (ImGui::BeginCombo("Shape", shapes[selectedObject->shapeIndex].name.c_str()))
+					{
+						for (int i = 0; i < shapes.size(); i++)
+						{
+							if (ImGui::Selectable(shapes[i].name.c_str(), i == selectedObject->shapeIndex))
+							{
+								LevelObjectProperties oldState = selectedObject->dumpProperties();
+
+								selectedObject->shapeIndex = i;
+								MeshRenderer* mr = (MeshRenderer*)selectedObject->node->renderer;
+								mr->mesh = shapes[i].mesh;
+
+								UndoRedoManager::inst->push(new EditObjectCmd(selectedObject->id, oldState, selectedObject->dumpProperties()));
+							}
+						}
+
+						ImGui::EndCombo();
+					}
 				}
 
 				ImGui::SliderFloat("Depth", &selectedObject->depth, -32.0f, 32.0f);
@@ -116,8 +158,16 @@ void Properties::onLayout()
 
 				if (ImGui::IsItemEdited())
 				{
-					MeshRenderer* mr = (MeshRenderer*)selectedObject->node->renderer;
-					mr->material = levelManager->level->colorSlots[selectedObject->colorSlotIndex]->material;
+					if (selectedObject->isText) 
+					{
+						TextRenderer* tr = (TextRenderer*)selectedObject->node->renderer;
+						tr->material = levelManager->level->colorSlots[selectedObject->colorSlotIndex]->material;
+					}
+					else 
+					{
+						MeshRenderer* mr = (MeshRenderer*)selectedObject->node->renderer;
+						mr->material = levelManager->level->colorSlots[selectedObject->colorSlotIndex]->material;
+					}
 				}
 
 				int editorBin = selectedObject->editorBinIndex + 1;

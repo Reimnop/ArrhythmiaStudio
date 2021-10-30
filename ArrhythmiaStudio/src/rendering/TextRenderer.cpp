@@ -35,7 +35,7 @@ TextRenderer::~TextRenderer()
 	glDeleteBuffers(1, &vbo);
 }
 
-void TextRenderer::setText(std::wstring text)
+void TextRenderer::setText(std::string text)
 {
 	if (!text.length())
 	{
@@ -45,7 +45,8 @@ void TextRenderer::setText(std::wstring text)
 
 	TextMeshGenerator generator = TextMeshGenerator(font);
 
-	TextVertex* vertices = generator.genMesh(text, &count);
+	std::wstring str = std::wstring(text.begin(), text.end());
+	TextVertex* vertices = generator.genMesh(str, &count);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, count * sizeof(TextVertex), vertices, GL_DYNAMIC_DRAW);

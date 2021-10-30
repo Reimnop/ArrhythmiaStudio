@@ -4,6 +4,8 @@ struct LevelObjectProperties
 {
 	float startTime;
 	float killTime;
+	bool isText;
+	std::string text;
 	int shapeIndex;
 	int editorBinIndex;
 	int colorSlotIndex;

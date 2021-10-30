@@ -6,6 +6,7 @@
 #include "UndoRedoManager.h"
 #include "../rendering/Renderer.h"
 #include "../rendering/MeshRenderer.h"
+#include "../rendering/TextRenderer.h"
 
 #include <filesystem>
 #include <fstream>
@@ -23,14 +24,20 @@ LevelManager::LevelManager()
 
 	inst = this;
 
-	ColorSlot::init();
-
 	timeline = new Timeline();
 	properties = new Properties();
 	theme = new Theme();
 	events = new Events();
+	unlitShader = new Shader("Assets/Shaders/unlit.vert", "Assets/Shaders/unlit.frag");
 
 	loadLevel("Assets/StartupLevel");
+
+	SceneNode* node = new SceneNode("debug", Scene::inst->rootNode);
+	TextRenderer* renderer = new TextRenderer(new Font("Assets/Inconsolata.asfont"));
+	renderer->material = level->colorSlots[0]->material;
+	renderer->setText(L"Hello, world!");
+	node->renderer = renderer;
+	node->setActive(true);
 }
 
 void LevelManager::loadLevel(std::string levelPath)
@@ -424,6 +431,7 @@ void LevelManager::spawnObject(LevelObject* levelObject) const
 	MeshRenderer* renderer = new MeshRenderer();
 	renderer->mesh = ShapeManager::inst->shapes[levelObject->shapeIndex].mesh;
 	renderer->material = level->colorSlots[levelObject->colorSlotIndex]->material;
+	renderer->shader = unlitShader;
 
 	node->renderer = renderer;
 

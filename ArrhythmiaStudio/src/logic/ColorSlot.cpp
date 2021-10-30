@@ -1,12 +1,5 @@
 #include "ColorSlot.h"
 
-Shader* ColorSlot::shader;
-
-void ColorSlot::init()
-{
-	shader = new Shader("Assets/Shaders/unlit.vert", "Assets/Shaders/unlit.frag");
-}
-
 ColorSlot::ColorSlot(int count, ColorKeyframe* keyframes)
 {
 	MaterialProperty properties[]
@@ -15,11 +8,11 @@ ColorSlot::ColorSlot(int count, ColorKeyframe* keyframes)
 	};
 
 	sequence = new ColorSequence(count, keyframes);
-	material = new Material(shader, 1, properties);
+	material = new Material(1, properties);
 
 	for (int i = 0; i < count; i++)
 	{
-		
+		insertKeyframe(keyframes[i]);
 	}
 
 	update(0.0f);
@@ -38,7 +31,7 @@ ColorSlot::ColorSlot(nlohmann::json j)
 		insertKeyframe(ColorKeyframe(kfJson));
 	}
 
-	material = new Material(shader, 1, properties);
+	material = new Material(1, properties);
 
 	update(0.0f);
 }

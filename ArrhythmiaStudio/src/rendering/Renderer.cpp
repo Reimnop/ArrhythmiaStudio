@@ -5,6 +5,7 @@
 
 #include <logger.h>
 
+#include "DrawDataProcessor.h"
 #include "../MainWindow.h"
 
 Renderer* Renderer::inst;
@@ -102,9 +103,6 @@ Renderer::Renderer(GLFWwindow* window)
 
 	bloom = new Bloom();
 	// tonemapping = new Tonemapping();
-
-	textRenderer = new SampleTextRenderer("Assets/Inconsolata.asfont");
-	textRenderer->setText(L"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed a rhoncus urna, nec pellentesque est.\nCurabitur quis magna eget odio malesuada iaculis. Ut dapibus iaculis urna, vitae sollicitudin diam ultrices\net.");
 }
 
 void Renderer::update()
@@ -152,8 +150,8 @@ void Renderer::renderViewport()
 
 	recursivelyRenderNodes(Scene::inst->rootNode, glm::mat4(1.0f));
 
-	std::sort(queuedDrawDataOpaque.begin(), queuedDrawDataOpaque.end(), opaqueComp);
-	std::sort(queuedDrawDataTransparent.begin(), queuedDrawDataTransparent.end(), transparentComp);
+	std::sort(queuedBatchedDrawDataOpaque.begin(), queuedBatchedDrawDataOpaque.end(), opaqueComp);
+	std::sort(queuedCommandTransparent.begin(), queuedCommandTransparent.end(), transparentComp);
 
 	FramebufferStack::push(multisampleFramebuffer);
 
@@ -164,7 +162,7 @@ void Renderer::renderViewport()
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 
-	for (const OutputDrawData* drawData : queuedDrawDataOpaque)
+	for (const BatchedDrawData* drawData : queuedBatchedDrawDataOpaque)
 	{
 		queueCommand(drawData);
 
@@ -222,7 +220,7 @@ void Renderer::renderViewport()
 
 			if (commands[i + 1].material != material)
 			{
-				const Shader* shader = material->getShader();
+				const Shader* shader = cmd.shader;
 				if (lastShader != shader->getHandle())
 				{
 					glUseProgram(shader->getHandle());
@@ -254,7 +252,7 @@ void Renderer::renderViewport()
 
 		drawCount++;
 
-		const Shader* shader = material->getShader();
+		const Shader* shader = cmd.shader;
 		if (lastShader != shader->getHandle())
 		{
 			glUseProgram(shader->getHandle());
@@ -273,45 +271,24 @@ void Renderer::renderViewport()
 		cmdBaseVertices.clear();
 	}
 
+	{
+		DrawDataProcessor processor = DrawDataProcessor(viewProjection);
+		for (const RenderCommand* command : queuedCommandOpaque)
+		{
+			processor.processDrawData(command->drawData);
+		}
+	}
+
 	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	// textRenderer->draw(viewProjection);
-
-	for (const OutputDrawData* drawData : queuedDrawDataTransparent)
 	{
-		if (!drawData->mesh || !drawData->material)
+		DrawDataProcessor processor = DrawDataProcessor(viewProjection);
+		for (const RenderCommand* command : queuedCommandTransparent)
 		{
-			continue;
+			processor.processDrawData(command->drawData);
 		}
-
-		const Material* material = drawData->material;
-		const Shader* shader = material->getShader();
-		const Mesh* mesh = drawData->mesh;
-
-		if (lastShader != shader->getHandle())
-		{
-			glUseProgram(shader->getHandle());
-			lastShader = shader->getHandle();
-		}
-
-		if (lastVertexArray != mesh->getVao())
-		{
-			glBindVertexArray(mesh->getVao());
-			lastVertexArray = mesh->getVao();
-		}
-
-		glm::mat4 mvp = viewProjection * drawData->transform;
-
-		glBindBufferBase(GL_UNIFORM_BUFFER, 0, material->getUniformBuffer());
-
-		glUniformMatrix4fv(0, 1, false, &mvp[0][0]);
-		glUniform1f(1, drawData->opacity);
-
-		glDrawElements(GL_TRIANGLES, mesh->indicesCount, GL_UNSIGNED_INT, nullptr);
-
-		delete drawData;
 	}
 
 	glDepthMask(GL_TRUE);
@@ -329,15 +306,15 @@ void Renderer::renderViewport()
 	// tonemapping->processImage(renderTexture, viewportWidth, viewportHeight);
 
 	// Clean up
-	queuedDrawDataOpaque.clear();
-	queuedDrawDataTransparent.clear();
+	queuedCommandTransparent.clear();
+	queuedCommandOpaque.clear();
+	queuedBatchedDrawDataOpaque.clear();
+
+	lastShader = -1;
 
 	commands.clear();
 	cmdVertexBuffer.clear();
 	cmdIndexBuffer.clear();
-
-	lastVertexArray = 0;
-	lastShader = 0;
 
 	glBindVertexArray(0);
 	glUseProgram(0);
@@ -360,16 +337,23 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 
 	if (node->renderer)
 	{
-		OutputDrawData* output;
-		if (node->renderer->render(globalTransform, &output))
+		RenderCommand* cmd;
+		if (node->renderer->tryRender(globalTransform, &cmd))
 		{
-			if (output->drawTransparent)
+			if (cmd->drawDepth.has_value())
 			{
-				queuedDrawDataTransparent.push_back(output);
+				queuedCommandTransparent.push_back(cmd);
 			}
 			else
 			{
-				queuedDrawDataOpaque.push_back(output);
+				if (cmd->drawData->getType() == DrawDataType_Batched)
+				{
+					queuedBatchedDrawDataOpaque.push_back((BatchedDrawData*)cmd->drawData);
+				}
+				else
+				{
+					queuedCommandOpaque.push_back(cmd);
+				}
 			}
 		}
 	}
@@ -380,7 +364,7 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 	}
 }
 
-void Renderer::queueCommand(const OutputDrawData* drawData)
+void Renderer::queueCommand(const BatchedDrawData* drawData)
 {
 	if (!drawData->mesh || !drawData->material)
 	{
@@ -417,6 +401,8 @@ void Renderer::queueCommand(const OutputDrawData* drawData)
 	}
 
 	DrawCommand& cmd = commands.back();
+
+	cmd.shader = drawData->shader;
 
 	for (int i = 0; i < mesh->verticesCount; i++)
 	{

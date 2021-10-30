@@ -1,24 +1,30 @@
 #pragma once
 
 #include "RendererComponent.h"
-#include "Mesh.h"
 #include "Material.h"
-#include "Shader.h"
+#include "text/TextMeshGenerator.h"
 
-class MeshRenderer : public RendererComponent
+class TextRenderer : public RendererComponent
 {
 public:
-	MeshRenderer();
-	~MeshRenderer() override = default;
+	TextRenderer(Font* font);
+	~TextRenderer() override;
 
-	Mesh* mesh;
 	Material* material;
-	Shader* shader;
 
 	float opacity = 1.0f;
 
+	void setText(std::wstring text);
 	bool tryRender(glm::mat4 transform, RenderCommand** command) override;
 private:
+	static Shader* shader;
+
+	Font* font;
+	size_t count;
+
+	uint32_t vao;
+	uint32_t vbo;
+
 	// Check if rendering is possible
 	bool canRender() const;
 };

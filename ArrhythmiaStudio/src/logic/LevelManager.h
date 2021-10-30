@@ -12,8 +12,7 @@
 #include "ObjectAction.h"
 #include "ColorSlot.h"
 #include "Level.h"
-
-class Theme;
+#include "../rendering/Shader.h"
 
 class LevelManager
 {
@@ -53,6 +52,8 @@ private:
 	Properties* properties;
 	Theme* theme;
 	Events* events;
+
+	Shader* unlitShader;
 
 	float lastTime = 0.0f;
 

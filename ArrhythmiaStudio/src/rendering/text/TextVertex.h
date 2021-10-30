@@ -7,11 +7,7 @@ struct TextVertex
 	glm::vec3 position;
 	glm::vec2 uv;
 
-	TextVertex()
-	{
-		position = glm::vec3();
-		uv = glm::vec2();
-	}
+	TextVertex() = default;
 
 	TextVertex(float x, float y, float z, float u, float v)
 	{

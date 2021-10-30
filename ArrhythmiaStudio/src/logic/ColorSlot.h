@@ -4,7 +4,6 @@
 
 #include "animation/Color.h"
 #include "animation/ColorSequence.h"
-#include "../rendering/Shader.h"
 #include "../rendering/Material.h"
 
 class ColorSlot
@@ -17,8 +16,6 @@ public:
 
 	Color currentColor;
 
-	static void init();
-
 	ColorSlot(int count, ColorKeyframe* keyframes);
 	ColorSlot(nlohmann::json j);
 	~ColorSlot();
@@ -28,6 +25,4 @@ public:
 
 	void update(float time);
 	nlohmann::json toJson() const;
-private:
-	static Shader* shader;
 };

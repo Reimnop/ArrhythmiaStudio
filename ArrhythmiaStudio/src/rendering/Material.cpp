@@ -5,9 +5,8 @@
 #define MAT_GETTER(t_name, type) type Material::get##t_name(const char* name) { return std::any_cast<type>(materialData[propertyIndices[name]]); }
 #define MAT_SETTER(t_name, type) void Material::set##t_name(const char* name, type value) { materialData[propertyIndices[name]] = value; }
 
-Material::Material(Shader* shader, int propertyCount, MaterialProperty* properties)
+Material::Material(int propertyCount, MaterialProperty* properties)
 {
-	this->shader = shader;
 	this->propertyCount = propertyCount;
 
 	for (int i = 0; i < propertyCount; i++)
@@ -40,11 +39,6 @@ Material::Material(Shader* shader, int propertyCount, MaterialProperty* properti
 Material::~Material()
 {
 	glDeleteBuffers(1, &uniformBuffer);
-}
-
-Shader* Material::getShader() const
-{
-	return shader;
 }
 
 int Material::getUniformBuffer() const

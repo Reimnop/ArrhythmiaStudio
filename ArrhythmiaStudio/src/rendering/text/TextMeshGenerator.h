@@ -1,7 +1,5 @@
 #pragma once
 
-#include <span>
-
 #include "Font.h"
 #include "TextVertex.h"
 

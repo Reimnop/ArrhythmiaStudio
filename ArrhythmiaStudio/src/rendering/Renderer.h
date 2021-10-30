@@ -6,7 +6,7 @@
 
 #include "DrawCommand.h"
 #include "../logic/Scene.h"
-#include "OutputDrawData.h"
+#include "BatchedDrawData.h"
 #include "Camera.h"
 #include "ImGuiController.h"
 #include "FramebufferStack.h"
@@ -38,11 +38,10 @@ private:
 	int lastViewportWidth;
 	int lastViewportHeight;
 
-	uint32_t lastVertexArray = 0;
-	uint32_t lastShader = 0;
-
 	uint32_t finalFramebuffer;
 	uint32_t renderTexture;
+
+	uint32_t lastShader = -1;
 
 	uint32_t multisampleFramebuffer;
 	uint32_t multisampleTexture;
@@ -64,26 +63,25 @@ private:
 	std::vector<void*> cmdIndices;
 	std::vector<GLint> cmdBaseVertices;
 
-	bool(*opaqueComp)(const OutputDrawData*, const OutputDrawData*) =
-		[](const OutputDrawData* a, const OutputDrawData* b)
+	bool(*opaqueComp)(const BatchedDrawData*, const BatchedDrawData*) =
+		[](const BatchedDrawData* a, const BatchedDrawData* b)
 		{
 			return a->material < b->material;
 		};
 
-	bool(*transparentComp)(const OutputDrawData*, const OutputDrawData*) = 
-		[](const OutputDrawData* a, const OutputDrawData* b)
+	bool(*transparentComp)(const RenderCommand*, const RenderCommand*) = 
+		[](const RenderCommand* a, const RenderCommand* b)
 		{
 			return a->drawDepth < b->drawDepth;
 		};
 
-	std::vector<OutputDrawData*> queuedDrawDataOpaque;
-	std::vector<OutputDrawData*> queuedDrawDataTransparent;
+	std::vector<RenderCommand*> queuedCommandOpaque;
+	std::vector<RenderCommand*> queuedCommandTransparent;
+	std::vector<BatchedDrawData*> queuedBatchedDrawDataOpaque;
 
 	GLFWwindow* mainWindow;
 	ImGuiController* imGuiController;
 
 	void recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform);
-	void queueCommand(const OutputDrawData* drawData);
-
-	SampleTextRenderer* textRenderer;
+	void queueCommand(const BatchedDrawData* drawData);
 };

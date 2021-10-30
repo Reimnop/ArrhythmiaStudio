@@ -278,6 +278,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="src\MainWindow.cpp" />
     <ClCompile Include="src\rendering\Camera.cpp" />
     <ClCompile Include="src\rendering\ComputeShader.cpp" />
+    <ClCompile Include="src\rendering\DrawDataProcessor.cpp" />
     <ClCompile Include="src\rendering\ImGuiController.cpp" />
     <ClCompile Include="src\rendering\Material.cpp" />
     <ClCompile Include="src\rendering\Mesh.cpp" />
@@ -286,6 +287,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="src\rendering\post_processing\Tonemapping.cpp" />
     <ClCompile Include="src\rendering\Renderer.cpp" />
     <ClCompile Include="src\rendering\Shader.cpp" />
+    <ClCompile Include="src\rendering\TextRenderer.cpp" />
     <ClCompile Include="src\rendering\Texture2D.cpp" />
     <ClCompile Include="src\rendering\text\Font.cpp" />
     <ClCompile Include="src\rendering\text\SampleTextRenderer.cpp" />
@@ -894,9 +896,11 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\logic\undo_commands\RemoveObjectCmd.h" />
     <ClInclude Include="src\logic\VideoExporter.h" />
     <ClInclude Include="src\MainWindow.h" />
-    <ClInclude Include="src\rendering\DrawCommand.h" />
     <ClInclude Include="src\rendering\Camera.h" />
     <ClInclude Include="src\rendering\ComputeShader.h" />
+    <ClInclude Include="src\rendering\DrawCommand.h" />
+    <ClInclude Include="src\rendering\DrawData.h" />
+    <ClInclude Include="src\rendering\DrawDataProcessor.h" />
     <ClInclude Include="src\rendering\FramebufferStack.h" />
     <ClInclude Include="src\rendering\GlobalConstants.h" />
     <ClInclude Include="src\rendering\ImGuiController.h" />
@@ -905,14 +909,17 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\rendering\MaterialPropertyType.h" />
     <ClInclude Include="src\rendering\Mesh.h" />
     <ClInclude Include="src\rendering\MeshRenderer.h" />
-    <ClInclude Include="src\rendering\OutputDrawData.h" />
+    <ClInclude Include="src\rendering\BatchedDrawData.h" />
     <ClInclude Include="src\rendering\post_processing\Bloom.h" />
     <ClInclude Include="src\rendering\post_processing\PostProcessor.h" />
     <ClInclude Include="src\rendering\post_processing\Tonemapping.h" />
+    <ClInclude Include="src\rendering\RenderCommand.h" />
     <ClInclude Include="src\rendering\Renderer.h" />
     <ClInclude Include="src\rendering\RendererComponent.h" />
     <ClInclude Include="src\rendering\Shader.h" />
+    <ClInclude Include="src\rendering\TextRenderer.h" />
     <ClInclude Include="src\rendering\Texture2D.h" />
+    <ClInclude Include="src\rendering\TextDrawData.h" />
     <ClInclude Include="src\rendering\text\AtlasInfo.h" />
     <ClInclude Include="src\rendering\text\Bounds.h" />
     <ClInclude Include="src\rendering\text\Font.h" />

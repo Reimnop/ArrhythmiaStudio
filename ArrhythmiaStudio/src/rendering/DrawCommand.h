@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Material.h"
+#include "Shader.h"
 
 struct DrawCommand
 {
@@ -9,4 +10,5 @@ struct DrawCommand
 	int vertexOffset;
 	int indexOffset;
 	Material* material;
+	Shader* shader;
 };

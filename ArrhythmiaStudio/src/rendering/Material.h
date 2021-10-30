@@ -6,7 +6,6 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include "Shader.h"
 #include "MaterialProperty.h"
 
 #define MAT_GETTER_TEMP(t_name, type) type get##t_name(const char* name);
@@ -15,10 +14,9 @@
 class Material
 {
 public:
-	Material(Shader* shader, int propertyCount, MaterialProperty* properties);
+	Material(int propertyCount, MaterialProperty* properties);
 	~Material();
 
-	Shader* getShader() const;
 	int getUniformBuffer() const;
 
 	MAT_GETTER_TEMP(Int, int)
@@ -41,7 +39,6 @@ public:
 
 	void updateBuffer();
 private:
-	Shader* shader;
 	uint32_t uniformBuffer;
 	int bufferSize;
 

@@ -15,6 +15,8 @@ void DrawDataProcessor::processDrawData(const DrawData* drawData)
 		case DrawDataType_Text:
 			processTextDrawData((TextDrawData*)drawData);
 	}
+
+	delete drawData;
 }
 
 void DrawDataProcessor::processBatchedDrawData(const BatchedDrawData* drawData)

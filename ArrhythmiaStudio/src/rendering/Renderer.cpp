@@ -276,6 +276,8 @@ void Renderer::renderViewport()
 		for (const RenderCommand* command : queuedCommandOpaque)
 		{
 			processor.processDrawData(command->drawData);
+
+			delete command;
 		}
 	}
 
@@ -288,6 +290,8 @@ void Renderer::renderViewport()
 		for (const RenderCommand* command : queuedCommandTransparent)
 		{
 			processor.processDrawData(command->drawData);
+
+			delete command;
 		}
 	}
 

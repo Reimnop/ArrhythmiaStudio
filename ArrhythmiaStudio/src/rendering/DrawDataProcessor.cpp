@@ -12,8 +12,10 @@ void DrawDataProcessor::processDrawData(const DrawData* drawData)
 	{
 		case DrawDataType_Batched:
 			processBatchedDrawData((BatchedDrawData*)drawData);
+			break;
 		case DrawDataType_Text:
 			processTextDrawData((TextDrawData*)drawData);
+			break;
 	}
 
 	delete drawData;

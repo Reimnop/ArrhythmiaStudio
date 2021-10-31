@@ -188,14 +188,57 @@ void Timeline::onLayout()
 				endTime = currentPos + newVisibleLength * 0.5f;
 			}
 
+			if (ImGui::IsWindowFocused() && !levelManager->selectedObjects.empty())
+			{
+				if (ImGui::IsKeyPressed(GLFW_KEY_UP))
+				{
+					int min = EDITOR_TIMELINE_BIN_COUNT;
+					for (LevelObject* levelObject : levelManager->selectedObjects)
+					{
+						if (levelObject->editorBinIndex < min)
+						{
+							min = levelObject->editorBinIndex;
+						}
+					}
+
+					if (min > 0)
+					{
+						for (LevelObject* levelObject : levelManager->selectedObjects)
+						{
+							levelObject->editorBinIndex--;
+						}
+					}
+				}
+
+				if (ImGui::IsKeyPressed(GLFW_KEY_DOWN))
+				{
+					int max = 0;
+					for (LevelObject* levelObject : levelManager->selectedObjects)
+					{
+						if (levelObject->editorBinIndex > max)
+						{
+							max = levelObject->editorBinIndex;
+						}
+					}
+
+					if (max < EDITOR_TIMELINE_BIN_COUNT - 1)
+					{
+						for (LevelObject* levelObject : levelManager->selectedObjects)
+						{
+							levelObject->editorBinIndex++;
+						}
+					}
+				}
+			}
+
 			// Deselect
-			if (isTimelineHovered && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL))
+			if (isTimelineHovered && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT))
 			{
 				levelManager->selectedObjects.clear();
 				Properties::inst->reset();
 			}
 
-			if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_A))
+			if (ImGui::IsWindowFocused() && ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT) && ImGui::IsKeyPressed(GLFW_KEY_A))
 			{
 				for (const std::pair<uint64_t, LevelObject*> x : levelManager->level->levelObjects)
 				{

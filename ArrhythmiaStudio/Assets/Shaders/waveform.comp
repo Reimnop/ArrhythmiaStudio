@@ -25,8 +25,9 @@ float waveformSdf(vec2 uv) {
 	
 	float offset = startTime * frequency;
 	float t = (endTime - startTime) * uv.x * frequency + offset;
+	t -= floor(t);
 
-	float s = mix(a, b, t - floor(t));
+	float s = mix(a, b, t);
 	
 	return clamp(uv.y - s, 0.0, 1.0);
 }

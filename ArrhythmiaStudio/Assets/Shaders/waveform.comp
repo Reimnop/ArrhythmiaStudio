@@ -11,13 +11,24 @@ layout(location = 0) uniform float startTime;
 layout(location = 1) uniform float endTime;
 layout(location = 2) uniform float frequency;
 
-float getSampleRange(float t) 
-{
+int getSampleIndex(float t) {
 	float offset = startTime * frequency;
 	float sampleIndex = (endTime - startTime) * t * frequency + offset;
-	sampleIndex = max(min(sampleIndex, samples.length() - 1.0), 0.0);
+	return int(clamp(sampleIndex, 0.0, samples.length() - 1.0));
+}
 
-	return abs(samples[int(sampleIndex)]);
+float waveformSdf(vec2 uv) {
+	int index = getSampleIndex(uv.x);
+	
+	float a = abs(samples[index]);
+	float b = abs(samples[min(index + 1, samples.length())]);
+	
+	float offset = startTime * frequency;
+	float t = (endTime - startTime) * uv.x * frequency + offset;
+
+	float s = mix(a, b, t - floor(t));
+	
+	return clamp(uv.y - s, 0.0, 1.0);
 }
 
 void main() {
@@ -25,15 +36,9 @@ void main() {
 	ivec2 size = imageSize(img_output);
 
 	vec2 coord = pixelCoords / vec2(size);
-
-	float s = getSampleRange(coord.x);
-
-	if (coord.y < s) 
-	{
-		imageStore(img_output, pixelCoords, vec4(0.4, 0.4, 0.4, 0.7));
-	}
-	else 
-	{
-		imageStore(img_output, pixelCoords, vec4(0.0));
-	}
+	
+	float dist = waveformSdf(coord);
+	float alpha = 0.7 - smoothstep(0.0, 0.005, dist) * 0.7;
+	
+	imageStore(img_output, pixelCoords, vec4(0.4, 0.4, 0.4, alpha));
 }

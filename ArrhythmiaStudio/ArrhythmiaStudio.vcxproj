@@ -937,6 +937,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <None Include="Assets\Inconsolata.asfont" />
     <None Include="Assets\PinyonScript.asfont" />
     <None Include="Assets\PlayfairDisplay.asfont" />
+    <None Include="Assets\Shaders\fxaa.comp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-blur-horizontal.comp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-blur-vertical.comp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-combine.comp" />

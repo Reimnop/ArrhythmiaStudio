@@ -34,6 +34,7 @@ Timeline::Timeline()
 
 	waveformTex = new Texture2D(512, 512, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
 	waveformShader = new ComputeShader("Assets/Shaders/waveform.comp");
+	fxaaShader = new ComputeShader("Assets/Shaders/fxaa.comp");
 
 	glGenBuffers(1, &audioBuffer);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, audioBuffer);
@@ -615,15 +616,17 @@ void Timeline::onLayout()
 			ImGui::ItemSize(ImVec2(availX, timelineHeight + EDITOR_TIME_POINTER_HEIGHT));
 		}
 
+		constexpr float SIZE_MULTIPLIER = 1.5f;
 		if (timelineSize != oldWaveformSize)
 		{
-			waveformTex->resize(timelineSize.x, timelineSize.y);
+			waveformTex->resize(timelineSize.x * SIZE_MULTIPLIER, timelineSize.y * SIZE_MULTIPLIER);
 			oldWaveformSize = timelineSize;
 		}
 
 		// Compute waveform
 		if (levelManager->audioClip)
 		{
+			// Waveform pass
 			glUseProgram(waveformShader->getHandle());
 
 			glBindImageTexture(0, waveformTex->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_RGBA8);
@@ -633,7 +636,18 @@ void Timeline::onLayout()
 			glUniform1f(1, endTime);
 			glUniform1f(2, EDITOR_WAVEFORM_FREQ);
 
+			glDispatchCompute(std::ceil(timelineSize.x * SIZE_MULTIPLIER / 8.0f), std::ceil(timelineSize.y * SIZE_MULTIPLIER / 8.0f), 1);
+
+			glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+
+			// FXAA pass
+			/* glUseProgram(fxaaShader->getHandle());
+
+			glBindTexture(GL_TEXTURE_2D, waveformTex->getHandle());
+
 			glDispatchCompute(std::ceil(timelineSize.x / 8.0f), std::ceil(timelineSize.y / 8.0f), 1);
+
+			glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT); */
 		}
 	}
 	ImGui::End();

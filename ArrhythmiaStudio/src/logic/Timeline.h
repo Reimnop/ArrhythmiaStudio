@@ -32,6 +32,7 @@ private:
 
 	uint32_t audioBuffer;
 	ComputeShader* waveformShader;
+	ComputeShader* fxaaShader;
 	Texture2D* waveformTex;
 
 	void onLayout();

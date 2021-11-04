@@ -2729,6 +2729,7 @@
     <None Include="Assets\PinyonScript.asfont" />
     <None Include="Assets\PlayfairDisplay.asfont" />
     <None Include="Assets\Impact.asfont" />
+    <None Include="Assets\Shaders\fxaa.comp" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs\glfw3.lib" />

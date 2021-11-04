@@ -17,19 +17,18 @@ int getSampleIndex(float t) {
 	return int(clamp(sampleIndex, 0.0, samples.length() - 1.0));
 }
 
-float waveformSdf(vec2 uv) {
+float waveformAlpha(vec2 uv) {
 	int index = getSampleIndex(uv.x);
 	
 	float a = abs(samples[index]);
 	float b = abs(samples[min(index + 1, samples.length())]);
 	
 	float offset = startTime * frequency;
-	float t = (endTime - startTime) * uv.x * frequency + offset;
-	t -= floor(t);
+	float t = fract((endTime - startTime) * uv.x * frequency + offset);
 
 	float s = mix(a, b, t);
 	
-	return clamp(uv.y - s, 0.0, 1.0);
+	return smoothstep(abs(b - a) * 0.05 + 0.005, 0.0, uv.y - s) * 0.7;
 }
 
 void main() {
@@ -38,8 +37,5 @@ void main() {
 
 	vec2 coord = pixelCoords / vec2(size);
 	
-	float dist = waveformSdf(coord);
-	float alpha = 0.7 - smoothstep(0.0, 0.005, dist) * 0.7;
-	
-	imageStore(img_output, pixelCoords, vec4(0.4, 0.4, 0.4, alpha));
+	imageStore(img_output, pixelCoords, vec4(0.4, 0.4, 0.4, waveformAlpha(coord)));
 }

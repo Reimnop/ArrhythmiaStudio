@@ -1,3 +1,5 @@
+/*
+
 #include "VideoExporter.h"
 
 #include "AudioClip.h"
@@ -122,4 +124,4 @@ void VideoExporter::exportToVideo(std::filesystem::path path) const
 
 	// Restore timeline pos
 	levelManager->updateLevel(oldTime);
-}
+} */

@@ -30,26 +30,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -233,46 +233,17 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="include\Sources\RawVideoFileSource.cpp" />
     <ClCompile Include="include\stb\stb_vorbis.c" />
     <ClCompile Include="include\VideoFormatConverter.cpp" />
-    <ClCompile Include="src\logic\AnimationChannel.cpp" />
     <ClCompile Include="src\logic\animation\ColorSequence.cpp" />
     <ClCompile Include="src\logic\animation\Easing.h" />
-    <ClCompile Include="src\logic\DebugMenu.cpp" />
     <ClCompile Include="src\logic\DocManager.cpp" />
-    <ClCompile Include="src\logic\Events.cpp" />
+    <ClCompile Include="src\logic\GameManager.cpp" />
     <ClCompile Include="src\logic\imgui\imgui_editorlib.cpp" />
-    <ClCompile Include="src\logic\LevelEvent.cpp" />
     <ClCompile Include="src\logic\animation\Sequence.cpp" />
     <ClCompile Include="src\logic\AudioClip.cpp" />
-    <ClCompile Include="src\logic\ColorSlot.cpp" />
-    <ClCompile Include="src\logic\DataManager.cpp" />
     <ClCompile Include="src\logic\DiscordManager.cpp" />
-    <ClCompile Include="src\logic\Level.cpp" />
-    <ClCompile Include="src\logic\Properties.cpp" />
-    <ClCompile Include="src\logic\LevelObject.cpp" />
-    <ClCompile Include="src\logic\GameManager.cpp" />
-    <ClCompile Include="src\logic\LevelManager.cpp" />
     <ClCompile Include="src\logic\Scene.cpp" />
     <ClCompile Include="src\logic\SceneNode.cpp" />
-    <ClCompile Include="src\logic\ShapeManager.cpp" />
-    <ClCompile Include="src\logic\Theme.cpp" />
-    <ClCompile Include="src\logic\Timeline.cpp" />
     <ClCompile Include="src\logic\Transform.cpp" />
-    <ClCompile Include="src\logic\UndoRedoManager.cpp" />
-    <ClCompile Include="src\logic\undo_commands\AddLevelEventCmd.cpp" />
-    <ClCompile Include="src\logic\undo_commands\AddObjectCmd.cpp" />
-    <ClCompile Include="src\logic\undo_commands\ChangeParentCmd.cpp" />
-    <ClCompile Include="src\logic\undo_commands\ColorAddKeyframeCmd.cpp" />
-    <ClCompile Include="src\logic\undo_commands\ColorKeyframeEditCmd.cpp" />
-    <ClCompile Include="src\logic\undo_commands\ColorRemoveKeyframeCmd.cpp" />
-    <ClCompile Include="src\logic\undo_commands\EditObjectCmd.cpp" />
-    <ClCompile Include="src\logic\undo_commands\EventKeyframeAddCmd.cpp" />
-    <ClCompile Include="src\logic\undo_commands\EventKeyframeEditCmd.cpp" />
-    <ClCompile Include="src\logic\undo_commands\EventKeyframeRemoveCmd.cpp" />
-    <ClCompile Include="src\logic\undo_commands\ObjectAddChannelCmd.cpp" />
-    <ClCompile Include="src\logic\undo_commands\ObjectAddKeyframeCmd.cpp" />
-    <ClCompile Include="src\logic\undo_commands\ObjectKeyframeEditCmd.cpp" />
-    <ClCompile Include="src\logic\undo_commands\ObjectRemoveKeyframeCmd.cpp" />
-    <ClCompile Include="src\logic\undo_commands\RemoveObjectCmd.cpp" />
     <ClCompile Include="src\logic\VideoExporter.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\MainWindow.cpp" />
@@ -840,8 +811,6 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="include\std.h" />
     <ClInclude Include="include\utils.h" />
     <ClInclude Include="include\VideoFormatConverter.h" />
-    <ClInclude Include="src\logic\AnimationChannelType.h" />
-    <ClInclude Include="src\logic\AnimationChannel.h" />
     <ClInclude Include="src\logic\animation\Color.h" />
     <ClInclude Include="src\logic\animation\ColorSequence.h" />
     <ClInclude Include="src\logic\animation\ColorKeyframe.h" />
@@ -849,51 +818,14 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\logic\animation\Keyframe.h" />
     <ClInclude Include="src\logic\animation\Sequence.h" />
     <ClInclude Include="src\logic\AudioClip.h" />
-    <ClInclude Include="src\logic\ColorSlot.h" />
-    <ClInclude Include="src\logic\DataManager.h" />
-    <ClInclude Include="src\logic\DebugMenu.h" />
     <ClInclude Include="src\logic\DiscordManager.h" />
     <ClInclude Include="src\logic\DocManager.h" />
     <ClInclude Include="src\logic\DocPage.h" />
-    <ClInclude Include="src\logic\Events.h" />
-    <ClInclude Include="src\logic\GlobalConstants.h" />
-    <ClInclude Include="src\logic\imgui\imgui_editorlib.h" />
-    <ClInclude Include="src\logic\Level.h" />
-    <ClInclude Include="src\logic\LevelCreateInfo.h" />
-    <ClInclude Include="src\logic\LevelEvent.h" />
-    <ClInclude Include="src\logic\LevelEventType.h" />
-    <ClInclude Include="src\logic\LevelObjectProperties.h" />
-    <ClInclude Include="src\logic\Properties.h" />
     <ClInclude Include="src\logic\GameManager.h" />
-    <ClInclude Include="src\logic\LevelManager.h" />
-    <ClInclude Include="src\logic\LevelObject.h" />
-    <ClInclude Include="src\logic\ObjectAction.h" />
-    <ClInclude Include="src\logic\ObjectActionType.h" />
+    <ClInclude Include="src\logic\imgui\imgui_editorlib.h" />
     <ClInclude Include="src\logic\Scene.h" />
     <ClInclude Include="src\logic\SceneNode.h" />
-    <ClInclude Include="src\logic\Shape.h" />
-    <ClInclude Include="src\logic\ShapeManager.h" />
-    <ClInclude Include="src\logic\Theme.h" />
-    <ClInclude Include="src\logic\Timeline.h" />
     <ClInclude Include="src\logic\Transform.h" />
-    <ClInclude Include="src\logic\UndoCommand.h" />
-    <ClInclude Include="src\logic\UndoRedoManager.h" />
-    <ClInclude Include="src\logic\undo_commands\AddLevelEventCmd.h" />
-    <ClInclude Include="src\logic\undo_commands\AddObjectCmd.h" />
-    <ClInclude Include="src\logic\undo_commands\ChangeParentCmd.h" />
-    <ClInclude Include="src\logic\undo_commands\ColorAddKeyframeCmd.h" />
-    <ClInclude Include="src\logic\undo_commands\ColorKeyframeEditCmd.h" />
-    <ClInclude Include="src\logic\undo_commands\ColorRemoveKeyframeCmd.h" />
-    <ClInclude Include="src\logic\undo_commands\EditObjectCmd.h" />
-    <ClInclude Include="src\logic\undo_commands\EventKeyframeAddCmd.h" />
-    <ClInclude Include="src\logic\undo_commands\EventKeyframeEditCmd.h" />
-    <ClInclude Include="src\logic\undo_commands\EventKeyframeRemoveCmd.h" />
-    <ClInclude Include="src\logic\undo_commands\MultiUndoCmd.h" />
-    <ClInclude Include="src\logic\undo_commands\ObjectAddChannelCmd.h" />
-    <ClInclude Include="src\logic\undo_commands\ObjectAddKeyframeCmd.h" />
-    <ClInclude Include="src\logic\undo_commands\ObjectKeyframeEditCmd.h" />
-    <ClInclude Include="src\logic\undo_commands\ObjectRemoveKeyframeCmd.h" />
-    <ClInclude Include="src\logic\undo_commands\RemoveObjectCmd.h" />
     <ClInclude Include="src\logic\VideoExporter.h" />
     <ClInclude Include="src\MainWindow.h" />
     <ClInclude Include="src\rendering\Camera.h" />

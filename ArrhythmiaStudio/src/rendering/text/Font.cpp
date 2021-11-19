@@ -1,8 +1,10 @@
 #include "Font.h"
 
 #include <fstream>
-#include <nlohmann/json.hpp>
+#include <json.hpp>
 #include <glad/glad.h>
+
+using namespace nlohmann;
 
 Font::Font(std::filesystem::path path)
 {
@@ -15,7 +17,7 @@ Font::Font(std::filesystem::path path)
 	s.read(json_buf, json_length);
 	json_buf[json_length] = 0; // null termination
 
-	nlohmann::json j = nlohmann::json::parse(json_buf);
+	json j = json::parse(json_buf);
 
 	atlasInfo.size = j["atlas"]["size"].get<float>();
 	atlasInfo.width = j["atlas"]["width"].get<int>();
@@ -27,7 +29,7 @@ Font::Font(std::filesystem::path path)
 	metrics.underlineY = j["metrics"]["underlineY"].get<float>();
 	metrics.underlineThickness = j["metrics"]["underlineThickness"].get<float>();
 
-	for (const nlohmann::json& glyph_json : j["glyphs"])
+	for (const json& glyph_json : j["glyphs"])
 	{
 		Glyph glyph = Glyph();
 		glyph.unicode = (wchar_t)glyph_json["unicode"].get<uint16_t>();
@@ -59,7 +61,7 @@ Font::Font(std::filesystem::path path)
 		glyphs.emplace(glyph.unicode, glyph);
 	}
 
-	for (const nlohmann::json& kerning : j["kerning"])
+	for (const json& kerning : j["kerning"])
 	{
 		wchar_t unicode1 = (wchar_t)kerning["unicode1"].get<uint16_t>();
 		wchar_t unicode2 = (wchar_t)kerning["unicode2"].get<uint16_t>();

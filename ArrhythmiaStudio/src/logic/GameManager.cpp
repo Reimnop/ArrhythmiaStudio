@@ -2,6 +2,7 @@
 
 #include "../rendering/ImGuiController.h"
 #include "../rendering/Renderer.h"
+#include "object_behaviours/NormalObjectBehaviour.h"
 #include "VideoExporter.h"
 
 #include <fstream>
@@ -9,11 +10,12 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_stdlib.h>
 #include <imgui/imgui_markdown.h>
-#include <ShlObj.h>
 #include <helper.h>
 #include <logger.h>
 
 #define WELCOME_MSG Welcome to PROJECT_NAME!
+
+LevelObject * obj;
 
 GameManager::GameManager(GLFWwindow* window)
 {
@@ -23,27 +25,33 @@ GameManager::GameManager(GLFWwindow* window)
 
 	discordManager = new DiscordManager();
 	docManager = new DocManager();
+	obj = new LevelObject();
 }
 
-void GameManager::update() const
+void GameManager::update()
 {
-	discordManager->update();
+	
 }
 
 void GameManager::onLayout()
 {
+	if (ImGui::Begin("DEBUG!!!"))
+	{
+		obj->drawEditor();
+
+		ImGui::End();
+	}
+
 	// Welcome popup
 	ImGui::SetNextWindowSize(ImVec2(320.0f, 140.0f));
 	if (ImGui::BeginPopupModal("Welcome", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings))
 	{
 		ImGui::Text(STRINGIFY(WELCOME_MSG));
 		ImGui::TextWrapped("Before continuing, please create a new level with File->New (Ctrl+N) or open a new level with File->Open (Ctrl+O).");
-
 		if (ImGui::Button("OK"))
 		{
 			ImGui::CloseCurrentPopup();
 		}
-
 		ImGui::EndPopup();
 	}
 

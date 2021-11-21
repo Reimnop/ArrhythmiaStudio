@@ -3470,7 +3470,7 @@ namespace nlohmann
 
     @since version 1.0.0
     */
-    using json = basic_json<>;
+    using unorderered_json = basic_json<>;
 
     template<class Key, class T, class IgnoredLess, class Allocator>
     struct ordered_map;
@@ -3482,7 +3482,7 @@ namespace nlohmann
 
     @since version 3.9.0
     */
-    using ordered_json = basic_json<nlohmann::ordered_map>;
+    using json = basic_json<nlohmann::ordered_map>;
 
 }  // namespace nlohmann
 

@@ -1,22 +1,36 @@
 #pragma once
+
+#include "json.hpp"
 #include "SceneNode.h"
 
+using namespace nlohmann;
+
+class LevelObjectBehaviour;
 class LevelObject
 {
 public:
-	std::string name;
+	uint64_t id;
 	float startTime;
 	float endTime;
+	SceneNode* node;
+	LevelObjectBehaviour* behaviour;
 
-	LevelObject(std::string name)
+	LevelObject();
+	~LevelObject();
+
+	template<typename T>
+	void initializeObjectBehaviour()
 	{
-		this->name = name;
+		behaviour = new T(this);
 	}
 
-	virtual ~LevelObject() = 0 {};
+	void setName(std::string name);
+	std::string getName();
 
-	virtual SceneNode* getObjectRootNode() const = 0;
+	void fromJson(json j);
+	json toJson();
 
-	virtual void update(float time) = 0;
-	virtual void setObjectState(bool active) = 0;
+	void drawEditor();
+private:
+	std::string name;
 };

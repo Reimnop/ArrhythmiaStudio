@@ -50,7 +50,7 @@ void SceneNode::setParent(SceneNode* newParent)
 		newParent = Scene::inst->rootNode;
 	}
 
-	if (newParent)
+	if (newParent) 
 	{
 		// Add to new parent
 		newParent->children.push_back(this);

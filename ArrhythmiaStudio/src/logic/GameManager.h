@@ -14,7 +14,7 @@ public:
 	GameManager(GLFWwindow* window);
 
 	// Runs every frame
-	void update() const;
+	void update();
 private:
 	GLFWwindow* mainWindow;
 	DocManager* docManager;

@@ -5,6 +5,7 @@
 
 #include "DocManager.h"
 #include "DiscordManager.h"
+#include "editor_windows/EditorWindow.h"
 
 class MainWindow;
 
@@ -20,10 +21,10 @@ private:
 	DocManager* docManager;
 	DiscordManager* discordManager;
 
+	std::vector<EditorWindow*> editorWindows;
+
 	bool welcomeOpened = false;
 	float editTimeElapsed = 0.0f;
 
 	void onLayout();
-	void calculateViewportRect(ImVec2 size, float* width, float* height);
-	std::string timeToString(float time) const;
 };

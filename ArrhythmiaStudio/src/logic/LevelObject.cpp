@@ -40,7 +40,7 @@ void LevelObject::fromJson(json j)
 	startTime = j["start"].get<float>();
 	endTime = j["end"].get<float>();
 	node = new SceneNode(name);
-	behaviour->fromJson(j["data"]);
+	behaviour->readJson(j);
 }
 
 json LevelObject::toJson()
@@ -50,9 +50,7 @@ json LevelObject::toJson()
 	j["id"] = id;
 	j["start"] = startTime;
 	j["end"] = endTime;
-	json data;
-	behaviour->toJson(data);
-	j["data"] = data;
+	behaviour->writeJson(j);
 	return j;
 }
 

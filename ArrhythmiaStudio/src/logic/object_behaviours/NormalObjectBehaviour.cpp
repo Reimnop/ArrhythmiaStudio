@@ -1,7 +1,7 @@
 #include "NormalObjectBehaviour.h"
-#include "../../rendering/Shader.h"
-#include "../../rendering/Material.h"
-#include "../../rendering/MeshRenderer.h"
+#include "../../engine/rendering/Shader.h"
+#include "../../engine/rendering/Material.h"
+#include "../../engine/rendering/MeshRenderer.h"
 #include "imgui/imgui.h"
 
 ShapeManager* NormalObjectBehaviour::shapeManager;
@@ -42,12 +42,12 @@ void NormalObjectBehaviour::update(float time)
 	baseObject->node->transform->position = glm::vec3(cos(time), sin(time), 0.0f);
 }
 
-void NormalObjectBehaviour::fromJson(json& j)
+void NormalObjectBehaviour::readJson(json& j)
 {
 	
 }
 
-void NormalObjectBehaviour::toJson(json& j)
+void NormalObjectBehaviour::writeJson(json& j)
 {
 	
 }

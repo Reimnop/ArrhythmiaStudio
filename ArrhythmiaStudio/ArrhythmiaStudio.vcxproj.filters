@@ -21,16 +21,16 @@
     <ClCompile Include="src\MainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\logic\Scene.cpp">
+    <ClCompile Include="src\engine\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\logic\SceneNode.cpp">
+    <ClCompile Include="src\engine\SceneNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\logic\Transform.cpp">
+    <ClCompile Include="src\engine\Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\ImGuiController.cpp">
+    <ClCompile Include="src\engine\rendering\ImGuiController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\imgui\imgui.cpp">
@@ -54,22 +54,22 @@
     <ClCompile Include="include\imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\Camera.cpp">
+    <ClCompile Include="src\engine\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\Material.cpp">
+    <ClCompile Include="src\engine\rendering\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\Shader.cpp">
+    <ClCompile Include="src\engine\rendering\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\Mesh.cpp">
+    <ClCompile Include="src\engine\rendering\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\MeshRenderer.cpp">
+    <ClCompile Include="src\engine\rendering\MeshRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\Renderer.cpp">
+    <ClCompile Include="src\engine\rendering\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\imgui\imgui_stdlib.cpp">
@@ -84,10 +84,10 @@
     <ClCompile Include="src\logic\AudioClip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\ComputeShader.cpp">
+    <ClCompile Include="src\engine\rendering\ComputeShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\Texture2D.cpp">
+    <ClCompile Include="src\engine\rendering\Texture2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\discord\achievement_manager.cpp">
@@ -135,13 +135,10 @@
     <ClCompile Include="src\logic\DiscordManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\post_processing\Bloom.cpp">
+    <ClCompile Include="src\engine\rendering\post_processing\Bloom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\post_processing\Tonemapping.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\imgui\imgui_editorlib.cpp">
+    <ClCompile Include="src\engine\rendering\post_processing\Tonemapping.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\stb\stb_vorbis.c">
@@ -258,19 +255,19 @@
     <ClCompile Include="src\logic\DocManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\text\Font.cpp">
+    <ClCompile Include="src\engine\rendering\text\Font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\text\TextMeshGenerator.cpp">
+    <ClCompile Include="src\engine\rendering\text\TextMeshGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\text\SampleTextRenderer.cpp">
+    <ClCompile Include="src\engine\rendering\text\SampleTextRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\DrawDataProcessor.cpp">
+    <ClCompile Include="src\engine\rendering\DrawDataProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\TextRenderer.cpp">
+    <ClCompile Include="src\engine\rendering\TextRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\logic\GameManager.cpp">
@@ -291,21 +288,27 @@
     <ClCompile Include="src\logic\object_behaviours\AnimateableObjectBehaviour.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\logic\editor_windows\Viewport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\editor_windows\Timeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\Scene.h">
+    <ClInclude Include="src\engine\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\SceneNode.h">
+    <ClInclude Include="src\engine\SceneNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\Transform.h">
+    <ClInclude Include="src\engine\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\ImGuiController.h">
+    <ClInclude Include="src\engine\rendering\ImGuiController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\imgui\imconfig.h">
@@ -332,40 +335,40 @@
     <ClInclude Include="include\imgui\imstb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Camera.h">
+    <ClInclude Include="src\engine\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Material.h">
+    <ClInclude Include="src\engine\rendering\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Shader.h">
+    <ClInclude Include="src\engine\rendering\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\MaterialProperty.h">
+    <ClInclude Include="src\engine\rendering\MaterialProperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\MaterialPropertyType.h">
+    <ClInclude Include="src\engine\rendering\MaterialPropertyType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Mesh.h">
+    <ClInclude Include="src\engine\rendering\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\VertexAttrib.h">
+    <ClInclude Include="src\engine\rendering\VertexAttrib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\BatchedDrawData.h">
+    <ClInclude Include="src\engine\rendering\BatchedDrawData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\RendererComponent.h">
+    <ClInclude Include="src\engine\rendering\RendererComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\MeshRenderer.h">
+    <ClInclude Include="src\engine\rendering\MeshRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Renderer.h">
+    <ClInclude Include="src\engine\rendering\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\FramebufferStack.h">
+    <ClInclude Include="src\engine\rendering\FramebufferStack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\imgui\imgui_stdlib.h">
@@ -1238,10 +1241,10 @@
     <ClInclude Include="src\logic\AudioClip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\ComputeShader.h">
+    <ClInclude Include="src\engine\rendering\ComputeShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Texture2D.h">
+    <ClInclude Include="src\engine\rendering\Texture2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\discord\achievement_manager.h">
@@ -1298,19 +1301,16 @@
     <ClInclude Include="src\logic\DiscordManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\post_processing\Bloom.h">
+    <ClInclude Include="src\engine\rendering\post_processing\Bloom.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\post_processing\PostProcessor.h">
+    <ClInclude Include="src\engine\rendering\post_processing\PostProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\GlobalConstants.h">
+    <ClInclude Include="src\engine\rendering\GlobalConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\post_processing\Tonemapping.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\imgui\imgui_editorlib.h">
+    <ClInclude Include="src\engine\rendering\post_processing\Tonemapping.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\utils.h">
@@ -1898,46 +1898,46 @@
     <ClInclude Include="src\logic\DocManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\text\Font.h">
+    <ClInclude Include="src\engine\rendering\text\Font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\text\AtlasInfo.h">
+    <ClInclude Include="src\engine\rendering\text\AtlasInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\text\Metrics.h">
+    <ClInclude Include="src\engine\rendering\text\Metrics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\text\Glyph.h">
+    <ClInclude Include="src\engine\rendering\text\Glyph.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\text\Bounds.h">
+    <ClInclude Include="src\engine\rendering\text\Bounds.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\text\TextMeshGenerator.h">
+    <ClInclude Include="src\engine\rendering\text\TextMeshGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\text\TextVertex.h">
+    <ClInclude Include="src\engine\rendering\text\TextVertex.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\text\SampleTextRenderer.h">
+    <ClInclude Include="src\engine\rendering\text\SampleTextRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\RenderCommand.h">
+    <ClInclude Include="src\engine\rendering\RenderCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\DrawData.h">
+    <ClInclude Include="src\engine\rendering\DrawData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\DrawCommand.h">
+    <ClInclude Include="src\engine\rendering\DrawCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\DrawDataProcessor.h">
+    <ClInclude Include="src\engine\rendering\DrawDataProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\TextRenderer.h">
+    <ClInclude Include="src\engine\rendering\TextRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\TextDrawData.h">
+    <ClInclude Include="src\engine\rendering\TextDrawData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\DocPage.h">
@@ -1968,6 +1968,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\object_behaviours\AnimateableObjectBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\editor_windows\Viewport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\editor_windows\EditorWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\editor_windows\Timeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

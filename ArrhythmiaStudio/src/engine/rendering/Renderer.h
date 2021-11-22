@@ -5,9 +5,9 @@
 #include <vector>
 
 #include "DrawCommand.h"
-#include "../logic/Scene.h"
+#include "../Scene.h"
 #include "BatchedDrawData.h"
-#include "Camera.h"
+#include "../Camera.h"
 #include "ImGuiController.h"
 #include "FramebufferStack.h"
 #include "post_processing/Bloom.h"

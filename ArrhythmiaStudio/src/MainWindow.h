@@ -2,7 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "rendering/Renderer.h"
+#include "engine/rendering/Renderer.h"
 
 #ifdef _DEBUG
 // #define SHOW_NON_IMPORTANT

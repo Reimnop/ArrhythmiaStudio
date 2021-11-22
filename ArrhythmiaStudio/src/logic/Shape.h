@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "../rendering/Mesh.h"
+#include "../engine/rendering/Mesh.h"
 
 struct Shape
 {

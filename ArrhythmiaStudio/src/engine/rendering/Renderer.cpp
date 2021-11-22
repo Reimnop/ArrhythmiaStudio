@@ -6,7 +6,7 @@
 #include <logger.h>
 
 #include "DrawDataProcessor.h"
-#include "../MainWindow.h"
+#include "../../MainWindow.h"
 
 Renderer* Renderer::inst;
 

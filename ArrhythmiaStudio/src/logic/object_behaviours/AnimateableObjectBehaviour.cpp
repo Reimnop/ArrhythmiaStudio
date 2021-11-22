@@ -17,12 +17,12 @@ void AnimateableObjectBehaviour::update(float time)
 	
 }
 
-void AnimateableObjectBehaviour::fromJson(json& j)
+void AnimateableObjectBehaviour::readJson(json& j)
 {
 	
 }
 
-void AnimateableObjectBehaviour::toJson(json& j)
+void AnimateableObjectBehaviour::writeJson(json& j)
 {
 	
 }

@@ -5,7 +5,7 @@
 #include <unordered_set>
 
 #include "Transform.h"
-#include "../rendering/RendererComponent.h"
+#include "rendering/RendererComponent.h"
 
 // Represents a node in a scene graph
 class Scene;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "json.hpp"
-#include "SceneNode.h"
+#include "../engine/SceneNode.h"
 
 using namespace nlohmann;
 

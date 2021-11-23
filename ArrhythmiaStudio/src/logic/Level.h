@@ -1,15 +1,24 @@
 #pragma once
 
-#include <map>
-#include "LevelObject.h"
+#include <unordered_map>
+#include <unordered_set>
+#include "Selection.h"
 
+class LevelObject;
 class Level 
 {
 public:
+	std::unordered_map<uint64_t, LevelObject*> levelObjects;
+	Selection selection;
+
+	float time = 0.0f;
+	float levelLength;
+
 	Level();
 	~Level();
 
-	void update(float t);
+	void seek(float t);
+	void update();
 
 	void addObject(LevelObject* object);
 	void deleteObject(LevelObject* object);
@@ -25,9 +34,7 @@ public:
 	void recalculateObjectsState();
 private:
 	float lastTime = 0.0f;
-	float time = 0.0f;
 	
-	std::map<uint64_t, LevelObject*> levelObjects;
 	std::unordered_set<LevelObject*> aliveObjects;
 
 	int activateIndex = 0;

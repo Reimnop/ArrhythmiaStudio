@@ -234,6 +234,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="include\stb\stb_vorbis.c" />
     <ClCompile Include="include\VideoFormatConverter.cpp" />
     <ClCompile Include="src\logic\DocManager.cpp" />
+    <ClCompile Include="src\logic\editor_windows\Properties.cpp" />
     <ClCompile Include="src\logic\editor_windows\Timeline.cpp" />
     <ClCompile Include="src\logic\editor_windows\Viewport.cpp" />
     <ClCompile Include="src\logic\GameManager.cpp" />
@@ -245,7 +246,6 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="src\logic\object_behaviours\NormalObjectBehaviour.cpp" />
     <ClCompile Include="src\engine\Scene.cpp" />
     <ClCompile Include="src\engine\SceneNode.cpp" />
-    <ClCompile Include="src\logic\ShapeManager.cpp" />
     <ClCompile Include="src\engine\Transform.cpp" />
     <ClCompile Include="src\logic\VideoExporter.cpp" />
     <ClCompile Include="src\Main.cpp" />
@@ -781,6 +781,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\logic\DocManager.h" />
     <ClInclude Include="src\logic\DocPage.h" />
     <ClInclude Include="src\logic\editor_windows\EditorWindow.h" />
+    <ClInclude Include="src\logic\editor_windows\Properties.h" />
     <ClInclude Include="src\logic\editor_windows\Timeline.h" />
     <ClInclude Include="src\logic\editor_windows\Viewport.h" />
     <ClInclude Include="src\logic\GameManager.h" />
@@ -791,8 +792,10 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\logic\object_behaviours\NormalObjectBehaviour.h" />
     <ClInclude Include="src\engine\Scene.h" />
     <ClInclude Include="src\engine\SceneNode.h" />
+    <ClInclude Include="src\logic\factories\ObjectBehaviourFactory.h" />
+    <ClInclude Include="src\logic\factories\ShapeFactory.h" />
+    <ClInclude Include="src\logic\Selection.h" />
     <ClInclude Include="src\logic\Shape.h" />
-    <ClInclude Include="src\logic\ShapeManager.h" />
     <ClInclude Include="src\engine\Transform.h" />
     <ClInclude Include="src\logic\VideoExporter.h" />
     <ClInclude Include="src\MainWindow.h" />
@@ -1023,7 +1026,6 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\Documentation\doc_list.txt" />
-    <Text Include="Assets\Shapes\shapes_list.txt" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\Inconsolata-Bold.ttf" />

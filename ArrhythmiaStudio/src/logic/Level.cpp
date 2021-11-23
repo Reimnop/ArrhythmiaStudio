@@ -1,19 +1,30 @@
 #include "Level.h"
+#include "LevelObject.h"
 #include "object_behaviours/LevelObjectBehaviour.h"
 
 Level::Level() 
 {
-	
+	// TODO: remove level length
+	levelLength = 100.0f;
 }
 
 Level::~Level()
 {
-	
+	for (auto pair : levelObjects)
+	{
+		delete pair.second;
+	}
 }
 
-void Level::update(float t)
+void Level::seek(float t)
 {
 	time = t;
+	update();
+}
+
+void Level::update()
+{
+	// time = ;
 
 	if (time > lastTime)
 	{
@@ -26,7 +37,7 @@ void Level::update(float t)
 
 	for (LevelObject* obj : aliveObjects)
 	{
-		obj->behaviour->update(time);
+		obj->update(time);
 	}
 
 	lastTime = time;
@@ -50,11 +61,13 @@ void Level::deleteObject(LevelObject* object)
 
 void Level::insertObject(LevelObject* object)
 {
+	object->level = this;
 	levelObjects.emplace(object->id, object);
 }
 
 void Level::removeObject(LevelObject* object)
 {
+	object->level = nullptr;
 	levelObjects.erase(object->id);
 }
 
@@ -92,6 +105,8 @@ void Level::recalculateObjectsState()
 {
 	std::unordered_map<LevelObject*, int> activeTable;
 	aliveObjects.clear();
+	activateIndex = 0;
+	deactivateIndex = 0;
 
 	for (auto pair : levelObjects)
 	{
@@ -106,16 +121,18 @@ void Level::recalculateObjectsState()
 			break;
 		}
 
+		activateIndex++;
 		activeTable[object]++;
 	}
 
 	for (LevelObject* object : deactivateList)
 	{
-		if (object->endTime >= time)
+		if (object->endTime > time)
 		{
 			break;
 		}
 
+		deactivateIndex++;
 		activeTable[object]--;
 	}
 
@@ -124,12 +141,12 @@ void Level::recalculateObjectsState()
 		LevelObject* obj = pair.first;
 		if (pair.second % 2)
 		{
-			obj->node->setActive(false);
+			obj->node->setActive(true);
+			aliveObjects.insert(obj);
 		}
 		else
 		{
 			obj->node->setActive(false);
-			aliveObjects.insert(obj);
 		}
 	}
 }

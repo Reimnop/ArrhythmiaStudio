@@ -302,7 +302,7 @@ void Renderer::renderViewport()
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, multisampleFramebuffer);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, finalFramebuffer);
 
-	glBlitFramebuffer(0, 0, viewportWidth, viewportHeight, 0, 0, viewportWidth, viewportHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+	glBlitFramebuffer(0, 0, viewportWidth, viewportHeight, 0, 0, viewportWidth, viewportHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -353,6 +353,7 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 				if (cmd->drawData->getType() == DrawDataType_Batched)
 				{
 					queuedBatchedDrawDataOpaque.push_back((BatchedDrawData*)cmd->drawData);
+					delete cmd;
 				}
 				else
 				{

@@ -5,6 +5,7 @@
 
 #include "DocManager.h"
 #include "DiscordManager.h"
+#include "Level.h"
 #include "editor_windows/EditorWindow.h"
 
 class MainWindow;
@@ -12,7 +13,11 @@ class MainWindow;
 class GameManager
 {
 public:
+	static GameManager* inst;
+
 	GameManager(GLFWwindow* window);
+
+	Level* level;
 
 	// Runs every frame
 	void update();

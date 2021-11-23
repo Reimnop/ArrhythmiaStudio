@@ -6,23 +6,22 @@
 using namespace nlohmann;
 
 class LevelObjectBehaviour;
+class Level;
 class LevelObject
 {
 public:
 	uint64_t id;
 	float startTime;
 	float endTime;
+	int bin;
+	Level* level;
 	SceneNode* node;
 	LevelObjectBehaviour* behaviour;
 
-	LevelObject();
+	LevelObject(std::string type, Level* level);
 	~LevelObject();
 
-	template<typename T>
-	void initializeObjectBehaviour()
-	{
-		behaviour = new T(this);
-	}
+	void update(float time);
 
 	void setName(std::string name);
 	std::string getName();
@@ -33,4 +32,5 @@ public:
 	void drawEditor();
 private:
 	std::string name;
+	std::string type;
 };

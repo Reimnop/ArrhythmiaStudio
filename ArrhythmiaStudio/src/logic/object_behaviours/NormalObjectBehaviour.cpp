@@ -2,17 +2,13 @@
 #include "../../engine/rendering/Shader.h"
 #include "../../engine/rendering/Material.h"
 #include "../../engine/rendering/MeshRenderer.h"
+#include "../factories/ShapeFactory.h"
 #include "imgui/imgui.h"
 
-ShapeManager* NormalObjectBehaviour::shapeManager;
+Shader* shader;
 
 NormalObjectBehaviour::NormalObjectBehaviour(LevelObject* baseObject) : AnimateableObjectBehaviour(baseObject)
 {
-	if (!shapeManager)
-	{
-		shapeManager = new ShapeManager();
-	}
-
 	MaterialProperty properties[]
 	{
 		MaterialProperty("Color", MaterialPropertyType_Vector3, 12)
@@ -22,12 +18,14 @@ NormalObjectBehaviour::NormalObjectBehaviour(LevelObject* baseObject) : Animatea
 	material->setVec3("Color", glm::vec3(1.0f));
 	material->updateBuffer();
 
-	Shader* shader = new Shader("Assets/Shaders/unlit.vert", "Assets/Shaders/unlit.frag");
+	if (!shader) {
+		shader = new Shader("Assets/Shaders/unlit.vert", "Assets/Shaders/unlit.frag");
+	}
 
 	MeshRenderer* renderer = new MeshRenderer();
 	renderer->material = material;
 	renderer->shader = shader;
-	renderer->mesh = shapeManager->shapes[0].mesh;
+	renderer->mesh = ShapeFactory::getShape("circle").mesh;
 
 	baseObject->node->renderer = renderer;
 }
@@ -37,9 +35,16 @@ NormalObjectBehaviour::~NormalObjectBehaviour()
 	delete baseObject->node->renderer;
 }
 
+LevelObjectBehaviour* NormalObjectBehaviour::create(LevelObject* object)
+{
+	return new NormalObjectBehaviour(object);
+}
+
 void NormalObjectBehaviour::update(float time) 
 {
-	baseObject->node->transform->position = glm::vec3(cos(time), sin(time), 0.0f);
+	float t = time - baseObject->startTime;
+	Transform& transform = *baseObject->node->transform;
+	transform.position = glm::vec3(cos(t * 2.0f), sin(t * 2.0f), 0.0f);
 }
 
 void NormalObjectBehaviour::readJson(json& j)

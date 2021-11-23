@@ -276,9 +276,6 @@
     <ClCompile Include="src\logic\object_behaviours\NormalObjectBehaviour.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\logic\ShapeManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\logic\Level.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -292,6 +289,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\logic\editor_windows\Timeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\editor_windows\Properties.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1955,9 +1955,6 @@
     <ClInclude Include="include\json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\ShapeManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\logic\Shape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1977,6 +1974,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\editor_windows\Timeline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\Selection.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\editor_windows\Properties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\factories\ObjectBehaviourFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\factories\ShapeFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -2444,7 +2453,6 @@
     <Library Include="libs\swscale.lib" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Assets\Shapes\shapes_list.txt" />
     <Text Include="Assets\Documentation\doc_list.txt" />
   </ItemGroup>
   <ItemGroup>

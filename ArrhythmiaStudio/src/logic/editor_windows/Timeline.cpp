@@ -53,14 +53,14 @@ void Timeline::drawTimeline()
 	// Time pointer dragging action
 	ImGuiID pointerID = window.GetID("##time-pointer");
 
-	if (ImGui::IsMouseDragging(ImGuiMouseButton_Left) && pointerRect.Contains(io.MousePos))
+	if (ImGui::IsMouseDragging(ImGuiMouseButton_Left) && pointerRect.Contains(io.MouseClickedPos[0]))
 	{
 		ImGui::SetActiveID(pointerID, &window);
 		ImGui::SetFocusID(pointerID, &window);
 		ImGui::FocusWindow(&window);
 	}
 
-	if (context.ActiveId == pointerID && context.ActiveIdSource == ImGuiInputSource_Mouse && !io.MouseDown[ImGuiMouseButton_Left])
+	if (context.ActiveId == pointerID && context.ActiveIdSource == ImGuiInputSource_Mouse && !io.MouseDown[0])
 	{
 		ImGui::ClearActiveID();
 	}
@@ -134,6 +134,7 @@ void Timeline::drawTimeline()
 		// Object strips handling
 		{
 			std::optional<std::reference_wrapper<LevelObject>> objectHovering;
+			std::optional<std::reference_wrapper<LevelObject>> lastClickedObject;
 
 			// Input pass
 			for (auto it = level.levelObjects.begin(); it != level.levelObjects.end(); ++it)
@@ -155,6 +156,11 @@ void Timeline::drawTimeline()
 				if (stripRect.Contains(io.MousePos) && ImGui::IsWindowHovered())
 				{
 					objectHovering = object;
+				}
+
+				if (stripRect.Contains(io.MouseClickedPos[0]) && ImGui::IsWindowHovered())
+				{
+					lastClickedObject = object;
 				}
 			}
 
@@ -188,11 +194,13 @@ void Timeline::drawTimeline()
 			// Object dragging action
 			ImGuiID objectDragID = window.GetID("##object-drag");
 
-			if (ImGui::IsWindowFocused() && objectHovering.has_value() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+			if (ImGui::IsWindowFocused() && lastClickedObject.has_value() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 			{
 				ImGui::SetActiveID(objectDragID, &window);
 				ImGui::SetFocusID(objectDragID, &window);
 				ImGui::FocusWindow(&window);
+
+				level.selection.selectedObject = lastClickedObject;
 			}
 
 			if (context.ActiveId == objectDragID && context.ActiveIdSource == ImGuiInputSource_Mouse && !io.MouseDown[0])

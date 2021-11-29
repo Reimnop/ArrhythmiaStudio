@@ -5,7 +5,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 
-std::vector<std::reference_wrapper<Sequence>> AnimateableObjectBehaviour::sequencesToDraw;
+std::vector<std::tuple<std::reference_wrapper<Sequence>, std::string>> AnimateableObjectBehaviour::sequencesToDraw;
 std::optional<KeyframeInfo> AnimateableObjectBehaviour::selectedKeyframe;
 std::optional<KeyframeTimeEditInfo> AnimateableObjectBehaviour::timeEditingKeyframe;
 
@@ -39,7 +39,11 @@ void AnimateableObjectBehaviour::readJson(json& j)
 
 void AnimateableObjectBehaviour::writeJson(json& j)
 {
-	
+	j["px"] = positionX.toJson();
+	j["py"] = positionY.toJson();
+	j["sx"] = scaleX.toJson();
+	j["sy"] = scaleY.toJson();
+	j["ro"] = rotation.toJson();
 }
 
 void AnimateableObjectBehaviour::drawEditor()
@@ -108,11 +112,11 @@ void AnimateableObjectBehaviour::drawEditor()
 
 void AnimateableObjectBehaviour::drawSequences()
 {
-	sequenceEdit(positionX);
-	sequenceEdit(positionY);
-	sequenceEdit(scaleX);
-	sequenceEdit(scaleY);
-	sequenceEdit(rotation);
+	sequenceEdit(positionX, "Position X");
+	sequenceEdit(positionY, "Position Y");
+	sequenceEdit(scaleX, "Scale X");
+	sequenceEdit(scaleY, "Scale Y");
+	sequenceEdit(rotation, "Rotation");
 }
 
 bool AnimateableObjectBehaviour::beginKeyframeEditor()
@@ -122,14 +126,15 @@ bool AnimateableObjectBehaviour::beginKeyframeEditor()
 	return true;
 }
 
-void AnimateableObjectBehaviour::sequenceEdit(Sequence& sequence)
+void AnimateableObjectBehaviour::sequenceEdit(Sequence& sequence, std::string label)
 {
-	sequencesToDraw.push_back(sequence);
+	sequencesToDraw.push_back(std::make_tuple(std::reference_wrapper(sequence), label));
 }
 
 void AnimateableObjectBehaviour::endKeyframeEditor()
 {
 	// Configurations
+	constexpr float SEQUENCE_LABEL_PADDING = 8.0f;
 	constexpr float SEQUENCE_HEIGHT = 20.0f;
 	constexpr ImU32 SEQUENCE_PRIMARY_COL = 0xFF1F1F1F;
 	constexpr ImU32 SEQUENCE_SECONDARY_COL = 0xFF2E2E2E;
@@ -138,7 +143,7 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 	constexpr float TIME_POINTER_HEIGHT = 30.0f;
 	constexpr float TIME_POINTER_TRI_HEIGHT = 8.0f;
 
-	constexpr float KEYFRAME_SIZE = 20.0f;
+	constexpr float KEYFRAME_SIZE = 15.0f;
 	constexpr float HALF_KEYFRAME_SIZE = KEYFRAME_SIZE / 2.0f;
 	constexpr ImU32 KEYFRAME_INACTIVE_COL = 0xFFBABABA;
 	constexpr ImU32 KEYFRAME_ACTIVE_COL = 0xFF626262;
@@ -178,14 +183,14 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 	// Time pointer dragging action
 	ImGuiID pointerID = window.GetID("##time-pointer");
 
-	if (ImGui::IsMouseDragging(ImGuiMouseButton_Left) && pointerRect.Contains(io.MousePos))
+	if (ImGui::IsMouseDragging(ImGuiMouseButton_Left) && pointerRect.Contains(io.MouseClickedPos[0]))
 	{
 		ImGui::SetActiveID(pointerID, &window);
 		ImGui::SetFocusID(pointerID, &window);
 		ImGui::FocusWindow(&window);
 	}
 
-	if (context.ActiveId == pointerID && context.ActiveIdSource == ImGuiInputSource_Mouse && !io.MouseDown[ImGuiMouseButton_Left])
+	if (context.ActiveId == pointerID && context.ActiveIdSource == ImGuiInputSource_Mouse && !io.MouseDown[0])
 	{
 		ImGui::ClearActiveID();
 	}
@@ -249,12 +254,13 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 
 		{
 			std::optional<KeyframeInfo> hoveredKeyframe;
+			std::optional<KeyframeInfo> lastClickedKeyframe;
 
 			// Input pass
 			for (int i = 0; i < sequenceCount; i++)
 			{
 				ImVec2 baseSequenceCoord = keyframeEditorBase + ImVec2(0.0f, i * SEQUENCE_HEIGHT);
-				Sequence& sequence = sequencesToDraw[i];
+				Sequence& sequence = std::get<0>(sequencesToDraw[i]);
 
 				for (int j = 0; j < sequence.keyframes.size(); j++)
 				{
@@ -276,6 +282,15 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 
 						hoveredKeyframe = kfInfo;
 					}
+
+					if (kfRect.Contains(io.MouseClickedPos[0]))
+					{
+						KeyframeInfo kfInfo;
+						kfInfo.index = j;
+						kfInfo.sequence = &sequence;
+
+						lastClickedKeyframe = kfInfo;
+					}
 				}
 			}
 
@@ -283,7 +298,13 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 			for (int i = 0; i < sequenceCount; i++)
 			{
 				ImVec2 baseSequenceCoord = keyframeEditorBase + ImVec2(0.0f, i * SEQUENCE_HEIGHT);
-				Sequence& sequence = sequencesToDraw[i];
+				Sequence& sequence = std::get<0>(sequencesToDraw[i]);
+				std::string label = std::get<1>(sequencesToDraw[i]);
+
+				drawList.AddText(
+					baseSequenceCoord + ImVec2(SEQUENCE_LABEL_PADDING, 0.0f),
+					ImGui::GetColorU32(ImGuiCol_Text),
+					label.c_str());
 
 				for (int j = 0; j < sequence.keyframes.size(); j++)
 				{
@@ -293,11 +314,30 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 						continue;
 					}
 
-					bool isHighlighted = 
-						(hoveredKeyframe.has_value() ?
-						hoveredKeyframe.value().index == j && hoveredKeyframe.value().sequence == &sequence : false) ||
-						(selectedKeyframe.has_value() ?
-						selectedKeyframe.value().index == j && selectedKeyframe.value().sequence == &sequence : false);
+					bool isHighlighted = false;
+					if (hoveredKeyframe.has_value() && hoveredKeyframe->index == j && hoveredKeyframe->sequence == &sequence)
+					{
+						isHighlighted = true;
+					}
+
+					if (isKeyframeTimeEditing())
+					{
+						assert(timeEditingKeyframe.has_value());
+
+						if (
+							timeEditingKeyframe->keyframes[timeEditingKeyframe->index] == sequence.keyframes[j] && 
+							timeEditingKeyframe->sequence == &sequence)
+						{
+							isHighlighted = true;
+						}
+					}
+					else
+					{
+						if (selectedKeyframe.has_value() && selectedKeyframe->index == j && selectedKeyframe->sequence == &sequence)
+						{
+							isHighlighted = true;
+						}
+					}
 
 					ImVec2 kfCenter = baseSequenceCoord + ImVec2(kfPos, SEQUENCE_HEIGHT / 2.0f);
 					drawList.AddQuadFilled(
@@ -314,16 +354,34 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 				selectedKeyframe = hoveredKeyframe;
 			}
 
+			// Create new keyframe
+			if (ImGui::IsWindowFocused() && keyframeEditorRect.Contains(io.MousePos) && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+			{
+				Sequence& sequence = std::get<0>(sequencesToDraw[(io.MousePos.y - keyframeEditorBase.y) / SEQUENCE_HEIGHT]);
+				float time = startTime + ((io.MousePos.x - keyframeEditorBase.x) / size.x) * (endTime - startTime);
+				sequence.insertKeyframe(Keyframe(time, 0.0f, EaseType_Linear));
+			}
+
+			// Keyframe delete
+			if (ImGui::IsWindowFocused() && selectedKeyframe.has_value() && ImGui::IsKeyDown(GLFW_KEY_DELETE))
+			{
+				KeyframeInfo& kfInfo = selectedKeyframe.value();
+				// We don't do it via the eraseKeyframe method because we already know the index
+				// and removing any item from a sorted vector results in a sorted vector.
+				kfInfo.sequence->keyframes.erase(kfInfo.sequence->keyframes.begin() + kfInfo.index);
+				selectedKeyframe.reset();
+			}
+
 			// Keyframe dragging action
 			ImGuiID keyframeDragID = window.GetID("##keyframe-drag");
 
-			if (ImGui::IsWindowFocused() && hoveredKeyframe.has_value() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+			if (ImGui::IsWindowFocused() && lastClickedKeyframe.has_value() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 			{
 				ImGui::SetActiveID(keyframeDragID, &window);
 				ImGui::SetFocusID(keyframeDragID, &window);
 				ImGui::FocusWindow(&window);
 
-				selectedKeyframe = hoveredKeyframe;
+				selectedKeyframe = lastClickedKeyframe;
 				KeyframeInfo& kfInfo = selectedKeyframe.value();
 
 				beginKeyframeTimeEdit(kfInfo.index, *kfInfo.sequence);

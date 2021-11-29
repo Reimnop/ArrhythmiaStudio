@@ -20,7 +20,7 @@ public:
 	void writeJson(json& j) override;
 	void drawEditor() override;
 private:
-	static std::vector<std::reference_wrapper<Sequence>> sequencesToDraw;
+	static std::vector<std::tuple<std::reference_wrapper<Sequence>, std::string>> sequencesToDraw;
 	static std::optional<KeyframeInfo> selectedKeyframe;
 	static std::optional<KeyframeTimeEditInfo> timeEditingKeyframe;
 
@@ -33,7 +33,7 @@ private:
 	virtual void drawSequences();
 protected:
 	bool beginKeyframeEditor();
-	void sequenceEdit(Sequence& sequence);
+	void sequenceEdit(Sequence& sequence, std::string label);
 	void endKeyframeEditor();
 
 	void beginKeyframeTimeEdit(int index, Sequence& sequence);

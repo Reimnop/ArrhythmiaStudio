@@ -28,7 +28,6 @@ private:
 
 	std::vector<EditorWindow*> editorWindows;
 
-	bool welcomeOpened = false;
 	float editTimeElapsed = 0.0f;
 
 	void onLayout();

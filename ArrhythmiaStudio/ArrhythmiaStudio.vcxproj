@@ -233,6 +233,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="include\Sources\RawVideoFileSource.cpp" />
     <ClCompile Include="include\stb\stb_vorbis.c" />
     <ClCompile Include="include\VideoFormatConverter.cpp" />
+    <ClCompile Include="src\logic\animation\Sequence.cpp" />
     <ClCompile Include="src\logic\DocManager.cpp" />
     <ClCompile Include="src\logic\editor_windows\Properties.cpp" />
     <ClCompile Include="src\logic\editor_windows\Timeline.cpp" />
@@ -776,6 +777,9 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="include\std.h" />
     <ClInclude Include="include\utils.h" />
     <ClInclude Include="include\VideoFormatConverter.h" />
+    <ClInclude Include="src\logic\animation\Easing.h" />
+    <ClInclude Include="src\logic\animation\Keyframe.h" />
+    <ClInclude Include="src\logic\animation\Sequence.h" />
     <ClInclude Include="src\logic\AudioClip.h" />
     <ClInclude Include="src\logic\DiscordManager.h" />
     <ClInclude Include="src\logic\DocManager.h" />
@@ -787,6 +791,8 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\logic\GameManager.h" />
     <ClInclude Include="src\logic\Level.h" />
     <ClInclude Include="src\logic\LevelObject.h" />
+    <ClInclude Include="src\logic\object_behaviours\KeyframeInfo.h" />
+    <ClInclude Include="src\logic\object_behaviours\KeyframeTimeEditInfo.h" />
     <ClInclude Include="src\logic\object_behaviours\LevelObjectBehaviour.h" />
     <ClInclude Include="src\logic\object_behaviours\AnimateableObjectBehaviour.h" />
     <ClInclude Include="src\logic\object_behaviours\NormalObjectBehaviour.h" />

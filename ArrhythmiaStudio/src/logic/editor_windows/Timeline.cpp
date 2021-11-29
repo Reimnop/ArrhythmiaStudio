@@ -60,7 +60,7 @@ void Timeline::drawTimeline()
 		ImGui::FocusWindow(&window);
 	}
 
-	if (context.ActiveIdSource == ImGuiInputSource_Mouse && !io.MouseDown[ImGuiMouseButton_Left])
+	if (context.ActiveId == pointerID && context.ActiveIdSource == ImGuiInputSource_Mouse && !io.MouseDown[ImGuiMouseButton_Left])
 	{
 		ImGui::ClearActiveID();
 	}
@@ -182,14 +182,7 @@ void Timeline::drawTimeline()
 
 			if (ImGui::IsWindowFocused() && objectEditorRect.Contains(io.MousePos) && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 			{
-				if (objectHovering.has_value())
-				{
-					level.selection.selectedObject = objectHovering.value();
-				}
-				else
-				{
-					level.selection.selectedObject = std::optional<std::reference_wrapper<LevelObject>>();
-				}
+				level.selection.selectedObject = objectHovering;
 			}
 
 			// Object dragging action
@@ -200,11 +193,9 @@ void Timeline::drawTimeline()
 				ImGui::SetActiveID(objectDragID, &window);
 				ImGui::SetFocusID(objectDragID, &window);
 				ImGui::FocusWindow(&window);
-
-				level.selection.selectedObject = objectHovering.value();
 			}
 
-			if (context.ActiveIdSource == ImGuiInputSource_Mouse && !io.MouseDown[0])
+			if (context.ActiveId == objectDragID && context.ActiveIdSource == ImGuiInputSource_Mouse && !io.MouseDown[0])
 			{
 				ImGui::ClearActiveID();
 			}
@@ -260,6 +251,8 @@ void Timeline::drawTimeline()
 
 		drawList.PopClipRect();
 	}
+
+	ImGui::ItemSize(size);
 }
 
 void Timeline::drawObjectStrip(std::string& name, ImVec2 min, ImVec2 max, bool highlighted)

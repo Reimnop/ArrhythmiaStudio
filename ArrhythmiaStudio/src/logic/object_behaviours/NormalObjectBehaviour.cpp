@@ -42,23 +42,21 @@ LevelObjectBehaviour* NormalObjectBehaviour::create(LevelObject* object)
 
 void NormalObjectBehaviour::update(float time) 
 {
-	float t = time - baseObject->startTime;
-	Transform& transform = *baseObject->node->transform;
-	transform.position = glm::vec3(cos(t * 2.0f), sin(t * 2.0f), 0.0f);
+	AnimateableObjectBehaviour::update(time);
 }
 
 void NormalObjectBehaviour::readJson(json& j)
 {
-	
+	AnimateableObjectBehaviour::readJson(j);
 }
 
 void NormalObjectBehaviour::writeJson(json& j)
 {
-	
+	AnimateableObjectBehaviour::writeJson(j);
 }
 
 void NormalObjectBehaviour::drawEditor()
 {
-	AnimateableObjectBehaviour::drawEditor();
 	ImGui::Text("The Editor is being drawn on Normal");
+	AnimateableObjectBehaviour::drawEditor();
 }

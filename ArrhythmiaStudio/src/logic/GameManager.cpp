@@ -54,9 +54,9 @@ GameManager::GameManager(GLFWwindow* window)
 	// TODO: remove dummy objects generator
 	level = new Level();
 	
-	for (int i = 0; i < 15; i++)
+	for (int i = 0; i < 100; i++)
 	{
-		float time = i * 0.4f;
+		float time = i * 0.025f;
 		LevelObject* object = new LevelObject("normal", level);
 		object->startTime = time;
 		object->endTime = time + 5.0f;
@@ -82,19 +82,6 @@ void GameManager::update()
 
 void GameManager::onLayout()
 {
-	// Welcome popup
-	ImGui::SetNextWindowSize(ImVec2(320.0f, 140.0f));
-	if (ImGui::BeginPopupModal("Welcome", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings))
-	{
-		ImGui::Text(STRINGIFY(WELCOME_MSG));
-		ImGui::TextWrapped("Before continuing, please create a new level with File->New (Ctrl+N) or open a new level with File->Open (Ctrl+O).");
-		if (ImGui::Button("OK"))
-		{
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::EndPopup();
-	}
-
 	ImGui::SetNextWindowSize(ImVec2(320.0f, 100.0f));
 	if (ImGui::BeginPopupModal("About", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings))
 	{
@@ -134,14 +121,6 @@ void GameManager::onLayout()
 	if (doAboutPopup)
 	{
 		ImGui::OpenPopup("About");
-	}
-
-	// Open welcome popup
-	if (!welcomeOpened)
-	{
-		ImGui::OpenPopup("Welcome");
-
-		welcomeOpened = true;
 	}
 
 	for (EditorWindow* window : editorWindows)

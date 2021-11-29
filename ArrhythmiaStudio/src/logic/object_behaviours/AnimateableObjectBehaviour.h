@@ -29,6 +29,8 @@ private:
 	Sequence scaleX;
 	Sequence scaleY;
 	Sequence rotation;
+
+	virtual void drawSequences();
 protected:
 	bool beginKeyframeEditor();
 	void sequenceEdit(Sequence& sequence);

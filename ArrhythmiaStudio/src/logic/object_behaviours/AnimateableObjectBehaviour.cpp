@@ -29,7 +29,7 @@ void AnimateableObjectBehaviour::update(float time)
 	transform.position.y = positionY.update(t);
 	transform.scale.x = scaleX.update(t);
 	transform.scale.y = scaleY.update(t);
-	transform.rotation = angleAxis(rotation.update(t) / PI * 180.0f, glm::vec3(0.0f, 0.0f, -1.0f));
+	transform.rotation = angleAxis(rotation.update(t) / 180.0f * PI, glm::vec3(0.0f, 0.0f, -1.0f));
 }
 
 void AnimateableObjectBehaviour::readJson(json& j)
@@ -46,11 +46,7 @@ void AnimateableObjectBehaviour::drawEditor()
 {
 	if (beginKeyframeEditor())
 	{
-		sequenceEdit(positionX);
-		sequenceEdit(positionY);
-		sequenceEdit(scaleX);
-		sequenceEdit(scaleY);
-		sequenceEdit(rotation);
+		drawSequences();
 
 		endKeyframeEditor();
 	}
@@ -108,6 +104,15 @@ void AnimateableObjectBehaviour::drawEditor()
 			endKeyframeTimeEdit();
 		}
 	}
+}
+
+void AnimateableObjectBehaviour::drawSequences()
+{
+	sequenceEdit(positionX);
+	sequenceEdit(positionY);
+	sequenceEdit(scaleX);
+	sequenceEdit(scaleY);
+	sequenceEdit(rotation);
 }
 
 bool AnimateableObjectBehaviour::beginKeyframeEditor()

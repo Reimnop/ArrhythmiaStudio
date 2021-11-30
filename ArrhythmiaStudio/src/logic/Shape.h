@@ -6,6 +6,7 @@
 
 struct Shape
 {
+	std::string id;
 	std::string name;
 	Mesh* mesh;
 

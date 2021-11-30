@@ -29,9 +29,9 @@ private:
 	Sequence scaleX;
 	Sequence scaleY;
 	Sequence rotation;
-
-	virtual void drawSequences();
 protected:
+	virtual void drawSequences();
+
 	bool beginKeyframeEditor();
 	void sequenceEdit(Sequence& sequence, std::string label);
 	void endKeyframeEditor();

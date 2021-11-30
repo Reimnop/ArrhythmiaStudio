@@ -9,9 +9,13 @@
 class ShapeFactory
 {
 public:
+	static inline std::unordered_map<std::string, Shape> shapes;
+
 	static void registerShape(std::filesystem::path path, std::string id)
 	{
-		shapes[id] = getShapeFromFile(path);
+		Shape shape = getShapeFromFile(path);
+		shape.id = id;
+		shapes[id] = shape;
 	}
 
 	static Shape getShape(std::string id)
@@ -19,8 +23,6 @@ public:
 		return shapes[id];
 	}
 private:
-	static inline std::unordered_map<std::string, Shape> shapes;
-
 	static Shape getShapeFromFile(std::filesystem::path& path)
 	{
 		std::ifstream s(path);

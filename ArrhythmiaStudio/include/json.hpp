@@ -3463,7 +3463,7 @@ namespace nlohmann
     class json_pointer;
 
     /*!
-    @brief default JSON class
+    @brief unordered JSON class
 
     This type is the default specialization of the @ref basic_json class which
     uses the standard template types.
@@ -3476,7 +3476,7 @@ namespace nlohmann
     struct ordered_map;
 
     /*!
-    @brief ordered JSON class
+    @brief default JSON class
 
     This type preserves the insertion order of object keys.
 

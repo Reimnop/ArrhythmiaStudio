@@ -1,7 +1,4 @@
 #include "NormalObjectBehaviour.h"
-#include "../../engine/rendering/Shader.h"
-#include "../../engine/rendering/Material.h"
-#include "../../engine/rendering/MeshRenderer.h"
 #include "../factories/ShapeFactory.h"
 #include "imgui/imgui.h"
 
@@ -9,6 +6,10 @@ Shader* shader;
 
 NormalObjectBehaviour::NormalObjectBehaviour(LevelObject* baseObject) : AnimateableObjectBehaviour(baseObject)
 {
+	Keyframe kf1 = Keyframe(0.0f, 1.0f, EaseType_Linear);
+	opacity = Sequence(1, &kf1);
+
+	// TODO: REMOVE DEBUG CODE!
 	MaterialProperty properties[]
 	{
 		MaterialProperty("Color", MaterialPropertyType_Vector3, 12)
@@ -22,12 +23,13 @@ NormalObjectBehaviour::NormalObjectBehaviour(LevelObject* baseObject) : Animatea
 		shader = new Shader("Assets/Shaders/unlit.vert", "Assets/Shaders/unlit.frag");
 	}
 
-	MeshRenderer* renderer = new MeshRenderer();
+	renderer = new MeshRenderer();
 	renderer->material = material;
 	renderer->shader = shader;
-	renderer->mesh = ShapeFactory::getShape("circle").mesh;
 
 	baseObject->node->renderer = renderer;
+
+	setShape("square");
 }
 
 NormalObjectBehaviour::~NormalObjectBehaviour()
@@ -43,20 +45,53 @@ LevelObjectBehaviour* NormalObjectBehaviour::create(LevelObject* object)
 void NormalObjectBehaviour::update(float time) 
 {
 	AnimateableObjectBehaviour::update(time);
+
+	renderer->opacity = opacity.update(time - baseObject->startTime);
 }
 
 void NormalObjectBehaviour::readJson(json& j)
 {
+	setShape(j["shape"].get<std::string>());
+
 	AnimateableObjectBehaviour::readJson(j);
 }
 
 void NormalObjectBehaviour::writeJson(json& j)
 {
+	j["shape"] = shape.id;
+
 	AnimateableObjectBehaviour::writeJson(j);
+	j["op"] = opacity.toJson();
 }
 
 void NormalObjectBehaviour::drawEditor()
 {
-	ImGui::Text("The Editor is being drawn on Normal");
+	if (ImGui::BeginCombo("Shape", shape.name.c_str()))
+	{
+		for (auto pair : ShapeFactory::shapes)
+		{
+			Shape& currentShape = pair.second;
+
+			if (ImGui::Selectable(currentShape.name.c_str(), currentShape.id == shape.id))
+			{
+				setShape(currentShape.id);
+			}
+		}
+		ImGui::EndCombo();
+	}
+
 	AnimateableObjectBehaviour::drawEditor();
+}
+
+void NormalObjectBehaviour::drawSequences()
+{
+	AnimateableObjectBehaviour::drawSequences();
+
+	sequenceEdit(opacity, "Opacity");
+}
+
+void NormalObjectBehaviour::setShape(std::string id)
+{
+	shape = ShapeFactory::getShape(id);
+	renderer->mesh = shape.mesh;
 }

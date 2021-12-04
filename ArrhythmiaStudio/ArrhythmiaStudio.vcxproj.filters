@@ -297,6 +297,9 @@
     <ClCompile Include="src\logic\animation\Sequence.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\logic\level_events\CameraShakeEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
@@ -2004,6 +2007,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\object_behaviours\KeyframeTimeEditInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\level_events\LevelEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\level_events\CameraShakeEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\editor_windows\Events.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

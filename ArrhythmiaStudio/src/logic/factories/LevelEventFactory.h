@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "logger.h"
 #include "../level_events/LevelEvent.h"
 
 struct LevelEventInfo
@@ -36,6 +37,8 @@ public:
 		info.name = name;
 		info.createFunction = &T::create;
 		infos.emplace(id, info);
+
+		Logger::info("Loaded level event " + id);
 	}
 
 	static LevelEventInfo getFromId(std::string id)

@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+
+#include "logger.h"
 #include "../object_behaviours/LevelObjectBehaviour.h"
 
 struct ObjectBehaviourInfo
@@ -34,6 +36,8 @@ public:
 		info.name = name;
 		info.createFunction = &T::create;
 		infos.emplace(id, info);
+
+		Logger::info("Loaded object behaviour " + id);
 	}
 
 	static ObjectBehaviourInfo getFromId(std::string id)

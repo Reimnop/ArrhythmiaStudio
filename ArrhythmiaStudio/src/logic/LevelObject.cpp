@@ -22,6 +22,17 @@ LevelObject::LevelObject(std::string type, Level* level)
 	behaviour = info.createFunction(this);
 }
 
+LevelObject::LevelObject(json j)
+{
+	name = j["name"].get<std::string>();
+	type = j["type"].get<std::string>();
+	node = new SceneNode(name);
+	node->setActive(false);
+	ObjectBehaviourInfo info = ObjectBehaviourFactory::getFromId(type);
+	behaviour = info.createFunction(this);
+	fromJson(j);
+}
+
 LevelObject::~LevelObject()
 {
 	delete node;
@@ -54,7 +65,6 @@ void LevelObject::fromJson(json j)
 	id = j["id"].get<uint64_t>();
 	startTime = j["start"].get<float>();
 	endTime = j["end"].get<float>();
-	node = new SceneNode(name);
 	behaviour->readJson(j);
 }
 

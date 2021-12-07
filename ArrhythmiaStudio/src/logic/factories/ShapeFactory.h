@@ -3,6 +3,7 @@
 #include <fstream>
 #include <unordered_map>
 
+#include "logger.h"
 #include "../Shape.h"
 #include "glm/vec3.hpp"
 
@@ -27,6 +28,8 @@ public:
 		Shape shape = getShapeFromFile(path);
 		shape.id = id;
 		shapes[id] = shape;
+
+		Logger::info("Loaded shape " + id);
 	}
 
 	static Shape getShape(std::string id)

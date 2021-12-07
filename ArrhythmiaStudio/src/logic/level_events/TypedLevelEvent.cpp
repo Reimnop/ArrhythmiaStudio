@@ -11,6 +11,15 @@ TypedLevelEvent::TypedLevelEvent(Level* level, std::string type)
 	levelEvent = info.createFunction(level);
 }
 
+TypedLevelEvent::TypedLevelEvent(Level* level, json j)
+{
+	this->level = level;
+	type = j["type"].get<std::string>();
+	LevelEventInfo info = LevelEventFactory::getFromId(type);
+	levelEvent = info.createFunction(level);
+	levelEvent->readJson(j);
+}
+
 TypedLevelEvent::~TypedLevelEvent()
 {
 	delete levelEvent;

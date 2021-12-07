@@ -10,6 +10,7 @@ class TypedLevelEvent
 {
 public:
 	TypedLevelEvent(Level* level, std::string type);
+	TypedLevelEvent(Level* level, json j);
 	~TypedLevelEvent();
 
 	std::string getTitle();

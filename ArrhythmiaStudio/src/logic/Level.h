@@ -16,6 +16,7 @@ public:
 	float levelLength;
 
 	Level();
+	Level(json j);
 	~Level();
 
 	void seek(float t);
@@ -33,6 +34,8 @@ public:
 	void removeDeactivateList(LevelObject* object);
 
 	void recalculateObjectsState();
+
+	json toJson();
 private:
 	float lastTime = 0.0f;
 	

@@ -57,9 +57,10 @@ GameManager::GameManager(GLFWwindow* window)
 	ShapeFactory::registerShape("Assets/Shapes/right_angled_triangle.shp", "right_angled_triangle");
 
 	// TODO: remove dummy objects generator
-	level = new Level();
+	json j = json::parse("{\"objects\":[{\"name\":\"object index 61\",\"type\":\"normal\",\"id\":3320485139699489000,\"start\":1.524999976158142,\"end\":6.525000095367432,\"shape\":\"square\",\"px\":[[0,0,1]],\"py\":[[0,0,1]],\"sx\":[[0,1,1]],\"sy\":[[0,1,1]],\"ro\":[[0,0,1]],\"op\":[[0,1,1]]}],\"events\":[{\"type\":\"camera\",\"x\":[[0,0,1]],\"y\":[[0,0,1]],\"r\":[[0,0,1]],\"s\":[[0,10,1]]}]}");
+	level = new Level(j);
 	
-	for (int i = 0; i < 100; i++)
+	/* for (int i = 0; i < 100; i++)
 	{
 		float time = i * 0.025f;
 		LevelObject* object = new LevelObject("normal", level);
@@ -73,7 +74,7 @@ GameManager::GameManager(GLFWwindow* window)
 		level->insertDeactivateList(object);
 	}
 
-	level->recalculateObjectsState();
+	level->recalculateObjectsState(); */
 
 	editorWindows.push_back(new Viewport());
 	editorWindows.push_back(new Timeline());

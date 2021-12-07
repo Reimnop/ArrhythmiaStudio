@@ -16,6 +16,28 @@ Level::Level()
 	seek(0.0f);
 }
 
+Level::Level(json j)
+{
+	levelLength = 100.0f;
+
+	json::array_t objArr = j["objects"];
+	for (json objJ : objArr)
+	{
+		LevelObject* obj = new LevelObject(objJ);
+		insertObject(obj);
+		insertActivateList(obj);
+		insertDeactivateList(obj);
+	}
+	recalculateObjectsState();
+	json::array_t eventsArr = j["events"];
+	for (json eventJ : eventsArr)
+	{
+		levelEvents.push_back(new TypedLevelEvent(this, eventJ));
+	}
+
+	seek(0.0f);
+}
+
 Level::~Level()
 {
 	for (auto pair : levelObjects)
@@ -202,4 +224,24 @@ void Level::updateReverse()
 		aliveObjects.erase(obj);
 		activateIndex--;
 	}
+}
+
+json Level::toJson()
+{
+	json j;
+	json::array_t objArr;
+	objArr.reserve(levelObjects.size());
+	for (auto kv : levelObjects)
+	{
+		objArr.push_back(kv.second->toJson());
+	}
+	j["objects"] = objArr;
+	json::array_t eventArr;
+	eventArr.reserve(levelEvents.size());
+	for (TypedLevelEvent* levelEvent : levelEvents)
+	{
+		eventArr.push_back(levelEvent->toJson());
+	}
+	j["events"] = eventArr;
+	return j;
 }

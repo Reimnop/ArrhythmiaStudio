@@ -19,6 +19,7 @@ public:
 	LevelObjectBehaviour* behaviour;
 
 	LevelObject(std::string type, Level* level);
+	LevelObject(json j);
 	~LevelObject();
 
 	void update(float time);

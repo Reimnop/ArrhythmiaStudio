@@ -29,7 +29,7 @@ void CameraLevelEvent::update(float time)
 		positionX.update(time),
 		positionY.update(time),
 		0.0f);
-	camera->rotation = glm::angleAxis(
+	camera->rotation = angleAxis(
 		rotation.update(time) / 180.0f * PI,
 		glm::vec3(0.0f, 0.0f, -1.0f));
 	camera->orthographicScale = scale.update(time);

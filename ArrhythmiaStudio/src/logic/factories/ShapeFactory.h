@@ -9,7 +9,18 @@
 class ShapeFactory
 {
 public:
-	static inline std::unordered_map<std::string, Shape> shapes;
+	ShapeFactory() = delete;
+
+	static std::vector<std::string> getShapeIds()
+	{
+		std::vector<std::string> ids;
+		ids.reserve(shapes.size());
+		for (auto kv : shapes)
+		{
+			ids.push_back(kv.first);
+		}
+		return ids;
+	}
 
 	static void registerShape(std::filesystem::path path, std::string id)
 	{
@@ -23,6 +34,8 @@ public:
 		return shapes[id];
 	}
 private:
+	static inline std::unordered_map<std::string, Shape> shapes;
+
 	static Shape getShapeFromFile(std::filesystem::path& path)
 	{
 		std::ifstream s(path);

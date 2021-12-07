@@ -9,6 +9,7 @@ class Level
 {
 public:
 	std::unordered_map<uint64_t, LevelObject*> levelObjects;
+	std::vector<TypedLevelEvent*> levelEvents;
 	Selection selection;
 
 	float time = 0.0f;

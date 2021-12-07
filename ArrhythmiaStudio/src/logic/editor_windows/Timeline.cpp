@@ -121,16 +121,6 @@ void Timeline::drawTimeline()
 			drawList.AddRectFilled(binBase, binBase + ImVec2(size.x, BIN_HEIGHT), BIN_SECONDARY_COL);
 		}
 
-		// Draw time grid
-		for (float t = ceil(startTime); t < endTime; t += 1.0f)
-		{
-			float pos = (t - startTime) / (endTime - startTime) * size.x;
-			drawList.AddLine(
-				baseCoord + ImVec2(pos, TIME_POINTER_HEIGHT),
-				baseCoord + ImVec2(pos, size.y),
-				ImGui::GetColorU32(ImGuiCol_Border));
-		}
-
 		// Object strips handling
 		{
 			std::optional<std::reference_wrapper<LevelObject>> objectHovering;
@@ -224,6 +214,16 @@ void Timeline::drawTimeline()
 				level.insertDeactivateList(&object);
 				level.recalculateObjectsState();
 			}
+		}
+
+		// Draw time grid
+		for (float t = ceil(startTime); t < endTime; t += 1.0f)
+		{
+			float pos = (t - startTime) / (endTime - startTime) * size.x;
+			drawList.AddLine(
+				baseCoord + ImVec2(pos, TIME_POINTER_HEIGHT),
+				baseCoord + ImVec2(pos, size.y),
+				ImGui::GetColorU32(ImGuiCol_Border));
 		}
 
 		drawList.PopClipRect();

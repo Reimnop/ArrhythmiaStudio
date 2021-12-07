@@ -2,18 +2,20 @@
 
 #include <functional>
 
-#include "helper.h"
 #include "logger.h"
 #include "../engine/rendering/ImGuiController.h"
 #include "../engine/rendering/Renderer.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_markdown.h"
-#include "editor_windows/Timeline.h"
-#include "editor_windows/Viewport.h"
-#include "editor_windows/Properties.h"
 #include "object_behaviours/NormalObjectBehaviour.h"
 #include "factories/ObjectBehaviourFactory.h"
 #include "factories/ShapeFactory.h"
+#include "factories/LevelEventFactory.h"
+#include "editor_windows/Timeline.h"
+#include "editor_windows/Viewport.h"
+#include "editor_windows/Properties.h"
+#include "editor_windows/Events.h"
+#include "level_events/CameraLevelEvent.h"
 
 #define WELCOME_MSG Welcome to PROJECT_NAME!
 
@@ -35,7 +37,10 @@ GameManager::GameManager(GLFWwindow* window)
 	docManager = new DocManager();
 
 	// Register object behaviours
-	ObjectBehaviourFactory::registerBehaviour<NormalObjectBehaviour>("normal");
+	ObjectBehaviourFactory::registerBehaviour<NormalObjectBehaviour>("normal", "Normal");
+
+	// Register level events
+	LevelEventFactory::registerEvent<CameraLevelEvent>("camera", "Camera");
 
 	// Register shapes
 	ShapeFactory::registerShape("Assets/Shapes/square.shp", "square");
@@ -73,6 +78,7 @@ GameManager::GameManager(GLFWwindow* window)
 	editorWindows.push_back(new Viewport());
 	editorWindows.push_back(new Timeline());
 	editorWindows.push_back(new Properties());
+	editorWindows.push_back(new Events());
 }
 
 void GameManager::update()

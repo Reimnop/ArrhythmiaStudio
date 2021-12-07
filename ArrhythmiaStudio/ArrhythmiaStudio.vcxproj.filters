@@ -297,7 +297,16 @@
     <ClCompile Include="src\logic\animation\Sequence.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\logic\level_events\CameraShakeEvent.cpp">
+    <ClCompile Include="src\logic\editor_windows\Events.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\level_events\AnimateableLevelEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\level_events\TypedLevelEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\level_events\CameraLevelEvent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -2003,19 +2012,28 @@
     <ClInclude Include="src\logic\animation\Easing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\object_behaviours\KeyframeInfo.h">
+    <ClInclude Include="src\logic\data\KeyframeInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\object_behaviours\KeyframeTimeEditInfo.h">
+    <ClInclude Include="src\logic\data\KeyframeTimeEditInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\level_events\LevelEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\level_events\CameraShakeEvent.h">
+    <ClInclude Include="src\logic\editor_windows\Events.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\editor_windows\Events.h">
+    <ClInclude Include="src\logic\factories\LevelEventFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\level_events\AnimateableLevelEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\level_events\TypedLevelEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\level_events\CameraLevelEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

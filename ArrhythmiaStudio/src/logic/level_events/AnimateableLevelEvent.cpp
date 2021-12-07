@@ -1,48 +1,11 @@
-#include "AnimateableObjectBehaviour.h"
-#include "../Level.h"
+#include "AnimateableLevelEvent.h"
 
 #define IMGUI_DEFINE_MATH_OPERATORS
+#include "../Level.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 
-AnimateableObjectBehaviour::AnimateableObjectBehaviour(LevelObject* baseObject) : LevelObjectBehaviour(baseObject)
-{
-	Keyframe kf0 = Keyframe(0.0f, 0.0f, EaseType_Linear);
-	Keyframe kf1 = Keyframe(0.0f, 1.0f, EaseType_Linear);
-	positionX = Sequence(1, &kf0);
-	positionY = Sequence(1, &kf0);
-	scaleX = Sequence(1, &kf1);
-	scaleY = Sequence(1, &kf1);
-	rotation = Sequence(1, &kf0);
-}
-
-void AnimateableObjectBehaviour::update(float time)
-{
-	float t = time - baseObject->startTime;
-
-	Transform& transform = *baseObject->node->transform;
-	transform.position.x = positionX.update(t);
-	transform.position.y = positionY.update(t);
-	transform.scale.x = scaleX.update(t);
-	transform.scale.y = scaleY.update(t);
-	transform.rotation = angleAxis(rotation.update(t) / 180.0f * PI, glm::vec3(0.0f, 0.0f, -1.0f));
-}
-
-void AnimateableObjectBehaviour::readJson(json& j)
-{
-	
-}
-
-void AnimateableObjectBehaviour::writeJson(json& j)
-{
-	j["px"] = positionX.toJson();
-	j["py"] = positionY.toJson();
-	j["sx"] = scaleX.toJson();
-	j["sy"] = scaleY.toJson();
-	j["ro"] = rotation.toJson();
-}
-
-void AnimateableObjectBehaviour::drawEditor()
+void AnimateableLevelEvent::drawEditor()
 {
 	if (beginKeyframeEditor())
 	{
@@ -74,7 +37,7 @@ void AnimateableObjectBehaviour::drawEditor()
 
 		ImGui::DragFloat("Keyframe time", &kf->time, 0.1f);
 		bool beginTimeEdit = ImGui::IsItemActivated();
-		bool endTimeEdit = ImGui::IsItemDeactivatedAfterEdit();	
+		bool endTimeEdit = ImGui::IsItemDeactivatedAfterEdit();
 
 		ImGui::DragFloat("Keyframe value", &kf->value, 0.1f);
 
@@ -106,28 +69,19 @@ void AnimateableObjectBehaviour::drawEditor()
 	}
 }
 
-void AnimateableObjectBehaviour::drawSequences()
-{
-	sequenceEdit(positionX, "Position X");
-	sequenceEdit(positionY, "Position Y");
-	sequenceEdit(scaleX, "Scale X");
-	sequenceEdit(scaleY, "Scale Y");
-	sequenceEdit(rotation, "Rotation");
-}
-
-bool AnimateableObjectBehaviour::beginKeyframeEditor()
+bool AnimateableLevelEvent::beginKeyframeEditor()
 {
 	sequencesToDraw.clear();
 
 	return true;
 }
 
-void AnimateableObjectBehaviour::sequenceEdit(Sequence& sequence, std::string label)
+void AnimateableLevelEvent::sequenceEdit(Sequence& sequence, std::string label)
 {
 	sequencesToDraw.push_back(std::make_tuple(std::reference_wrapper(sequence), label));
 }
 
-void AnimateableObjectBehaviour::endKeyframeEditor()
+void AnimateableLevelEvent::endKeyframeEditor()
 {
 	// Configurations
 	constexpr float SEQUENCE_LABEL_PADDING = 8.0f;
@@ -149,7 +103,6 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuiContext& context = *ImGui::GetCurrentContext();
 	ImGuiStorage& storage = *ImGui::GetStateStorage();
-	Level& level = *baseObject->level;
 	int sequenceCount = sequencesToDraw.size();
 
 	// Drawing
@@ -164,8 +117,6 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 
 	float startTime = storage.GetFloat(startTimeId, 0.0f);
 	float endTime = storage.GetFloat(endTimeId, 1.0f);
-
-	float objectLength = baseObject->endTime - baseObject->startTime;
 
 	// Input handling
 	ImRect pointerRect = ImRect(
@@ -194,9 +145,9 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 	if (context.ActiveId == pointerID)
 	{
 		float newTime = startTime + (io.MousePos.x - baseCoord.x) / size.x * (endTime - startTime);
-		newTime = std::clamp(newTime, 0.0f, objectLength);
+		newTime = std::clamp(newTime, 0.0f, level->levelLength);
 
-		level.seek(newTime + baseObject->startTime);
+		level->seek(newTime);
 	}
 
 	// Zoom and pan
@@ -205,7 +156,7 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 		float visibleLength = endTime - startTime;
 		float currentPos = (startTime + endTime) * 0.5f;
 
-		float zoom = visibleLength / objectLength;
+		float zoom = visibleLength / level->levelLength;
 
 		zoom -= io.MouseWheel * 0.05f;
 
@@ -214,13 +165,13 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 			currentPos -= io.MouseDelta.x / size.x * visibleLength;
 		}
 
-		float minZoom = 2.0f / objectLength;
+		float minZoom = 2.0f / level->levelLength;
 		zoom = std::clamp(zoom, minZoom, 1.0f);
 
-		float newVisibleLength = zoom * objectLength;
+		float newVisibleLength = zoom * level->levelLength;
 
 		float minPos = newVisibleLength * 0.5f;
-		float maxPos = objectLength - minPos;
+		float maxPos = level->levelLength - minPos;
 
 		currentPos = std::clamp(currentPos, minPos, maxPos);
 
@@ -321,7 +272,7 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 						assert(timeEditingKeyframe.has_value());
 
 						if (
-							timeEditingKeyframe->keyframes[timeEditingKeyframe->index] == sequence.keyframes[j] && 
+							timeEditingKeyframe->keyframes[timeEditingKeyframe->index] == sequence.keyframes[j] &&
 							timeEditingKeyframe->sequence == &sequence)
 						{
 							isHighlighted = true;
@@ -399,7 +350,7 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 				Keyframe& kf = editInfo.keyframes[editInfo.index];
 
 				float timeDelta = (io.MouseDelta.x / size.x) * (endTime - startTime);
-				timeDelta = std::clamp(timeDelta, -kf.time, baseObject->endTime - kf.time);
+				timeDelta = std::clamp(timeDelta, -kf.time, level->levelLength - kf.time);
 
 				kf.time += timeDelta;
 
@@ -420,7 +371,7 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 	// Draw time pointer last
 	drawList.PushClipRect(baseCoord, baseCoord + size, true);
 	{
-		float pointerPos = (level.time - baseObject->startTime - startTime) / (endTime - startTime) * size.x;
+		float pointerPos = (level->time - startTime) / (endTime - startTime) * size.x;
 
 		drawList.AddLine(
 			baseCoord + ImVec2(pointerPos, 0.0f),
@@ -444,7 +395,7 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 	ImGui::ItemSize(size);
 }
 
-void AnimateableObjectBehaviour::beginKeyframeTimeEdit(int index, Sequence& sequence)
+void AnimateableLevelEvent::beginKeyframeTimeEdit(int index, Sequence& sequence)
 {
 	KeyframeTimeEditInfo editInfo;
 	editInfo.index = index;
@@ -454,7 +405,7 @@ void AnimateableObjectBehaviour::beginKeyframeTimeEdit(int index, Sequence& sequ
 	timeEditingKeyframe = editInfo;
 }
 
-void AnimateableObjectBehaviour::endKeyframeTimeEdit()
+void AnimateableLevelEvent::endKeyframeTimeEdit()
 {
 	assert(timeEditingKeyframe.has_value());
 
@@ -472,7 +423,7 @@ void AnimateableObjectBehaviour::endKeyframeTimeEdit()
 	timeEditingKeyframe.reset();
 }
 
-void AnimateableObjectBehaviour::updateKeyframeTimeEdit()
+void AnimateableLevelEvent::updateKeyframeTimeEdit()
 {
 	assert(timeEditingKeyframe.has_value());
 
@@ -480,7 +431,9 @@ void AnimateableObjectBehaviour::updateKeyframeTimeEdit()
 	editInfo.sequence->loadKeyframes(editInfo.keyframes);
 }
 
-bool AnimateableObjectBehaviour::isKeyframeTimeEditing()
+bool AnimateableLevelEvent::isKeyframeTimeEditing()
 {
 	return timeEditingKeyframe.has_value();
 }
+
+

@@ -1,11 +1,19 @@
 #include "Level.h"
 #include "LevelObject.h"
+#include "factories/LevelEventFactory.h"
 #include "object_behaviours/LevelObjectBehaviour.h"
 
 Level::Level() 
 {
 	// TODO: remove level length
 	levelLength = 100.0f;
+
+	for (std::string id : LevelEventFactory::getEventIds())
+	{
+		levelEvents.push_back(new TypedLevelEvent(this, id));
+	}
+
+	seek(0.0f);
 }
 
 Level::~Level()
@@ -35,9 +43,16 @@ void Level::update()
 		updateReverse();
 	}
 
+	// Update objects
 	for (LevelObject* obj : aliveObjects)
 	{
 		obj->update(time);
+	}
+
+	// Update events
+	for (TypedLevelEvent* levelEvent : levelEvents)
+	{
+		levelEvent->update(time);
 	}
 
 	lastTime = time;

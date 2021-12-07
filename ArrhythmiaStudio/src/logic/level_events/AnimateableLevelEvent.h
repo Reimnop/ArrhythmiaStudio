@@ -1,36 +1,24 @@
 #pragma once
+#include <optional>
+#include <vector>
 
-#include "LevelObjectBehaviour.h"
-#include "json.hpp"
+#include "LevelEvent.h"
+#include "../animation/Sequence.h"
 #include "../data/KeyframeInfo.h"
 #include "../data/KeyframeTimeEditInfo.h"
-#include "../animation/Sequence.h"
 
-using namespace nlohmann;
-
-class AnimateableObjectBehaviour : public LevelObjectBehaviour
+class AnimateableLevelEvent : public LevelEvent
 {
 public:
-	AnimateableObjectBehaviour(LevelObject* baseObject);
-	~AnimateableObjectBehaviour() override = default;
+	AnimateableLevelEvent(Level* level) : LevelEvent(level) {}
 
-	void update(float time) override;
-
-	void readJson(json& j) override;
-	void writeJson(json& j) override;
 	void drawEditor() override;
 private:
 	static inline std::vector<std::tuple<std::reference_wrapper<Sequence>, std::string>> sequencesToDraw;
 	static inline std::optional<KeyframeInfo> selectedKeyframe;
 	static inline std::optional<KeyframeTimeEditInfo> timeEditingKeyframe;
-
-	Sequence positionX;
-	Sequence positionY;
-	Sequence scaleX;
-	Sequence scaleY;
-	Sequence rotation;
 protected:
-	virtual void drawSequences();
+	virtual void drawSequences() = 0;
 
 	bool beginKeyframeEditor();
 	void sequenceEdit(Sequence& sequence, std::string label);

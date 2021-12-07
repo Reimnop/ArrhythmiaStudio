@@ -68,9 +68,9 @@ void NormalObjectBehaviour::drawEditor()
 {
 	if (ImGui::BeginCombo("Shape", shape.name.c_str()))
 	{
-		for (auto pair : ShapeFactory::shapes)
+		for (std::string id : ShapeFactory::getShapeIds())
 		{
-			Shape& currentShape = pair.second;
+			Shape currentShape = ShapeFactory::getShape(id);
 
 			if (ImGui::Selectable(currentShape.name.c_str(), currentShape.id == shape.id))
 			{

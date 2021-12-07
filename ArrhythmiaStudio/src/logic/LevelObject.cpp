@@ -18,7 +18,8 @@ LevelObject::LevelObject(std::string type, Level* level)
 	this->level = level;
 	node = new SceneNode(name);
 	node->setActive(false);
-	behaviour = ObjectBehaviourFactory::getFromId(type, this);
+	ObjectBehaviourInfo info = ObjectBehaviourFactory::getFromId(type);
+	behaviour = info.createFunction(this);
 }
 
 LevelObject::~LevelObject()
@@ -46,10 +47,9 @@ std::string LevelObject::getName()
 void LevelObject::fromJson(json j)
 {
 	name = j["name"].get<std::string>();
-	type = j["type"].get<std::string>();
-	if (type != this->type)
+	if (type != j["type"].get<std::string>())
 	{
-		throw new std::runtime_error("Mismatch object type!");
+		throw std::runtime_error("Mismatch object type!");
 	}
 	id = j["id"].get<uint64_t>();
 	startTime = j["start"].get<float>();

@@ -1,7 +1,10 @@
 #pragma once
+#include <string>
 
-#include "../Level.h"
+#include "json.hpp"
+using namespace nlohmann;
 
+class Level;
 class LevelEvent
 {
 public:
@@ -11,8 +14,10 @@ public:
 	virtual std::string getTitle() = 0;
 
 	virtual void update(float time) = 0;
-
 	virtual void drawEditor() = 0;
-private:
+
+	virtual void toJson(json& j) = 0;
+	virtual void fromJson(json& j) = 0;
+protected:
 	Level* level;
 };

@@ -19,6 +19,11 @@ Sequence::Sequence(int count, Keyframe* keyframes)
 	lastIndex = 0;
 }
 
+Sequence::Sequence(json j)
+{
+	fromJson(j);
+}
+
 void Sequence::loadKeyframes(std::vector<Keyframe>& keyframes)
 {
 	this->keyframes = keyframes;
@@ -101,6 +106,18 @@ float Sequence::update(float time)
 	const float easedT = ease(t);
 
 	return std::lerp(left.value, right.value, easedT);
+}
+
+void Sequence::fromJson(json j)
+{
+	json::array_t arr = j;
+	std::vector<Keyframe> keyframes;
+	keyframes.reserve(arr.size());
+	for (json kfJ : arr)
+	{
+		keyframes.push_back(Keyframe(kfJ));
+	}
+	loadKeyframes(keyframes);
 }
 
 json Sequence::toJson()

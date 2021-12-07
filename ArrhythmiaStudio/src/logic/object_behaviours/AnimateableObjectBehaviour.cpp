@@ -30,7 +30,11 @@ void AnimateableObjectBehaviour::update(float time)
 
 void AnimateableObjectBehaviour::readJson(json& j)
 {
-	
+	positionX.fromJson(j["px"]);
+	positionY.fromJson(j["py"]);
+	scaleX.fromJson(j["sx"]);
+	scaleY.fromJson(j["sy"]);
+	rotation.fromJson(j["ro"]);
 }
 
 void AnimateableObjectBehaviour::writeJson(json& j)

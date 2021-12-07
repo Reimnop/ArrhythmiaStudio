@@ -43,12 +43,15 @@ void CameraLevelEvent::drawSequences()
 	sequenceEdit(scale, "Scale");
 }
 
-void CameraLevelEvent::fromJson(json& j)
+void CameraLevelEvent::readJson(json& j)
 {
-	
+	positionX.fromJson(j["x"]);
+	positionY.fromJson(j["y"]);
+	rotation.fromJson(j["r"]);
+	scale.fromJson(j["s"]);
 }
 
-void CameraLevelEvent::toJson(json& j)
+void CameraLevelEvent::writeJson(json& j)
 {
 	j["x"] = positionX.toJson();
 	j["y"] = positionY.toJson();

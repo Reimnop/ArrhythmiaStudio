@@ -13,6 +13,7 @@ public:
 
 	Sequence();
 	Sequence(int count, Keyframe* keyframes);
+	Sequence(json j);
 
 	void loadKeyframes(std::vector<Keyframe>& keyframes);
 	void insertKeyframe(Keyframe keyframe);

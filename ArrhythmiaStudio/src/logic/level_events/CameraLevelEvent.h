@@ -14,8 +14,8 @@ public:
 
 	void update(float time) override;
 
-	void fromJson(json& j) override;
-	void toJson(json& j) override;
+	void readJson(json& j) override;
+	void writeJson(json& j) override;
 protected:
 	void drawSequences() override;
 private:

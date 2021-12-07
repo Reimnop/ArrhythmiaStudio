@@ -30,7 +30,7 @@ json TypedLevelEvent::toJson()
 {
 	json j;
 	j["type"] = type;
-	levelEvent->toJson(j);
+	levelEvent->writeJson(j);
 	return j;
 }
 
@@ -40,7 +40,7 @@ void TypedLevelEvent::fromJson(json j)
 	{
 		throw std::runtime_error("Mismatch level event type!");
 	}
-	levelEvent->fromJson(j);
+	levelEvent->readJson(j);
 }
 
 void TypedLevelEvent::drawEditor()

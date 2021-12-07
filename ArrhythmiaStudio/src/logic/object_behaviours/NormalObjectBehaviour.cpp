@@ -52,14 +52,13 @@ void NormalObjectBehaviour::update(float time)
 void NormalObjectBehaviour::readJson(json& j)
 {
 	setShape(j["shape"].get<std::string>());
-
 	AnimateableObjectBehaviour::readJson(j);
+	opacity.fromJson(j["op"]);
 }
 
 void NormalObjectBehaviour::writeJson(json& j)
 {
 	j["shape"] = shape.id;
-
 	AnimateableObjectBehaviour::writeJson(j);
 	j["op"] = opacity.toJson();
 }

@@ -3,10 +3,10 @@
 #include "factories/LevelEventFactory.h"
 #include "object_behaviours/LevelObjectBehaviour.h"
 
-Level::Level() 
+Level::Level(path audioPath) 
 {
-	// TODO: remove level length
-	levelLength = 100.0f;
+	clip = new AudioClip(audioPath);
+	levelLength = clip->getLength();
 
 	for (std::string id : LevelEventFactory::getEventIds())
 	{
@@ -16,9 +16,10 @@ Level::Level()
 	seek(0.0f);
 }
 
-Level::Level(json j)
+Level::Level(path audioPath, json j)
 {
-	levelLength = 100.0f;
+	clip = new AudioClip(audioPath);
+	levelLength = clip->getLength();
 
 	json::array_t objArr = j["objects"];
 	for (json objJ : objArr)
@@ -44,17 +45,21 @@ Level::~Level()
 	{
 		delete pair.second;
 	}
+
+	delete clip;
 }
 
 void Level::seek(float t)
 {
 	time = t;
+	clip->pause();
+	clip->seek(t);
 	update();
 }
 
 void Level::update()
 {
-	// time = ;
+	time = clip->getPosition();
 
 	if (time > lastTime)
 	{

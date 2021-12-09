@@ -1,10 +1,13 @@
 #include "Timeline.h"
-#include "../LevelObject.h"
-#include "../GameManager.h"
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
+
+#include "../factories/ObjectBehaviourFactory.h"
+#include "../LevelObject.h"
+#include "../GameManager.h"
+#include "utils.h"
 
 std::string Timeline::getTitle()
 {
@@ -13,6 +16,36 @@ std::string Timeline::getTitle()
 
 void Timeline::draw()
 {
+	GameManager& gameManager = *GameManager::inst;
+	Level& level = *gameManager.level;
+
+	ImGui::Text(Utils::timeToString(level.time).c_str());
+
+	ImGui::SameLine();
+
+	ImGui::SetNextItemWidth(150.0f);
+	float speed = level.clip->getSpeed();
+	ImGui::SliderFloat("Speed", &speed, 0.25f, 4.0f);
+
+	if (ImGui::IsItemEdited())
+	{
+		level.clip->setSpeed(speed);
+	}
+
+	ImGui::SameLine();
+	// Draw play button
+	if (playButton(level.clip->isPlaying()))
+	{
+		if (level.clip->isPlaying())
+		{
+			level.clip->pause();
+		}
+		else
+		{
+			level.clip->play();
+		}
+	}
+
 	drawTimeline();
 }
 
@@ -53,7 +86,7 @@ void Timeline::drawTimeline()
 	// Time pointer dragging action
 	ImGuiID pointerID = window.GetID("##time-pointer");
 
-	if (ImGui::IsMouseDragging(ImGuiMouseButton_Left) && pointerRect.Contains(io.MouseClickedPos[0]))
+	if (ImGui::IsWindowFocused() && context.MovingWindow != &window && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && pointerRect.Contains(io.MousePos))
 	{
 		ImGui::SetActiveID(pointerID, &window);
 		ImGui::SetFocusID(pointerID, &window);
@@ -71,6 +104,35 @@ void Timeline::drawTimeline()
 		newTime = std::clamp(newTime, 0.0f, level.levelLength);
 
 		level.seek(newTime);
+	}
+
+	// New object creation
+	if (ImGui::BeginPopup("##timeline-context"))
+	{
+		if (ImGui::BeginMenu("New object"))
+		{
+			for (std::string id : ObjectBehaviourFactory::getBehaviorIds())
+			{
+				ObjectBehaviourInfo info = ObjectBehaviourFactory::getFromId(id);
+				if (ImGui::MenuItem(info.name.c_str()))
+				{
+					float st = level.time;
+					float et = st + 5.0f;
+					LevelObject* obj = new LevelObject(id, &level);
+					obj->startTime = st;
+					obj->endTime = et;
+					level.addObject(obj);
+				}
+			}
+			ImGui::EndMenu();
+		}
+
+		ImGui::EndPopup();
+	}
+
+	if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right) && objectEditorRect.Contains(io.MousePos))
+	{
+		ImGui::OpenPopup("##timeline-context");
 	}
 
 	// Zoom and pan
@@ -184,7 +246,7 @@ void Timeline::drawTimeline()
 			// Object dragging action
 			ImGuiID objectDragID = window.GetID("##object-drag");
 
-			if (ImGui::IsWindowFocused() && lastClickedObject.has_value() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+			if (ImGui::IsWindowFocused() && context.MovingWindow != &window && lastClickedObject.has_value() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 			{
 				ImGui::SetActiveID(objectDragID, &window);
 				ImGui::SetFocusID(objectDragID, &window);
@@ -200,6 +262,8 @@ void Timeline::drawTimeline()
 
 			if (context.ActiveId == objectDragID)
 			{
+				assert(level.selection.selectedObject.has_value());
+
 				LevelObject& object = level.selection.selectedObject.value();
 
 				float timeDelta = (io.MouseDelta.x / size.x) * (endTime - startTime);
@@ -213,6 +277,16 @@ void Timeline::drawTimeline()
 				level.insertActivateList(&object);
 				level.insertDeactivateList(&object);
 				level.recalculateObjectsState();
+			}
+			else // Other things to do when not dragging
+			{
+				// Object deletion
+				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE) && level.selection.selectedObject.has_value())
+				{
+					LevelObject& object = level.selection.selectedObject.value();
+					level.selection.selectedObject.reset();
+					level.deleteObject(&object);
+				}
 			}
 		}
 
@@ -291,4 +365,35 @@ void Timeline::drawObjectStrip(std::string& name, ImVec2 min, ImVec2 max, bool h
 		textPtr);
 
 	drawList.PopClipRect();
+}
+
+bool Timeline::playButton(bool playing)
+{
+	constexpr float PLAY_BUTTON_SIZE = 20.0f;
+	constexpr ImU32 PLAY_BUTTON_COL = 0xFFBABABA;
+
+	ImDrawList& drawList = *ImGui::GetWindowDrawList();
+	ImVec2 cursor = ImGui::GetCursorScreenPos();
+
+	if (playing)
+	{
+		drawList.AddRectFilled(
+			cursor,
+			ImVec2(cursor.x + PLAY_BUTTON_SIZE / 3.0f, cursor.y + PLAY_BUTTON_SIZE),
+			PLAY_BUTTON_COL);
+		drawList.AddRectFilled(
+			ImVec2(cursor.x + PLAY_BUTTON_SIZE / 3.0f * 2.0f, cursor.y),
+			ImVec2(cursor.x + PLAY_BUTTON_SIZE, cursor.y + PLAY_BUTTON_SIZE),
+			PLAY_BUTTON_COL);
+	}
+	else
+	{
+		drawList.AddTriangleFilled(
+			cursor,
+			ImVec2(cursor.x, cursor.y + PLAY_BUTTON_SIZE),
+			ImVec2(cursor.x + PLAY_BUTTON_SIZE, cursor.y + PLAY_BUTTON_SIZE * 0.5f),
+			PLAY_BUTTON_COL);
+	}
+
+	return ImGui::InvisibleButton("##play-button", ImVec2(PLAY_BUTTON_SIZE, PLAY_BUTTON_SIZE));
 }

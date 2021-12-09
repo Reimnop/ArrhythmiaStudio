@@ -17,4 +17,6 @@ private:
 
 	void drawTimeline();
 	void drawObjectStrip(std::string& name, ImVec2 min, ImVec2 max, bool highlighted);
+
+	bool playButton(bool playing);
 };

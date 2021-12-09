@@ -2,12 +2,20 @@
 
 #include <unordered_map>
 #include <unordered_set>
+#include <filesystem>
+
+#include "AudioClip.h"
 #include "Selection.h"
+
+using namespace std::filesystem;
 
 class LevelObject;
 class Level 
 {
 public:
+	std::string name;
+	AudioClip* clip;
+
 	std::unordered_map<uint64_t, LevelObject*> levelObjects;
 	std::vector<TypedLevelEvent*> levelEvents;
 	Selection selection;
@@ -15,8 +23,8 @@ public:
 	float time = 0.0f;
 	float levelLength;
 
-	Level();
-	Level(json j);
+	Level(path audioPath);
+	Level(path audioPath, json j);
 	~Level();
 
 	void seek(float t);

@@ -183,7 +183,7 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 	// Time pointer dragging action
 	ImGuiID pointerID = window.GetID("##time-pointer");
 
-	if (ImGui::IsMouseDragging(ImGuiMouseButton_Left) && pointerRect.Contains(io.MouseClickedPos[0]))
+	if (ImGui::IsWindowFocused() && context.MovingWindow != &window && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && pointerRect.Contains(io.MousePos))
 	{
 		ImGui::SetActiveID(pointerID, &window);
 		ImGui::SetFocusID(pointerID, &window);
@@ -375,7 +375,7 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 			// Keyframe dragging action
 			ImGuiID keyframeDragID = window.GetID("##keyframe-drag");
 
-			if (ImGui::IsWindowFocused() && lastClickedKeyframe.has_value() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
+			if (ImGui::IsWindowFocused() && context.MovingWindow != &window && lastClickedKeyframe.has_value() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 			{
 				ImGui::SetActiveID(keyframeDragID, &window);
 				ImGui::SetFocusID(keyframeDragID, &window);

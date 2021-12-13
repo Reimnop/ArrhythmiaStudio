@@ -21,10 +21,12 @@ public:
 
 	bool isPlaying() const;
 
+	float getVolume() const;
 	float getLength() const;
 	float getPosition() const;
 	float getSpeed() const;
 
+	void setVolume(float value) const;
 	void setSpeed(float value) const;
 
 	void seek(float time) const;

@@ -57,7 +57,7 @@ GameManager::GameManager(GLFWwindow* window)
 	ShapeFactory::registerShape("Assets/Shapes/triangle.shp", "triangle");
 	ShapeFactory::registerShape("Assets/Shapes/right_angled_triangle.shp", "right_angled_triangle");
 
-	level = new Level(R"(C:\Users\Reimnop\Music\Destiny 2 - Journey Vocal Variant 2.ogg)");
+	level = new Level(R"(C:\Users\Reimnop\Music\cYsmix - Triangles-QtDbzbQTLHQ.ogg)");
 
 	editorWindows.push_back(new Viewport());
 	editorWindows.push_back(new Timeline());

@@ -13,6 +13,7 @@ public:
 	TypedLevelEvent(Level* level, json j);
 	~TypedLevelEvent();
 
+	std::string getType();
 	std::string getTitle();
 
 	void update(float time);

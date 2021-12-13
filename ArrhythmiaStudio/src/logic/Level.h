@@ -4,7 +4,7 @@
 #include <unordered_set>
 #include <filesystem>
 
-#include "AudioClip.h"
+#include "../engine/AudioClip.h"
 #include "Selection.h"
 
 using namespace std::filesystem;
@@ -17,11 +17,14 @@ public:
 	AudioClip* clip;
 
 	std::unordered_map<uint64_t, LevelObject*> levelObjects;
-	std::vector<TypedLevelEvent*> levelEvents;
+	std::unordered_map<std::string, TypedLevelEvent*> levelEvents;
 	Selection selection;
 
 	float time = 0.0f;
 	float levelLength;
+
+	float offset = 0.0f;
+	float bpm = 120.0f;
 
 	Level(path audioPath);
 	Level(path audioPath, json j);

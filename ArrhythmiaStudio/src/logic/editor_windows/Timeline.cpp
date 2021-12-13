@@ -9,6 +9,51 @@
 #include "../GameManager.h"
 #include "utils.h"
 
+Timeline::Timeline()
+{
+	waveformTex = new Texture2D(512, 512, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+	waveformShader = new ComputeShader("Assets/Shaders/waveform.comp");
+
+	genBuffer();
+}
+
+Timeline::~Timeline()
+{
+	delete waveformShader;
+	delete waveformTex;
+}
+
+void Timeline::genBuffer()
+{
+	AudioClip& clip = *GameManager::inst->level->clip;
+
+	int pixCount = clip.getLength() * WAVEFORM_FREQ;
+
+	float* samples = new float[pixCount];
+	for (int i = 0; i < pixCount; i++)
+	{
+		float t1 = i / (float)pixCount;
+		float t2 = (i + 1) / (float)pixCount;
+
+		int i1 = (int)std::lerp(0.0f, clip.samplesCount - 1, t1);
+		int i2 = (int)std::lerp(0.0f, clip.samplesCount - 1, t2);
+
+		float s = 0.0f;
+		for (int j = i1; j < i2; j++)
+		{
+			s += std::abs(clip.samples[j] / 32768.0f);
+		}
+		samples[i] = s / (i2 - i1);
+	}
+
+	glGenBuffers(1, &audioBuffer);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, audioBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, pixCount * sizeof(float), samples, GL_STATIC_COPY);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+
+	delete[] samples;
+}
+
 std::string Timeline::getTitle()
 {
 	return "Timeline";
@@ -23,16 +68,6 @@ void Timeline::draw()
 
 	ImGui::SameLine();
 
-	ImGui::SetNextItemWidth(150.0f);
-	float speed = level.clip->getSpeed();
-	ImGui::SliderFloat("Speed", &speed, 0.25f, 4.0f);
-
-	if (ImGui::IsItemEdited())
-	{
-		level.clip->setSpeed(speed);
-	}
-
-	ImGui::SameLine();
 	// Draw play button
 	if (playButton(level.clip->isPlaying()))
 	{
@@ -46,7 +81,65 @@ void Timeline::draw()
 		}
 	}
 
+	ImGui::SameLine();
+
+	// Volume
+	ImGui::SetNextItemWidth(150.0f);
+	float volume = level.clip->getVolume();
+	ImGui::SliderFloat("Volume", &volume, 0.0f, 1.0f);
+
+	if (ImGui::IsItemEdited())
+	{
+		level.clip->setVolume(volume);
+	}
+
+	ImGui::SameLine();
+
+	// Speed
+	ImGui::SetNextItemWidth(150.0f);
+	float speed = level.clip->getSpeed();
+	ImGui::SliderFloat("Speed", &speed, 0.25f, 4.0f);
+
+	if (ImGui::IsItemEdited())
+	{
+		level.clip->setSpeed(speed);
+	}
+
+	ImGui::SameLine();
+
+	// BPM
+	ImGui::SetNextItemWidth(150.0f);
+
+	ImGui::DragFloat("BPM", &level.bpm);
+
+	ImGui::SameLine();
+
+	// Offset
+	ImGui::SetNextItemWidth(150.0f);
+
+	ImGui::DragFloat("Offset", &level.offset);
+
 	drawTimeline();
+
+	// Compute timeline waveform
+	if (timelineSize != oldTimelineSize)
+	{
+		waveformTex->resize(timelineSize.x, timelineSize.y);
+		oldTimelineSize = timelineSize;
+	}
+
+	glUseProgram(waveformShader->getHandle());
+
+	glBindImageTexture(0, waveformTex->getHandle(), 0, false, 0, GL_WRITE_ONLY, GL_RGBA8);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, audioBuffer);
+
+	glUniform1f(0, startTime);
+	glUniform1f(1, endTime);
+	glUniform1f(2, WAVEFORM_FREQ);
+
+	glDispatchCompute(std::ceil(timelineSize.x / 8.0f), std::ceil(timelineSize.y / 8.0f), 1);
+
+	glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 }
 
 void Timeline::drawTimeline()
@@ -73,6 +166,8 @@ void Timeline::drawTimeline()
 	ImVec2 size = ImVec2(ImGui::GetContentRegionAvailWidth(), BIN_COUNT * BIN_HEIGHT + TIME_POINTER_HEIGHT);
 	ImVec2 timePointerAreaSize = ImVec2(size.x, TIME_POINTER_HEIGHT);
 	ImVec2 objectEditorSize = ImVec2(size.x, BIN_COUNT * BIN_HEIGHT);
+
+	timelineSize = objectEditorSize;
 
 	// Input handling
 	ImRect pointerRect = ImRect(
@@ -183,6 +278,31 @@ void Timeline::drawTimeline()
 			drawList.AddRectFilled(binBase, binBase + ImVec2(size.x, BIN_HEIGHT), BIN_SECONDARY_COL);
 		}
 
+		// Draw waveform
+		drawList.AddImage(
+			(ImTextureID)waveformTex->getHandle(), 
+			objectEditorBase, 
+			objectEditorBase + objectEditorSize,
+			ImVec2(0.0f, 1.0f),
+			ImVec2(1.0f, 0.0f));
+
+		float spb = 60.0f / level.bpm;
+		int gridCount = (endTime - startTime) / spb;
+
+		// Draw background time grid
+		// Instead of this check I could try using a shader but nah, that's overengineering
+		if (gridCount < 200) 
+		{
+			for (float t = ceil((startTime - level.offset) / spb) * spb; t < endTime - level.offset; t += spb)
+			{
+				float pos = (t + level.offset - startTime) / (endTime - startTime) * size.x;
+				drawList.AddLine(
+					baseCoord + ImVec2(pos, TIME_POINTER_HEIGHT),
+					baseCoord + ImVec2(pos, size.y),
+					ImGui::GetColorU32(ImGuiCol_Border, 0.3));
+			}
+		}
+
 		// Object strips handling
 		{
 			std::optional<std::reference_wrapper<LevelObject>> objectHovering;
@@ -290,14 +410,17 @@ void Timeline::drawTimeline()
 			}
 		}
 
-		// Draw time grid
-		for (float t = ceil(startTime); t < endTime; t += 1.0f)
+		// Draw foreground time grid
+		if (gridCount < 200)
 		{
-			float pos = (t - startTime) / (endTime - startTime) * size.x;
-			drawList.AddLine(
-				baseCoord + ImVec2(pos, TIME_POINTER_HEIGHT),
-				baseCoord + ImVec2(pos, size.y),
-				ImGui::GetColorU32(ImGuiCol_Border));
+			for (float t = ceil((startTime - level.offset) / spb) * spb; t < endTime - level.offset; t += spb)
+			{
+				float pos = (t + level.offset - startTime) / (endTime - startTime) * size.x;
+				drawList.AddLine(
+					baseCoord + ImVec2(pos, TIME_POINTER_HEIGHT),
+					baseCoord + ImVec2(pos, size.y),
+					ImGui::GetColorU32(ImGuiCol_Border, 0.3));
+			}
 		}
 
 		drawList.PopClipRect();

@@ -48,6 +48,13 @@ bool AudioClip::isPlaying() const
 	return BASS_ChannelIsActive(channel) == BASS_ACTIVE_PLAYING;
 }
 
+float AudioClip::getVolume() const
+{
+	float vol;
+	BASS_ChannelGetAttribute(channel, BASS_ATTRIB_VOL, &vol);
+	return vol;
+}
+
 float AudioClip::getLength() const
 {
 	QWORD bytePos = BASS_ChannelGetLength(channel, BASS_POS_BYTE);
@@ -65,6 +72,11 @@ float AudioClip::getSpeed() const
 	float value;
 	BASS_ChannelGetAttribute(channel, BASS_ATTRIB_FREQ, &value);
 	return value / frequency;
+}
+
+void AudioClip::setVolume(float value) const
+{
+	BASS_ChannelSetAttribute(channel, BASS_ATTRIB_VOL, value);
 }
 
 void AudioClip::setSpeed(float value) const

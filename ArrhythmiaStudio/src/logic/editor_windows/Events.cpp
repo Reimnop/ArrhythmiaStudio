@@ -20,7 +20,7 @@ void Events::draw()
 			level->selection.selectedEvent.reset();
 		}
 
-		for (TypedLevelEvent* levelEvent : gameManager->level->levelEvents)
+		for (auto &[type, levelEvent] : gameManager->level->levelEvents)
 		{
 			if (ImGui::Selectable(
 				levelEvent->getTitle().c_str(),

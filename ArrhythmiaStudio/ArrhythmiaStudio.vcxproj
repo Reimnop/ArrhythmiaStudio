@@ -240,7 +240,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="src\logic\editor_windows\Timeline.cpp" />
     <ClCompile Include="src\logic\editor_windows\Viewport.cpp" />
     <ClCompile Include="src\logic\GameManager.cpp" />
-    <ClCompile Include="src\logic\AudioClip.cpp" />
+    <ClCompile Include="src\engine\AudioClip.cpp" />
     <ClCompile Include="src\logic\DiscordManager.cpp" />
     <ClCompile Include="src\logic\Level.cpp" />
     <ClCompile Include="src\logic\LevelObject.cpp" />
@@ -784,7 +784,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\logic\animation\Easing.h" />
     <ClInclude Include="src\logic\animation\Keyframe.h" />
     <ClInclude Include="src\logic\animation\Sequence.h" />
-    <ClInclude Include="src\logic\AudioClip.h" />
+    <ClInclude Include="src\engine\AudioClip.h" />
     <ClInclude Include="src\logic\DiscordManager.h" />
     <ClInclude Include="src\logic\DocManager.h" />
     <ClInclude Include="src\logic\DocPage.h" />

@@ -10,7 +10,7 @@ Level::Level(path audioPath)
 
 	for (std::string id : LevelEventFactory::getEventIds())
 	{
-		levelEvents.push_back(new TypedLevelEvent(this, id));
+		levelEvents.emplace(id, new TypedLevelEvent(this, id));
 	}
 
 	seek(0.0f);
@@ -21,6 +21,10 @@ Level::Level(path audioPath, json j)
 	clip = new AudioClip(audioPath);
 	levelLength = clip->getLength();
 
+	name = j["name"].get<std::string>();
+	bpm = j["bpm"].get<float>();
+	offset = j["offset"].get<float>();
+
 	json::array_t objArr = j["objects"];
 	for (json objJ : objArr)
 	{
@@ -30,10 +34,36 @@ Level::Level(path audioPath, json j)
 		insertDeactivateList(obj);
 	}
 	recalculateObjectsState();
+
+	// Prepare level events map
+	for (std::string id : LevelEventFactory::getEventIds())
+	{
+		levelEvents[id] = nullptr;
+	}
+
 	json::array_t eventsArr = j["events"];
 	for (json eventJ : eventsArr)
 	{
-		levelEvents.push_back(new TypedLevelEvent(this, eventJ));
+		TypedLevelEvent* levelEvent = new TypedLevelEvent(this, eventJ);
+
+		if (levelEvents.count(levelEvent->getType()))
+		{
+			Logger::warn("Duplicate level event, skipping! Duplicated value: " + levelEvent->getType());
+			delete levelEvent;
+		}
+		else 
+		{
+			levelEvents[levelEvent->getType()] = levelEvent;
+		}
+	}
+
+	for (auto &[id, obj] : levelEvents)
+	{
+		if (!obj)
+		{
+			Logger::warn("Missing level event, creating new! Missing value: " + id);
+			levelEvents[id] = new TypedLevelEvent(this, id);
+		}
 	}
 
 	seek(0.0f);
@@ -77,7 +107,7 @@ void Level::update()
 	}
 
 	// Update events
-	for (TypedLevelEvent* levelEvent : levelEvents)
+	for (auto &[type, levelEvent] : levelEvents)
 	{
 		levelEvent->update(time);
 	}
@@ -150,9 +180,8 @@ void Level::recalculateObjectsState()
 	activateIndex = 0;
 	deactivateIndex = 0;
 
-	for (auto pair : levelObjects)
+	for (auto &[id, obj] : levelObjects)
 	{
-		LevelObject* obj = pair.second;
 		activeTable[obj] = 0;
 	}
 
@@ -178,10 +207,9 @@ void Level::recalculateObjectsState()
 		activeTable[object]--;
 	}
 
-	for (auto pair : activeTable)
+	for (auto &[obj, activeIndex] : activeTable)
 	{
-		LevelObject* obj = pair.first;
-		if (pair.second % 2)
+		if (activeIndex % 2)
 		{
 			obj->node->setActive(true);
 			aliveObjects.insert(obj);
@@ -234,16 +262,19 @@ void Level::updateReverse()
 json Level::toJson()
 {
 	json j;
+	j["name"] = name;
+	j["bpm"] = bpm;
+	j["offset"] = offset;
 	json::array_t objArr;
 	objArr.reserve(levelObjects.size());
-	for (auto kv : levelObjects)
+	for (auto &[id, obj] : levelObjects)
 	{
-		objArr.push_back(kv.second->toJson());
+		objArr.push_back(obj->toJson());
 	}
 	j["objects"] = objArr;
 	json::array_t eventArr;
 	eventArr.reserve(levelEvents.size());
-	for (TypedLevelEvent* levelEvent : levelEvents)
+	for (auto &[type, levelEvent] : levelEvents)
 	{
 		eventArr.push_back(levelEvent->toJson());
 	}

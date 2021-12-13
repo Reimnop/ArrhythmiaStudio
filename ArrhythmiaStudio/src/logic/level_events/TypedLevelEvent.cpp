@@ -25,6 +25,11 @@ TypedLevelEvent::~TypedLevelEvent()
 	delete levelEvent;
 }
 
+std::string TypedLevelEvent::getType()
+{
+	return type;
+}
+
 std::string TypedLevelEvent::getTitle()
 {
 	return levelEvent->getTitle();

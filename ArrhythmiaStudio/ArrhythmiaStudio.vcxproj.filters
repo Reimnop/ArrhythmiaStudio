@@ -81,7 +81,7 @@
     <ClCompile Include="include\glm\detail\glm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\logic\AudioClip.cpp">
+    <ClCompile Include="src\engine\AudioClip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\engine\rendering\ComputeShader.cpp">
@@ -1253,7 +1253,7 @@
     <ClInclude Include="include\bass\bass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\AudioClip.h">
+    <ClInclude Include="src\engine\AudioClip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\engine\rendering\ComputeShader.h">

@@ -17,7 +17,13 @@ int getSampleIndex(float t) {
 	return int(clamp(sampleIndex, 0.0, samples.length() - 1.0));
 }
 
-bool isInWave(vec2 uv) {
+float interpolate(float x, float y, float t) {
+	return clamp((t - x) / (y - x), 0.0, 1.0);
+}
+
+float wave(vec2 uv) {
+	const float AA = 0.005;
+
 	int index = getSampleIndex(uv.x);
 	
 	float a = abs(samples[index]);
@@ -28,7 +34,7 @@ bool isInWave(vec2 uv) {
 
 	float s = mix(a, b, t);
 	
-	return uv.y < s;
+	return 1.0 - interpolate(0.0, AA + abs(b - a) * AA * 8.0, uv.y - s);
 }
 
 void main() {
@@ -37,5 +43,5 @@ void main() {
 
 	vec2 coord = pixelCoords / vec2(size);
 	
-	imageStore(img_output, pixelCoords, vec4(0.4, 0.4, 0.4, isInWave(coord) ? 0.7 : 0.0));
+	imageStore(img_output, pixelCoords, vec4(0.4, 0.4, 0.4, wave(coord) * 0.7));
 }

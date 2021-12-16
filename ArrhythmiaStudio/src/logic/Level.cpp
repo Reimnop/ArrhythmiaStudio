@@ -71,9 +71,14 @@ Level::Level(path audioPath, json j)
 
 Level::~Level()
 {
-	for (auto pair : levelObjects)
+	for (auto &[id, obj] : levelObjects)
 	{
-		delete pair.second;
+		delete obj;
+	}
+
+	for (auto &[id, levelEvent] : levelEvents)
+	{
+		delete levelEvent;
 	}
 
 	delete clip;

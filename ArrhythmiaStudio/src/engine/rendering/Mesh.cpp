@@ -1,9 +1,7 @@
 #include "Mesh.h"
 
-Mesh::Mesh(int verticesCount, int indicesCount, glm::vec3* vertices, uint32_t* indices)
+Mesh::Mesh(std::vector<glm::vec3>& vertices, std::vector<uint32_t>& indices)
 {
-	this->verticesCount = verticesCount;
-	this->indicesCount = indicesCount;
 	this->vertices = vertices;
 	this->indices = indices;
 
@@ -14,11 +12,11 @@ Mesh::Mesh(int verticesCount, int indicesCount, glm::vec3* vertices, uint32_t* i
 
 	glGenBuffers(1, &vbo0);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo0);
-	glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(glm::vec3), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3), vertices.data(), GL_STATIC_DRAW);
 
 	glGenBuffers(1, &ebo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
 
 	// Location 0 is always position
 	glEnableVertexAttribArray(0);
@@ -27,9 +25,6 @@ Mesh::Mesh(int verticesCount, int indicesCount, glm::vec3* vertices, uint32_t* i
 
 Mesh::~Mesh()
 {
-	delete[] vertices;
-	delete[] indices;
-
 	glDeleteVertexArrays(1, &vao);
 	glDeleteBuffers(1, &vbo0);
 	glDeleteBuffers(1, &vbo1);

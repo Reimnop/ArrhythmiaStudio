@@ -2,30 +2,12 @@
 #include "../factories/ShapeFactory.h"
 #include "imgui/imgui.h"
 
-Shader* shader;
-
 NormalObjectBehaviour::NormalObjectBehaviour(LevelObject* baseObject) : AnimateableObjectBehaviour(baseObject)
 {
 	Keyframe kf1 = Keyframe(0.0f, 1.0f, EaseType_Linear);
 	opacity = Sequence(1, &kf1);
 
-	// TODO: REMOVE DEBUG CODE!
-	MaterialProperty properties[]
-	{
-		MaterialProperty("Color", MaterialPropertyType_Vector3, 12)
-	};
-
-	Material* material = new Material(1, properties);
-	material->setVec3("Color", glm::vec3(1.0f));
-	material->updateBuffer();
-
-	if (!shader) {
-		shader = new Shader("Assets/Shaders/unlit.vert", "Assets/Shaders/unlit.frag");
-	}
-
 	renderer = new MeshRenderer();
-	renderer->material = material;
-	renderer->shader = shader;
 
 	baseObject->node->renderer = renderer;
 

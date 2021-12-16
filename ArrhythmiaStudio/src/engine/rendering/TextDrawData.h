@@ -17,4 +17,9 @@ struct TextDrawData : DrawData
 	{
 		return DrawDataType_Text;
 	}
+
+	Drawer* getDrawer() override
+	{
+		throw std::runtime_error("Not implemented");
+	}
 };

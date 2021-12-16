@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <glm/glm.hpp>
 
 #include "VertexAttrib.h"
@@ -7,13 +8,10 @@
 class Mesh
 {
 public:
-	glm::vec3* vertices;
-	uint32_t* indices;
+	std::vector<glm::vec3> vertices;
+	std::vector<uint32_t> indices;
 
-	int verticesCount;
-	int indicesCount;
-
-	Mesh(int verticesCount, int indicesCount, glm::vec3* vertices, uint32_t* indices);
+	Mesh(std::vector<glm::vec3>& vertices, std::vector<uint32_t>& indices);
 	~Mesh();
 
 	void setPerVertexData(int size, void* data, int attribCount, VertexAttrib* attribs) const;

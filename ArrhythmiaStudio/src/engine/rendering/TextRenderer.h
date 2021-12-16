@@ -2,6 +2,7 @@
 
 #include "RendererComponent.h"
 #include "Material.h"
+#include "../../engine/rendering/Shader.h"
 #include "text/TextMeshGenerator.h"
 
 class TextRenderer : public RendererComponent

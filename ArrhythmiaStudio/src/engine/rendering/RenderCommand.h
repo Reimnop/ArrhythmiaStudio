@@ -13,4 +13,9 @@ struct RenderCommand
 		drawDepth = std::optional<float>();
 		this->drawData = drawData;
 	}
+
+	~RenderCommand()
+	{
+		delete drawData;
+	}
 };

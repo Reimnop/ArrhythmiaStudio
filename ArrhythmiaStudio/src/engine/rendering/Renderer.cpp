@@ -5,8 +5,8 @@
 
 #include <logger.h>
 
-#include "DrawDataProcessor.h"
 #include "../../MainWindow.h"
+#include "drawers/BatchedDrawer.h"
 
 Renderer* Renderer::inst;
 
@@ -74,28 +74,6 @@ Renderer::Renderer(GLFWwindow* window)
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	// Initialize batch resources
-	glGenVertexArrays(1, &mdVAO);
-	glBindVertexArray(mdVAO);
-
-	glGenBuffers(1, &mdVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, mdVBO);
-	glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
-
-	glGenBuffers(1, &mdEBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mdEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, nullptr);
-	glEnableVertexAttribArray(0);
-
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	lastVertexBufferSize = 0;
-	lastIndexBufferSize = 0;
-
 	mainWindow = window;
 
 	camera = new Camera();
@@ -149,9 +127,7 @@ void Renderer::renderViewport()
 	glm::mat4 viewProjection = projection * view;
 
 	recursivelyRenderNodes(Scene::inst->rootNode, glm::mat4(1.0f));
-
-	std::sort(queuedBatchedDrawDataOpaque.begin(), queuedBatchedDrawDataOpaque.end(), opaqueComp);
-	std::sort(queuedCommandTransparent.begin(), queuedCommandTransparent.end(), transparentComp);
+	prepareDrawers();
 
 	FramebufferStack::push(multisampleFramebuffer);
 
@@ -162,137 +138,24 @@ void Renderer::renderViewport()
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 
-	for (const BatchedDrawData* drawData : queuedBatchedDrawDataOpaque)
+	// Opaque shits are drawn here
+	for (Drawer* drawer : queuedOpaqueDrawers)
 	{
-		queueCommand(drawData);
+		drawer->draw(viewProjection);
 
-		delete drawData;
-	}
-
-	if (!commands.empty())
-	{
-		// Upload vertex buffer
-		glBindBuffer(GL_ARRAY_BUFFER, mdVBO);
-
-		const size_t vSize = sizeof(glm::vec3) * cmdVertexBuffer.size();
-		if (vSize > lastVertexBufferSize)
-		{
-			glBufferData(GL_ARRAY_BUFFER, vSize, cmdVertexBuffer.data(), GL_DYNAMIC_DRAW);
-			lastVertexBufferSize = vSize;
-		}
-		else
-		{
-			glBufferSubData(GL_ARRAY_BUFFER, 0, vSize, cmdVertexBuffer.data());
-		}
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		// Upload index buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mdEBO);
-
-		const size_t iSize = sizeof(uint32_t) * cmdIndexBuffer.size();
-		if (iSize > lastIndexBufferSize)
-		{
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, iSize, cmdIndexBuffer.data(), GL_DYNAMIC_DRAW);
-			lastIndexBufferSize = iSize;
-		}
-		else
-		{
-			glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, 0, iSize, cmdIndexBuffer.data());
-		}
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		// Draw commands
-		glBindVertexArray(mdVAO);
-
-		Material* material = commands.front().material;
-		int drawCount = 0;
-		for (int i = 0; i < commands.size() - 1; i++)
-		{
-			const DrawCommand& cmd = commands[i];
-
-			cmdCounts.push_back(cmd.indicesCount);
-			cmdIndices.push_back((void*)(sizeof(uint32_t) * cmd.indexOffset));
-			cmdBaseVertices.push_back(cmd.vertexOffset);
-
-			drawCount++;
-
-			if (commands[i + 1].material != material)
-			{
-				const Shader* shader = cmd.shader;
-				if (lastShader != shader->getHandle())
-				{
-					glUseProgram(shader->getHandle());
-					lastShader = shader->getHandle();
-				}
-
-				glBindBufferBase(GL_UNIFORM_BUFFER, 0, material->getUniformBuffer());
-
-				glUniformMatrix4fv(0, 1, false, &viewProjection[0][0]);
-				glUniform1f(1, 1.0f);
-
-				glMultiDrawElementsBaseVertex(GL_TRIANGLES, cmdCounts.data(), GL_UNSIGNED_INT, cmdIndices.data(), drawCount, cmdBaseVertices.data());
-
-				cmdCounts.clear();
-				cmdIndices.clear();
-				cmdBaseVertices.clear();
-
-				drawCount = 0;
-
-				material = commands[i + 1].material;
-			}
-		}
-
-		const DrawCommand& cmd = commands.back();
-
-		cmdCounts.push_back(cmd.indicesCount);
-		cmdIndices.push_back((void*)(sizeof(uint32_t) * cmd.indexOffset));
-		cmdBaseVertices.push_back(cmd.vertexOffset);
-
-		drawCount++;
-
-		const Shader* shader = cmd.shader;
-		if (lastShader != shader->getHandle())
-		{
-			glUseProgram(shader->getHandle());
-			lastShader = shader->getHandle();
-		}
-
-		glBindBufferBase(GL_UNIFORM_BUFFER, 0, material->getUniformBuffer());
-
-		glUniformMatrix4fv(0, 1, false, &viewProjection[0][0]);
-		glUniform1f(1, 1.0f);
-
-		glMultiDrawElementsBaseVertex(GL_TRIANGLES, cmdCounts.data(), GL_UNSIGNED_INT, cmdIndices.data(), drawCount, cmdBaseVertices.data());
-
-		cmdCounts.clear();
-		cmdIndices.clear();
-		cmdBaseVertices.clear();
-	}
-
-	{
-		DrawDataProcessor processor = DrawDataProcessor(viewProjection);
-		for (const RenderCommand* command : queuedCommandOpaque)
-		{
-			processor.processDrawData(command->drawData);
-
-			delete command;
-		}
+		delete drawer;
 	}
 
 	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	// Transparent shits are drawn here
+	for (Drawer* drawer : queuedTransparentDrawers)
 	{
-		DrawDataProcessor processor = DrawDataProcessor(viewProjection);
-		for (const RenderCommand* command : queuedCommandTransparent)
-		{
-			processor.processDrawData(command->drawData);
+		drawer->draw(viewProjection);
 
-			delete command;
-		}
+		delete drawer;
 	}
 
 	glDepthMask(GL_TRUE);
@@ -310,15 +173,8 @@ void Renderer::renderViewport()
 	// tonemapping->processImage(renderTexture, viewportWidth, viewportHeight);
 
 	// Clean up
-	queuedCommandTransparent.clear();
-	queuedCommandOpaque.clear();
-	queuedBatchedDrawDataOpaque.clear();
-
-	lastShader = -1;
-
-	commands.clear();
-	cmdVertexBuffer.clear();
-	cmdIndexBuffer.clear();
+	queuedOpaqueDrawers.clear();
+	queuedTransparentDrawers.clear();
 
 	glBindVertexArray(0);
 	glUseProgram(0);
@@ -350,15 +206,7 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 			}
 			else
 			{
-				if (cmd->drawData->getType() == DrawDataType_Batched)
-				{
-					queuedBatchedDrawDataOpaque.push_back((BatchedDrawData*)cmd->drawData);
-					delete cmd;
-				}
-				else
-				{
-					queuedCommandOpaque.push_back(cmd);
-				}
+				queuedCommandOpaque.push_back(cmd);
 			}
 		}
 	}
@@ -369,59 +217,107 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 	}
 }
 
-void Renderer::queueCommand(const BatchedDrawData* drawData)
+void Renderer::prepareDrawers()
 {
-	if (!drawData->mesh || !drawData->material)
-	{
-		return;
-	}
-
-	const Mesh* mesh = drawData->mesh;
-
-	if (commands.empty() || 
-		commands.back().material != drawData->material || 
-		commands.back().verticesCount >= EST_MAX_BATCH_VERTICES || 
-		commands.back().indicesCount >= EST_MAX_BATCH_INDICES)
-	{
-		DrawCommand newCmd = DrawCommand();
-
-		newCmd.verticesCount = 0;
-		newCmd.indicesCount = 0;
-
-		if (commands.empty())
+	// Sort draw commands
+	// We sort opaque commands by type to maximize batching efficiency
+	std::sort(queuedCommandOpaque.begin(), queuedCommandOpaque.end(), [](RenderCommand* a, RenderCommand* b)
 		{
-			newCmd.vertexOffset = 0;
-			newCmd.indexOffset = 0;
-		}
-		else
+			return a->drawData->getType() < b->drawData->getType();
+		});
+
+	// For transparent commands, we sort by depth, then by type
+	std::sort(queuedCommandTransparent.begin(), queuedCommandTransparent.end(), [](RenderCommand* a, RenderCommand* b)
 		{
-			const DrawCommand& lastCmd = commands.back();
-			newCmd.vertexOffset = lastCmd.vertexOffset + lastCmd.verticesCount;
-			newCmd.indexOffset = lastCmd.indexOffset + lastCmd.indicesCount;
+			assert(a->drawDepth.has_value());
+			assert(b->drawDepth.has_value());
+
+			const float depthA = a->drawDepth.value();
+			const float depthB = b->drawDepth.value();
+			if (depthA != depthB)
+			{
+				return depthA < depthB;
+			}
+
+			return a->drawData->getType() < b->drawData->getType();
+		});
+
+	// Batching and queuing other stuff
+
+	// Batching opaque objects
+	{
+		BatchedDrawer* currentOpaqueDrawer = nullptr;
+		for (RenderCommand* cmd : queuedCommandOpaque)
+		{
+			if (cmd->drawData->getType() == DrawDataType_Batched)
+			{
+				if (!currentOpaqueDrawer)
+				{
+					currentOpaqueDrawer = new BatchedDrawer();
+				}
+
+				BatchedDrawData* drawData = (BatchedDrawData*)cmd->drawData;
+				currentOpaqueDrawer->appendMesh(drawData->mesh, drawData->transform, glm::vec4(1.0f));
+			}
+			else
+			{
+				if (currentOpaqueDrawer)
+				{
+					queuedOpaqueDrawers.push_back(currentOpaqueDrawer);
+					currentOpaqueDrawer = nullptr;
+				}
+
+				queuedOpaqueDrawers.push_back(cmd->drawData->getDrawer());
+			}
+
+			delete cmd;
 		}
 
-		newCmd.material = drawData->material;
-
-		commands.push_back(newCmd);
+		// We check if there is any unqueued opaque drawer at the end and if there is, queue it
+		if (currentOpaqueDrawer)
+		{
+			queuedOpaqueDrawers.push_back(currentOpaqueDrawer);
+			currentOpaqueDrawer = nullptr;
+		}
 	}
 
-	DrawCommand& cmd = commands.back();
-
-	cmd.shader = drawData->shader;
-
-	for (int i = 0; i < mesh->verticesCount; i++)
+	// Batching transparent objects
 	{
-		glm::vec3 aPos = mesh->vertices[i];
-		glm::vec3 transformedPos = glm::vec3(drawData->transform * glm::vec4(aPos, 1.0f));
+		BatchedDrawer* currentTransparentDrawer = nullptr;
+		for (RenderCommand* cmd : queuedCommandTransparent)
+		{
+			if (cmd->drawData->getType() == DrawDataType_Batched)
+			{
+				if (!currentTransparentDrawer)
+				{
+					currentTransparentDrawer = new BatchedDrawer();
+				}
 
-		cmdVertexBuffer.push_back(transformedPos);
+				BatchedDrawData* drawData = (BatchedDrawData*)cmd->drawData;
+				currentTransparentDrawer->appendMesh(drawData->mesh, drawData->transform, glm::vec4(1.0f, 1.0f, 1.0f, drawData->opacity));
+			}
+			else
+			{
+				if (currentTransparentDrawer)
+				{
+					queuedTransparentDrawers.push_back(currentTransparentDrawer);
+					currentTransparentDrawer = nullptr;
+				}
+
+				queuedTransparentDrawers.push_back(cmd->drawData->getDrawer());
+			}
+
+			delete cmd;
+		}
+
+		// We check if there is any unqueued transparent drawer at the end and if there is, queue it
+		if (currentTransparentDrawer)
+		{
+			queuedTransparentDrawers.push_back(currentTransparentDrawer);
+			currentTransparentDrawer = nullptr;
+		}
 	}
 
-	for (int i = 0; i < mesh->indicesCount; i++)
-	{
-		cmdIndexBuffer.push_back(cmd.verticesCount + mesh->indices[i]);
-	}
-
-	cmd.verticesCount += mesh->verticesCount;
-	cmd.indicesCount += mesh->indicesCount;
+	queuedCommandTransparent.clear();
+	queuedCommandOpaque.clear();
 }

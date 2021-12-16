@@ -2,6 +2,7 @@
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "../Level.h"
+#include "GLFW/glfw3.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 

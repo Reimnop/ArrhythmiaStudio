@@ -1,4 +1,5 @@
 #pragma once
+#include "drawers/Drawer.h"
 
 enum DrawDataType
 {
@@ -10,5 +11,7 @@ enum DrawDataType
 // Generic interface for draw data
 struct DrawData
 {
+	virtual ~DrawData() = default;
 	virtual DrawDataType getType() const = 0;
+	virtual Drawer* getDrawer() = 0;
 };

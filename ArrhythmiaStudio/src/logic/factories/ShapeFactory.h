@@ -48,24 +48,28 @@ private:
 
 		int verticesCount;
 		s >> verticesCount;
-		glm::vec3* vertices = new glm::vec3[verticesCount];
+		std::vector<glm::vec3> vertices;
+		vertices.reserve(verticesCount);
 		for (int i = 0; i < verticesCount; i++)
 		{
 			float x, y;
 			s >> x >> y;
-			vertices[i] = glm::vec3(x, y, 0.0f);
+			vertices.emplace_back(x, y, 0.0f);
 		}
 
 		int indicesCount;
 		s >> indicesCount;
-		uint32_t* indices = new uint32_t[indicesCount];
+		std::vector<uint32_t> indices;
+		indices.reserve(indicesCount);
 		for (int i = 0; i < indicesCount; i++)
 		{
-			s >> indices[i];
+			uint32_t val;
+			s >> val;
+			indices.push_back(val);
 		}
 
 		s.close();
 
-		return Shape(name, new Mesh(verticesCount, indicesCount, vertices, indices));
+		return Shape(name, new Mesh(vertices, indices));
 	}
 };

@@ -233,6 +233,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="include\Sources\RawVideoFileSource.cpp" />
     <ClCompile Include="include\stb\stb_vorbis.c" />
     <ClCompile Include="include\VideoFormatConverter.cpp" />
+    <ClCompile Include="src\engine\rendering\drawers\BatchedDrawer.cpp" />
     <ClCompile Include="src\logic\animation\Sequence.cpp" />
     <ClCompile Include="src\logic\DocManager.cpp" />
     <ClCompile Include="src\logic\editor_windows\Events.cpp" />
@@ -257,7 +258,6 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="src\MainWindow.cpp" />
     <ClCompile Include="src\engine\Camera.cpp" />
     <ClCompile Include="src\engine\rendering\ComputeShader.cpp" />
-    <ClCompile Include="src\engine\rendering\DrawDataProcessor.cpp" />
     <ClCompile Include="src\engine\rendering\ImGuiController.cpp" />
     <ClCompile Include="src\engine\rendering\Material.cpp" />
     <ClCompile Include="src\engine\rendering\Mesh.cpp" />
@@ -781,6 +781,9 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="include\std.h" />
     <ClInclude Include="include\utils.h" />
     <ClInclude Include="include\VideoFormatConverter.h" />
+    <ClInclude Include="src\engine\rendering\drawers\BatchedDrawer.h" />
+    <ClInclude Include="src\engine\rendering\drawers\BatchedVertex.h" />
+    <ClInclude Include="src\engine\rendering\drawers\Drawer.h" />
     <ClInclude Include="src\logic\animation\Easing.h" />
     <ClInclude Include="src\logic\animation\Keyframe.h" />
     <ClInclude Include="src\logic\animation\Sequence.h" />
@@ -817,9 +820,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\MainWindow.h" />
     <ClInclude Include="src\engine\Camera.h" />
     <ClInclude Include="src\engine\rendering\ComputeShader.h" />
-    <ClInclude Include="src\engine\rendering\DrawCommand.h" />
     <ClInclude Include="src\engine\rendering\DrawData.h" />
-    <ClInclude Include="src\engine\rendering\DrawDataProcessor.h" />
     <ClInclude Include="src\engine\rendering\FramebufferStack.h" />
     <ClInclude Include="src\engine\rendering\GlobalConstants.h" />
     <ClInclude Include="src\engine\rendering\ImGuiController.h" />

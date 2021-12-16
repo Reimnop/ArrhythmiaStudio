@@ -1,9 +1,8 @@
 #include "MeshRenderer.h"
+
 MeshRenderer::MeshRenderer()
 {
 	mesh = nullptr;
-	material = nullptr;
-	shader = nullptr;
 }
 
 bool MeshRenderer::tryRender(glm::mat4 transform, RenderCommand** command)
@@ -15,8 +14,6 @@ bool MeshRenderer::tryRender(glm::mat4 transform, RenderCommand** command)
 
 	BatchedDrawData* drawData = new BatchedDrawData();
 	drawData->mesh = mesh;
-	drawData->material = material;
-	drawData->shader = shader;
 	drawData->transform = transform;
 	drawData->opacity = opacity;
 
@@ -34,5 +31,5 @@ bool MeshRenderer::tryRender(glm::mat4 transform, RenderCommand** command)
 
 bool MeshRenderer::canRender() const
 {
-	return mesh != nullptr && material != nullptr && shader != nullptr && opacity > 0.0f;
+	return mesh != nullptr && opacity > 0.0f;
 }

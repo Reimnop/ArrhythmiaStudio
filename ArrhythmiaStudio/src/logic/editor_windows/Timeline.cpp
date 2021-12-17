@@ -406,6 +406,7 @@ void Timeline::drawTimeline()
 					LevelObject& object = level.selection.selectedObject.value();
 					level.selection.selectedObject.reset();
 					level.deleteObject(&object);
+					delete &object;
 				}
 			}
 		}

@@ -1,17 +1,16 @@
 #pragma once
 
+#include "text/Font.h"
+#include "drawers/TextDrawer.h"
 #include "DrawData.h"
-#include "Material.h"
 
 struct TextDrawData : DrawData
 {
 	uint32_t vao;
-	uint32_t shader;
-	Material* material;
-	uint32_t atlasTexture;
-	size_t count;
+	Font* font;
+	uint32_t count;
 	glm::mat4 transform;
-	float opacity;
+	glm::vec4 color;
 
 	DrawDataType getType() const override
 	{
@@ -20,6 +19,6 @@ struct TextDrawData : DrawData
 
 	Drawer* getDrawer() override
 	{
-		throw std::runtime_error("Not implemented");
+		return new TextDrawer(this);
 	}
 };

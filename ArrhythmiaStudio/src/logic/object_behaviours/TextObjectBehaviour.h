@@ -1,17 +1,16 @@
 #pragma once
 
 #include "AnimateableObjectBehaviour.h"
-#include "../../engine/rendering/MeshRenderer.h"
-#include "../Shape.h"
+#include "../../engine/rendering/TextRenderer.h"
 #include "json.hpp"
 
 using namespace nlohmann;
 
-class NormalObjectBehaviour : public AnimateableObjectBehaviour 
+class TextObjectBehaviour : public AnimateableObjectBehaviour 
 {
 public:
-	NormalObjectBehaviour(LevelObject* baseObject);
-	~NormalObjectBehaviour() override = default;
+	TextObjectBehaviour(LevelObject* baseObject);
+	~TextObjectBehaviour() override = default;
 
 	static LevelObjectBehaviour* create(LevelObject* object);
 
@@ -24,10 +23,10 @@ public:
 protected:
 	void drawSequences() override;
 private:
-	MeshRenderer* renderer;
+	static inline Font* font;
+
+	TextRenderer* renderer;
+	std::string text;
 
 	Sequence opacity;
-
-	Shape shape;
-	void setShape(std::string id);
 };

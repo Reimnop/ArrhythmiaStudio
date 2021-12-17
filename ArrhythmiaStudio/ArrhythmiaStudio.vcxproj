@@ -234,6 +234,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="include\stb\stb_vorbis.c" />
     <ClCompile Include="include\VideoFormatConverter.cpp" />
     <ClCompile Include="src\engine\rendering\drawers\BatchedDrawer.cpp" />
+    <ClCompile Include="src\engine\rendering\drawers\TextDrawer.cpp" />
     <ClCompile Include="src\logic\animation\Sequence.cpp" />
     <ClCompile Include="src\logic\DocManager.cpp" />
     <ClCompile Include="src\logic\editor_windows\Events.cpp" />
@@ -253,6 +254,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="src\engine\Scene.cpp" />
     <ClCompile Include="src\engine\SceneNode.cpp" />
     <ClCompile Include="src\engine\Transform.cpp" />
+    <ClCompile Include="src\logic\object_behaviours\TextObjectBehaviour.cpp" />
     <ClCompile Include="src\logic\VideoExporter.cpp" />
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\MainWindow.cpp" />
@@ -784,6 +786,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\engine\rendering\drawers\BatchedDrawer.h" />
     <ClInclude Include="src\engine\rendering\drawers\BatchedVertex.h" />
     <ClInclude Include="src\engine\rendering\drawers\Drawer.h" />
+    <ClInclude Include="src\engine\rendering\drawers\TextDrawer.h" />
     <ClInclude Include="src\logic\animation\Easing.h" />
     <ClInclude Include="src\logic\animation\Keyframe.h" />
     <ClInclude Include="src\logic\animation\Sequence.h" />
@@ -813,6 +816,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\engine\SceneNode.h" />
     <ClInclude Include="src\logic\factories\ObjectBehaviourFactory.h" />
     <ClInclude Include="src\logic\factories\ShapeFactory.h" />
+    <ClInclude Include="src\logic\object_behaviours\TextObjectBehaviour.h" />
     <ClInclude Include="src\logic\Selection.h" />
     <ClInclude Include="src\logic\Shape.h" />
     <ClInclude Include="src\engine\Transform.h" />

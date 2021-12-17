@@ -97,6 +97,7 @@ void LevelObject::drawEditor()
 		level->insertDeactivateList(this);
 		level->recalculateObjectsState();
 	}
+	ImGui::SliderInt("Editor bin", &bin, 0, 14);
 
 	behaviour->drawEditor();
 

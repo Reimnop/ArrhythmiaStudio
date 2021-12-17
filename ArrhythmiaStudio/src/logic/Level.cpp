@@ -15,7 +15,7 @@ Level::Level(path audioPath)
 
 	// Generate test objects
 	// TODO: remove them
-	for (int i = 0; i < 4000; i++)
+	for (int i = 0; i < 1; i++)
 	{
 		LevelObject* obj = new LevelObject("normal", this);
 		insertObject(obj);

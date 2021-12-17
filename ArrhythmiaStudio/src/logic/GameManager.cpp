@@ -9,6 +9,7 @@
 #include "imgui/imgui_markdown.h"
 #include "imgui/imgui_internal.h"
 #include "object_behaviours/NormalObjectBehaviour.h"
+#include "object_behaviours/TextObjectBehaviour.h"
 #include "factories/ObjectBehaviourFactory.h"
 #include "factories/ShapeFactory.h"
 #include "factories/LevelEventFactory.h"
@@ -39,6 +40,7 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Register object behaviours
 	ObjectBehaviourFactory::registerBehaviour<NormalObjectBehaviour>("normal", "Normal");
+	ObjectBehaviourFactory::registerBehaviour<TextObjectBehaviour>("text", "Text");
 
 	// Register level events
 	LevelEventFactory::registerEvent<CameraLevelEvent>("camera", "Camera");

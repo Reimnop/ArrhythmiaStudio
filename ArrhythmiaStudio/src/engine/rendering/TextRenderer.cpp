@@ -1,15 +1,8 @@
 #include "TextRenderer.h"
 #include "TextDrawData.h"
 
-Shader* TextRenderer::shader;
-
 TextRenderer::TextRenderer(Font* font)
 {
-	if (!shader)
-	{
-		shader = new Shader("Assets/Shaders/text.vert", "Assets/Shaders/text.frag");
-	}
-
 	this->font = font;
 
 	glGenBuffers(1, &vbo);
@@ -64,12 +57,10 @@ bool TextRenderer::tryRender(glm::mat4 transform, RenderCommand** command)
 
 	TextDrawData* drawData = new TextDrawData();
 	drawData->vao = vao;
-	drawData->shader = shader->getHandle();
-	drawData->material = material;
-	drawData->atlasTexture = font->getAtlasTextureHandle();
+	drawData->font = font;
 	drawData->count = count;
 	drawData->transform = transform;
-	drawData->opacity = opacity;
+	drawData->color = color;
 
 	RenderCommand* cmd = new RenderCommand(drawData);
 	cmd->drawDepth = transform[3].z;
@@ -81,5 +72,5 @@ bool TextRenderer::tryRender(glm::mat4 transform, RenderCommand** command)
 
 bool TextRenderer::canRender() const
 {
-	return count && material && opacity > 0.0f;
+	return count && color.w > 0.0f;
 }

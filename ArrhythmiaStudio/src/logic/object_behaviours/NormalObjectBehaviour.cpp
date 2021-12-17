@@ -19,11 +19,6 @@ NormalObjectBehaviour::NormalObjectBehaviour(LevelObject* baseObject) : Animatea
 	setShape("square");
 }
 
-NormalObjectBehaviour::~NormalObjectBehaviour()
-{
-	delete baseObject->node->renderer;
-}
-
 LevelObjectBehaviour* NormalObjectBehaviour::create(LevelObject* object)
 {
 	return new NormalObjectBehaviour(object);

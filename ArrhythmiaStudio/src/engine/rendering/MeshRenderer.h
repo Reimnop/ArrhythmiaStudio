@@ -11,7 +11,7 @@ public:
 
 	Mesh* mesh;
 
-	float opacity = 1.0f;
+	glm::vec4 color;
 
 	bool tryRender(glm::mat4 transform, RenderCommand** command) override;
 private:

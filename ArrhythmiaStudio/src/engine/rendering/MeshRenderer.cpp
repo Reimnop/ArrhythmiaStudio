@@ -15,11 +15,11 @@ bool MeshRenderer::tryRender(glm::mat4 transform, RenderCommand** command)
 	BatchedDrawData* drawData = new BatchedDrawData();
 	drawData->mesh = mesh;
 	drawData->transform = transform;
-	drawData->opacity = opacity;
+	drawData->color = color;
 
 	RenderCommand* cmd = new RenderCommand(drawData);
 
-	if (opacity < 1.0f)
+	if (color.w < 1.0f)
 	{
 		cmd->drawDepth = transform[3].z;
 	}
@@ -31,5 +31,5 @@ bool MeshRenderer::tryRender(glm::mat4 transform, RenderCommand** command)
 
 bool MeshRenderer::canRender() const
 {
-	return mesh != nullptr && opacity > 0.0f;
+	return mesh != nullptr && color.w > 0.0f;
 }

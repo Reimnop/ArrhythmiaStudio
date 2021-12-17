@@ -176,6 +176,8 @@ void Renderer::renderViewport()
 	queuedOpaqueDrawers.clear();
 	queuedTransparentDrawers.clear();
 
+	BatchedDrawer::clearBatches();
+
 	glBindVertexArray(0);
 	glUseProgram(0);
 }
@@ -257,7 +259,7 @@ void Renderer::prepareDrawers()
 				}
 
 				BatchedDrawData* drawData = (BatchedDrawData*)cmd->drawData;
-				currentOpaqueDrawer->appendMesh(drawData->mesh, drawData->transform, glm::vec4(1.0f));
+				currentOpaqueDrawer->appendMesh(drawData->mesh, drawData->transform, drawData->color);
 			}
 			else
 			{
@@ -294,7 +296,7 @@ void Renderer::prepareDrawers()
 				}
 
 				BatchedDrawData* drawData = (BatchedDrawData*)cmd->drawData;
-				currentTransparentDrawer->appendMesh(drawData->mesh, drawData->transform, glm::vec4(1.0f, 1.0f, 1.0f, drawData->opacity));
+				currentTransparentDrawer->appendMesh(drawData->mesh, drawData->transform, drawData->color);
 			}
 			else
 			{

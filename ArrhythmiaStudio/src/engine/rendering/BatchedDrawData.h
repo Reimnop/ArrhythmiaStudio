@@ -10,7 +10,9 @@ struct BatchedDrawData : DrawData
 {
 	Mesh* mesh;
 	glm::mat4 transform;
-	float opacity;
+	glm::vec4 color;
+
+	~BatchedDrawData() override = default;
 
 	DrawDataType getType() const override
 	{

@@ -13,6 +13,17 @@ Level::Level(path audioPath)
 		levelEvents.emplace(id, new TypedLevelEvent(this, id));
 	}
 
+	// Generate test objects
+	// TODO: remove them
+	for (int i = 0; i < 4000; i++)
+	{
+		LevelObject* obj = new LevelObject("normal", this);
+		insertObject(obj);
+		insertActivateList(obj);
+		insertDeactivateList(obj);
+	}
+	recalculateObjectsState();
+
 	seek(0.0f);
 }
 

@@ -1,4 +1,6 @@
 #include "NormalObjectBehaviour.h"
+
+#include "utils.h"
 #include "../factories/ShapeFactory.h"
 #include "imgui/imgui.h"
 
@@ -8,6 +10,9 @@ NormalObjectBehaviour::NormalObjectBehaviour(LevelObject* baseObject) : Animatea
 	opacity = Sequence(1, &kf1);
 
 	renderer = new MeshRenderer();
+	renderer->color.x = 1.0f;
+	renderer->color.y = 1.0f;
+	renderer->color.z = 1.0f;
 
 	baseObject->node->renderer = renderer;
 
@@ -28,7 +33,7 @@ void NormalObjectBehaviour::update(float time)
 {
 	AnimateableObjectBehaviour::update(time);
 
-	renderer->opacity = opacity.update(time - baseObject->startTime);
+	renderer->color.w = opacity.update(time - baseObject->startTime);
 }
 
 void NormalObjectBehaviour::readJson(json& j)

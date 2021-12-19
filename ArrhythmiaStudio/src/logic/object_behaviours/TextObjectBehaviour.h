@@ -26,7 +26,7 @@ private:
 	static inline Font* font;
 
 	TextRenderer* renderer;
-	std::string text;
+	std::wstring text;
 
 	Sequence opacity;
 };

@@ -7,19 +7,19 @@ TextMeshGenerator::TextMeshGenerator(Font* font)
 	this->font = font;
 }
 
-TextVertex* TextMeshGenerator::genMesh(const std::wstring& text, size_t* verticesCount) const
+std::vector<TextVertex> TextMeshGenerator::genMesh(const std::wstring& text) const
 {
 	const AtlasInfo& info = font->getInfo();
 	const Metrics& metrics = font->getMetrics();
 
 	const size_t count = getVerticesCount(text);
-	if (count == 0)
+	if (!count)
 	{
-		*verticesCount = 0;
-		return nullptr;
+		return std::vector<TextVertex>();
 	}
 
-	TextVertex* vertices = new TextVertex[count];
+	std::vector<TextVertex> vertices;
+	vertices.reserve(count);
 
 	std::vector<std::wstring> lines = split(L"\r|\n|\r\n", text);
 
@@ -44,12 +44,12 @@ TextVertex* TextMeshGenerator::genMesh(const std::wstring& text, size_t* vertice
 				const Bounds& planeBounds = g.planeBounds;
 				const Bounds& atlasBounds = g.atlasBounds;
 
-				vertices[vert_offset + 0] = TextVertex(x_offset + planeBounds.right, y_offset + planeBounds.top, 0.0f, atlasBounds.right / info.width, (info.height - atlasBounds.top) / info.height);
-				vertices[vert_offset + 1] = TextVertex(x_offset + planeBounds.left, y_offset + planeBounds.top, 0.0f, atlasBounds.left / info.width, (info.height - atlasBounds.top) / info.height);
-				vertices[vert_offset + 2] = TextVertex(x_offset + planeBounds.left, y_offset + planeBounds.bottom, 0.0f, atlasBounds.left / info.width, (info.height - atlasBounds.bottom) / info.height);
-				vertices[vert_offset + 3] = TextVertex(x_offset + planeBounds.right, y_offset + planeBounds.top, 0.0f, atlasBounds.right / info.width, (info.height - atlasBounds.top) / info.height);
-				vertices[vert_offset + 4] = TextVertex(x_offset + planeBounds.left, y_offset + planeBounds.bottom, 0.0f, atlasBounds.left / info.width, (info.height - atlasBounds.bottom) / info.height);
-				vertices[vert_offset + 5] = TextVertex(x_offset + planeBounds.right, y_offset + planeBounds.bottom, 0.0f, atlasBounds.right / info.width, (info.height - atlasBounds.bottom) / info.height);
+				vertices.emplace_back(x_offset + planeBounds.right, y_offset + planeBounds.top, 0.0f, atlasBounds.right / info.width, (info.height - atlasBounds.top) / info.height);
+				vertices.emplace_back(x_offset + planeBounds.left, y_offset + planeBounds.top, 0.0f, atlasBounds.left / info.width, (info.height - atlasBounds.top) / info.height);
+				vertices.emplace_back(x_offset + planeBounds.left, y_offset + planeBounds.bottom, 0.0f, atlasBounds.left / info.width, (info.height - atlasBounds.bottom) / info.height);
+				vertices.emplace_back(x_offset + planeBounds.right, y_offset + planeBounds.top, 0.0f, atlasBounds.right / info.width, (info.height - atlasBounds.top) / info.height);
+				vertices.emplace_back(x_offset + planeBounds.left, y_offset + planeBounds.bottom, 0.0f, atlasBounds.left / info.width, (info.height - atlasBounds.bottom) / info.height);
+				vertices.emplace_back(x_offset + planeBounds.right, y_offset + planeBounds.bottom, 0.0f, atlasBounds.right / info.width, (info.height - atlasBounds.bottom) / info.height);
 
 				vert_offset += 6;
 			}
@@ -64,7 +64,6 @@ TextVertex* TextMeshGenerator::genMesh(const std::wstring& text, size_t* vertice
 		y_offset -= metrics.lineHeight;
 	}
 
-	*verticesCount = count;
 	return vertices;
 }
 

@@ -13,7 +13,7 @@ public:
 
 	Sequence();
 	Sequence(int count, Keyframe* keyframes);
-	Sequence(json j);
+	Sequence(json& j);
 
 	void loadKeyframes(std::vector<Keyframe>& keyframes);
 	void insertKeyframe(Keyframe keyframe);
@@ -21,7 +21,7 @@ public:
 
 	float update(float time);
 
-	void fromJson(json j);
+	void fromJson(json& j);
 	json toJson();
 private:
 	int lastIndex;

@@ -315,6 +315,12 @@
     <ClCompile Include="src\logic\object_behaviours\TextObjectBehaviour.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\logic\editor_windows\Themes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\animation\ColorSequence.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
@@ -2049,6 +2055,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\object_behaviours\TextObjectBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\editor_windows\Themes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\animation\Color.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\animation\ColorKeyframe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\animation\ColorSequence.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\data\ColorKeyframeInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\data\ColorKeyframeTimeEditInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

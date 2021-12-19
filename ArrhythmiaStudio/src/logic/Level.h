@@ -5,6 +5,7 @@
 #include <filesystem>
 
 #include "../engine/AudioClip.h"
+#include "animation/ColorSequence.h"
 #include "Selection.h"
 
 using namespace std::filesystem;
@@ -18,6 +19,7 @@ public:
 
 	std::unordered_map<uint64_t, LevelObject*> levelObjects;
 	std::unordered_map<std::string, TypedLevelEvent*> levelEvents;
+	std::vector<ColorSequence*> colorSequences;
 	Selection selection;
 
 	float time = 0.0f;

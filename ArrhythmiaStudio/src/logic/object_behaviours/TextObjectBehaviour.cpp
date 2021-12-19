@@ -37,7 +37,7 @@ void TextObjectBehaviour::update(float time)
 
 void TextObjectBehaviour::readJson(json& j)
 {
-	text = j["text"].get<std::string>();
+	text = j["text"].get<std::wstring>();
 	renderer->setText(text);
 
 	AnimateableObjectBehaviour::readJson(j);
@@ -54,12 +54,11 @@ void TextObjectBehaviour::writeJson(json& j)
 
 void TextObjectBehaviour::drawEditor()
 {
-	ImGui::InputTextMultiline("Text", &text);
-
-	if (ImGui::IsItemEdited())
-	{
-		renderer->setText(text);
-	}
+	// TODO: Find a way to make InputText work on wstring
+	std::string str(text.begin(), text.end());
+	ImGui::InputTextMultiline("Text", &str);
+	// We update the text every frame because ImGui won't return true when the field is cleared for some reason
+	renderer->setText(std::wstring(str.begin(), str.end()));
 
 	AnimateableObjectBehaviour::drawEditor();
 }

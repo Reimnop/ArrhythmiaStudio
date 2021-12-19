@@ -8,7 +8,7 @@ class TextMeshGenerator
 public:
 	TextMeshGenerator(Font* font);
 
-	TextVertex* genMesh(const std::wstring& text, size_t* verticesCount) const;
+	std::vector<TextVertex> genMesh(const std::wstring& text) const;
 private:
 	Font* font;
 

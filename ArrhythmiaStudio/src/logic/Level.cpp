@@ -13,6 +13,14 @@ Level::Level(path audioPath)
 		levelEvents.emplace(id, new TypedLevelEvent(this, id));
 	}
 
+	ColorKeyframe defaultColorKf;
+	defaultColorKf.time = 0.0f;
+	defaultColorKf.color = Color(1.0f, 1.0f, 1.0f);
+	for (int i = 0; i < 20; i++)
+	{
+		colorSequences.push_back(new ColorSequence(1, &defaultColorKf));
+	}
+
 	// Generate test objects
 	// TODO: remove them
 	for (int i = 0; i < 1; i++)

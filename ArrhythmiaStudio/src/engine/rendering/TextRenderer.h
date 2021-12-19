@@ -12,7 +12,7 @@ public:
 
 	glm::vec4 color;
 
-	void setText(std::string text);
+	void setText(const std::wstring& text);
 	bool tryRender(glm::mat4 transform, RenderCommand** command) override;
 private:
 	Font* font;

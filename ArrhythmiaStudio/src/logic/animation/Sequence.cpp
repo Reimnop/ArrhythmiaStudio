@@ -19,7 +19,7 @@ Sequence::Sequence(int count, Keyframe* keyframes)
 	lastIndex = 0;
 }
 
-Sequence::Sequence(json j)
+Sequence::Sequence(json& j)
 {
 	fromJson(j);
 }
@@ -33,7 +33,6 @@ void Sequence::loadKeyframes(std::vector<Keyframe>& keyframes)
 			return a.time < b.time;
 		});
 }
-
 
 void Sequence::insertKeyframe(Keyframe keyframe)
 {
@@ -108,14 +107,14 @@ float Sequence::update(float time)
 	return std::lerp(left.value, right.value, easedT);
 }
 
-void Sequence::fromJson(json j)
+void Sequence::fromJson(json& j)
 {
 	json::array_t arr = j;
 	std::vector<Keyframe> keyframes;
 	keyframes.reserve(arr.size());
 	for (json kfJ : arr)
 	{
-		keyframes.push_back(Keyframe(kfJ));
+		keyframes.emplace_back(kfJ);
 	}
 	loadKeyframes(keyframes);
 }

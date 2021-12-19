@@ -14,11 +14,12 @@ SampleTextRenderer::SampleTextRenderer(std::filesystem::path fontPath)
 	font = new Font(fontPath);
 	generator = new TextMeshGenerator(font);
 
-	TextVertex* vertices = generator->genMesh(L"Hello world!", &count);
+	std::vector<TextVertex> vertices = generator->genMesh(L"Hello world!");
+	count = vertices.size();
 
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, count * sizeof(TextVertex), vertices, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, count * sizeof(TextVertex), vertices.data(), GL_DYNAMIC_DRAW);
 
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
@@ -31,8 +32,6 @@ SampleTextRenderer::SampleTextRenderer(std::filesystem::path fontPath)
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	delete[] vertices;
 }
 
 SampleTextRenderer::~SampleTextRenderer()
@@ -43,13 +42,12 @@ SampleTextRenderer::~SampleTextRenderer()
 
 void SampleTextRenderer::setText(std::wstring text)
 {
-	TextVertex* vertices = generator->genMesh(text, &count);
+	std::vector<TextVertex> vertices = generator->genMesh(text);
+	count = vertices.size();
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, count * sizeof(TextVertex), vertices, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, count * sizeof(TextVertex), vertices.data(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	delete[] vertices;
 }
 
 void SampleTextRenderer::draw(glm::mat4 mvp)

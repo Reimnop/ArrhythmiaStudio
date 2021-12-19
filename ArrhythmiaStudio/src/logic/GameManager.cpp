@@ -17,6 +17,7 @@
 #include "editor_windows/Viewport.h"
 #include "editor_windows/Properties.h"
 #include "editor_windows/Events.h"
+#include "editor_windows/Themes.h"
 #include "level_events/CameraLevelEvent.h"
 
 #define WELCOME_MSG Welcome to PROJECT_NAME!
@@ -65,6 +66,7 @@ GameManager::GameManager(GLFWwindow* window)
 	editorWindows.push_back(new Timeline());
 	editorWindows.push_back(new Properties());
 	editorWindows.push_back(new Events());
+	editorWindows.push_back(new Themes());
 }
 
 void GameManager::update()

@@ -13,12 +13,9 @@ Level::Level(path audioPath)
 		levelEvents.emplace(id, new TypedLevelEvent(this, id));
 	}
 
-	ColorKeyframe defaultColorKf;
-	defaultColorKf.time = 0.0f;
-	defaultColorKf.color = Color(1.0f, 1.0f, 1.0f);
 	for (int i = 0; i < 20; i++)
 	{
-		colorSequences.push_back(new ColorSequence(1, &defaultColorKf));
+		colorSlots.push_back(new ColorSlot());
 	}
 
 	// Generate test objects
@@ -31,8 +28,6 @@ Level::Level(path audioPath)
 		insertDeactivateList(obj);
 	}
 	recalculateObjectsState();
-
-	seek(0.0f);
 }
 
 Level::Level(path audioPath, json j)
@@ -85,7 +80,11 @@ Level::Level(path audioPath, json j)
 		}
 	}
 
-	seek(0.0f);
+	json::array_t colorSlotsArr = j["color_slots"];
+	for (json colorSlotJ : colorSlotsArr)
+	{
+		colorSlots.push_back(new ColorSlot(colorSlotJ));
+	}
 }
 
 Level::~Level()
@@ -124,16 +123,22 @@ void Level::update()
 		updateReverse();
 	}
 
+	// Update events
+	for (auto& [type, levelEvent] : levelEvents)
+	{
+		levelEvent->update(time);
+	}
+
+	// Update theme
+	for (ColorSlot* slot : colorSlots)
+	{
+		slot->update(time);
+	}
+
 	// Update objects
 	for (LevelObject* obj : aliveObjects)
 	{
 		obj->update(time);
-	}
-
-	// Update events
-	for (auto &[type, levelEvent] : levelEvents)
-	{
-		levelEvent->update(time);
 	}
 
 	lastTime = time;

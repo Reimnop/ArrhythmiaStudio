@@ -60,5 +60,4 @@ void TypedLevelEvent::fromJson(json j)
 void TypedLevelEvent::drawEditor()
 {
 	levelEvent->drawEditor();
-	update(level->time);
 }

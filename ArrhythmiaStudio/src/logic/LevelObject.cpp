@@ -100,6 +100,4 @@ void LevelObject::drawEditor()
 	ImGui::SliderInt("Editor bin", &bin, 0, 14);
 
 	behaviour->drawEditor();
-
-	update(level->time);
 }

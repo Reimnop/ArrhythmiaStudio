@@ -2,6 +2,7 @@
 
 #include "utils.h"
 #include "../factories/ShapeFactory.h"
+#include "../GameManager.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_stdlib.h"
 
@@ -16,9 +17,6 @@ TextObjectBehaviour::TextObjectBehaviour(LevelObject* baseObject) : AnimateableO
 	opacity = Sequence(1, &kf1);
 
 	renderer = new TextRenderer(font);
-	renderer->color.x = 1.0f;
-	renderer->color.y = 1.0f;
-	renderer->color.z = 1.0f;
 
 	baseObject->node->renderer = renderer;
 }
@@ -32,13 +30,19 @@ void TextObjectBehaviour::update(float time)
 {
 	AnimateableObjectBehaviour::update(time);
 
+	Level& level = *GameManager::inst->level;
+
+	renderer->color.r = level.colorSlots[colorSlot]->color.r;
+	renderer->color.g = level.colorSlots[colorSlot]->color.g;
+	renderer->color.b = level.colorSlots[colorSlot]->color.b;
 	renderer->color.w = opacity.update(time - baseObject->startTime);
 }
 
 void TextObjectBehaviour::readJson(json& j)
 {
-	text = j["text"].get<std::wstring>();
-	renderer->setText(text);
+	colorSlot = j["color"].get<int>();
+	text = j["text"].get<std::string>();
+	renderer->setText(std::wstring(text.begin(), text.end()));
 
 	AnimateableObjectBehaviour::readJson(j);
 	opacity.fromJson(j["op"]);
@@ -46,6 +50,7 @@ void TextObjectBehaviour::readJson(json& j)
 
 void TextObjectBehaviour::writeJson(json& j)
 {
+	j["color"] = colorSlot;
 	j["text"] = text;
 
 	AnimateableObjectBehaviour::writeJson(j);
@@ -54,11 +59,15 @@ void TextObjectBehaviour::writeJson(json& j)
 
 void TextObjectBehaviour::drawEditor()
 {
-	// TODO: Find a way to make InputText work on wstring
-	std::string str(text.begin(), text.end());
-	ImGui::InputTextMultiline("Text", &str);
-	// We update the text every frame because ImGui won't return true when the field is cleared for some reason
-	renderer->setText(std::wstring(str.begin(), str.end()));
+	Level& level = *GameManager::inst->level;
+	ImGui::SliderInt("Color", &colorSlot, 0, level.colorSlots.size());
+
+	ImGui::InputTextMultiline("Text", &text);
+
+	if (ImGui::IsItemEdited()) 
+	{
+		renderer->setText(std::wstring(text.begin(), text.end()));
+	}
 
 	AnimateableObjectBehaviour::drawEditor();
 }

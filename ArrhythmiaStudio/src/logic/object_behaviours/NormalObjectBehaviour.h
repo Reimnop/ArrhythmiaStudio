@@ -24,6 +24,8 @@ public:
 protected:
 	void drawSequences() override;
 private:
+	int colorSlot = 0;
+
 	MeshRenderer* renderer;
 
 	Sequence opacity;

@@ -237,6 +237,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClCompile Include="src\engine\rendering\drawers\TextDrawer.cpp" />
     <ClCompile Include="src\logic\animation\ColorSequence.cpp" />
     <ClCompile Include="src\logic\animation\Sequence.cpp" />
+    <ClCompile Include="src\logic\ColorSlot.cpp" />
     <ClCompile Include="src\logic\DocManager.cpp" />
     <ClCompile Include="src\logic\editor_windows\Events.cpp" />
     <ClCompile Include="src\logic\editor_windows\Properties.cpp" />
@@ -796,6 +797,7 @@ xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
     <ClInclude Include="src\logic\animation\Keyframe.h" />
     <ClInclude Include="src\logic\animation\Sequence.h" />
     <ClInclude Include="src\engine\AudioClip.h" />
+    <ClInclude Include="src\logic\ColorSlot.h" />
     <ClInclude Include="src\logic\data\ColorKeyframeInfo.h" />
     <ClInclude Include="src\logic\data\ColorKeyframeTimeEditInfo.h" />
     <ClInclude Include="src\logic\DiscordManager.h" />

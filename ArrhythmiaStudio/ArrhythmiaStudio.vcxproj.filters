@@ -321,6 +321,9 @@
     <ClCompile Include="src\logic\animation\ColorSequence.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\logic\ColorSlot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
@@ -2073,6 +2076,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\data\ColorKeyframeTimeEditInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\ColorSlot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

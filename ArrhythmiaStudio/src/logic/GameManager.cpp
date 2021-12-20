@@ -71,10 +71,7 @@ GameManager::GameManager(GLFWwindow* window)
 
 void GameManager::update()
 {
-	if (level->clip->isPlaying()) 
-	{
-		level->update();
-	}
+	level->update();
 }
 
 void GameManager::onLayout()

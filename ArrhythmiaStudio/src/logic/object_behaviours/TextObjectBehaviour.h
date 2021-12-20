@@ -25,8 +25,10 @@ protected:
 private:
 	static inline Font* font;
 
+	int colorSlot = 0;
+
 	TextRenderer* renderer;
-	std::wstring text;
+	std::string text;
 
 	Sequence opacity;
 };

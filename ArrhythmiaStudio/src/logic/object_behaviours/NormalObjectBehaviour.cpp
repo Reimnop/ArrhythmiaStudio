@@ -2,6 +2,7 @@
 
 #include "utils.h"
 #include "../factories/ShapeFactory.h"
+#include "../GameManager.h"
 #include "imgui/imgui.h"
 
 NormalObjectBehaviour::NormalObjectBehaviour(LevelObject* baseObject) : AnimateableObjectBehaviour(baseObject)
@@ -10,9 +11,6 @@ NormalObjectBehaviour::NormalObjectBehaviour(LevelObject* baseObject) : Animatea
 	opacity = Sequence(1, &kf1);
 
 	renderer = new MeshRenderer();
-	renderer->color.x = 1.0f;
-	renderer->color.y = 1.0f;
-	renderer->color.z = 1.0f;
 
 	baseObject->node->renderer = renderer;
 
@@ -28,11 +26,17 @@ void NormalObjectBehaviour::update(float time)
 {
 	AnimateableObjectBehaviour::update(time);
 
+	Level& level = *GameManager::inst->level;
+
+	renderer->color.r = level.colorSlots[colorSlot]->color.r;
+	renderer->color.g = level.colorSlots[colorSlot]->color.g;
+	renderer->color.b = level.colorSlots[colorSlot]->color.b;
 	renderer->color.w = opacity.update(time - baseObject->startTime);
 }
 
 void NormalObjectBehaviour::readJson(json& j)
 {
+	colorSlot = j["color"].get<int>();
 	setShape(j["shape"].get<std::string>());
 	AnimateableObjectBehaviour::readJson(j);
 	opacity.fromJson(j["op"]);
@@ -40,6 +44,7 @@ void NormalObjectBehaviour::readJson(json& j)
 
 void NormalObjectBehaviour::writeJson(json& j)
 {
+	j["color"] = colorSlot;
 	j["shape"] = shape.id;
 	AnimateableObjectBehaviour::writeJson(j);
 	j["op"] = opacity.toJson();
@@ -47,6 +52,9 @@ void NormalObjectBehaviour::writeJson(json& j)
 
 void NormalObjectBehaviour::drawEditor()
 {
+	Level& level = *GameManager::inst->level;
+	ImGui::SliderInt("Color", &colorSlot, 0, level.colorSlots.size());
+
 	if (ImGui::BeginCombo("Shape", shape.name.c_str()))
 	{
 		for (std::string id : ShapeFactory::getShapeIds())

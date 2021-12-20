@@ -16,33 +16,33 @@ void Themes::draw()
 	GameManager* gameManager = GameManager::inst;
 	Level* level = gameManager->level;
 
-	if (ImGui::BeginChild("##color-sequences", ImVec2(0.0f, 120.0f), true))
+	if (ImGui::BeginChild("##color-slots", ImVec2(0.0f, 120.0f), true))
 	{
 		// Deselect
 		if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootWindow) && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 		{
-			level->selection.selectedColorSequence.reset();
+			level->selection.selectedColorSlot.reset();
 		}
 
-		for (size_t i = 0; i < gameManager->level->colorSequences.size(); i++)
+		for (size_t i = 0; i < gameManager->level->colorSlots.size(); i++)
 		{
-			ColorSequence& sequence = *gameManager->level->colorSequences[i];
+			ColorSlot& slot = *gameManager->level->colorSlots[i];
 
 			std::string title = "Color slot " + std::to_string(i);
 
 			if (ImGui::Selectable(
 				title.c_str(),
-				level->selection.selectedColorSequence.has_value() ? 
-				&level->selection.selectedColorSequence->get() == &sequence :
+				level->selection.selectedColorSlot.has_value() ? 
+				&level->selection.selectedColorSlot->get() == &slot :
 				false))
 			{
-				level->selection.selectedColorSequence = sequence;
+				level->selection.selectedColorSlot = slot;
 			}
 		}
 	}
 	ImGui::EndChild();
 
-	if (level->selection.selectedColorSequence.has_value()) 
+	if (level->selection.selectedColorSlot.has_value()) 
 	{
 		drawEditor();
 	}
@@ -55,9 +55,9 @@ void Themes::drawEditor()
 
 	if (beginKeyframeEditor())
 	{
-		assert(level->selection.selectedColorSequence.has_value());
+		assert(level->selection.selectedColorSlot.has_value());
 
-		sequenceEdit(level->selection.selectedColorSequence.value(), "Color");
+		sequenceEdit(level->selection.selectedColorSlot->get().sequence, "Color");
 
 		endKeyframeEditor();
 	}

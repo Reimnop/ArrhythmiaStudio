@@ -41,10 +41,7 @@ MainWindow::MainWindow()
 	glfwSetErrorCallback(glfwErrorCallback);
 
 	// Init GLFW
-	if (!glfwInit())
-	{
-		throw std::runtime_error("GLFW initialization failed!");
-	}
+	LOG4CXX_ASSERT(logger, glfwInit(), "GLFW initialization failed!");
 
 	// Create window
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -56,17 +53,11 @@ MainWindow::MainWindow()
 
 	window = glfwCreateWindow(1600, 900, STRINGIFY(PROJECT_NAME), NULL, NULL);
 
-	if (!window)
-	{
-		throw std::runtime_error("Window creation failed!");
-	}
+	LOG4CXX_ASSERT(logger, window, "Window creation failed!");
 
 	glfwMakeContextCurrent(window);
 
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		throw std::runtime_error("GLAD initialization failed!");
-	}
+	LOG4CXX_ASSERT(logger, gladLoadGLLoader((GLADloadproc)glfwGetProcAddress), "GLAD initialization failed!");
 
 	glfwSwapInterval(1);
 

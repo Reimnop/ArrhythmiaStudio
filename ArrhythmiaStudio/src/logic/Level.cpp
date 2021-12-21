@@ -3,9 +3,14 @@
 #include "factories/LevelEventFactory.h"
 #include "object_behaviours/LevelObjectBehaviour.h"
 
-Level::Level(path audioPath) 
+Level::Level(path audioPath, path levelDir)
 {
-	clip = new AudioClip(audioPath);
+	this->levelDir = levelDir;
+
+	// Copy audio file to level directory
+	copy_file(audioPath, levelDir / "audio.ogg");
+
+	clip = new AudioClip(levelDir / "audio.ogg");
 	levelLength = clip->getLength();
 
 	for (std::string id : LevelEventFactory::getEventIds())
@@ -18,22 +23,20 @@ Level::Level(path audioPath)
 		colorSlots.push_back(new ColorSlot());
 	}
 
-	// Generate test objects
-	// TODO: remove them
-	for (int i = 0; i < 1; i++)
-	{
-		LevelObject* obj = new LevelObject("normal", this);
-		insertObject(obj);
-		insertActivateList(obj);
-		insertDeactivateList(obj);
-	}
-	recalculateObjectsState();
+	std::ofstream o(levelDir / "level.aslv");
+	o << toJson();
 }
 
-Level::Level(path audioPath, json j)
+Level::Level(path levelDir)
 {
-	clip = new AudioClip(audioPath);
+	this->levelDir = levelDir;
+
+	clip = new AudioClip(levelDir / "audio.ogg");
 	levelLength = clip->getLength();
+
+	std::ifstream i(levelDir / "level.aslv");
+	json j;
+	i >> j;
 
 	name = j["name"].get<std::string>();
 	bpm = j["bpm"].get<float>();
@@ -60,7 +63,7 @@ Level::Level(path audioPath, json j)
 	{
 		TypedLevelEvent* levelEvent = new TypedLevelEvent(this, eventJ);
 
-		if (levelEvents.count(levelEvent->getType()))
+		if (levelEvents[levelEvent->getType()])
 		{
 			Logger::warn("Duplicate level event, skipping! Duplicated value: " + levelEvent->getType());
 			delete levelEvent;
@@ -308,5 +311,18 @@ json Level::toJson()
 		eventArr.push_back(levelEvent->toJson());
 	}
 	j["events"] = eventArr;
+	json::array_t colorSlotArr;
+	colorSlotArr.reserve(colorSlots.size());
+	for (ColorSlot* slot : colorSlots)
+	{
+		colorSlotArr.push_back(slot->toJson());
+	}
+	j["color_slots"] = colorSlotArr;
 	return j;
+}
+
+void Level::save()
+{
+	std::ofstream o(levelDir / "level.aslv");
+	o << toJson();
 }

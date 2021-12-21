@@ -65,6 +65,7 @@ void LevelObject::fromJson(json j)
 	id = j["id"].get<uint64_t>();
 	startTime = j["start"].get<float>();
 	endTime = j["end"].get<float>();
+	bin = j["bin"].get<int>();
 	behaviour->readJson(j);
 }
 
@@ -76,6 +77,7 @@ json LevelObject::toJson()
 	j["id"] = id;
 	j["start"] = startTime;
 	j["end"] = endTime;
+	j["bin"] = bin;
 	behaviour->writeJson(j);
 	return j;
 }

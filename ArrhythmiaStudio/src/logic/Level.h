@@ -14,6 +14,7 @@ class LevelObject;
 class Level 
 {
 public:
+	path levelDir;
 	std::string name;
 	AudioClip* clip;
 
@@ -28,8 +29,10 @@ public:
 	float offset = 0.0f;
 	float bpm = 120.0f;
 
-	Level(path audioPath);
-	Level(path audioPath, json j);
+	// This constructor creates a new level
+	Level(path audioPath, path levelDir);
+	// This constructor opens an existing level
+	Level(path levelDir);
 	~Level();
 
 	void seek(float t);
@@ -49,6 +52,7 @@ public:
 	void recalculateObjectsState();
 
 	json toJson();
+	void save();
 private:
 	float lastTime = 0.0f;
 	

@@ -60,7 +60,7 @@ GameManager::GameManager(GLFWwindow* window)
 	ShapeFactory::registerShape("Assets/Shapes/triangle.shp", "triangle");
 	ShapeFactory::registerShape("Assets/Shapes/right_angled_triangle.shp", "right_angled_triangle");
 
-	level = new Level(R"(C:\Users\Reimnop\Music\cYsmix - Triangles-QtDbzbQTLHQ.ogg)");
+	level = new Level(R"(C:\Users\Reimnop\Documents\ASLevels\test_lv)");
 
 	editorWindows.push_back(new Viewport());
 	editorWindows.push_back(new Timeline());
@@ -94,6 +94,11 @@ void GameManager::onLayout()
 	{
 		if (ImGui::BeginMenu("File"))
 		{
+			if (ImGui::MenuItem("Save"))
+			{
+				level->save();
+			}
+
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Help"))

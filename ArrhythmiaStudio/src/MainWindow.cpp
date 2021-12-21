@@ -16,13 +16,13 @@ void MainWindow::glDebugCallback(GLenum source, GLenum type, unsigned int id, GL
 	switch (severity)
 	{
 	case GL_DEBUG_SEVERITY_LOW:
-		LOG4CXX_DEBUG(logger, "OpenGL: " + msgStr);
+		LOG4CXX_DEBUG(logger, "OpenGL: " << msgStr.c_str());
 		break;
 	case GL_DEBUG_SEVERITY_MEDIUM:
-		LOG4CXX_WARN(logger, "OpenGL: " + msgStr);
+		LOG4CXX_WARN(logger, "OpenGL: " << msgStr.c_str());
 		break;
 	case GL_DEBUG_SEVERITY_HIGH:
-		LOG4CXX_ERROR(logger, "OpenGL: " + msgStr);
+		LOG4CXX_ERROR(logger, "OpenGL: " << msgStr.c_str());
 		break;
 	}
 }

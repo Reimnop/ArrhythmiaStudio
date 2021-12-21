@@ -1,4 +1,7 @@
 #include "Level.h"
+
+#include <fstream>
+
 #include "LevelObject.h"
 #include "factories/LevelEventFactory.h"
 #include "object_behaviours/LevelObjectBehaviour.h"
@@ -65,7 +68,7 @@ Level::Level(path levelDir)
 
 		if (levelEvents[levelEvent->getType()])
 		{
-			Logger::warn("Duplicate level event, skipping! Duplicated value: " + levelEvent->getType());
+			LOG4CXX_WARN(logger, "Duplicate level event, skipping! Duplicated value: " << levelEvent->getType().c_str());
 			delete levelEvent;
 		}
 		else 
@@ -78,7 +81,7 @@ Level::Level(path levelDir)
 	{
 		if (!obj)
 		{
-			Logger::warn("Missing level event, creating new! Missing value: " + id);
+			LOG4CXX_WARN(logger, "Missing level event, creating new! Missing value: " << id.c_str());
 			levelEvents[id] = new TypedLevelEvent(this, id);
 		}
 	}

@@ -2,7 +2,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "logger.h"
+#include "log4cxx/logger.h"
 #include "../object_behaviours/LevelObjectBehaviour.h"
 
 struct ObjectBehaviourInfo
@@ -37,7 +37,7 @@ public:
 		info.createFunction = &T::create;
 		infos.emplace(id, info);
 
-		Logger::info("Loaded object behaviour " + id);
+		LOG4CXX_INFO(logger, "Loaded object behaviour " << id.c_str());
 	}
 
 	static ObjectBehaviourInfo getFromId(std::string id)
@@ -45,5 +45,6 @@ public:
 		return infos[id];
 	}
 private:
+	static inline log4cxx::LoggerPtr logger = log4cxx::Logger::getLogger("ObjectBehaviourFactory");
 	static inline std::unordered_map<std::string, ObjectBehaviourInfo> infos;
 };

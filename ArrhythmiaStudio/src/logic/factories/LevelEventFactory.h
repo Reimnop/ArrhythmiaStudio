@@ -3,7 +3,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "logger.h"
+#include "log4cxx/logger.h"
 #include "../level_events/LevelEvent.h"
 
 struct LevelEventInfo
@@ -38,7 +38,7 @@ public:
 		info.createFunction = &T::create;
 		infos.emplace(id, info);
 
-		Logger::info("Loaded level event " + id);
+		LOG4CXX_INFO(logger, "Loaded level event " << id.c_str());
 	}
 
 	static LevelEventInfo getFromId(std::string id)
@@ -46,5 +46,6 @@ public:
 		return infos[id];
 	}
 private:
+	static inline log4cxx::LoggerPtr logger = log4cxx::Logger::getLogger("LevelEventFactory");
 	static inline std::unordered_map<std::string, LevelEventInfo> infos;
 };

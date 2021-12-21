@@ -4,6 +4,7 @@
 #include <unordered_set>
 #include <filesystem>
 
+#include "log4cxx/logger.h"
 #include "../engine/AudioClip.h"
 #include "ColorSlot.h"
 #include "Selection.h"
@@ -54,6 +55,8 @@ public:
 	json toJson();
 	void save();
 private:
+	static inline log4cxx::LoggerPtr logger = log4cxx::Logger::getLogger("Level");
+
 	float lastTime = 0.0f;
 	
 	std::unordered_set<LevelObject*> aliveObjects;

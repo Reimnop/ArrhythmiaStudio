@@ -3,8 +3,6 @@
 #include "post_processing/Bloom.h"
 #include "GlobalConstants.h"
 
-#include <logger.h>
-
 #include "../../MainWindow.h"
 #include "drawers/BatchedDrawer.h"
 
@@ -23,10 +21,10 @@ Renderer::Renderer(GLFWwindow* window)
 	const GLubyte* version = glGetString(GL_VERSION);
 	const GLubyte* langVer = glGetString(GL_SHADING_LANGUAGE_VERSION);
 
-	Logger::info("Renderer: " + std::string((const char*)renderer));
-	Logger::info("Vendor: " + std::string((const char*)vendor));
-	Logger::info("OpenGL Version: " + std::string((const char*)version));
-	Logger::info("GLSL Version: " + std::string((const char*)langVer));
+	LOG4CXX_INFO(logger, "Renderer: " << (const char*)renderer);
+	LOG4CXX_INFO(logger, "Vendor: " << (const char*)vendor);
+	LOG4CXX_INFO(logger, "OpenGL Version: " << (const char*)version);
+	LOG4CXX_INFO(logger, "GLSL Version: " << (const char*)langVer);
 
 	viewportWidth = RENDERER_INITIAL_WIDTH;
 	viewportHeight = RENDERER_INITIAL_HEIGHT;

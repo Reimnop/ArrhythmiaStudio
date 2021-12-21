@@ -3,9 +3,11 @@
 #include <fstream>
 #include <unordered_map>
 
-#include "logger.h"
+#include "log4cxx/logger.h"
 #include "../Shape.h"
 #include "glm/vec3.hpp"
+
+using namespace std::filesystem;
 
 class ShapeFactory
 {
@@ -23,13 +25,13 @@ public:
 		return ids;
 	}
 
-	static void registerShape(std::filesystem::path path, std::string id)
+	static void registerShape(path path, std::string id)
 	{
 		Shape shape = getShapeFromFile(path);
 		shape.id = id;
 		shapes[id] = shape;
 
-		Logger::info("Loaded shape " + id);
+		LOG4CXX_INFO(logger, "Loaded shape " << id.c_str());
 	}
 
 	static Shape getShape(std::string id)
@@ -37,9 +39,10 @@ public:
 		return shapes[id];
 	}
 private:
+	static inline log4cxx::LoggerPtr logger = log4cxx::Logger::getLogger("ShapeFactory");
 	static inline std::unordered_map<std::string, Shape> shapes;
 
-	static Shape getShapeFromFile(std::filesystem::path& path)
+	static Shape getShapeFromFile(path& path)
 	{
 		std::ifstream s(path);
 

@@ -2,7 +2,7 @@
 
 #include <functional>
 
-#include "logger.h"
+#include "log4cxx/logger.h"
 #include "../engine/rendering/ImGuiController.h"
 #include "../engine/rendering/Renderer.h"
 #include "imgui/imgui.h"

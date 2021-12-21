@@ -5,11 +5,11 @@
 #include <vector>
 
 #include "../Scene.h"
-#include "BatchedDrawData.h"
 #include "../Camera.h"
 #include "ImGuiController.h"
 #include "FramebufferStack.h"
 #include "post_processing/Bloom.h"
+#include "log4cxx/logger.h"
 // #include "PostProcessing/Tonemapping.h"
 
 class Renderer
@@ -33,6 +33,8 @@ public:
 
 	uint32_t getRenderTexture() const;
 private:
+	static inline log4cxx::LoggerPtr logger = log4cxx::Logger::getLogger("Renderer");
+
 	int lastViewportWidth;
 	int lastViewportHeight;
 

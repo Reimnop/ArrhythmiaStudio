@@ -6,7 +6,7 @@
 
 void MainWindow::glfwErrorCallback(int error_code, const char* description)
 {
-	LOG4CXX_ERROR(logger, "GLFW: " + std::string(description));
+	LOG4CXX_ERROR(logger, "GLFW: " << description);
 }
 
 void MainWindow::glDebugCallback(GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length, const char* message, const void* userParam)

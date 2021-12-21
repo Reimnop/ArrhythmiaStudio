@@ -3482,7 +3482,7 @@ namespace nlohmann
 
     @since version 3.9.0
     */
-    using json = basic_json<nlohmann::ordered_map>;
+    using json = basic_json<nlohmann::ordered_map, std::vector, std::string, bool, std::int64_t, std::uint64_t, float>;
 
 }  // namespace nlohmann
 

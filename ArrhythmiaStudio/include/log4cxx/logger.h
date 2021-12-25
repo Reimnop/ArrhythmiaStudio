@@ -27,6 +27,7 @@
 	#pragma warning ( disable: 4231 4251 4275 4786 )
 #endif
 
+#include <stdlib.h>
 #include <log4cxx/helpers/appenderattachableimpl.h>
 #include <log4cxx/level.h>
 #include <log4cxx/helpers/pool.h>
@@ -1930,7 +1931,8 @@ Logs a error if the condition is not true.
 #define LOG4CXX_ASSERT(logger, condition, message) do { \
 		if (!(condition) && logger->isErrorEnabled()) {\
 			::log4cxx::helpers::MessageBuffer oss_; \
-			logger->forcedLog(::log4cxx::Level::getError(), oss_.str(oss_ << message), LOG4CXX_LOCATION); }} while (0)
+			logger->forcedLog(::log4cxx::Level::getError(), oss_.str(oss_ << message), LOG4CXX_LOCATION); \
+			std::exit(EXIT_FAILURE); }} while (0)
 
 /**
 Logs a error if the condition is not true, formatting with libfmt
@@ -1941,7 +1943,8 @@ Logs a error if the condition is not true, formatting with libfmt
 */
 #define LOG4CXX_ASSERT_FMT(logger, condition, ...) do { \
 		if (!(condition) && logger->isErrorEnabled()) {\
-			logger->forcedLog(::log4cxx::Level::getError(), fmt::format( __VA_ARGS__ ), LOG4CXX_LOCATION); }} while (0)
+			logger->forcedLog(::log4cxx::Level::getError(), fmt::format( __VA_ARGS__ ), LOG4CXX_LOCATION); \
+			std::exit(EXIT_FAILURE); }} while (0)
 
 #else
 #define LOG4CXX_ERROR(logger, message)

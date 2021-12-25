@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <imgui/imgui.h>
 
+#include "log4cxx/logger.h"
 #include "DocManager.h"
 #include "DiscordManager.h"
 #include "Level.h"
@@ -22,6 +23,8 @@ public:
 	// Runs every frame
 	void update();
 private:
+	static inline log4cxx::LoggerPtr logger = log4cxx::Logger::getLogger("GameManager");
+
 	GLFWwindow* mainWindow;
 	DocManager* docManager;
 	DiscordManager* discordManager;

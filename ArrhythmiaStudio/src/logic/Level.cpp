@@ -6,9 +6,10 @@
 #include "factories/LevelEventFactory.h"
 #include "object_behaviours/LevelObjectBehaviour.h"
 
-Level::Level(path audioPath, path levelDir)
+Level::Level(std::string name, path audioPath, path levelDir)
 {
 	this->levelDir = levelDir;
+	this->name = name;
 
 	// Copy audio file to level directory
 	copy_file(audioPath, levelDir / "audio.ogg");

@@ -1,0 +1,36 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<ControlTemplate 
+		x:Key="HorizontalScrollBarStyle" 
+		TargetType="{x:Type ScrollBar}">
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="0.00001*"/>
+			</Grid.ColumnDefinitions>
+			<Border
+				BorderThickness="0"
+				Background="#292929" />
+			<Track 
+				Name="PART_Track"
+				Grid.Column="1"
+				IsDirectionReversed="False">
+				<Track.DecreaseRepeatButton>
+					<RepeatButton 
+						Style="{StaticResource ScrollBarRepeatButtonStyle}"
+						Command="ScrollBar.PageLeftCommand" />
+				</Track.DecreaseRepeatButton>
+				<Track.Thumb>
+					<Thumb 
+						Style="{StaticResource ScrollBarThumbStyle}"
+						Margin="2"/>
+				</Track.Thumb>
+				<Track.IncreaseRepeatButton>
+					<RepeatButton 
+						Style="{StaticResource ScrollBarRepeatButtonStyle}"
+						Command="ScrollBar.PageRightCommand" />
+				</Track.IncreaseRepeatButton>
+			</Track>
+		</Grid>
+	</ControlTemplate>
+
+</ResourceDictionary>

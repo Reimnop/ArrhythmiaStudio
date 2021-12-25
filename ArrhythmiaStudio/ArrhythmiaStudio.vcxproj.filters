@@ -2603,6 +2603,9 @@
     <ClInclude Include="include\log4cxx\writerappender.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Arguments.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\glm\ext\matrix_clip_space.inl">
@@ -3059,6 +3062,8 @@
     <None Include="libapr-1.dll" />
     <None Include="libexpat.dll" />
     <None Include="log4cxx.cfg" />
+    <None Include="test_level\audio.ogg" />
+    <None Include="test_level\level.aslv" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs\glfw3.lib" />

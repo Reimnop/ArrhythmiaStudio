@@ -2,7 +2,7 @@
 
 #include <functional>
 
-#include "log4cxx/logger.h"
+#include "../Arguments.h"
 #include "../engine/rendering/ImGuiController.h"
 #include "../engine/rendering/Renderer.h"
 #include "imgui/imgui.h"
@@ -60,7 +60,23 @@ GameManager::GameManager(GLFWwindow* window)
 	ShapeFactory::registerShape("Assets/Shapes/triangle.shp", "triangle");
 	ShapeFactory::registerShape("Assets/Shapes/right_angled_triangle.shp", "right_angled_triangle");
 
-	level = new Level(R"(C:\Users\Reimnop\Documents\ASLevels\test_lv)");
+	// Initialize level based on arguments
+	std::string str;
+	if (Arguments::tryGet("new", &str))
+	{
+		std::string levelPath = Arguments::get("level-path");
+		std::string audioPath = Arguments::get("audio-path");
+		level = new Level(str, audioPath, levelPath);
+	}
+	else if (Arguments::tryGet("open", &str))
+	{
+		level = new Level(str);
+	}
+	else
+	{
+		LOG4CXX_ERROR(logger, "Level not specified!");
+		std::exit(EXIT_FAILURE);
+	}
 
 	editorWindows.push_back(new Viewport());
 	editorWindows.push_back(new Timeline());

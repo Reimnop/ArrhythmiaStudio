@@ -1,10 +1,13 @@
+#include "Arguments.h"
 #include "helper.h"
 #include "MainWindow.h"
 
 #include "log4cxx/propertyconfigurator.h"
 
-int main()
+int main(int argc, char** argv)
 {
+	Arguments::parseArguments(argc, argv);
+
 	log4cxx::PropertyConfigurator::configure("log4cxx.cfg");
 
 	log4cxx::LoggerPtr logger = log4cxx::Logger::getLogger("Main");

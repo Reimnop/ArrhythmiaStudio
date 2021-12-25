@@ -1014,8 +1014,6 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <None Include="Assets\Shapes\right_angled_triangle.shp" />
     <None Include="Assets\Shapes\square.shp" />
     <None Include="Assets\Shapes\triangle.shp" />
-    <None Include="Assets\StartupLevel\level.aslv" />
-    <None Include="Assets\StartupLevel\song.ogg" />
     <None Include="avcodec-58.dll" />
     <None Include="avdevice-58.dll" />
     <None Include="avfilter-7.dll" />

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ookii.Dialogs.Wpf;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -28,11 +29,22 @@ namespace Launcher
 
         private void OpenClick(object sender, RoutedEventArgs e)
         {
+            VistaFolderBrowserDialog dialog = new VistaFolderBrowserDialog();
+            dialog.Description = "Select level folder";
 
+            if ((bool)dialog.ShowDialog(this))
+            {
+                Process process = new Process();
+                process.StartInfo.FileName = "Arrhythmia Studio.exe";
+                process.StartInfo.Arguments = $"-open \"{dialog.SelectedPath}\"";
+                process.Start();
+                Application.Current.Shutdown();
+            }
         }
 
         private void NewClick(object sender, RoutedEventArgs e)
         {
+
         }
     }
 }

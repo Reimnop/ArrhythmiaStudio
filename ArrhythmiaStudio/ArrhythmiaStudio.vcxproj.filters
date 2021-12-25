@@ -3046,8 +3046,6 @@
     <None Include="Assets\Shapes\right_angled_triangle.shp" />
     <None Include="Assets\Shapes\triangle.shp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-threshold.comp" />
-    <None Include="Assets\StartupLevel\level.aslv" />
-    <None Include="Assets\StartupLevel\song.ogg" />
     <None Include="Assets\Documentation\general_usage.md" />
     <None Include="Assets\Documentation\testing.md" />
     <None Include="Assets\Shaders\text.vert" />

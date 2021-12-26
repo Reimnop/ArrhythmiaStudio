@@ -65,8 +65,8 @@ GameManager::GameManager(GLFWwindow* window)
 	if (Arguments::tryGet("new", &str))
 	{
 		std::string levelPath = Arguments::get("level-path");
-		std::string audioPath = Arguments::get("audio-path");
-		level = new Level(str, audioPath, levelPath);
+		std::string songPath = Arguments::get("song-path");
+		level = new Level(str, songPath, levelPath);
 	}
 	else if (Arguments::tryGet("open", &str))
 	{

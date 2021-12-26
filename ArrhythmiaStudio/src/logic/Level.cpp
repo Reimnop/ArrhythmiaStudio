@@ -6,15 +6,15 @@
 #include "factories/LevelEventFactory.h"
 #include "object_behaviours/LevelObjectBehaviour.h"
 
-Level::Level(std::string name, path audioPath, path levelDir)
+Level::Level(std::string name, path songPath, path levelDir)
 {
 	this->levelDir = levelDir;
 	this->name = name;
 
 	// Copy audio file to level directory
-	copy_file(audioPath, levelDir / "audio.ogg");
+	copy_file(songPath, levelDir / "song.ogg");
 
-	clip = new AudioClip(levelDir / "audio.ogg");
+	clip = new AudioClip(levelDir / "song.ogg");
 	levelLength = clip->getLength();
 
 	for (std::string id : LevelEventFactory::getEventIds())
@@ -35,7 +35,7 @@ Level::Level(path levelDir)
 {
 	this->levelDir = levelDir;
 
-	clip = new AudioClip(levelDir / "audio.ogg");
+	clip = new AudioClip(levelDir / "song.ogg");
 	levelLength = clip->getLength();
 
 	std::ifstream i(levelDir / "level.aslv");

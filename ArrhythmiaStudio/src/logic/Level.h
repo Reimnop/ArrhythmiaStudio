@@ -31,7 +31,7 @@ public:
 	float bpm = 120.0f;
 
 	// This constructor creates a new level
-	Level(std::string name, path audioPath, path levelDir);
+	Level(std::string name, path songPath, path levelDir);
 	// This constructor opens an existing level
 	Level(path levelDir);
 	~Level();

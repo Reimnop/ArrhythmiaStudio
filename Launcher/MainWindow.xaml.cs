@@ -44,7 +44,15 @@ namespace Launcher
 
         private void NewClick(object sender, RoutedEventArgs e)
         {
-
+            NewLevelDialog nld = new NewLevelDialog();
+            if ((bool)nld.ShowDialog())
+            {
+                Process process = new Process();
+                process.StartInfo.FileName = "Arrhythmia Studio.exe";
+                process.StartInfo.Arguments = $"-new \"{nld.LevelName}\" -level-path \"{nld.LevelPath}\" -song-path \"{nld.SongPath}\"";
+                process.Start();
+                Application.Current.Shutdown();
+            }
         }
     }
 }

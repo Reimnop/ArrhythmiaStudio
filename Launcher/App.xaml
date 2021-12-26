@@ -16,6 +16,7 @@
                 <ResourceDictionary Source="Style/ScrollBarStyle.xaml"/>
                 <ResourceDictionary Source="Style/ScrollViewerStyle.xaml"/>
                 <ResourceDictionary Source="Style/LevelButtonStyle.xaml"/>
+                <ResourceDictionary Source="Style/TextBoxStyle.xaml"/>
 	        </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

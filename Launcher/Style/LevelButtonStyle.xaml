@@ -8,12 +8,17 @@
                     <Border 
 		                Name="Background"
 		                Background="Transparent">
-	                    <Grid Margin="4,0,0,4">
+	                    <Grid Margin="4,0,4,0">
 		                    <TextBlock 
 	                            Foreground="{TemplateBinding Foreground}" 
 	                            Text="{TemplateBinding Property=LevelName}"
 	                            VerticalAlignment="Top"
 	                            TextTrimming="CharacterEllipsis"/>
+		                    <TextBlock 
+			                    Foreground="{TemplateBinding Foreground}" 
+			                    Text="{TemplateBinding Property=LastOpened}"
+                                HorizontalAlignment="Right"
+			                    VerticalAlignment="Top"/>
                             <TextBlock 
                                 Opacity="0.75"
 	                            Foreground="{TemplateBinding Foreground}" 

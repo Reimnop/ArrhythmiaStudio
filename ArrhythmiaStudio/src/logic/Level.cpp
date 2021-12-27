@@ -1,91 +1,339 @@
 #include "Level.h"
 
-Level::~Level()
+#include <fstream>
+
+#include "LevelObject.h"
+#include "factories/LevelEventFactory.h"
+#include "object_behaviours/LevelObjectBehaviour.h"
+
+Level::Level(std::string name, path songPath, path levelDir)
 {
-	for (const ColorSlot* colorSlot : colorSlots)
+	this->levelDir = levelDir;
+	this->name = name;
+
+	// Copy audio file to level directory
+	copy_file(songPath, levelDir / "song.ogg");
+
+	clip = new AudioClip(levelDir / "song.ogg");
+	levelLength = clip->getLength();
+
+	for (std::string id : LevelEventFactory::getEventIds())
 	{
-		delete colorSlot;
+		levelEvents.emplace(id, new TypedLevelEvent(this, id));
 	}
 
-	for (const LevelEvent* levelEvent : levelEvents)
+	for (int i = 0; i < 20; i++)
+	{
+		colorSlots.push_back(new ColorSlot());
+	}
+
+	std::ofstream o(levelDir / "level.aslv");
+	o << toJson();
+}
+
+Level::Level(path levelDir)
+{
+	this->levelDir = levelDir;
+
+	clip = new AudioClip(levelDir / "song.ogg");
+	levelLength = clip->getLength();
+
+	std::ifstream i(levelDir / "level.aslv");
+	json j;
+	i >> j;
+
+	name = j["name"].get<std::string>();
+	bpm = j["bpm"].get<float>();
+	offset = j["offset"].get<float>();
+
+	json::array_t objArr = j["objects"];
+	for (json objJ : objArr)
+	{
+		LevelObject* obj = new LevelObject(objJ, this);
+		insertObject(obj);
+		insertActivateList(obj);
+		insertDeactivateList(obj);
+	}
+	recalculateObjectsState();
+
+	for (auto& [id, obj] : levelObjects)
+	{
+		obj->initializeParent();
+	}
+
+	// Prepare level events map
+	for (std::string id : LevelEventFactory::getEventIds())
+	{
+		levelEvents[id] = nullptr;
+	}
+
+	json::array_t eventsArr = j["events"];
+	for (json eventJ : eventsArr)
+	{
+		TypedLevelEvent* levelEvent = new TypedLevelEvent(this, eventJ);
+
+		if (levelEvents[levelEvent->getType()])
+		{
+			LOG4CXX_WARN(logger, "Duplicate level event, skipping! Duplicated value: " << levelEvent->getType().c_str());
+			delete levelEvent;
+		}
+		else 
+		{
+			levelEvents[levelEvent->getType()] = levelEvent;
+		}
+	}
+
+	for (auto &[id, levelEvent] : levelEvents)
+	{
+		if (!levelEvent)
+		{
+			LOG4CXX_WARN(logger, "Missing level event, creating new! Missing value: " << id.c_str());
+			levelEvents[id] = new TypedLevelEvent(this, id);
+		}
+	}
+
+	json::array_t colorSlotsArr = j["color_slots"];
+	for (json colorSlotJ : colorSlotsArr)
+	{
+		colorSlots.push_back(new ColorSlot(colorSlotJ));
+	}
+}
+
+Level::~Level()
+{
+	for (auto &[id, obj] : levelObjects)
+	{
+		delete obj;
+	}
+
+	for (auto &[id, levelEvent] : levelEvents)
 	{
 		delete levelEvent;
 	}
 
-	for (const std::pair<uint64_t, LevelObject*> x : levelObjects)
+	delete clip;
+}
+
+void Level::seek(float t)
+{
+	time = t;
+	clip->pause();
+	clip->seek(t);
+	update();
+}
+
+void Level::update()
+{
+	time = clip->getPosition();
+
+	if (time > lastTime)
 	{
-		delete x.second;
+		updateForward();
+	}
+	else if (time < lastTime)
+	{
+		updateReverse();
+	}
+
+	// Update events
+	for (auto& [type, levelEvent] : levelEvents)
+	{
+		levelEvent->update(time);
+	}
+
+	// Update theme
+	for (ColorSlot* slot : colorSlots)
+	{
+		slot->update(time);
+	}
+
+	// Update objects
+	for (LevelObject* obj : aliveObjects)
+	{
+		obj->update(time);
+	}
+
+	lastTime = time;
+}
+
+void Level::addObject(LevelObject* object)
+{
+	insertObject(object);
+	insertActivateList(object);
+	insertDeactivateList(object);
+	recalculateObjectsState();
+}
+
+void Level::deleteObject(LevelObject* object)
+{
+	removeObject(object);
+	removeActivateList(object);
+	removeDeactivateList(object);
+	recalculateObjectsState();
+
+	delete object;
+}
+
+void Level::insertObject(LevelObject* object)
+{
+	object->level = this;
+	levelObjects.emplace(object->id, object);
+}
+
+void Level::removeObject(LevelObject* object)
+{
+	object->level = nullptr;
+	levelObjects.erase(object->id);
+}
+
+void Level::insertActivateList(LevelObject* object)
+{
+	activateList.insert(
+		std::upper_bound(activateList.begin(), activateList.end(), object,
+			[](LevelObject* a, LevelObject* b)
+			{
+				return a->startTime < b->startTime;
+			}), object);
+}
+
+void Level::insertDeactivateList(LevelObject* object)
+{
+	deactivateList.insert(
+		std::upper_bound(deactivateList.begin(), deactivateList.end(), object,
+			[](LevelObject* a, LevelObject* b)
+			{
+				return a->endTime < b->endTime;
+			}), object);
+}
+
+void Level::removeActivateList(LevelObject* object)
+{
+	activateList.erase(std::remove(activateList.begin(), activateList.end(), object));
+}
+
+void Level::removeDeactivateList(LevelObject* object)
+{
+	deactivateList.erase(std::remove(deactivateList.begin(), deactivateList.end(), object));
+}
+
+void Level::recalculateObjectsState()
+{
+	std::unordered_map<LevelObject*, int> activeTable;
+	aliveObjects.clear();
+	activateIndex = 0;
+	deactivateIndex = 0;
+
+	for (auto &[id, obj] : levelObjects)
+	{
+		activeTable[obj] = 0;
+	}
+
+	for (LevelObject* object : activateList)
+	{
+		if (object->startTime > time)
+		{
+			break;
+		}
+
+		activateIndex++;
+		activeTable[object]++;
+	}
+
+	for (LevelObject* object : deactivateList)
+	{
+		if (object->endTime > time)
+		{
+			break;
+		}
+
+		deactivateIndex++;
+		activeTable[object]--;
+	}
+
+	for (auto &[obj, activeIndex] : activeTable)
+	{
+		if (activeIndex % 2)
+		{
+			obj->node->setActive(true);
+			aliveObjects.insert(obj);
+		}
+		else
+		{
+			obj->node->setActive(false);
+		}
 	}
 }
 
-void Level::insertLevelEvent(LevelEvent* value)
+void Level::updateForward()
 {
-	if (hasLevelEvent(value->type))
+	while (activateIndex < activateList.size() && time >= activateList[activateIndex]->startTime)
 	{
-		return;
+		LevelObject* obj = activateList[activateIndex];
+		obj->node->setActive(true);
+		aliveObjects.insert(obj);
+		activateIndex++;
 	}
 
-	const std::vector<LevelEvent*>::iterator it = std::lower_bound(levelEvents.begin(), levelEvents.end(), value,
-																   [](const LevelEvent* a, const LevelEvent* b)
-																   {
-																       return a->type < b->type;
-																   });
-	levelEvents.insert(it, value);
-
-	levelEventLookup[value->type] = true;
+	while (deactivateIndex < deactivateList.size() && time >= deactivateList[deactivateIndex]->endTime)
+	{
+		LevelObject* obj = deactivateList[deactivateIndex];
+		obj->node->setActive(false);
+		aliveObjects.erase(obj);
+		deactivateIndex++;
+	}
 }
 
-void Level::eraseLevelEvent(LevelEventType type)
+void Level::updateReverse()
 {
-	const std::vector<LevelEvent*>::iterator it = std::find_if(levelEvents.begin(), levelEvents.end(),
-															   [type](const LevelEvent* a)
-															   {
-															       return a->type == type;
-															   });
+	while (deactivateIndex - 1 >= 0 && time < deactivateList[deactivateIndex - 1]->endTime)
+	{
+		LevelObject* obj = deactivateList[deactivateIndex - 1];
+		obj->node->setActive(true);
+		aliveObjects.insert(obj);
+		deactivateIndex--;
+	}
 
-	delete (*it);
-	levelEvents.erase(it);
-
-	levelEventLookup[type] = false;
+	while (activateIndex - 1 >= 0 && time < activateList[activateIndex - 1]->startTime)
+	{
+		LevelObject* obj = activateList[activateIndex - 1];
+		obj->node->setActive(false);
+		aliveObjects.erase(obj);
+		activateIndex--;
+	}
 }
 
-LevelEvent* Level::getLevelEvent(LevelEventType type)
+json Level::toJson()
 {
-	const std::vector<LevelEvent*>::iterator it = std::find_if(levelEvents.begin(), levelEvents.end(),
-															   [type](const LevelEvent* a)
-															   {
-															   	   return a->type == type;
-															   });
-	return *it;
-}
-
-bool Level::hasLevelEvent(LevelEventType type)
-{
-	return levelEventLookup[type];
-}
-
-nlohmann::ordered_json Level::toJson()
-{
-	nlohmann::ordered_json j;
+	json j;
 	j["name"] = name;
-
-	j["color_slots"] = nlohmann::ordered_json::array();
-	for (int i = 0; i < colorSlots.size(); i++)
+	j["bpm"] = bpm;
+	j["offset"] = offset;
+	json::array_t objArr;
+	objArr.reserve(levelObjects.size());
+	for (auto &[id, obj] : levelObjects)
 	{
-		j["color_slots"][i] = colorSlots[i]->toJson();
+		objArr.push_back(obj->toJson());
 	}
-
-	j["level_events"] = nlohmann::ordered_json::array();
-	for (int i = 0; i < levelEvents.size(); i++)
+	j["objects"] = objArr;
+	json::array_t eventArr;
+	eventArr.reserve(levelEvents.size());
+	for (auto &[type, levelEvent] : levelEvents)
 	{
-		j["level_events"][i] = levelEvents[i]->toJson();
+		eventArr.push_back(levelEvent->toJson());
 	}
-
-	j["objects"] = nlohmann::ordered_json::array();
-	for (const std::pair<uint64_t, LevelObject*> x : levelObjects)
+	j["events"] = eventArr;
+	json::array_t colorSlotArr;
+	colorSlotArr.reserve(colorSlots.size());
+	for (ColorSlot* slot : colorSlots)
 	{
-		j["objects"].push_back(x.second->toJson());
+		colorSlotArr.push_back(slot->toJson());
 	}
-
+	j["color_slots"] = colorSlotArr;
 	return j;
+}
+
+void Level::save()
+{
+	std::ofstream o(levelDir / "level.aslv");
+	o << toJson();
 }

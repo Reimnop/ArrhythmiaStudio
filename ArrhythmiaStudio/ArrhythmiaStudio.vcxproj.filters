@@ -21,16 +21,16 @@
     <ClCompile Include="src\MainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\logic\Scene.cpp">
+    <ClCompile Include="src\engine\Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\logic\SceneNode.cpp">
+    <ClCompile Include="src\engine\SceneNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\logic\Transform.cpp">
+    <ClCompile Include="src\engine\Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\ImGuiController.cpp">
+    <ClCompile Include="src\engine\rendering\ImGuiController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\imgui\imgui.cpp">
@@ -54,49 +54,25 @@
     <ClCompile Include="include\imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\Camera.cpp">
+    <ClCompile Include="src\engine\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\Material.cpp">
+    <ClCompile Include="src\engine\rendering\Material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\Shader.cpp">
+    <ClCompile Include="src\engine\rendering\Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\Mesh.cpp">
+    <ClCompile Include="src\engine\rendering\Mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\MeshRenderer.cpp">
+    <ClCompile Include="src\engine\rendering\MeshRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\Renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\GameManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\LevelManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\LevelObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\Timeline.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\Properties.cpp">
+    <ClCompile Include="src\engine\rendering\Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\imgui\imgui_stdlib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\animation\ColorSequence.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\ColorSlot.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\Theme.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\glad\glad.c">
@@ -105,22 +81,13 @@
     <ClCompile Include="include\glm\detail\glm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\logic\AudioClip.cpp">
+    <ClCompile Include="src\engine\AudioClip.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\logic\ShapeManager.cpp">
+    <ClCompile Include="src\engine\rendering\ComputeShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\logic\DataManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\Level.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\rendering\ComputeShader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\rendering\Texture2D.cpp">
+    <ClCompile Include="src\engine\rendering\Texture2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\discord\achievement_manager.cpp">
@@ -168,31 +135,10 @@
     <ClCompile Include="src\logic\DiscordManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\logic\animation\Sequence.cpp">
+    <ClCompile Include="src\engine\rendering\post_processing\Bloom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\logic\AnimationChannel.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\LevelEvent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\Events.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\animation\Easing.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\rendering\post_processing\Bloom.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\rendering\post_processing\Tonemapping.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\imgui\imgui_editorlib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\DebugMenu.cpp">
+    <ClCompile Include="src\engine\rendering\post_processing\Tonemapping.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\stb\stb_vorbis.c">
@@ -306,70 +252,76 @@
     <ClCompile Include="src\logic\VideoExporter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\logic\UndoRedoManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\undo_commands\AddObjectCmd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\undo_commands\RemoveObjectCmd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\undo_commands\EditObjectCmd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\undo_commands\ChangeParentCmd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\undo_commands\ObjectKeyframeEditCmd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\undo_commands\ObjectAddChannelCmd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\undo_commands\ObjectAddKeyframeCmd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\undo_commands\ObjectRemoveKeyframeCmd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\undo_commands\AddLevelEventCmd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\undo_commands\EventKeyframeAddCmd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\undo_commands\EventKeyframeRemoveCmd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\undo_commands\EventKeyframeEditCmd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\undo_commands\ColorAddKeyframeCmd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\undo_commands\ColorRemoveKeyframeCmd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\logic\undo_commands\ColorKeyframeEditCmd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\logic\DocManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\text\Font.cpp">
+    <ClCompile Include="src\engine\rendering\text\Font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\text\TextMeshGenerator.cpp">
+    <ClCompile Include="src\engine\rendering\text\TextMeshGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\text\SampleTextRenderer.cpp">
+    <ClCompile Include="src\engine\rendering\text\SampleTextRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\DrawDataProcessor.cpp">
+    <ClCompile Include="src\engine\rendering\TextRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\rendering\TextRenderer.cpp">
+    <ClCompile Include="src\logic\GameManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\object_behaviours\NormalObjectBehaviour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\Level.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\LevelObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\object_behaviours\AnimateableObjectBehaviour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\editor_windows\Viewport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\editor_windows\Timeline.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\editor_windows\Properties.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\animation\Sequence.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\editor_windows\Events.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\level_events\AnimateableLevelEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\level_events\TypedLevelEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\level_events\CameraLevelEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\rendering\drawers\BatchedDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\rendering\drawers\TextDrawer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\object_behaviours\TextObjectBehaviour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\editor_windows\Themes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\animation\ColorSequence.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logic\ColorSlot.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -377,16 +329,16 @@
     <ClInclude Include="src\MainWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\Scene.h">
+    <ClInclude Include="src\engine\Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\SceneNode.h">
+    <ClInclude Include="src\engine\SceneNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\Transform.h">
+    <ClInclude Include="src\engine\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\ImGuiController.h">
+    <ClInclude Include="src\engine\rendering\ImGuiController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\imgui\imconfig.h">
@@ -413,88 +365,43 @@
     <ClInclude Include="include\imgui\imstb_truetype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Camera.h">
+    <ClInclude Include="src\engine\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Material.h">
+    <ClInclude Include="src\engine\rendering\Material.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Shader.h">
+    <ClInclude Include="src\engine\rendering\Shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\MaterialProperty.h">
+    <ClInclude Include="src\engine\rendering\MaterialProperty.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\MaterialPropertyType.h">
+    <ClInclude Include="src\engine\rendering\MaterialPropertyType.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Mesh.h">
+    <ClInclude Include="src\engine\rendering\Mesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\VertexAttrib.h">
+    <ClInclude Include="src\engine\rendering\VertexAttrib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\BatchedDrawData.h">
+    <ClInclude Include="src\engine\rendering\BatchedDrawData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\RendererComponent.h">
+    <ClInclude Include="src\engine\rendering\RendererComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\MeshRenderer.h">
+    <ClInclude Include="src\engine\rendering\MeshRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\Renderer.h">
+    <ClInclude Include="src\engine\rendering\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\GameManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\LevelManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\LevelObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\animation\Keyframe.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\ObjectAction.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\ObjectActionType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\Timeline.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\Properties.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rendering\FramebufferStack.h">
+    <ClInclude Include="src\engine\rendering\FramebufferStack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\imgui\imgui_stdlib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\animation\ColorSequence.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\animation\ColorKeyframe.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\animation\Color.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\ColorSlot.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\Theme.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\GlobalConstants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\glad\glad.h">
@@ -1355,148 +1262,16 @@
     <ClInclude Include="include\KHR\khrplatform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\nlohmann\adl_serializer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\byte_container_with_subtype.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\json.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\json_fwd.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\ordered_map.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\exceptions.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\hash.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\json_pointer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\json_ref.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\macro_scope.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\macro_unscope.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\string_escape.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\value_t.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\output\binary_writer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\output\output_adapters.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\output\serializer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\meta\cpp_future.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\meta\detected.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\meta\identity_tag.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\meta\is_sax.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\meta\type_traits.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\meta\void_t.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\input\binary_reader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\input\input_adapters.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\input\json_sax.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\input\lexer.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\input\parser.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\input\position_t.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\iterators\internal_iterator.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\iterators\iter_impl.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\iterators\iteration_proxy.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\iterators\iterator_traits.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\iterators\json_reverse_iterator.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\iterators\primitive_iterator.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\conversions\from_json.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\conversions\to_chars.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\detail\conversions\to_json.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\thirdparty\hedley\hedley.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\nlohmann\thirdparty\hedley\hedley_undef.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\bass\bass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\AudioClip.h">
+    <ClInclude Include="src\engine\AudioClip.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\Shape.h">
+    <ClInclude Include="src\engine\rendering\ComputeShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\ShapeManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\DataManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\Level.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rendering\ComputeShader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rendering\Texture2D.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\LevelCreateInfo.h">
+    <ClInclude Include="src\engine\rendering\Texture2D.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\discord\achievement_manager.h">
@@ -1553,46 +1328,19 @@
     <ClInclude Include="src\logic\DiscordManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\LevelEventType.h">
+    <ClInclude Include="src\engine\rendering\post_processing\Bloom.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\animation\Sequence.h">
+    <ClInclude Include="src\engine\rendering\post_processing\PostProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\AnimationChannel.h">
+    <ClInclude Include="src\engine\rendering\GlobalConstants.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\AnimationChannelType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\LevelEvent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\Events.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\animation\EaseType.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rendering\post_processing\Bloom.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rendering\post_processing\PostProcessor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rendering\GlobalConstants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\rendering\post_processing\Tonemapping.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\imgui\imgui_editorlib.h">
+    <ClInclude Include="src\engine\rendering\post_processing\Tonemapping.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\DebugMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\helper.h">
@@ -2171,112 +1919,691 @@
     <ClInclude Include="src\logic\VideoExporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\logic\UndoRedoManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\UndoCommand.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\undo_commands\AddObjectCmd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\undo_commands\RemoveObjectCmd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\undo_commands\MultiUndoCmd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\LevelObjectProperties.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\undo_commands\EditObjectCmd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\undo_commands\ChangeParentCmd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\undo_commands\ObjectKeyframeEditCmd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\undo_commands\ObjectAddChannelCmd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\undo_commands\ObjectAddKeyframeCmd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\undo_commands\ObjectRemoveKeyframeCmd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\undo_commands\AddLevelEventCmd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\undo_commands\EventKeyframeAddCmd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\undo_commands\EventKeyframeRemoveCmd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\undo_commands\EventKeyframeEditCmd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\undo_commands\ColorAddKeyframeCmd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\undo_commands\ColorRemoveKeyframeCmd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\logic\undo_commands\ColorKeyframeEditCmd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\imgui\imgui_markdown.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\DocManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\engine\rendering\text\Font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\rendering\text\AtlasInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\rendering\text\Metrics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\rendering\text\Glyph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\rendering\text\Bounds.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\rendering\text\TextMeshGenerator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\rendering\text\TextVertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\rendering\text\SampleTextRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\rendering\RenderCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\rendering\DrawData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\rendering\TextRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\rendering\TextDrawData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="src\logic\DocPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\text\Font.h">
+    <ClInclude Include="src\logic\GameManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\text\AtlasInfo.h">
+    <ClInclude Include="src\logic\object_behaviours\LevelObjectBehaviour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\text\Metrics.h">
+    <ClInclude Include="src\logic\object_behaviours\NormalObjectBehaviour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\text\Glyph.h">
+    <ClInclude Include="include\json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\text\Bounds.h">
+    <ClInclude Include="src\logic\Shape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\text\TextMeshGenerator.h">
+    <ClInclude Include="src\logic\Level.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\text\TextVertex.h">
+    <ClInclude Include="src\logic\LevelObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\text\SampleTextRenderer.h">
+    <ClInclude Include="src\logic\object_behaviours\AnimateableObjectBehaviour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\RenderCommand.h">
+    <ClInclude Include="src\logic\editor_windows\Viewport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\DrawData.h">
+    <ClInclude Include="src\logic\editor_windows\EditorWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\DrawCommand.h">
+    <ClInclude Include="src\logic\editor_windows\Timeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\DrawDataProcessor.h">
+    <ClInclude Include="src\logic\Selection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\TextRenderer.h">
+    <ClInclude Include="src\logic\editor_windows\Properties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\rendering\TextDrawData.h">
+    <ClInclude Include="src\logic\factories\ObjectBehaviourFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\factories\ShapeFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\animation\Sequence.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\animation\Keyframe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\animation\Easing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\data\KeyframeInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\data\KeyframeTimeEditInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\level_events\LevelEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\editor_windows\Events.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\factories\LevelEventFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\level_events\AnimateableLevelEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\level_events\TypedLevelEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\level_events\CameraLevelEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\rendering\drawers\Drawer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\rendering\drawers\BatchedDrawer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\rendering\drawers\BatchedVertex.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\rendering\drawers\TextDrawer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\object_behaviours\TextObjectBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\editor_windows\Themes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\animation\Color.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\animation\ColorKeyframe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\animation\ColorSequence.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\data\ColorKeyframeInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\data\ColorKeyframeTimeEditInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\ColorSlot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\config\propertysetter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\db\odbcappender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\filter\andfilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\filter\denyallfilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\filter\expressionfilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\filter\levelmatchfilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\filter\levelrangefilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\filter\locationinfofilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\filter\loggermatchfilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\filter\mapfilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\filter\propertyfilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\filter\stringmatchfilter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\absolutetimedateformat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\appenderattachableimpl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\aprinitializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\bufferedoutputstream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\bufferedwriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\bytearrayinputstream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\bytearrayoutputstream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\bytebuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\cacheddateformat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\charsetdecoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\charsetencoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\class.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\classregistration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\cyclicbuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\datagrampacket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\datagramsocket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\date.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\dateformat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\datelayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\datetimedateformat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\exception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\fileinputstream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\fileoutputstream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\filewatchdog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\inetaddress.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\inputstream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\inputstreamreader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\integer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\iso8601dateformat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\locale.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\loglog.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\messagebuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\object.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\objectoutputstream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\onlyonceerrorhandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\optionconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\outputstream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\outputstreamwriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\pool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\properties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\propertyresourcebundle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\reader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\relativetimedateformat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\resourcebundle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\serversocket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\simpledateformat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\socket.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\socketoutputstream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\strftimedateformat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\strictmath.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\stringhelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\stringtokenizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\syslogwriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\systemerrwriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\systemoutwriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\tchar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\threadlocal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\threadspecificdata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\timezone.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\transcoder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\writer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\helpers\xml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\net\smtpappender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\net\socketappender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\net\socketappenderskeleton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\net\sockethubappender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\net\syslogappender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\net\telnetappender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\net\xmlsocketappender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\nt\nteventlogappender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\nt\outputdebugstringappender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\classnamepatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\datepatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\filedatepatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\filelocationpatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\formattinginfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\fulllocationpatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\integerpatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\levelpatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\linelocationpatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\lineseparatorpatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\literalpatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\loggerpatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\loggingeventpatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\messagepatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\methodlocationpatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\nameabbreviator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\namepatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\ndcpatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\patternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\patternparser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\propertiespatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\relativetimepatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\threadpatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\pattern\throwableinformationpatternconverter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\private\log4cxx_private.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\rolling\action.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\rolling\filerenameaction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\rolling\filterbasedtriggeringpolicy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\rolling\fixedwindowrollingpolicy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\rolling\gzcompressaction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\rolling\manualtriggeringpolicy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\rolling\rollingfileappender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\rolling\rollingfileappenderskeleton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\rolling\rollingpolicy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\rolling\rollingpolicybase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\rolling\rolloverdescription.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\rolling\sizebasedtriggeringpolicy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\rolling\timebasedrollingpolicy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\rolling\triggeringpolicy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\rolling\zipcompressaction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\spi\location\locationinfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\spi\appenderattachable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\spi\configurator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\spi\defaultrepositoryselector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\spi\errorhandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\spi\filter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\spi\hierarchyeventlistener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\spi\loggerfactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\spi\loggerrepository.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\spi\loggingevent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\spi\optionhandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\spi\repositoryselector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\spi\rootlogger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\spi\triggeringeventevaluator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\varia\fallbackerrorhandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\xml\domconfigurator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\xml\xmllayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\appender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\appenderskeleton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\asyncappender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\basicconfigurator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\boost-std-configuration.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\consoleappender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\dailyrollingfileappender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\defaultconfigurator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\defaultloggerfactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\file.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\fileappender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\hierarchy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\htmllayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\jsonlayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\layout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\level.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\log4cxx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\logmanager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\logstring.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\mdc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\ndc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\patternlayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\portability.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\propertyconfigurator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\provisionnode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\rollingfileappender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\simplelayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\stream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\ttcclayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\version_info.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log4cxx\writerappender.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Arguments.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -2719,8 +3046,6 @@
     <None Include="Assets\Shapes\right_angled_triangle.shp" />
     <None Include="Assets\Shapes\triangle.shp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-threshold.comp" />
-    <None Include="Assets\StartupLevel\level.aslv" />
-    <None Include="Assets\StartupLevel\song.ogg" />
     <None Include="Assets\Documentation\general_usage.md" />
     <None Include="Assets\Documentation\testing.md" />
     <None Include="Assets\Shaders\text.vert" />
@@ -2730,6 +3055,13 @@
     <None Include="Assets\PlayfairDisplay.asfont" />
     <None Include="Assets\Impact.asfont" />
     <None Include="Assets\Shaders\fxaa.comp" />
+    <None Include="log4cxx.dll" />
+    <None Include="libaprutil-1.dll" />
+    <None Include="libapr-1.dll" />
+    <None Include="libexpat.dll" />
+    <None Include="log4cxx.cfg" />
+    <None Include="test_level\audio.ogg" />
+    <None Include="test_level\level.aslv" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs\glfw3.lib" />
@@ -2742,9 +3074,9 @@
     <Library Include="libs\avutil.lib" />
     <Library Include="libs\swresample.lib" />
     <Library Include="libs\swscale.lib" />
+    <Library Include="libs\log4cxx.lib" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Assets\Shapes\shapes_list.txt" />
     <Text Include="Assets\Documentation\doc_list.txt" />
   </ItemGroup>
   <ItemGroup>

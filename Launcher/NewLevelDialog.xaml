@@ -1,0 +1,99 @@
+﻿<Window x:Class="Launcher.NewLevelDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Launcher"
+        mc:Ignorable="d"
+        Title="New level" 
+        Height="148" 
+        Width="360"
+		ResizeMode="NoResize"
+        Style="{StaticResource GlobalStyle}"
+        Background="#2e2e2e">
+    <Grid
+	    Margin="8">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+	    <Grid.RowDefinitions>
+		    <RowDefinition Height="20"/>
+		    <RowDefinition Height="4"/>
+            <RowDefinition Height="20"/>
+		    <RowDefinition Height="4"/>
+            <RowDefinition Height="20"/>
+		    <RowDefinition Height="4"/>
+            <RowDefinition Height="20"/>
+        </Grid.RowDefinitions>
+        <TextBlock
+	        Foreground="White"
+            VerticalAlignment="Center"
+	        Text="Level name"/>
+        <TextBox
+			Name="LevelNameBox"
+	        Grid.Column="1"
+	        Background="#292929"
+	        BorderBrush="#444444"
+	        Foreground="White"
+	        Style="{StaticResource TextBoxStyle}"/>
+        <TextBlock
+            Grid.Row="2"
+	        Foreground="White"
+	        VerticalAlignment="Center"
+	        Text="Level path"/>
+        <Grid
+	        Grid.Row="2"
+	        Grid.Column="1">
+	        <Grid.ColumnDefinitions>
+		        <ColumnDefinition/>
+		        <ColumnDefinition Width="4"/>
+		        <ColumnDefinition Width="60"/>
+	        </Grid.ColumnDefinitions>
+	        <TextBox
+				Name="LevelPathBox"
+		        Background="#292929"
+		        BorderBrush="#444444"
+		        Foreground="White"
+		        Style="{StaticResource TextBoxStyle}"/>
+	        <Button
+		        Grid.Column="2"
+		        Content="Browse"
+		        Style="{StaticResource ButtonStyle}"
+		        Click="LevelPathBrowse_Click"/>
+        </Grid>
+        <TextBlock
+	        Grid.Row="4"
+	        Foreground="White"
+	        VerticalAlignment="Center"
+	        Text="Song path"/>
+        <Grid
+	        Grid.Row="4"
+	        Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+				<ColumnDefinition Width="4"/>
+                <ColumnDefinition Width="60"/>
+            </Grid.ColumnDefinitions>
+	        <TextBox
+				Name="SongPathBox"
+		        Background="#292929"
+		        BorderBrush="#444444"
+		        Foreground="White"
+		        Style="{StaticResource TextBoxStyle}"/>
+            <Button
+                Grid.Column="2"
+                Content="Browse"
+                Style="{StaticResource ButtonStyle}"
+                Click="SongPathBrowse_Click"/>
+        </Grid>
+        <Button
+			Grid.Row="6"
+	        Grid.Column="1"
+	        Content="Create"
+			Width="60"
+			HorizontalAlignment="Right"
+	        Style="{StaticResource ButtonStyle}"
+			Click="CreateLevel_Click"/>
+    </Grid>
+</Window>

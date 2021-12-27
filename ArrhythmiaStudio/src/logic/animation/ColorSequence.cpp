@@ -1,6 +1,12 @@
 #include "ColorSequence.h"
 
+#include "json.hpp"
 #include "Easing.h"
+
+ColorSequence::ColorSequence()
+{
+	lastIndex = 0;
+}
 
 ColorSequence::ColorSequence(int count, ColorKeyframe* keyframes)
 {
@@ -10,6 +16,21 @@ ColorSequence::ColorSequence(int count, ColorKeyframe* keyframes)
 	}
 
 	lastIndex = 0;
+}
+
+ColorSequence::ColorSequence(json& j)
+{
+	fromJson(j);
+}
+
+void ColorSequence::loadKeyframes(std::vector<ColorKeyframe>& keyframes)
+{
+	this->keyframes = keyframes;
+	std::sort(this->keyframes.begin(), this->keyframes.end(),
+		[](ColorKeyframe a, ColorKeyframe b)
+		{
+			return a.time < b.time;
+		});
 }
 
 void ColorSequence::insertKeyframe(ColorKeyframe keyframe)
@@ -100,4 +121,26 @@ Color ColorSequence::update(float time)
 	const float g = std::lerp(left.color.g, right.color.g, easedT);
 	const float b = std::lerp(left.color.b, right.color.b, easedT);
 	return Color(r, g, b);
+}
+
+void ColorSequence::fromJson(json& j)
+{
+	json::array_t arr = j;
+	std::vector<ColorKeyframe> keyframes;
+	keyframes.reserve(arr.size());
+	for (json kfJ : arr)
+	{
+		keyframes.emplace_back(kfJ);
+	}
+	loadKeyframes(keyframes);
+}
+
+json ColorSequence::toJson()
+{
+	json::array_t j;
+	for (ColorKeyframe kf : keyframes)
+	{
+		j.push_back(kf.toJson());
+	}
+	return j;
 }

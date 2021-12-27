@@ -8,7 +8,7 @@
 #include <imgui/imgui_markdown.h>
 
 #include "DocPage.h"
-#include "../rendering/Texture2D.h"
+#include "../engine/rendering/Texture2D.h"
 
 class DocManager
 {

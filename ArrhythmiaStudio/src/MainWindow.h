@@ -2,11 +2,9 @@
 
 #include <GLFW/glfw3.h>
 
-#include "rendering/Renderer.h"
+#include "engine/rendering/Renderer.h"
 
 #ifdef _DEBUG
-// #define SHOW_NON_IMPORTANT
-#define THROW_GL_ERROR
 #define DEBUG_CALLBACK_SYNCHRONOUS
 #endif
 
@@ -28,6 +26,8 @@ public:
 	// Starts main loop
 	void run();
 private:
+	static inline log4cxx::LoggerPtr logger = log4cxx::Logger::getLogger("MainWindow");
+
 	Renderer* renderer;
 
 	GameManager* gameManager;
@@ -35,4 +35,7 @@ private:
 	void onLoad();
 	void onUpdateFrame() const;
 	void onRenderFrame() const;
+
+	static void glfwErrorCallback(int error_code, const char* description);
+	static void glDebugCallback(GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length, const char* message, const void* userParam);
 };

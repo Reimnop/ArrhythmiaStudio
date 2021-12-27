@@ -1,41 +1,29 @@
 #include "MainWindow.h"
 #include "logic/GameManager.h"
 
-#include <helper.h>
-#include <logger.h>
-#include <bass/bass.h>
+#include "helper.h"
+#include "bass/bass.h"
 
-void glfwErrorCallback(int error_code, const char* description)
+void MainWindow::glfwErrorCallback(int error_code, const char* description)
 {
-	Logger::error("GLFW: " + std::string(description));
+	LOG4CXX_ERROR(logger, "GLFW: " << description);
 }
 
-void glDebugCallback(GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length, const char* message, const void* userParam)
+void MainWindow::glDebugCallback(GLenum source, GLenum type, unsigned int id, GLenum severity, GLsizei length, const char* message, const void* userParam)
 {
 	std::string msgStr = std::string(message, length);
 
 	switch (severity)
 	{
-#ifdef SHOW_NON_IMPORTANT
 	case GL_DEBUG_SEVERITY_LOW:
-		Logger::info("OpenGL: " + msgStr);
+		LOG4CXX_DEBUG(logger, "OpenGL: " << msgStr.c_str());
 		break;
-#endif
 	case GL_DEBUG_SEVERITY_MEDIUM:
-		Logger::warn("OpenGL: " + msgStr);
+		LOG4CXX_WARN(logger, "OpenGL: " << msgStr.c_str());
 		break;
 	case GL_DEBUG_SEVERITY_HIGH:
-#ifdef THROW_GL_ERROR
-		throw std::runtime_error(msgStr);
-#else
-		Logger::error("OpenGL: " + msgStr);
-#endif
+		LOG4CXX_ERROR(logger, "OpenGL: " << msgStr.c_str());
 		break;
-#ifdef SHOW_NON_IMPORTANT
-	default:
-		Logger::info("OpenGL: " + msgStr);
-		break;
-#endif
 	}
 }
 
@@ -53,10 +41,7 @@ MainWindow::MainWindow()
 	glfwSetErrorCallback(glfwErrorCallback);
 
 	// Init GLFW
-	if (!glfwInit())
-	{
-		throw std::runtime_error("GLFW initialization failed!");
-	}
+	LOG4CXX_ASSERT(logger, glfwInit(), "GLFW initialization failed!");
 
 	// Create window
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -64,20 +49,15 @@ MainWindow::MainWindow()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+	glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 
 	window = glfwCreateWindow(1600, 900, STRINGIFY(PROJECT_NAME), NULL, NULL);
 
-	if (!window)
-	{
-		throw std::runtime_error("Window creation failed!");
-	}
+	LOG4CXX_ASSERT(logger, window, "Window creation failed!");
 
 	glfwMakeContextCurrent(window);
 
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		throw std::runtime_error("GLAD initialization failed!");
-	}
+	LOG4CXX_ASSERT(logger, gladLoadGLLoader((GLADloadproc)glfwGetProcAddress), "GLAD initialization failed!");
 
 	glfwSwapInterval(1);
 

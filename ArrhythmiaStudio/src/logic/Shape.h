@@ -2,12 +2,18 @@
 
 #include <string>
 
-#include "../rendering/Mesh.h"
+#include "../engine/rendering/Mesh.h"
 
 struct Shape
 {
+	std::string id;
 	std::string name;
 	Mesh* mesh;
+
+	Shape()
+	{
+		
+	}
 
 	Shape(std::string name, Mesh* mesh)
 	{

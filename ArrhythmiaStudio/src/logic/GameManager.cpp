@@ -1,206 +1,97 @@
 #include "GameManager.h"
 
-#include "../rendering/ImGuiController.h"
-#include "../rendering/Renderer.h"
-#include "VideoExporter.h"
-
-#include <fstream>
 #include <functional>
-#include <imgui/imgui.h>
-#include <imgui/imgui_stdlib.h>
-#include <imgui/imgui_markdown.h>
-#include <ShlObj.h>
-#include <helper.h>
-#include <logger.h>
+
+#include "../Arguments.h"
+#include "../engine/rendering/ImGuiController.h"
+#include "../engine/rendering/Renderer.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_markdown.h"
+#include "imgui/imgui_internal.h"
+#include "object_behaviours/NormalObjectBehaviour.h"
+#include "object_behaviours/TextObjectBehaviour.h"
+#include "factories/ObjectBehaviourFactory.h"
+#include "factories/ShapeFactory.h"
+#include "factories/LevelEventFactory.h"
+#include "editor_windows/Timeline.h"
+#include "editor_windows/Viewport.h"
+#include "editor_windows/Properties.h"
+#include "editor_windows/Events.h"
+#include "editor_windows/Themes.h"
+#include "level_events/CameraLevelEvent.h"
 
 #define WELCOME_MSG Welcome to PROJECT_NAME!
 
+GameManager* GameManager::inst;
+
 GameManager::GameManager(GLFWwindow* window)
 {
+	if (inst)
+	{
+		return;
+	}
+	inst = this;
+
 	mainWindow = window;
 
 	ImGuiController::onLayout.push_back(std::bind(&GameManager::onLayout, this));
 
-	shapeManager = new ShapeManager();
-	dataManager = new DataManager();
 	discordManager = new DiscordManager();
-	undoRedoManager = new UndoRedoManager();
-	levelManager = new LevelManager();
 	docManager = new DocManager();
-	debug = new DebugMenu();
+
+	// Register object behaviours
+	ObjectBehaviourFactory::registerBehaviour<NormalObjectBehaviour>("normal", "Normal");
+	ObjectBehaviourFactory::registerBehaviour<TextObjectBehaviour>("text", "Text");
+
+	// Register level events
+	LevelEventFactory::registerEvent<CameraLevelEvent>("camera", "Camera");
+
+	// Register shapes
+	ShapeFactory::registerShape("Assets/Shapes/square.shp", "square");
+	ShapeFactory::registerShape("Assets/Shapes/hollow_square.shp", "hollow_square");
+	ShapeFactory::registerShape("Assets/Shapes/circle.shp", "circle");
+	ShapeFactory::registerShape("Assets/Shapes/circle_quarter.shp", "circle_quarter");
+	ShapeFactory::registerShape("Assets/Shapes/hollow_circle.shp", "hollow_circle");
+	ShapeFactory::registerShape("Assets/Shapes/hollow_circle_quarter.shp", "hollow_circle_quarter");
+	ShapeFactory::registerShape("Assets/Shapes/pentagon.shp", "pentagon");
+	ShapeFactory::registerShape("Assets/Shapes/hollow_pentagon.shp", "hollow_pentagon");
+	ShapeFactory::registerShape("Assets/Shapes/hexagon.shp", "hexagon");
+	ShapeFactory::registerShape("Assets/Shapes/hollow_hexagon.shp", "hollow_hexagon");
+	ShapeFactory::registerShape("Assets/Shapes/triangle.shp", "triangle");
+	ShapeFactory::registerShape("Assets/Shapes/right_angled_triangle.shp", "right_angled_triangle");
+
+	// Initialize level based on arguments
+	std::string str;
+	if (Arguments::tryGet("new", &str))
+	{
+		std::string levelPath = Arguments::get("level-path");
+		std::string songPath = Arguments::get("song-path");
+		level = new Level(str, songPath, levelPath);
+	}
+	else if (Arguments::tryGet("open", &str))
+	{
+		level = new Level(str);
+	}
+	else
+	{
+		LOG4CXX_ERROR(logger, "Level not specified!");
+		std::exit(EXIT_FAILURE);
+	}
+
+	editorWindows.push_back(new Viewport());
+	editorWindows.push_back(new Timeline());
+	editorWindows.push_back(new Properties());
+	editorWindows.push_back(new Events());
+	editorWindows.push_back(new Themes());
 }
 
-void GameManager::update() const
+void GameManager::update()
 {
-	levelManager->update();
-	discordManager->update();
+	level->update();
 }
 
 void GameManager::onLayout()
 {
-	// Welcome popup
-	ImGui::SetNextWindowSize(ImVec2(320.0f, 140.0f));
-	if (ImGui::BeginPopupModal("Welcome", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings))
-	{
-		ImGui::Text(STRINGIFY(WELCOME_MSG));
-		ImGui::TextWrapped("Before continuing, please create a new level with File->New (Ctrl+N) or open a new level with File->Open (Ctrl+O).");
-
-		if (ImGui::Button("OK"))
-		{
-			ImGui::CloseCurrentPopup();
-		}
-
-		ImGui::EndPopup();
-	}
-
-	// Level creation popup
-	if (ImGui::BeginPopupModal("New Level", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings))
-	{
-		ImGui::SetNextItemWidth(318.0f);
-		ImGui::InputText("Level name", &currentCreateInfo.levelName);
-
-		ImGui::PushID(1);
-		if (ImGui::Button("Browse"))
-		{
-			COMDLG_FILTERSPEC filter;
-			filter.pszName = L"Ogg Vorbis file";
-			filter.pszSpec = L"*.ogg";
-
-			IFileDialog* fd;
-			CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&fd));
-
-			DWORD dwFlags;
-			fd->GetOptions(&dwFlags);
-			fd->SetOptions(dwFlags | FOS_FORCEFILESYSTEM);
-			fd->SetFileTypes(1, &filter);
-			fd->Show(NULL);
-
-			IShellItem* psiResult;
-			if (SUCCEEDED(fd->GetResult(&psiResult)))
-			{
-				PWSTR pszFilePath = NULL;
-				psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
-
-				std::wstring ws(pszFilePath);
-				currentCreateInfo.levelSong = std::string(ws.begin(), ws.end());
-
-				CoTaskMemFree(pszFilePath);
-			}
-
-			fd->Release();
-		}
-		ImGui::SameLine();
-		ImGui::InputText("Level song", &currentCreateInfo.levelSong);
-		ImGui::PopID();
-
-		ImGui::PushID(2);
-		if (ImGui::Button("Browse"))
-		{
-			IFileDialog* fd;
-			CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&fd));
-
-			DWORD dwFlags;
-			fd->GetOptions(&dwFlags);
-			fd->SetOptions(dwFlags | FOS_FORCEFILESYSTEM | FOS_PICKFOLDERS);
-			fd->Show(NULL);
-
-			IShellItem* psiResult;
-			if (SUCCEEDED(fd->GetResult(&psiResult)))
-			{
-				PWSTR pszFilePath = NULL;
-				psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
-
-				std::wstring ws(pszFilePath);
-				currentCreateInfo.levelPath = std::string(ws.begin(), ws.end());
-
-				CoTaskMemFree(pszFilePath);
-			}
-
-			fd->Release();
-		}
-		ImGui::SameLine();
-		ImGui::InputText("Level path", &currentCreateInfo.levelPath);
-		ImGui::PopID();
-
-		if (ImGui::Button("Cancel"))
-		{
-			ImGui::CloseCurrentPopup();
-		}
-		ImGui::SameLine();
-		if (ImGui::Button("OK"))
-		{
-			dataManager->newLevel(currentCreateInfo);
-			ImGui::CloseCurrentPopup();
-		}
-
-		ImGui::EndPopup();
-	}
-
-	if (ImGui::BeginPopupModal("Export Configuration", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings))
-	{
-		if (ImGui::Button("Browse"))
-		{
-			COMDLG_FILTERSPEC filter;
-			filter.pszName = L"MKV file";
-			filter.pszSpec = L"*.mkv";
-
-			IFileDialog* fd;
-			CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&fd));
-
-			DWORD dwFlags;
-			fd->GetOptions(&dwFlags);
-			fd->SetOptions(dwFlags | FOS_FORCEFILESYSTEM);
-			fd->SetFileTypes(1, &filter);
-			fd->Show(NULL);
-
-			IShellItem* psiResult;
-			if (SUCCEEDED(fd->GetResult(&psiResult)))
-			{
-				PWSTR pszFilePath = NULL;
-				psiResult->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
-
-				std::wstring ws(pszFilePath);
-				videoPath = std::string(ws.begin(), ws.end());
-
-				CoTaskMemFree(pszFilePath);
-			}
-
-			fd->Release();
-		}
-		ImGui::SameLine();
-		ImGui::InputText("Video path", &videoPath);
-
-		ImGui::InputInt("Width", &videoWidth);
-		ImGui::SameLine();
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 45);
-		ImGui::InputInt("Height", &videoHeight);
-
-		ImGui::InputInt("Framerate", &videoFramerate);
-
-		ImGui::InputInt("Start frame", &videoStartFrame);
-		ImGui::SameLine();
-		ImGui::InputInt("End frame", &videoEndFrame);
-
-		if (ImGui::Button("Render"))
-		{
-			const VideoExporter* exporter = new VideoExporter(videoWidth, videoHeight, videoFramerate, videoStartFrame, videoEndFrame, new ffmpegcpp::VideoCodec(AV_CODEC_ID_VP9), new ffmpegcpp::AudioCodec(AV_CODEC_ID_AAC));
-			exporter->exportToVideo(videoPath);
-
-			delete exporter;
-
-			ImGui::CloseCurrentPopup();
-		}
-
-		ImGui::SameLine();
-
-		if (ImGui::Button("Cancel"))
-		{
-			ImGui::CloseCurrentPopup();
-		}
-
-		ImGui::EndPopup();
-	}
-
 	ImGui::SetNextWindowSize(ImVec2(320.0f, 100.0f));
 	if (ImGui::BeginPopupModal("About", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoSavedSettings))
 	{
@@ -212,8 +103,6 @@ void GameManager::onLayout()
 		ImGui::EndPopup();
 	}
 
-	bool doOpenLevelPopup = false;
-	bool doExportVideoPopup = false;
 	bool doAboutPopup = false;
 
 	// Menu bar
@@ -221,46 +110,11 @@ void GameManager::onLayout()
 	{
 		if (ImGui::BeginMenu("File"))
 		{
-			if (ImGui::MenuItem("New", "Ctrl+N"))
+			if (ImGui::MenuItem("Save"))
 			{
-				doOpenLevelPopup = true;
+				level->save();
 			}
 
-			if (!dataManager->isStartupLevel)
-			{
-				if (ImGui::MenuItem("Save", "Ctrl+S"))
-				{
-					dataManager->saveLevel();
-				}
-
-				if (ImGui::MenuItem("Save As", "Ctrl+Shift+S"))
-				{
-					dataManager->saveLevel(true);
-				}
-			}
-
-			if (ImGui::MenuItem("Open", "Ctrl+O"))
-			{
-				dataManager->openLevel();
-			}
-
-			if (ImGui::MenuItem("Export to Video"))
-			{
-				doExportVideoPopup = true;
-			}
-
-			ImGui::EndMenu();
-		}
-		if (ImGui::BeginMenu("Edit"))
-		{
-			if (ImGui::MenuItem("Undo", "Ctrl+Z"))
-			{
-				undoRedoManager->undo();
-			}
-			if (ImGui::MenuItem("Redo", "Ctrl+Y"))
-			{
-				undoRedoManager->redo();
-			}
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Help"))
@@ -279,131 +133,20 @@ void GameManager::onLayout()
 		ImGui::EndMainMenuBar();
 	}
 
-	// Keyboard shortcuts handling
-	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_N))
-	{
-		doOpenLevelPopup = true;
-	}
-
-	if (!dataManager->isStartupLevel)
-	{
-		if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT) &&
-			ImGui::IsKeyPressed(GLFW_KEY_S))
-		{
-			dataManager->saveLevel(true);
-		}
-
-		if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_S))
-		{
-			dataManager->saveLevel();
-		}
-	}
-
-	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_O))
-	{
-		dataManager->openLevel();
-	}
-
-	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_Z))
-	{
-		undoRedoManager->undo();
-	}
-
-	if (ImGui::IsKeyDown(GLFW_KEY_LEFT_CONTROL) && ImGui::IsKeyPressed(GLFW_KEY_Y))
-	{
-		undoRedoManager->redo();
-	}
-
-	if (doOpenLevelPopup)
-	{
-		currentCreateInfo = LevelCreateInfo();
-
-		ImGui::OpenPopup("New Level");
-	}
-
-	if (doExportVideoPopup)
-	{
-		ImGui::OpenPopup("Export Configuration");
-	}
-
 	if (doAboutPopup)
 	{
 		ImGui::OpenPopup("About");
 	}
 
-	// Open welcome popup
-	if (!welcomeOpened)
+	for (EditorWindow* window : editorWindows)
 	{
-		ImGui::OpenPopup("Welcome");
-
-		welcomeOpened = true;
-	}
-
-	// Open viewport
-	if (ImGui::Begin("Viewport"))
-	{
-		ImVec2 contentRegion = ImGui::GetContentRegionAvail();
-
-		float width, height;
-		calculateViewportRect(contentRegion, &width, &height);
-
-		Renderer::inst->viewportWidth = width;
-		Renderer::inst->viewportHeight = height;
-
-		ImVec2 cursorPos = ImGui::GetCursorScreenPos();
-
-		ImVec2 frameMin = ImVec2(cursorPos.x + (contentRegion.x - width) / 2.0f,
-		                         cursorPos.y + (contentRegion.y - height) / 2.0f);
-		ImVec2 frameMax = ImVec2(frameMin.x + width, frameMin.y + height);
-
-		ImDrawList* drawList = ImGui::GetWindowDrawList();
-
-		drawList->AddImage((ImTextureID)Renderer::inst->getRenderTexture(), ImVec2(frameMin.x, frameMax.y),
-		                   ImVec2(frameMax.x, frameMin.y));
-		drawList->AddRect(frameMin, frameMax, ImGui::GetColorU32(ImGuiCol_Border), 0.0f, ImDrawFlags_None, 2.0f);
-
-		if (dataManager->isStartupLevel)
+		if (ImGui::Begin(window->getTitle().c_str())) 
 		{
-			ImGui::SetCursorScreenPos(ImVec2(frameMin.x + 4.0f, frameMin.y + 4.0f));
-			if (ImGui::BeginChild("warn-startup", ImVec2(320.0f, 120.0f)))
+			if (!ImGui::GetCurrentWindow()->SkipItems) 
 			{
-				ImGui::TextWrapped(
-					"Warning: All changes made in the startup level will not be saved. Please create a new level or open an existing level.");
-
-				ImGui::EndChild();
+				window->draw();
 			}
 		}
+		ImGui::End();
 	}
-	ImGui::End();
-}
-
-void GameManager::calculateViewportRect(ImVec2 size, float* width, float* height)
-{
-	const float aspect = 16.0f / 9.0f;
-
-	if (size.x / size.y > aspect) // Landscape
-	{
-		*width = size.y * aspect;
-		*height = size.y;
-	}
-	else // Portrait
-	{
-		*width = size.x;
-		*height = size.x / aspect;
-	}
-}
-
-std::string GameManager::timeToString(float time) const
-{
-	float secs = std::floor(time);
-
-	int seconds = (int)secs % 60;
-	int minutes = (int)secs / 60 % 60;
-	int hours = (int)secs / 3600 % 60;
-
-	std::string secondsStr = seconds < 10 ? "0" + std::to_string(seconds) : std::to_string(seconds);
-	std::string minutesStr = minutes < 10 ? "0" + std::to_string(minutes) : std::to_string(minutes);
-	std::string hoursStr = hours < 10 ? "0" + std::to_string(hours) : std::to_string(hours);
-
-	return hoursStr + ":" + minutesStr + ":" + secondsStr;
 }

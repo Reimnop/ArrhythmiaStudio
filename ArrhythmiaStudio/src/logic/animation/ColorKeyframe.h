@@ -1,10 +1,10 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
-#include <utils.h>
-
+#include "json.hpp"
 #include "Color.h"
-#include "EaseType.h"
+#include "Easing.h"
+
+using namespace nlohmann;
 
 struct ColorKeyframe
 {
@@ -19,7 +19,7 @@ struct ColorKeyframe
 		easing = EaseType_Linear;
 	}
 
-	ColorKeyframe(nlohmann::json j)
+	ColorKeyframe(json j)
 	{
 		time = j["time"].get<float>();
 		color.r = j["color"][0].get<float>();
@@ -41,9 +41,9 @@ struct ColorKeyframe
 		return time == other.time && color == other.color && easing == other.easing;
 	}
 
-	nlohmann::ordered_json toJson() const
+	json toJson() const
 	{
-		nlohmann::ordered_json j;
+		json j;
 		j["time"] = time;
 		j["color"][0] = color.r;
 		j["color"][1] = color.g;

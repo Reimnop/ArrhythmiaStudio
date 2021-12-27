@@ -1,26 +1,71 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
+#include <unordered_map>
+#include <unordered_set>
+#include <filesystem>
 
+#include "log4cxx/logger.h"
+#include "../engine/AudioClip.h"
 #include "ColorSlot.h"
-#include "LevelEvent.h"
-#include "LevelObject.h"
+#include "Selection.h"
 
-class Level
+using namespace std::filesystem;
+
+class LevelObject;
+class Level 
 {
 public:
+	path levelDir;
 	std::string name;
-	std::vector<ColorSlot*> colorSlots;
-	std::vector<LevelEvent*> levelEvents;
-	std::map<uint64_t, LevelObject*> levelObjects;
+	AudioClip* clip;
 
+	std::unordered_map<uint64_t, LevelObject*> levelObjects;
+	std::unordered_map<std::string, TypedLevelEvent*> levelEvents;
+	std::vector<ColorSlot*> colorSlots;
+	Selection selection;
+
+	float time = 0.0f;
+	float levelLength;
+
+	float offset = 0.0f;
+	float bpm = 120.0f;
+
+	// This constructor creates a new level
+	Level(std::string name, path songPath, path levelDir);
+	// This constructor opens an existing level
+	Level(path levelDir);
 	~Level();
 
-	void insertLevelEvent(LevelEvent* value);
-	void eraseLevelEvent(LevelEventType type);
-	LevelEvent* getLevelEvent(LevelEventType type);
-	bool hasLevelEvent(LevelEventType type);
-	nlohmann::ordered_json toJson();
+	void seek(float t);
+	void update();
+
+	void addObject(LevelObject* object);
+	void deleteObject(LevelObject* object);
+
+	void insertObject(LevelObject* object);
+	void removeObject(LevelObject* object);
+
+	void insertActivateList(LevelObject* object);
+	void insertDeactivateList(LevelObject* object);
+	void removeActivateList(LevelObject* object);
+	void removeDeactivateList(LevelObject* object);
+
+	void recalculateObjectsState();
+
+	json toJson();
+	void save();
 private:
-	bool levelEventLookup[LevelEventType_Count];
+	static inline log4cxx::LoggerPtr logger = log4cxx::Logger::getLogger("Level");
+
+	float lastTime = 0.0f;
+	
+	std::unordered_set<LevelObject*> aliveObjects;
+
+	int activateIndex = 0;
+	int deactivateIndex = 0;
+	std::vector<LevelObject*> activateList;
+	std::vector<LevelObject*> deactivateList;
+
+	void updateForward();
+	void updateReverse();
 };

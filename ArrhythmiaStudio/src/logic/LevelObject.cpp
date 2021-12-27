@@ -1,262 +1,216 @@
 #include "LevelObject.h"
 
-#include <utils.h>
+#include "Level.h"
+#include "GameManager.h"
+#include "utils.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_stdlib.h"
+#include "factories/ObjectBehaviourFactory.h"
 
-#include "LevelManager.h"
-#include "../rendering/MeshRenderer.h"
-#include "ShapeManager.h"
-
-LevelObject::LevelObject()
+LevelObject::LevelObject(std::string type, Level* level)
 {
-    node = nullptr;
-    id = Utils::randomId();
+	name = "New object";
+	this->type = type;
+	id = Utils::randomId();
+	startTime = 0.0f;
+	endTime = 5.0f;
+	bin = 0;
+	this->level = level;
+	node = new SceneNode(name);
+	node->setActive(false);
+	ObjectBehaviourInfo info = ObjectBehaviourFactory::getFromId(type);
+	behaviour = info.createFunction(this);
 }
 
-LevelObject::LevelObject(nlohmann::json j)
+LevelObject::LevelObject(json j, Level* level)
 {
-    name = j["name"].get<std::string>();
-    id = j["id"].get<uint64_t>();
-    parentId = j["parent"].get<uint64_t>();
-    startTime = j["start"].get<float>();
-    killTime = j["kill"].get<float>();
-    depth = j["depth"].get<float>();
-    isText = j.contains("is_text") && j["is_text"].get<bool>();
-    if (isText) 
-    {
-        text = j["text"].get<std::string>();
-    }
-    else
-    {
-        shapeIndex = j["shape"].get<int>();
-    }
-    colorSlotIndex = j["color_slot"].get<int>();
-    editorBinIndex = j["editor_bin"].get<int>();
-
-    if (j.contains("layer"))
-    {
-        layer = j["layer"].get<int>();
-    }
-
-    nlohmann::json::array_t arr = j["channels"].get<nlohmann::json::array_t>();
-    for (int i = 0; i < arr.size(); i++)
-    {
-        insertChannel(new AnimationChannel(arr[i]));
-    }
-
-    node = nullptr;
+	name = j["name"].get<std::string>();
+	type = j["type"].get<std::string>();
+	id = j["id"].get<uint64_t>();
+	if (j.contains("parent")) 
+	{
+		parentIdToInitialize = j["parent"].get<uint64_t>();
+	}
+	startTime = j["start"].get<float>();
+	endTime = j["end"].get<float>();
+	bin = j["bin"].get<int>();
+	this->level = level;
+	node = new SceneNode(name);
+	node->setActive(false);
+	ObjectBehaviourInfo info = ObjectBehaviourFactory::getFromId(type);
+	behaviour = info.createFunction(this);
+	behaviour->readJson(j);
 }
 
 LevelObject::~LevelObject()
 {
-    Level* level = LevelManager::inst->level;
+	// Remove from parent
+	if (parent)
+	{
+		parent->children.erase(this);
+	}
 
-    // Remove from parent
-    if (parentId)
-    {
-        LevelObject* parent = level->levelObjects[parentId];
-        parent->childrenId.erase(id);
-    }
+	std::vector _children(children.begin(), children.end());
 
-    // Cache children ids
-    const size_t childrenCount = childrenId.size();
-    uint64_t* children = new uint64_t[childrenCount];
-    std::copy(childrenId.begin(), childrenId.end(), children);
+	// Unparent all children
+	for (size_t i = 0; i < _children.size(); i++)
+	{
+		_children[i]->setParent(nullptr);
+	}
 
-    // Unparent all children
-    for (int i = 0; i < childrenCount; i++)
-    {
-        level->levelObjects[children[i]]->setParent(nullptr);
-    }
-
-    delete[] children;
-
-    for (const AnimationChannel* channel : animationChannels)
-    {
-        delete channel;
-    }
-
-    delete node;
+	delete node;
+	delete behaviour;
 }
 
-LevelObjectProperties LevelObject::dumpProperties() const
+void LevelObject::initializeParent()
 {
-    LevelObjectProperties properties = LevelObjectProperties();
-    properties.startTime = startTime;
-    properties.killTime = killTime;
-    properties.isText = isText;
-    properties.text = text;
-    properties.shapeIndex = shapeIndex;
-    properties.editorBinIndex = editorBinIndex;
-    properties.colorSlotIndex = colorSlotIndex;
-    properties.depth = depth;
-    properties.layer = layer;
-
-    return properties;
+	if (parentIdToInitialize) 
+	{
+		setParent(level->levelObjects[parentIdToInitialize]);
+	}
 }
 
-void LevelObject::applyProperties(LevelObjectProperties properties)
+void LevelObject::update(float time)
 {
-    LevelManager* levelManager = LevelManager::inst;
-    const Level* level = levelManager->level;
+	behaviour->update(time);
+}
 
-    // This check is not necessary but it's good to have it there because re-insertion is expensive
-    if (properties.startTime != startTime || properties.killTime != killTime)
-    {
-        startTime = properties.startTime;
-        killTime = properties.killTime;
-
-        levelManager->recalculateObjectAction(this);
-        levelManager->recalculateActionIndex(levelManager->time);
-    }
-
-    isText = properties.isText;
-    text = properties.text;
-    shapeIndex = properties.shapeIndex;
-    editorBinIndex = properties.editorBinIndex;
-    colorSlotIndex = properties.colorSlotIndex;
-    depth = properties.depth;
-    layer = properties.layer;
-
-    if (node)
-    {
-        delete node->renderer;
-
-        if (isText)
-        {
-            TextRenderer* renderer = new TextRenderer(LevelManager::inst->mainFont);
-            renderer->material = level->colorSlots[colorSlotIndex]->material;
-            renderer->setText(text);
-
-            node->renderer = renderer;
-        }
-        else
-        {
-            MeshRenderer* renderer = new MeshRenderer();
-            renderer->mesh = ShapeManager::inst->shapes[shapeIndex].mesh;
-            renderer->material = level->colorSlots[colorSlotIndex]->material;
-            renderer->shader = LevelManager::inst->unlitShader;
-
-            node->renderer = renderer;
-        }
-
-        levelManager->updateObject(this);
-    }
+LevelObject* LevelObject::getParent()
+{
+	return parent;
 }
 
 void LevelObject::setParent(LevelObject* newParent)
 {
-    Level* level = LevelManager::inst->level;
+	// Remove from old parent
+	if (parent)
+	{
+		parent->children.erase(this);
+	}
 
-    // Remove from old parent
-    if (parentId)
-    {
-        level->levelObjects[parentId]->childrenId.erase(id);
-    }
-
-    // Add to new parent
-    if (newParent)
-    {
-        newParent->childrenId.emplace(id);
-        parentId = newParent->id;
-        node->setParent(newParent->node);
-    }
-    else
-    {
-        parentId = 0;
-        node->setParent(nullptr);
-    }
+	// Add to new parent
+	if (newParent)
+	{
+		newParent->children.emplace(this);
+		parent = newParent;
+		node->setParent(newParent->node);
+	}
+	else
+	{
+		parent = nullptr;
+		node->setParent(nullptr);
+	}
 }
 
-void LevelObject::genActionPair(ObjectAction* spawnAction, ObjectAction* killAction)
+void LevelObject::setName(std::string& name)
 {
-    ObjectAction spawn = ObjectAction();
-    spawn.time = startTime;
-    spawn.type = ObjectActionType_Spawn;
-    spawn.levelObject = this;
-
-    ObjectAction kill = ObjectAction();
-    kill.time = killTime + 0.0001f;
-    kill.type = ObjectActionType_Kill;
-    kill.levelObject = this;
-
-    *spawnAction = spawn;
-    *killAction = kill;
+	this->name = name;
+	node->name = name;
 }
 
-void LevelObject::insertChannel(AnimationChannel* value)
+std::string LevelObject::getName()
 {
-    if (hasChannel(value->type))
-    {
-        return;
-    }
-
-    const std::vector<AnimationChannel*>::iterator it = std::lower_bound(animationChannels.begin(), animationChannels.end(),
-                                                                        value,
-                                                                        [](const AnimationChannel* a, const AnimationChannel* b)
-                                                                        {
-                                                                            return a->type < b->type;
-                                                                        });
-    animationChannels.insert(it, value);
-
-    animationChannelLookup[value->type] = true;
+	return name;
 }
 
-void LevelObject::eraseChannel(AnimationChannelType type)
+void LevelObject::fromJson(json j)
 {
-    const std::vector<AnimationChannel*>::iterator it = std::find_if(animationChannels.begin(), animationChannels.end(),
-                                                                     [type](const AnimationChannel* a)
-                                                                     {
-                                                                         return a->type == type;
-                                                                     });
-    delete (*it);
-    animationChannels.erase(it);
-
-    animationChannelLookup[type] = false;
+	name = j["name"].get<std::string>();
+	if (type != j["type"].get<std::string>())
+	{
+		throw std::runtime_error("Mismatch object type!");
+	}
+	id = j["id"].get<uint64_t>();
+	setParent(level->levelObjects[j["parent"].get<uint64_t>()]);
+	startTime = j["start"].get<float>();
+	endTime = j["end"].get<float>();
+	bin = j["bin"].get<int>();
+	behaviour->readJson(j);
 }
 
-AnimationChannel* LevelObject::getChannel(AnimationChannelType type)
+json LevelObject::toJson()
 {
-    const std::vector<AnimationChannel*>::iterator it = std::find_if(animationChannels.begin(), animationChannels.end(),
-                                                                     [type](const AnimationChannel* a)
-                                                                     {
-                                                                         return a->type == type;
-                                                                     });
-
-    return *it;
+	json j;
+	j["name"] = name;
+	j["type"] = type;
+	j["id"] = id;
+	if (parent) 
+	{
+		j["parent"] = parent->id;
+	}
+	j["start"] = startTime;
+	j["end"] = endTime;
+	j["bin"] = bin;
+	behaviour->writeJson(j);
+	return j;
 }
 
-bool LevelObject::hasChannel(AnimationChannelType type)
+void LevelObject::drawEditor()
 {
-    return animationChannelLookup[type];
-}
+	ImGui::InputText("Name", &name);
+	ImGui::DragFloat("Start time", &startTime, 0.1f);
+	if (ImGui::IsItemEdited())
+	{
+		level->removeActivateList(this);
+		level->insertActivateList(this);
+		level->recalculateObjectsState();
+	}
+	ImGui::DragFloat("End time", &endTime, 0.1f);
+	if (ImGui::IsItemEdited())
+	{
+		level->removeDeactivateList(this);
+		level->insertDeactivateList(this);
+		level->recalculateObjectsState();
+	}
+	ImGui::SliderInt("Editor bin", &bin, 0, 14);
 
-nlohmann::ordered_json LevelObject::toJson()
-{
-    nlohmann::ordered_json j;
-    j["name"] = name;
-    j["id"] = id;
-    j["parent"] = parentId;
-    j["start"] = startTime;
-    j["kill"] = killTime;
-    j["depth"] = depth;
-    j["is_text"] = isText;
-    if (isText)
-    {
-        j["text"] = text;
-    }
-    else
-    {
-        j["shape"] = shapeIndex;
-    }
-    j["color_slot"] = colorSlotIndex;
-    j["editor_bin"] = editorBinIndex;
-    j["layer"] = layer;
+	// Parent select popup
+	if (ImGui::BeginPopupModal("Select parent", &parentSearchOpen))
+	{
+		if (ImGui::Button("Clear parent"))
+		{
+			setParent(nullptr);
+		}
+		ImGui::SameLine();
+		ImGui::InputText("Search", &parentSearchStr);
 
-    j["channels"] = nlohmann::json::array();
-    for (int i = 0; i < animationChannels.size(); i++)
-    {
-        j["channels"][i] = animationChannels[i]->toJson();
-    }
+		if (ImGui::IsItemEdited())
+		{
+			parentSearchRegex = std::regex(parentSearchStr);
+		}
 
-    return j;
+		if (ImGui::BeginChild("##parent-objects", ImVec2(0.0f, 0.0f), true))
+		{
+			for (auto &[id, obj] : level->levelObjects)
+			{
+				if (obj == this)
+				{
+					continue;
+				}
+
+				std::string title = obj->getName();
+
+				if (std::regex_search(title, parentSearchRegex))
+				{
+					if (ImGui::Selectable(title.c_str()))
+					{
+						setParent(obj);
+						ImGui::CloseCurrentPopup();
+					}
+				}
+			}
+		}
+		ImGui::EndChild();
+
+		ImGui::EndPopup();
+	}
+
+	std::string parentBtnStr = parent ? parent->getName() : "Select parent";
+	if (ImGui::Button(parentBtnStr.c_str(), ImVec2(ImGui::GetContentRegionAvailWidth(), 0.0f)))
+	{
+		parentSearchOpen = true;
+		ImGui::OpenPopup("Select parent");
+	}
+
+	behaviour->drawEditor();
 }

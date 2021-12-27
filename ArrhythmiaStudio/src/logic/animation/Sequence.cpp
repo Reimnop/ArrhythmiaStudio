@@ -1,6 +1,13 @@
 #include "Sequence.h"
 
+#include <cmath>
+
 #include "Easing.h"
+
+Sequence::Sequence()
+{
+	lastIndex = 0;
+}
 
 Sequence::Sequence(int count, Keyframe* keyframes)
 {
@@ -12,34 +19,33 @@ Sequence::Sequence(int count, Keyframe* keyframes)
 	lastIndex = 0;
 }
 
+Sequence::Sequence(json& j)
+{
+	fromJson(j);
+}
+
+void Sequence::loadKeyframes(std::vector<Keyframe>& keyframes)
+{
+	this->keyframes = keyframes;
+	std::sort(this->keyframes.begin(), this->keyframes.end(), 
+		[](Keyframe a, Keyframe b)
+		{
+			return a.time < b.time;
+		});
+}
+
 void Sequence::insertKeyframe(Keyframe keyframe)
 {
-	keyframe.evaluateValue();
-
-	if (keyframes.empty())
-	{
-		keyframes.push_back(keyframe);
-		return;
-	}
-
-	if (keyframes.back().time <= keyframe.time)
-	{
-		keyframes.push_back(keyframe);
-		return;
-	}
-
-	const std::vector<Keyframe>::iterator it = std::lower_bound(keyframes.begin(), keyframes.end(), keyframe,
-																[](Keyframe a, Keyframe b)
-																{
-																    return a.time < b.time;
-																});
-	keyframes.insert(it, keyframe);
+	keyframes.insert(std::lower_bound(keyframes.begin(), keyframes.end(), keyframe,
+		[](Keyframe a, Keyframe b)
+		{
+			return a.time < b.time;
+		}), keyframe);
 }
 
 void Sequence::eraseKeyframe(Keyframe keyframe)
 {
-	const std::vector<Keyframe>::iterator it = std::remove(keyframes.begin(), keyframes.end(), keyframe);
-	keyframes.erase(it);
+	keyframes.erase(std::remove(keyframes.begin(), keyframes.end(), keyframe));
 }
 
 float Sequence::update(float time)
@@ -52,17 +58,17 @@ float Sequence::update(float time)
 
 	if (keyframes.size() == 1)
 	{
-		return keyframes.front().evaluatedValue;
+		return keyframes.front().value;
 	}
 
 	if (time < keyframes.front().time)
 	{
-		return keyframes.front().evaluatedValue;
+		return keyframes.front().value;
 	}
 
 	if (time >= keyframes.back().time)
 	{
-		return keyframes.back().evaluatedValue;
+		return keyframes.back().value;
 	}
 
 	// If time is not out of bounds, find left and right keyframes
@@ -98,5 +104,27 @@ float Sequence::update(float time)
 	const float t = (time - left.time) / (right.time - left.time);
 	const float easedT = ease(t);
 
-	return std::lerp(left.evaluatedValue, right.evaluatedValue, easedT);
+	return std::lerp(left.value, right.value, easedT);
+}
+
+void Sequence::fromJson(json& j)
+{
+	json::array_t arr = j;
+	std::vector<Keyframe> keyframes;
+	keyframes.reserve(arr.size());
+	for (json kfJ : arr)
+	{
+		keyframes.emplace_back(kfJ);
+	}
+	loadKeyframes(keyframes);
+}
+
+json Sequence::toJson()
+{
+	json::array_t j;
+	for (Keyframe kf : keyframes)
+	{
+		j.push_back(kf.toJson());
+	}
+	return j;
 }

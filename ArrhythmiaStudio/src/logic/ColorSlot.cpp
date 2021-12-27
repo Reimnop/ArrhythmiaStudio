@@ -1,77 +1,34 @@
 #include "ColorSlot.h"
 
-ColorSlot::ColorSlot(int count, ColorKeyframe* keyframes)
+ColorSlot::ColorSlot()
 {
-	MaterialProperty properties[]
-	{
-		MaterialProperty("Color", MaterialPropertyType_Vector3, 12)
-	};
-
-	sequence = new ColorSequence(count, keyframes);
-	material = new Material(1, properties);
-
-	for (int i = 0; i < count; i++)
-	{
-		insertKeyframe(keyframes[i]);
-	}
-
-	update(0.0f);
+	ColorKeyframe kfWhite;
+	kfWhite.time = 0.0f;
+	kfWhite.color = Color(1.0f, 1.0f, 1.0f);
+	sequence = ColorSequence(1, &kfWhite);
 }
 
-ColorSlot::ColorSlot(nlohmann::json j)
+ColorSlot::ColorSlot(json& j)
 {
-	MaterialProperty properties[]
-	{
-		MaterialProperty("Color", MaterialPropertyType_Vector3, 12)
-	};
-
-	sequence = new ColorSequence(0, nullptr);
-	for (const nlohmann::json& kfJson : j["keyframes"])
-	{
-		insertKeyframe(ColorKeyframe(kfJson));
-	}
-
-	material = new Material(1, properties);
-
-	update(0.0f);
+	sequence = ColorSequence(j);
 }
 
-ColorSlot::~ColorSlot()
+void ColorSlot::update(float t)
 {
-	delete sequence;
-	delete material;
+	color = sequence.update(t);
 }
 
-
-void ColorSlot::insertKeyframe(ColorKeyframe kf)
+Color ColorSlot::getColor()
 {
-	keyframes.push_back(kf);
-	sequence->insertKeyframe(kf);
+	return color;
 }
 
-void ColorSlot::eraseKeyframe(ColorKeyframe kf)
+json ColorSlot::toJson()
 {
-	const std::vector<ColorKeyframe>::iterator it = std::remove(keyframes.begin(), keyframes.end(), kf);
-	keyframes.erase(it);
-
-	sequence->eraseKeyframe(kf);
+	return sequence.toJson();
 }
 
-void ColorSlot::update(float time)
+void ColorSlot::fromJson(json& j)
 {
-	currentColor = sequence->update(time);
-	material->setVec3("Color", glm::vec3(currentColor.r, currentColor.g, currentColor.b));
-	material->updateBuffer();
-}
-
-nlohmann::json ColorSlot::toJson() const
-{
-	nlohmann::json j;
-	j["keyframes"] = nlohmann::json::array();
-	for (const ColorKeyframe& kf : keyframes)
-	{
-		j["keyframes"].push_back((const nlohmann::json)kf.toJson());
-	}
-
-	return j;
+	sequence.fromJson(j);
 }

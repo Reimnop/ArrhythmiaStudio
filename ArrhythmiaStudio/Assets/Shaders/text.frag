@@ -2,22 +2,18 @@
 
 layout(location = 0) out vec4 fragColor;
 
-layout(std140, binding = 0) uniform Material {
-	layout(offset = 0) vec3 color;
-};
-
-layout(location = 1) uniform float opacity = 1.0;
-
+layout(location = 1) uniform vec4 color;
 layout(location = 2) uniform sampler2D sdfTexture;
 
-in vec2 TexCoord;
+layout(location = 3) uniform float width = 0.4;
+layout(location = 4) uniform float edge = 0.4;
+
+layout(location = 0) in vec2 frag_TexCoord;
 
 void main() {
-	vec3 sdf = texture(sdfTexture, TexCoord).rgb;
-	float signedDistance = max(min(sdf.r, sdf.g), min(max(sdf.r, sdf.g), sdf.b));
+	vec3 sdf = texture(sdfTexture, frag_TexCoord).rgb;
+	float dist = 1.0 - max(min(sdf.r, sdf.g), min(max(sdf.r, sdf.g), sdf.b));
+	float sdfOpacity = 1.0 - smoothstep(width, width + edge, dist);
 
-	float screenPxDistance = signedDistance * 2.0 - 1.0;
-	float sdfOpacity = clamp(screenPxDistance + 0.8, 0.0, 1.0);
-
-	fragColor = mix(vec4(0.0), vec4(color, 1.0), sdfOpacity * opacity);
+	fragColor = vec4(color.rgb, color.a * sdfOpacity);
 }

@@ -49,12 +49,17 @@ Level::Level(path levelDir)
 	json::array_t objArr = j["objects"];
 	for (json objJ : objArr)
 	{
-		LevelObject* obj = new LevelObject(objJ);
+		LevelObject* obj = new LevelObject(objJ, this);
 		insertObject(obj);
 		insertActivateList(obj);
 		insertDeactivateList(obj);
 	}
 	recalculateObjectsState();
+
+	for (auto& [id, obj] : levelObjects)
+	{
+		obj->initializeParent();
+	}
 
 	// Prepare level events map
 	for (std::string id : LevelEventFactory::getEventIds())
@@ -78,9 +83,9 @@ Level::Level(path levelDir)
 		}
 	}
 
-	for (auto &[id, obj] : levelEvents)
+	for (auto &[id, levelEvent] : levelEvents)
 	{
-		if (!obj)
+		if (!levelEvent)
 		{
 			LOG4CXX_WARN(logger, "Missing level event, creating new! Missing value: " << id.c_str());
 			levelEvents[id] = new TypedLevelEvent(this, id);
@@ -165,6 +170,8 @@ void Level::deleteObject(LevelObject* object)
 	removeActivateList(object);
 	removeDeactivateList(object);
 	recalculateObjectsState();
+
+	delete object;
 }
 
 void Level::insertObject(LevelObject* object)

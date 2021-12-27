@@ -167,6 +167,11 @@ void LevelObject::drawEditor()
 	// Parent select popup
 	if (ImGui::BeginPopupModal("Select parent", &parentSearchOpen))
 	{
+		if (ImGui::Button("Clear parent"))
+		{
+			setParent(nullptr);
+		}
+		ImGui::SameLine();
 		ImGui::InputText("Search", &parentSearchStr);
 
 		if (ImGui::IsItemEdited())

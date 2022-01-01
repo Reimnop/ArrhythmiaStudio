@@ -2,6 +2,7 @@
 
 #include <functional>
 
+#include "VideoExporter.h"
 #include "../Arguments.h"
 #include "../engine/rendering/ImGuiController.h"
 #include "../engine/rendering/Renderer.h"
@@ -113,6 +114,12 @@ void GameManager::onLayout()
 			if (ImGui::MenuItem("Save"))
 			{
 				level->save();
+			}
+
+			if (ImGui::MenuItem("Export to Video"))
+			{
+				VideoExporter exporter = VideoExporter(1920, 1080, 60, 0, 300, "h264_nvenc", "aac");
+				exporter.exportToVideo("test.mp4");
 			}
 
 			ImGui::EndMenu();

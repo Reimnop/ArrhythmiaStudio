@@ -12,6 +12,7 @@ AnimateableObjectBehaviour::AnimateableObjectBehaviour(LevelObject* baseObject) 
 	Keyframe kf1 = Keyframe(0.0f, 1.0f, EaseType_Linear);
 	positionX = Sequence(1, &kf0);
 	positionY = Sequence(1, &kf0);
+	positionZ = Sequence(1, &kf0);
 	scaleX = Sequence(1, &kf1);
 	scaleY = Sequence(1, &kf1);
 	rotation = Sequence(1, &kf0);
@@ -24,6 +25,7 @@ void AnimateableObjectBehaviour::update(float time)
 	Transform& transform = *baseObject->node->transform;
 	transform.position.x = positionX.update(t);
 	transform.position.y = positionY.update(t);
+	transform.position.z = positionZ.update(t);
 	transform.scale.x = scaleX.update(t);
 	transform.scale.y = scaleY.update(t);
 	transform.rotation = angleAxis(rotation.update(t) / 180.0f * PI, glm::vec3(0.0f, 0.0f, -1.0f));
@@ -33,6 +35,7 @@ void AnimateableObjectBehaviour::readJson(json& j)
 {
 	positionX.fromJson(j["px"]);
 	positionY.fromJson(j["py"]);
+	positionZ.fromJson(j["pz"]);
 	scaleX.fromJson(j["sx"]);
 	scaleY.fromJson(j["sy"]);
 	rotation.fromJson(j["ro"]);
@@ -42,6 +45,7 @@ void AnimateableObjectBehaviour::writeJson(json& j)
 {
 	j["px"] = positionX.toJson();
 	j["py"] = positionY.toJson();
+	j["pz"] = positionZ.toJson();
 	j["sx"] = scaleX.toJson();
 	j["sy"] = scaleY.toJson();
 	j["ro"] = rotation.toJson();
@@ -115,6 +119,7 @@ void AnimateableObjectBehaviour::drawSequences()
 {
 	sequenceEdit(positionX, "Position X");
 	sequenceEdit(positionY, "Position Y");
+	sequenceEdit(positionZ, "Position Z");
 	sequenceEdit(scaleX, "Scale X");
 	sequenceEdit(scaleY, "Scale Y");
 	sequenceEdit(rotation, "Rotation");

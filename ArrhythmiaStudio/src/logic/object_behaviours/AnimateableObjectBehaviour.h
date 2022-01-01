@@ -26,6 +26,7 @@ private:
 
 	Sequence positionX;
 	Sequence positionY;
+	Sequence positionZ;
 	Sequence scaleX;
 	Sequence scaleY;
 	Sequence rotation;

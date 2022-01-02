@@ -179,6 +179,7 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClCompile Include="include\VideoFormatConverter.cpp" />
     <ClCompile Include="src\engine\rendering\drawers\BatchedDrawer.cpp" />
     <ClCompile Include="src\engine\rendering\drawers\TextDrawer.cpp" />
+    <ClCompile Include="src\logic\animation\ColorIndexSequence.cpp" />
     <ClCompile Include="src\logic\animation\ColorSequence.cpp" />
     <ClCompile Include="src\logic\animation\Sequence.cpp" />
     <ClCompile Include="src\logic\ColorSlot.cpp" />
@@ -910,6 +911,8 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClInclude Include="src\engine\rendering\drawers\Drawer.h" />
     <ClInclude Include="src\engine\rendering\drawers\TextDrawer.h" />
     <ClInclude Include="src\logic\animation\Color.h" />
+    <ClInclude Include="src\logic\animation\ColorIndexKeyframe.h" />
+    <ClInclude Include="src\logic\animation\ColorIndexSequence.h" />
     <ClInclude Include="src\logic\animation\ColorKeyframe.h" />
     <ClInclude Include="src\logic\animation\ColorSequence.h" />
     <ClInclude Include="src\logic\animation\Easing.h" />

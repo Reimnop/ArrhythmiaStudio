@@ -6,15 +6,17 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_stdlib.h"
 
-TextObjectBehaviour::TextObjectBehaviour(LevelObject* baseObject) : AnimateableObjectBehaviour(baseObject)
+TextObjectBehaviour::TextObjectBehaviour(LevelObject* baseObject) : AnimateableColoredObjectBehaviour(baseObject), color(baseObject->level)
 {
 	if (!font)
 	{
 		font = new Font("Assets/Inconsolata.asfont");
 	}
 
-	Keyframe kf1 = Keyframe(0.0f, 1.0f, EaseType_Linear);
+	Keyframe kf1(0.0f, 1.0f, EaseType_Linear);
+	ColorIndexKeyframe cikf0(0.0f, 0, EaseType_Linear);
 	opacity = Sequence(1, &kf1);
+	color = ColorIndexSequence(1, &cikf0, baseObject->level);
 
 	renderer = new TextRenderer(font);
 
@@ -30,37 +32,35 @@ void TextObjectBehaviour::update(float time)
 {
 	AnimateableObjectBehaviour::update(time);
 
-	Level& level = *GameManager::inst->level;
-
-	renderer->color.r = level.colorSlots[colorSlot]->color.r;
-	renderer->color.g = level.colorSlots[colorSlot]->color.g;
-	renderer->color.b = level.colorSlots[colorSlot]->color.b;
+	Color _color = color.update(time - baseObject->startTime);
+	renderer->color.r = _color.r;
+	renderer->color.g = _color.g;
+	renderer->color.b = _color.b;
 	renderer->color.w = opacity.update(time - baseObject->startTime);
 }
 
 void TextObjectBehaviour::readJson(json& j)
 {
-	colorSlot = j["color"].get<int>();
 	text = j["text"].get<std::string>();
 	renderer->setText(std::wstring(text.begin(), text.end()));
 
 	AnimateableObjectBehaviour::readJson(j);
 	opacity.fromJson(j["op"]);
+	color.fromJson(j["co"]);
 }
 
 void TextObjectBehaviour::writeJson(json& j)
 {
-	j["color"] = colorSlot;
 	j["text"] = text;
 
 	AnimateableObjectBehaviour::writeJson(j);
 	j["op"] = opacity.toJson();
+	j["co"] = color.toJson();
 }
 
 void TextObjectBehaviour::drawEditor()
 {
-	Level& level = *GameManager::inst->level;
-	ImGui::SliderInt("Color", &colorSlot, 0, level.colorSlots.size());
+	Level& level = *baseObject->level;
 
 	ImGui::InputTextMultiline("Text", &text);
 
@@ -69,7 +69,7 @@ void TextObjectBehaviour::drawEditor()
 		renderer->setText(std::wstring(text.begin(), text.end()));
 	}
 
-	AnimateableObjectBehaviour::drawEditor();
+	AnimateableColoredObjectBehaviour::drawEditor();
 }
 
 void TextObjectBehaviour::drawSequences()
@@ -77,4 +77,9 @@ void TextObjectBehaviour::drawSequences()
 	AnimateableObjectBehaviour::drawSequences();
 
 	sequenceEdit(opacity, "Opacity");
+}
+
+void TextObjectBehaviour::drawColorSequences()
+{
+	colorSequenceEdit(color, "Color");
 }

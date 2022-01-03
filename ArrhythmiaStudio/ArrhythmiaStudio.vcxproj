@@ -199,6 +199,7 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClCompile Include="src\logic\level_events\AnimateableLevelEvent.cpp" />
     <ClCompile Include="src\logic\level_events\CameraLevelEvent.cpp" />
     <ClCompile Include="src\logic\level_events\TypedLevelEvent.cpp" />
+    <ClCompile Include="src\logic\object_behaviours\AnimateableColoredObjectBehaviour.cpp" />
     <ClCompile Include="src\logic\object_behaviours\AnimateableObjectBehaviour.cpp" />
     <ClCompile Include="src\logic\object_behaviours\NormalObjectBehaviour.cpp" />
     <ClCompile Include="src\engine\Scene.cpp" />
@@ -922,6 +923,8 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClInclude Include="src\logic\animation\Sequence.h" />
     <ClInclude Include="src\engine\AudioClip.h" />
     <ClInclude Include="src\logic\ColorSlot.h" />
+    <ClInclude Include="src\logic\data\ColorIndexKeyframeInfo.h" />
+    <ClInclude Include="src\logic\data\ColorIndexKeyframeTimeEditInfo.h" />
     <ClInclude Include="src\logic\data\ColorKeyframeInfo.h" />
     <ClInclude Include="src\logic\data\ColorKeyframeTimeEditInfo.h" />
     <ClInclude Include="src\logic\DiscordManager.h" />
@@ -943,6 +946,7 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClInclude Include="src\logic\data\KeyframeInfo.h" />
     <ClInclude Include="src\logic\data\KeyframeTimeEditInfo.h" />
     <ClInclude Include="src\logic\level_events\TypedLevelEvent.h" />
+    <ClInclude Include="src\logic\object_behaviours\AnimateableColoredObjectBehaviour.h" />
     <ClInclude Include="src\logic\object_behaviours\LevelObjectBehaviour.h" />
     <ClInclude Include="src\logic\object_behaviours\AnimateableObjectBehaviour.h" />
     <ClInclude Include="src\logic\object_behaviours\NormalObjectBehaviour.h" />

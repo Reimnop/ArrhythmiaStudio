@@ -5,10 +5,12 @@
 #include "../GameManager.h"
 #include "imgui/imgui.h"
 
-NormalObjectBehaviour::NormalObjectBehaviour(LevelObject* baseObject) : AnimateableObjectBehaviour(baseObject)
+NormalObjectBehaviour::NormalObjectBehaviour(LevelObject* baseObject) : AnimateableColoredObjectBehaviour(baseObject), color(baseObject->level)
 {
-	Keyframe kf1 = Keyframe(0.0f, 1.0f, EaseType_Linear);
+	Keyframe kf1(0.0f, 1.0f, EaseType_Linear);
+	ColorIndexKeyframe cikf0(0.0f, 0, EaseType_Linear);
 	opacity = Sequence(1, &kf1);
+	color = ColorIndexSequence(1, &cikf0, baseObject->level);
 
 	renderer = new MeshRenderer();
 
@@ -24,37 +26,33 @@ LevelObjectBehaviour* NormalObjectBehaviour::create(LevelObject* object)
 
 void NormalObjectBehaviour::update(float time) 
 {
-	AnimateableObjectBehaviour::update(time);
+	AnimateableColoredObjectBehaviour::update(time);
 
-	Level& level = *GameManager::inst->level;
-
-	renderer->color.r = level.colorSlots[colorSlot]->color.r;
-	renderer->color.g = level.colorSlots[colorSlot]->color.g;
-	renderer->color.b = level.colorSlots[colorSlot]->color.b;
+	Color _color = color.update(time - baseObject->startTime);
+	renderer->color.r = _color.r;
+	renderer->color.g = _color.g;
+	renderer->color.b = _color.b;
 	renderer->color.w = opacity.update(time - baseObject->startTime);
 }
 
 void NormalObjectBehaviour::readJson(json& j)
 {
-	colorSlot = j["color"].get<int>();
 	setShape(j["shape"].get<std::string>());
-	AnimateableObjectBehaviour::readJson(j);
+	AnimateableColoredObjectBehaviour::readJson(j);
 	opacity.fromJson(j["op"]);
+	color.fromJson(j["co"]);
 }
 
 void NormalObjectBehaviour::writeJson(json& j)
 {
-	j["color"] = colorSlot;
 	j["shape"] = shape.id;
-	AnimateableObjectBehaviour::writeJson(j);
+	AnimateableColoredObjectBehaviour::writeJson(j);
 	j["op"] = opacity.toJson();
+	j["co"] = color.toJson();
 }
 
 void NormalObjectBehaviour::drawEditor()
 {
-	Level& level = *GameManager::inst->level;
-	ImGui::SliderInt("Color", &colorSlot, 0, level.colorSlots.size());
-
 	if (ImGui::BeginCombo("Shape", shape.name.c_str()))
 	{
 		for (std::string id : ShapeFactory::getShapeIds())
@@ -69,14 +67,19 @@ void NormalObjectBehaviour::drawEditor()
 		ImGui::EndCombo();
 	}
 
-	AnimateableObjectBehaviour::drawEditor();
+	AnimateableColoredObjectBehaviour::drawEditor();
 }
 
 void NormalObjectBehaviour::drawSequences()
 {
-	AnimateableObjectBehaviour::drawSequences();
+	AnimateableColoredObjectBehaviour::drawSequences();
 
 	sequenceEdit(opacity, "Opacity");
+}
+
+void NormalObjectBehaviour::drawColorSequences()
+{
+	colorSequenceEdit(color, "Color");
 }
 
 void NormalObjectBehaviour::setShape(std::string id)

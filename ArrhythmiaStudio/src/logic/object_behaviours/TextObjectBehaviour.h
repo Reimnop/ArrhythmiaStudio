@@ -1,12 +1,12 @@
 #pragma once
 
-#include "AnimateableObjectBehaviour.h"
+#include "AnimateableColoredObjectBehaviour.h"
 #include "../../engine/rendering/TextRenderer.h"
 #include "json.hpp"
 
 using namespace nlohmann;
 
-class TextObjectBehaviour : public AnimateableObjectBehaviour 
+class TextObjectBehaviour : public AnimateableColoredObjectBehaviour 
 {
 public:
 	TextObjectBehaviour(LevelObject* baseObject);
@@ -22,13 +22,13 @@ public:
 	void drawEditor() override;
 protected:
 	void drawSequences() override;
+	void drawColorSequences() override;
 private:
 	static inline Font* font;
-
-	int colorSlot = 0;
 
 	TextRenderer* renderer;
 	std::string text;
 
 	Sequence opacity;
+	ColorIndexSequence color;
 };

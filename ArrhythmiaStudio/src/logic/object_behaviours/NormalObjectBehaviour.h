@@ -1,13 +1,13 @@
 #pragma once
 
-#include "AnimateableObjectBehaviour.h"
+#include "AnimateableColoredObjectBehaviour.h"
 #include "../../engine/rendering/MeshRenderer.h"
 #include "../Shape.h"
 #include "json.hpp"
 
 using namespace nlohmann;
 
-class NormalObjectBehaviour : public AnimateableObjectBehaviour 
+class NormalObjectBehaviour : public AnimateableColoredObjectBehaviour
 {
 public:
 	NormalObjectBehaviour(LevelObject* baseObject);
@@ -23,12 +23,12 @@ public:
 	void drawEditor() override;
 protected:
 	void drawSequences() override;
+	void drawColorSequences() override;
 private:
-	int colorSlot = 0;
-
 	MeshRenderer* renderer;
 
 	Sequence opacity;
+	ColorIndexSequence color;
 
 	Shape shape;
 	void setShape(std::string id);

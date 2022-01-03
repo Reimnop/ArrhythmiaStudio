@@ -327,6 +327,9 @@
     <ClCompile Include="src\logic\animation\ColorIndexSequence.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\logic\object_behaviours\AnimateableColoredObjectBehaviour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
@@ -2615,6 +2618,15 @@
     <ClInclude Include="src\logic\animation\ColorIndexSequence.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\logic\data\ColorIndexKeyframeInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\data\ColorIndexKeyframeTimeEditInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\object_behaviours\AnimateableColoredObjectBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\glm\ext\matrix_clip_space.inl">
@@ -3071,6 +3083,7 @@
     <None Include="log4cxx.cfg" />
     <None Include="test_level\audio.ogg" />
     <None Include="test_level\level.aslv" />
+    <None Include="test_level\song.ogg" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs\glfw3.lib" />

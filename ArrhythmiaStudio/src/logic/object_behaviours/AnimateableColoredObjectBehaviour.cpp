@@ -1,4 +1,4 @@
-#include "AnimateableObjectBehaviour.h"
+#include "AnimateableColoredObjectBehaviour.h"
 #include "../Level.h"
 
 #define IMGUI_DEFINE_MATH_OPERATORS
@@ -6,89 +6,46 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_internal.h"
 
-AnimateableObjectBehaviour::AnimateableObjectBehaviour(LevelObject* baseObject) : LevelObjectBehaviour(baseObject)
+void AnimateableColoredObjectBehaviour::drawEditor()
 {
-	Keyframe kf0(0.0f, 0.0f, EaseType_Linear);
-	Keyframe kf1(0.0f, 1.0f, EaseType_Linear);
-	positionX = Sequence(1, &kf0);
-	positionY = Sequence(1, &kf0);
-	positionZ = Sequence(1, &kf0);
-	scaleX = Sequence(1, &kf1);
-	scaleY = Sequence(1, &kf1);
-	rotation = Sequence(1, &kf0);
-}
+	AnimateableObjectBehaviour::drawEditor();
 
-void AnimateableObjectBehaviour::update(float time)
-{
-	float t = time - baseObject->startTime;
-
-	Transform& transform = *baseObject->node->transform;
-	transform.position.x = positionX.update(t);
-	transform.position.y = positionY.update(t);
-	transform.position.z = positionZ.update(t);
-	transform.scale.x = scaleX.update(t);
-	transform.scale.y = scaleY.update(t);
-	transform.rotation = angleAxis(rotation.update(t) / 180.0f * PI, glm::vec3(0.0f, 0.0f, -1.0f));
-}
-
-void AnimateableObjectBehaviour::readJson(json& j)
-{
-	positionX.fromJson(j["px"]);
-	positionY.fromJson(j["py"]);
-	positionZ.fromJson(j["pz"]);
-	scaleX.fromJson(j["sx"]);
-	scaleY.fromJson(j["sy"]);
-	rotation.fromJson(j["ro"]);
-}
-
-void AnimateableObjectBehaviour::writeJson(json& j)
-{
-	j["px"] = positionX.toJson();
-	j["py"] = positionY.toJson();
-	j["pz"] = positionZ.toJson();
-	j["sx"] = scaleX.toJson();
-	j["sy"] = scaleY.toJson();
-	j["ro"] = rotation.toJson();
-}
-
-void AnimateableObjectBehaviour::drawEditor()
-{
-	if (beginKeyframeEditor())
+	if (beginColorKeyframeEditor())
 	{
-		drawSequences();
+		drawColorSequences();
 
-		endKeyframeEditor();
+		endColorKeyframeEditor();
 	}
 
 	// Draw keyframe editor
 	if (selectedKeyframe.has_value())
 	{
 		int index = selectedKeyframe.value().index;
-		Sequence& sequence = *selectedKeyframe.value().sequence;
+		ColorIndexSequence& sequence = *selectedKeyframe.value().sequence;
 
-		Keyframe* kf;
-		if (isKeyframeTimeEditing())
+		ColorIndexKeyframe* kf;
+		if (isColorKeyframeTimeEditing())
 		{
 			assert(timeEditingKeyframe.has_value());
 
-			KeyframeTimeEditInfo& editInfo = timeEditingKeyframe.value();
+			ColorIndexKeyframeTimeEditInfo& editInfo = timeEditingKeyframe.value();
 			kf = &editInfo.keyframes[editInfo.index];
 
-			updateKeyframeTimeEdit();
+			updateColorKeyframeTimeEdit();
 		}
 		else
 		{
 			kf = &sequence.keyframes[index];
 		}
 
-		ImGui::DragFloat("Keyframe time", &kf->time, 0.1f);
+		ImGui::DragFloat("Color keyframe time", &kf->time, 0.1f);
 		bool beginTimeEdit = ImGui::IsItemActivated();
 		bool endTimeEdit = ImGui::IsItemDeactivatedAfterEdit();	
 
-		ImGui::DragFloat("Keyframe value", &kf->value, 0.1f);
+		ImGui::SliderInt("Color keyframe value", &kf->value, 0, baseObject->level->colorSlots.size() - 1);
 
 		std::string currentEaseName = Easing::getEaseName(kf->easing);
-		if (ImGui::BeginCombo("Keyframe easing", currentEaseName.c_str()))
+		if (ImGui::BeginCombo("Color keyframe easing", currentEaseName.c_str()))
 		{
 			for (int i = 0; i < EaseType_Count; i++)
 			{
@@ -105,39 +62,29 @@ void AnimateableObjectBehaviour::drawEditor()
 		// Time edit defer
 		if (beginTimeEdit)
 		{
-			beginKeyframeTimeEdit(index, sequence);
+			beginColorKeyframeTimeEdit(index, sequence);
 		}
 
 		if (endTimeEdit)
 		{
-			endKeyframeTimeEdit();
+			endColorKeyframeTimeEdit();
 		}
 	}
 }
 
-void AnimateableObjectBehaviour::drawSequences()
-{
-	sequenceEdit(positionX, "Position X");
-	sequenceEdit(positionY, "Position Y");
-	sequenceEdit(positionZ, "Position Z");
-	sequenceEdit(scaleX, "Scale X");
-	sequenceEdit(scaleY, "Scale Y");
-	sequenceEdit(rotation, "Rotation");
-}
-
-bool AnimateableObjectBehaviour::beginKeyframeEditor()
+bool AnimateableColoredObjectBehaviour::beginColorKeyframeEditor()
 {
 	sequencesToDraw.clear();
 
 	return true;
 }
 
-void AnimateableObjectBehaviour::sequenceEdit(Sequence& sequence, std::string label)
+void AnimateableColoredObjectBehaviour::colorSequenceEdit(ColorIndexSequence& sequence, std::string label)
 {
 	sequencesToDraw.push_back(std::make_tuple(std::reference_wrapper(sequence), label));
 }
 
-void AnimateableObjectBehaviour::endKeyframeEditor()
+void AnimateableColoredObjectBehaviour::endColorKeyframeEditor()
 {
 	// Configurations
 	constexpr float SEQUENCE_LABEL_PADDING = 8.0f;
@@ -169,8 +116,8 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 	ImVec2 keyframeEditorSize = ImVec2(size.x, sequenceCount * SEQUENCE_HEIGHT);
 
 	// Storage
-	ImGuiID startTimeId = window.GetID("##kf-editor-st");
-	ImGuiID endTimeId = window.GetID("##kf-editor-et");
+	ImGuiID startTimeId = window.GetID("##color-kf-editor-st");
+	ImGuiID endTimeId = window.GetID("##color-kf-editor-et");
 
 	float startTime = storage.GetFloat(startTimeId, 0.0f);
 	float endTime = storage.GetFloat(endTimeId, 1.0f);
@@ -187,7 +134,7 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 		baseCoord + size);
 
 	// Time pointer dragging action
-	ImGuiID pointerID = window.GetID("##time-pointer");
+	ImGuiID pointerID = window.GetID("##color-time-pointer");
 
 	if (ImGui::IsWindowFocused() && context.MovingWindow != &window && ImGui::IsMouseClicked(ImGuiMouseButton_Left) && pointerRect.Contains(io.MousePos))
 	{
@@ -259,14 +206,14 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 		}
 
 		{
-			std::optional<KeyframeInfo> hoveredKeyframe;
-			std::optional<KeyframeInfo> lastClickedKeyframe;
+			std::optional<ColorIndexKeyframeInfo> hoveredKeyframe;
+			std::optional<ColorIndexKeyframeInfo> lastClickedKeyframe;
 
 			// Input pass
 			for (int i = 0; i < sequenceCount; i++)
 			{
 				ImVec2 baseSequenceCoord = keyframeEditorBase + ImVec2(0.0f, i * SEQUENCE_HEIGHT);
-				Sequence& sequence = std::get<0>(sequencesToDraw[i]);
+				ColorIndexSequence& sequence = std::get<0>(sequencesToDraw[i]);
 
 				for (int j = 0; j < sequence.keyframes.size(); j++)
 				{
@@ -282,7 +229,7 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 
 					if (kfRect.Contains(io.MousePos))
 					{
-						KeyframeInfo kfInfo;
+						ColorIndexKeyframeInfo kfInfo;
 						kfInfo.index = j;
 						kfInfo.sequence = &sequence;
 
@@ -291,7 +238,7 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 
 					if (kfRect.Contains(io.MouseClickedPos[0]))
 					{
-						KeyframeInfo kfInfo;
+						ColorIndexKeyframeInfo kfInfo;
 						kfInfo.index = j;
 						kfInfo.sequence = &sequence;
 
@@ -304,7 +251,7 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 			for (int i = 0; i < sequenceCount; i++)
 			{
 				ImVec2 baseSequenceCoord = keyframeEditorBase + ImVec2(0.0f, i * SEQUENCE_HEIGHT);
-				Sequence& sequence = std::get<0>(sequencesToDraw[i]);
+				ColorIndexSequence& sequence = std::get<0>(sequencesToDraw[i]);
 				std::string label = std::get<1>(sequencesToDraw[i]);
 
 				drawList.AddText(
@@ -326,7 +273,7 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 						isHighlighted = true;
 					}
 
-					if (isKeyframeTimeEditing())
+					if (isColorKeyframeTimeEditing())
 					{
 						assert(timeEditingKeyframe.has_value());
 
@@ -363,15 +310,15 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 			// Create new keyframe
 			if (ImGui::IsWindowFocused() && keyframeEditorRect.Contains(io.MousePos) && ImGui::IsMouseClicked(ImGuiMouseButton_Right))
 			{
-				Sequence& sequence = std::get<0>(sequencesToDraw[(io.MousePos.y - keyframeEditorBase.y) / SEQUENCE_HEIGHT]);
+				ColorIndexSequence& sequence = std::get<0>(sequencesToDraw[(io.MousePos.y - keyframeEditorBase.y) / SEQUENCE_HEIGHT]);
 				float time = startTime + ((io.MousePos.x - keyframeEditorBase.x) / size.x) * (endTime - startTime);
-				sequence.insertKeyframe(Keyframe(time, 0.0f, EaseType_Linear));
+				sequence.insertKeyframe(ColorIndexKeyframe(time, 0.0f, EaseType_Linear));
 			}
 
 			// Keyframe delete
 			if (ImGui::IsWindowFocused() && selectedKeyframe.has_value() && ImGui::IsKeyDown(GLFW_KEY_DELETE))
 			{
-				KeyframeInfo& kfInfo = selectedKeyframe.value();
+				ColorIndexKeyframeInfo& kfInfo = selectedKeyframe.value();
 				// We don't do it via the eraseKeyframe method because we already know the index
 				// and removing any item from a sorted vector results in a sorted vector.
 				kfInfo.sequence->keyframes.erase(kfInfo.sequence->keyframes.begin() + kfInfo.index);
@@ -379,7 +326,7 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 			}
 
 			// Keyframe dragging action
-			ImGuiID keyframeDragID = window.GetID("##keyframe-drag");
+			ImGuiID keyframeDragID = window.GetID("##color-keyframe-drag");
 
 			if (ImGui::IsWindowFocused() && context.MovingWindow != &window && lastClickedKeyframe.has_value() && ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 			{
@@ -388,32 +335,32 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 				ImGui::FocusWindow(&window);
 
 				selectedKeyframe = lastClickedKeyframe;
-				KeyframeInfo& kfInfo = selectedKeyframe.value();
+				ColorIndexKeyframeInfo& kfInfo = selectedKeyframe.value();
 
-				beginKeyframeTimeEdit(kfInfo.index, *kfInfo.sequence);
+				beginColorKeyframeTimeEdit(kfInfo.index, *kfInfo.sequence);
 			}
 
 			if (context.ActiveId == keyframeDragID && context.ActiveIdSource == ImGuiInputSource_Mouse && !io.MouseDown[0])
 			{
 				ImGui::ClearActiveID();
 
-				endKeyframeTimeEdit();
+				endColorKeyframeTimeEdit();
 			}
 
 			if (context.ActiveId == keyframeDragID)
 			{
-				assert(isKeyframeTimeEditing());
+				assert(isColorKeyframeTimeEditing());
 				assert(timeEditingKeyframe.has_value());
 
-				KeyframeTimeEditInfo& editInfo = timeEditingKeyframe.value();
-				Keyframe& kf = editInfo.keyframes[editInfo.index];
+				ColorIndexKeyframeTimeEditInfo& editInfo = timeEditingKeyframe.value();
+				ColorIndexKeyframe& kf = editInfo.keyframes[editInfo.index];
 
 				float timeDelta = (io.MouseDelta.x / size.x) * (endTime - startTime);
 				timeDelta = std::clamp(timeDelta, -kf.time, baseObject->endTime - kf.time);
 
 				kf.time += timeDelta;
 
-				updateKeyframeTimeEdit();
+				updateColorKeyframeTimeEdit();
 			}
 		}
 
@@ -454,9 +401,9 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 	ImGui::ItemSize(size);
 }
 
-void AnimateableObjectBehaviour::beginKeyframeTimeEdit(int index, Sequence& sequence)
+void AnimateableColoredObjectBehaviour::beginColorKeyframeTimeEdit(int index, ColorIndexSequence& sequence)
 {
-	KeyframeTimeEditInfo editInfo;
+	ColorIndexKeyframeTimeEditInfo editInfo;
 	editInfo.index = index;
 	editInfo.sequence = &sequence;
 	editInfo.keyframes = sequence.keyframes;
@@ -464,16 +411,16 @@ void AnimateableObjectBehaviour::beginKeyframeTimeEdit(int index, Sequence& sequ
 	timeEditingKeyframe = editInfo;
 }
 
-void AnimateableObjectBehaviour::endKeyframeTimeEdit()
+void AnimateableColoredObjectBehaviour::endColorKeyframeTimeEdit()
 {
 	assert(timeEditingKeyframe.has_value());
 
-	KeyframeTimeEditInfo& info = timeEditingKeyframe.value();
-	Keyframe kf = info.keyframes[info.index];
+	ColorIndexKeyframeTimeEditInfo& info = timeEditingKeyframe.value();
+	ColorIndexKeyframe kf = info.keyframes[info.index];
 
 	auto it = std::find(info.sequence->keyframes.begin(), info.sequence->keyframes.end(), kf);
 
-	KeyframeInfo newInfo;
+	ColorIndexKeyframeInfo newInfo;
 	newInfo.index = it - info.sequence->keyframes.begin();
 	newInfo.sequence = info.sequence;
 
@@ -482,15 +429,15 @@ void AnimateableObjectBehaviour::endKeyframeTimeEdit()
 	timeEditingKeyframe.reset();
 }
 
-void AnimateableObjectBehaviour::updateKeyframeTimeEdit()
+void AnimateableColoredObjectBehaviour::updateColorKeyframeTimeEdit()
 {
 	assert(timeEditingKeyframe.has_value());
 
-	KeyframeTimeEditInfo& editInfo = timeEditingKeyframe.value();
+	ColorIndexKeyframeTimeEditInfo& editInfo = timeEditingKeyframe.value();
 	editInfo.sequence->loadKeyframes(editInfo.keyframes);
 }
 
-bool AnimateableObjectBehaviour::isKeyframeTimeEditing()
+bool AnimateableColoredObjectBehaviour::isColorKeyframeTimeEditing()
 {
 	return timeEditingKeyframe.has_value();
 }

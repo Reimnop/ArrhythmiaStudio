@@ -4,8 +4,8 @@
 
 CameraLevelEvent::CameraLevelEvent(Level* level) : AnimateableLevelEvent(level)
 {
-	Keyframe kf0 = Keyframe(0.0f, 0.0f, EaseType_Linear);
-	Keyframe kf10 = Keyframe(0.0f, 10.0f, EaseType_Linear);
+	Keyframe kf0(0.0f, 0.0f, EaseType_Linear);
+	Keyframe kf10(0.0f, 10.0f, EaseType_Linear);
 	positionX = Sequence(1, &kf0);
 	positionY = Sequence(1, &kf0);
 	rotation = Sequence(1, &kf0);

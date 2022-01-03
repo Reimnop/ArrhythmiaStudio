@@ -27,6 +27,7 @@ void TextDrawer::draw(glm::mat4 cameraMatrix)
 	glUniformMatrix4fv(0, 1, false, &mvp[0][0]);
 	glUniform4f(1, color.x, color.y, color.z, color.w);
 
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, font->getAtlasTextureHandle());
 
 	glDrawArrays(GL_TRIANGLES, 0, count);

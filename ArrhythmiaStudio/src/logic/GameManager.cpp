@@ -21,6 +21,7 @@
 #include "editor_windows/Events.h"
 #include "editor_windows/Themes.h"
 #include "level_events/CameraLevelEvent.h"
+#include "level_events/BloomLevelEvent.h"
 
 #define WELCOME_MSG Welcome to PROJECT_NAME!
 
@@ -48,6 +49,7 @@ GameManager::GameManager(GLFWwindow* window)
 
 	// Register level events
 	LevelEventFactory::registerEvent<CameraLevelEvent>("camera", "Camera");
+	LevelEventFactory::registerEvent<BloomLevelEvent>("bloom", "Bloom");
 
 	// Register shapes
 	ShapeFactory::registerShape("Assets/Shapes/square.shp", "square");

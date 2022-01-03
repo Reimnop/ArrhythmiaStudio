@@ -197,6 +197,7 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClCompile Include="src\logic\Level.cpp" />
     <ClCompile Include="src\logic\LevelObject.cpp" />
     <ClCompile Include="src\logic\level_events\AnimateableLevelEvent.cpp" />
+    <ClCompile Include="src\logic\level_events\BloomLevelEvent.cpp" />
     <ClCompile Include="src\logic\level_events\CameraLevelEvent.cpp" />
     <ClCompile Include="src\logic\level_events\TypedLevelEvent.cpp" />
     <ClCompile Include="src\logic\object_behaviours\AnimateableColoredObjectBehaviour.cpp" />
@@ -942,6 +943,7 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClInclude Include="src\logic\Level.h" />
     <ClInclude Include="src\logic\LevelObject.h" />
     <ClInclude Include="src\logic\level_events\AnimateableLevelEvent.h" />
+    <ClInclude Include="src\logic\level_events\BloomLevelEvent.h" />
     <ClInclude Include="src\logic\level_events\CameraLevelEvent.h" />
     <ClInclude Include="src\logic\level_events\LevelEvent.h" />
     <ClInclude Include="src\logic\data\KeyframeInfo.h" />

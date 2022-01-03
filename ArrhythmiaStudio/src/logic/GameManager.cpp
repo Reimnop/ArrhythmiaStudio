@@ -9,6 +9,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_markdown.h"
 #include "imgui/imgui_internal.h"
+#include "object_behaviours/EmptyObjectBehaviour.h"
 #include "object_behaviours/NormalObjectBehaviour.h"
 #include "object_behaviours/TextObjectBehaviour.h"
 #include "factories/ObjectBehaviourFactory.h"
@@ -41,6 +42,7 @@ GameManager::GameManager(GLFWwindow* window)
 	docManager = new DocManager();
 
 	// Register object behaviours
+	ObjectBehaviourFactory::registerBehaviour<EmptyObjectBehaviour>("empty", "Empty");
 	ObjectBehaviourFactory::registerBehaviour<NormalObjectBehaviour>("normal", "Normal");
 	ObjectBehaviourFactory::registerBehaviour<TextObjectBehaviour>("text", "Text");
 

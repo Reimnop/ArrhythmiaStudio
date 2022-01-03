@@ -201,6 +201,7 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClCompile Include="src\logic\level_events\TypedLevelEvent.cpp" />
     <ClCompile Include="src\logic\object_behaviours\AnimateableColoredObjectBehaviour.cpp" />
     <ClCompile Include="src\logic\object_behaviours\AnimateableObjectBehaviour.cpp" />
+    <ClCompile Include="src\logic\object_behaviours\EmptyObjectBehaviour.cpp" />
     <ClCompile Include="src\logic\object_behaviours\NormalObjectBehaviour.cpp" />
     <ClCompile Include="src\engine\Scene.cpp" />
     <ClCompile Include="src\engine\SceneNode.cpp" />
@@ -947,6 +948,7 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClInclude Include="src\logic\data\KeyframeTimeEditInfo.h" />
     <ClInclude Include="src\logic\level_events\TypedLevelEvent.h" />
     <ClInclude Include="src\logic\object_behaviours\AnimateableColoredObjectBehaviour.h" />
+    <ClInclude Include="src\logic\object_behaviours\EmptyObjectBehaviour.h" />
     <ClInclude Include="src\logic\object_behaviours\LevelObjectBehaviour.h" />
     <ClInclude Include="src\logic\object_behaviours\AnimateableObjectBehaviour.h" />
     <ClInclude Include="src\logic\object_behaviours\NormalObjectBehaviour.h" />

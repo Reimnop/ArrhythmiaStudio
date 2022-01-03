@@ -330,6 +330,9 @@
     <ClCompile Include="src\logic\object_behaviours\AnimateableColoredObjectBehaviour.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\logic\object_behaviours\EmptyObjectBehaviour.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MainWindow.h">
@@ -2625,6 +2628,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\object_behaviours\AnimateableColoredObjectBehaviour.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logic\object_behaviours\EmptyObjectBehaviour.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

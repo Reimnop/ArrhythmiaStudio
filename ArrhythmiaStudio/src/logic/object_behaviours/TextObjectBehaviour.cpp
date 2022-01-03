@@ -60,8 +60,6 @@ void TextObjectBehaviour::writeJson(json& j)
 
 void TextObjectBehaviour::drawEditor()
 {
-	Level& level = *baseObject->level;
-
 	ImGui::InputTextMultiline("Text", &text);
 
 	if (ImGui::IsItemEdited()) 

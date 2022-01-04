@@ -23,6 +23,7 @@ private:
 
 	float startTime = 0.0f;
 	float endTime = 12.0f;
+	int layer = 0;
 
 	uint32_t audioBuffer;
 	ComputeShader* waveformShader;

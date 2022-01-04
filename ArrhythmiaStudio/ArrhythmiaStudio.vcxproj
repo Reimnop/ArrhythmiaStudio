@@ -911,6 +911,7 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClInclude Include="include\utils.h" />
     <ClInclude Include="include\VideoFormatConverter.h" />
     <ClInclude Include="src\Arguments.h" />
+    <ClInclude Include="src\logic\EditorSettings.h" />
     <ClInclude Include="src\engine\rendering\drawers\BatchedDrawer.h" />
     <ClInclude Include="src\engine\rendering\drawers\BatchedVertex.h" />
     <ClInclude Include="src\engine\rendering\drawers\Drawer.h" />

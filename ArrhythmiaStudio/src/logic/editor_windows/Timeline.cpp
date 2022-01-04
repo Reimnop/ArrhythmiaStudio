@@ -8,6 +8,7 @@
 #include "../LevelObject.h"
 #include "../GameManager.h"
 #include "utils.h"
+#include "../EditorSettings.h"
 
 Timeline::Timeline()
 {
@@ -107,6 +108,11 @@ void Timeline::draw()
 
 	ImGui::SameLine();
 
+	// Layer
+	ImGui::SetNextItemWidth(150.0f);
+	ImGui::SliderInt("Layer", &layer, 0, LAYER_COUNT);
+	ImGui::SameLine();
+
 	// BPM
 	ImGui::SetNextItemWidth(150.0f);
 
@@ -145,10 +151,9 @@ void Timeline::draw()
 void Timeline::drawTimeline()
 {
 	// Configurations
-	constexpr int BIN_COUNT = 15;
-	constexpr float BIN_HEIGHT = 20.0f;
-	constexpr ImU32 BIN_PRIMARY_COL = 0xFF1F1F1F;
-	constexpr ImU32 BIN_SECONDARY_COL = 0xFF2E2E2E;
+	constexpr float ROW_HEIGHT = 20.0f;
+	constexpr ImU32 ROW_PRIMARY_COL = 0xFF1F1F1F;
+	constexpr ImU32 ROW_SECONDARY_COL = 0xFF2E2E2E;
 
 	constexpr float TIME_POINTER_WIDTH = 18.0f;
 	constexpr float TIME_POINTER_HEIGHT = 30.0f;
@@ -163,9 +168,9 @@ void Timeline::drawTimeline()
 
 	// Coords calculation
 	ImVec2 baseCoord = ImGui::GetCursorScreenPos();
-	ImVec2 size = ImVec2(ImGui::GetContentRegionAvailWidth(), BIN_COUNT * BIN_HEIGHT + TIME_POINTER_HEIGHT);
+	ImVec2 size = ImVec2(ImGui::GetContentRegionAvailWidth(), ROW_COUNT * ROW_HEIGHT + TIME_POINTER_HEIGHT);
 	ImVec2 timePointerAreaSize = ImVec2(size.x, TIME_POINTER_HEIGHT);
-	ImVec2 objectEditorSize = ImVec2(size.x, BIN_COUNT * BIN_HEIGHT);
+	ImVec2 objectEditorSize = ImVec2(size.x, ROW_COUNT * ROW_HEIGHT);
 
 	timelineSize = objectEditorSize;
 
@@ -216,6 +221,7 @@ void Timeline::drawTimeline()
 					LevelObject* obj = new LevelObject(id, &level);
 					obj->startTime = st;
 					obj->endTime = et;
+					obj->layer = layer;
 					level.addObject(obj);
 				}
 			}
@@ -269,13 +275,13 @@ void Timeline::drawTimeline()
 		ImVec2 objectEditorBase = baseCoord + ImVec2(0.0f, timePointerAreaSize.y);
 
 		// Draw background
-		drawList.AddRectFilled(objectEditorBase, objectEditorBase + objectEditorSize, BIN_PRIMARY_COL);
+		drawList.AddRectFilled(objectEditorBase, objectEditorBase + objectEditorSize, ROW_PRIMARY_COL);
 
 		// Draw foreground
-		for (int i = 1; i < BIN_COUNT; i += 2)
+		for (int i = 1; i < ROW_COUNT; i += 2)
 		{
-			ImVec2 binBase = objectEditorBase + ImVec2(0.0f, BIN_HEIGHT * i);
-			drawList.AddRectFilled(binBase, binBase + ImVec2(size.x, BIN_HEIGHT), BIN_SECONDARY_COL);
+			ImVec2 binBase = objectEditorBase + ImVec2(0.0f, ROW_HEIGHT * i);
+			drawList.AddRectFilled(binBase, binBase + ImVec2(size.x, ROW_HEIGHT), ROW_SECONDARY_COL);
 		}
 
 		// Draw waveform
@@ -313,7 +319,9 @@ void Timeline::drawTimeline()
 			{
 				LevelObject& object = *it->second;
 
-				if (object.endTime < startTime || object.startTime > endTime || object.bin < 0 || object.bin >= BIN_COUNT)
+				if (object.endTime < startTime || object.startTime > endTime || 
+					object.row < 0 || object.row >= ROW_COUNT ||
+					object.layer != layer)
 				{
 					continue;
 				}
@@ -322,8 +330,8 @@ void Timeline::drawTimeline()
 				float endPos = (object.endTime - startTime) / (endTime - startTime) * size.x;
 
 				ImRect stripRect = ImRect(
-					objectEditorBase + ImVec2(startPos, BIN_HEIGHT * object.bin),
-					objectEditorBase + ImVec2(endPos, BIN_HEIGHT * (object.bin + 1)));
+					objectEditorBase + ImVec2(startPos, ROW_HEIGHT * object.row),
+					objectEditorBase + ImVec2(endPos, ROW_HEIGHT * (object.row + 1)));
 
 				if (stripRect.Contains(io.MousePos) && ImGui::IsWindowHovered())
 				{
@@ -341,7 +349,9 @@ void Timeline::drawTimeline()
 			{
 				LevelObject& object = *it->second;
 
-				if (object.endTime < startTime || object.startTime > endTime || object.bin < 0 || object.bin >= BIN_COUNT)
+				if (object.endTime < startTime || object.startTime > endTime || 
+					object.row < 0 || object.row >= ROW_COUNT ||
+					object.layer != layer)
 				{
 					continue;
 				}
@@ -353,8 +363,8 @@ void Timeline::drawTimeline()
 
 				drawObjectStrip(
 					objectName,
-					objectEditorBase + ImVec2(startPos, BIN_HEIGHT * object.bin),
-					objectEditorBase + ImVec2(endPos, BIN_HEIGHT * (object.bin + 1)),
+					objectEditorBase + ImVec2(startPos, ROW_HEIGHT * object.row),
+					objectEditorBase + ImVec2(endPos, ROW_HEIGHT * (object.row + 1)),
 					(level.selection.selectedObject.has_value() ? &object == &level.selection.selectedObject.value().get() : false) || (objectHovering.has_value() ? &objectHovering.value().get() == &object : false));
 			}
 

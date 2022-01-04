@@ -15,7 +15,8 @@ public:
 	uint64_t id;
 	float startTime;
 	float endTime;
-	int bin;
+	int row;
+	int layer;
 	SceneNode* node;
 	LevelObjectBehaviour* behaviour;
 

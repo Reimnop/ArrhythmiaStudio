@@ -6,6 +6,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_stdlib.h"
 #include "factories/ObjectBehaviourFactory.h"
+#include "EditorSettings.h"
 
 LevelObject::LevelObject(std::string type, Level* level)
 {
@@ -14,7 +15,8 @@ LevelObject::LevelObject(std::string type, Level* level)
 	id = Utils::randomId();
 	startTime = 0.0f;
 	endTime = 5.0f;
-	bin = 0;
+	layer = 0;
+	row = 0;
 	this->level = level;
 	node = new SceneNode(name);
 	node->setActive(false);
@@ -33,7 +35,8 @@ LevelObject::LevelObject(json j, Level* level)
 	}
 	startTime = j["start"].get<float>();
 	endTime = j["end"].get<float>();
-	bin = j["bin"].get<int>();
+	layer = j["layer"].get<int>();
+	row = j["row"].get<int>();
 	this->level = level;
 	node = new SceneNode(name);
 	node->setActive(false);
@@ -124,7 +127,8 @@ void LevelObject::fromJson(json j)
 	setParent(level->levelObjects[j["parent"].get<uint64_t>()]);
 	startTime = j["start"].get<float>();
 	endTime = j["end"].get<float>();
-	bin = j["bin"].get<int>();
+	layer = j["layer"].get<int>();
+	row = j["row"].get<int>();
 	behaviour->readJson(j);
 }
 
@@ -140,7 +144,8 @@ json LevelObject::toJson()
 	}
 	j["start"] = startTime;
 	j["end"] = endTime;
-	j["bin"] = bin;
+	j["layer"] = layer;
+	j["row"] = row;
 	behaviour->writeJson(j);
 	return j;
 }
@@ -162,7 +167,8 @@ void LevelObject::drawEditor()
 		level->insertDeactivateList(this);
 		level->recalculateObjectsState();
 	}
-	ImGui::SliderInt("Editor bin", &bin, 0, 14);
+	ImGui::SliderInt("Editor layer", &layer, 0, LAYER_COUNT - 1);
+	ImGui::SliderInt("Editor row", &row, 0, ROW_COUNT - 1);
 
 	// Parent select popup
 	if (ImGui::BeginPopupModal("Select parent", &parentSearchOpen))

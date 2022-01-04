@@ -36,7 +36,7 @@ void TextRenderer::setText(const std::wstring& text)
 		return;
 	}
 
-	TextMeshGenerator generator = TextMeshGenerator(font);
+	TextMeshGenerator generator(font);
 
 	std::vector<TextVertex> vertices = generator.genMesh(text);
 	count = vertices.size();

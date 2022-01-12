@@ -218,11 +218,11 @@ void Timeline::drawTimeline()
 				{
 					float st = level.time;
 					float et = st + 5.0f;
-					LevelObject* obj = new LevelObject(id, &level);
+					LevelObject* obj = new LevelObject(id, level.spawner);
 					obj->startTime = st;
 					obj->endTime = et;
 					obj->layer = layer;
-					level.addObject(obj);
+					level.spawner->addObject(obj);
 				}
 			}
 			ImGui::EndMenu();
@@ -315,7 +315,7 @@ void Timeline::drawTimeline()
 			std::optional<std::reference_wrapper<LevelObject>> lastClickedObject;
 
 			// Input pass
-			for (auto it = level.levelObjects.begin(); it != level.levelObjects.end(); ++it)
+			for (auto it = level.spawner->levelObjects.begin(); it != level.spawner->levelObjects.end(); ++it)
 			{
 				LevelObject& object = *it->second;
 
@@ -345,7 +345,7 @@ void Timeline::drawTimeline()
 			}
 
 			// Visual pass
-			for (auto it = level.levelObjects.begin(); it != level.levelObjects.end(); ++it)
+			for (auto it = level.spawner->levelObjects.begin(); it != level.spawner->levelObjects.end(); ++it)
 			{
 				LevelObject& object = *it->second;
 
@@ -402,11 +402,11 @@ void Timeline::drawTimeline()
 				object.startTime += timeDelta;
 				object.endTime += timeDelta;
 
-				level.removeActivateList(&object);
-				level.removeDeactivateList(&object);
-				level.insertActivateList(&object);
-				level.insertDeactivateList(&object);
-				level.recalculateObjectsState();
+				level.spawner->removeActivateList(&object);
+				level.spawner->removeDeactivateList(&object);
+				level.spawner->insertActivateList(&object);
+				level.spawner->insertDeactivateList(&object);
+				level.spawner->recalculateObjectsState();
 			}
 			else // Other things to do when not dragging
 			{
@@ -415,7 +415,7 @@ void Timeline::drawTimeline()
 				{
 					LevelObject& object = level.selection.selectedObject.value();
 					level.selection.selectedObject.reset();
-					level.deleteObject(&object);
+					level.spawner->deleteObject(&object);
 				}
 			}
 		}

@@ -1,5 +1,5 @@
 #include "AnimateableColoredObjectBehaviour.h"
-#include "../Level.h"
+#include "../GameManager.h"
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "GLFW/glfw3.h"
@@ -42,7 +42,7 @@ void AnimateableColoredObjectBehaviour::drawEditor()
 		bool beginTimeEdit = ImGui::IsItemActivated();
 		bool endTimeEdit = ImGui::IsItemDeactivatedAfterEdit();	
 
-		ImGui::SliderInt("Color keyframe value", &kf->value, 0, baseObject->level->colorSlots.size() - 1);
+		ImGui::SliderInt("Color keyframe value", &kf->value, 0, GameManager::inst->level->colorSlots.size() - 1);
 
 		std::string currentEaseName = Easing::getEaseName(kf->easing);
 		if (ImGui::BeginCombo("Color keyframe easing", currentEaseName.c_str()))
@@ -106,7 +106,7 @@ void AnimateableColoredObjectBehaviour::endColorKeyframeEditor()
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuiContext& context = *ImGui::GetCurrentContext();
 	ImGuiStorage& storage = *ImGui::GetStateStorage();
-	Level& level = *baseObject->level;
+	Level& level = *GameManager::inst->level;
 	int sequenceCount = sequencesToDraw.size();
 
 	// Drawing

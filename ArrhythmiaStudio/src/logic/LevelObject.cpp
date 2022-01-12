@@ -8,7 +8,7 @@
 #include "factories/ObjectBehaviourFactory.h"
 #include "EditorSettings.h"
 
-LevelObject::LevelObject(std::string type, Level* level)
+LevelObject::LevelObject(std::string type, ObjectSpawner* spawner)
 {
 	name = "New object";
 	this->type = type;
@@ -17,14 +17,14 @@ LevelObject::LevelObject(std::string type, Level* level)
 	endTime = 5.0f;
 	layer = 0;
 	row = 0;
-	this->level = level;
+	this->spawner = spawner;
 	node = new SceneNode(name);
 	node->setActive(false);
 	ObjectBehaviourInfo info = ObjectBehaviourFactory::getFromId(type);
 	behaviour = info.createFunction(this);
 }
 
-LevelObject::LevelObject(json j, Level* level)
+LevelObject::LevelObject(json& j, ObjectSpawner* spawner)
 {
 	name = j["name"].get<std::string>();
 	type = j["type"].get<std::string>();
@@ -37,7 +37,7 @@ LevelObject::LevelObject(json j, Level* level)
 	endTime = j["end"].get<float>();
 	layer = j["layer"].get<int>();
 	row = j["row"].get<int>();
-	this->level = level;
+	this->spawner = spawner;
 	node = new SceneNode(name);
 	node->setActive(false);
 	ObjectBehaviourInfo info = ObjectBehaviourFactory::getFromId(type);
@@ -69,7 +69,7 @@ void LevelObject::initializeParent()
 {
 	if (parentIdToInitialize) 
 	{
-		setParent(level->levelObjects[parentIdToInitialize]);
+		setParent(spawner->levelObjects[parentIdToInitialize]);
 	}
 }
 
@@ -124,7 +124,7 @@ void LevelObject::fromJson(json j)
 		throw std::runtime_error("Mismatch object type!");
 	}
 	id = j["id"].get<uint64_t>();
-	setParent(level->levelObjects[j["parent"].get<uint64_t>()]);
+	setParent(spawner->levelObjects[j["parent"].get<uint64_t>()]);
 	startTime = j["start"].get<float>();
 	endTime = j["end"].get<float>();
 	layer = j["layer"].get<int>();
@@ -156,16 +156,16 @@ void LevelObject::drawEditor()
 	ImGui::DragFloat("Start time", &startTime, 0.1f);
 	if (ImGui::IsItemEdited())
 	{
-		level->removeActivateList(this);
-		level->insertActivateList(this);
-		level->recalculateObjectsState();
+		spawner->removeActivateList(this);
+		spawner->insertActivateList(this);
+		spawner->recalculateObjectsState();
 	}
 	ImGui::DragFloat("End time", &endTime, 0.1f);
 	if (ImGui::IsItemEdited())
 	{
-		level->removeDeactivateList(this);
-		level->insertDeactivateList(this);
-		level->recalculateObjectsState();
+		spawner->removeDeactivateList(this);
+		spawner->insertDeactivateList(this);
+		spawner->recalculateObjectsState();
 	}
 	ImGui::SliderInt("Editor layer", &layer, 0, LAYER_COUNT - 1);
 	ImGui::SliderInt("Editor row", &row, 0, ROW_COUNT - 1);
@@ -187,7 +187,7 @@ void LevelObject::drawEditor()
 
 		if (ImGui::BeginChild("##parent-objects", ImVec2(0.0f, 0.0f), true))
 		{
-			for (auto &[id, obj] : level->levelObjects)
+			for (auto &[id, obj] : spawner->levelObjects)
 			{
 				if (obj == this)
 				{

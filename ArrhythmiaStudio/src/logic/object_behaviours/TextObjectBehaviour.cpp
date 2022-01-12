@@ -6,7 +6,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_stdlib.h"
 
-TextObjectBehaviour::TextObjectBehaviour(LevelObject* baseObject) : AnimateableColoredObjectBehaviour(baseObject), color(baseObject->level)
+TextObjectBehaviour::TextObjectBehaviour(LevelObject* baseObject) : AnimateableColoredObjectBehaviour(baseObject), color(Level::inst)
 {
 	if (!font)
 	{
@@ -16,7 +16,7 @@ TextObjectBehaviour::TextObjectBehaviour(LevelObject* baseObject) : AnimateableC
 	Keyframe kf1(0.0f, 1.0f, EaseType_Linear);
 	ColorIndexKeyframe cikf0(0.0f, 0, EaseType_Linear);
 	opacity = Sequence(1, &kf1);
-	color = ColorIndexSequence(1, &cikf0, baseObject->level);
+	color = ColorIndexSequence(1, &cikf0, Level::inst);
 
 	renderer = new TextRenderer(font);
 

@@ -1,5 +1,5 @@
 #include "AnimateableObjectBehaviour.h"
-#include "../Level.h"
+#include "../GameManager.h"
 
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include "GLFW/glfw3.h"
@@ -159,7 +159,7 @@ void AnimateableObjectBehaviour::endKeyframeEditor()
 	ImGuiIO& io = ImGui::GetIO();
 	ImGuiContext& context = *ImGui::GetCurrentContext();
 	ImGuiStorage& storage = *ImGui::GetStateStorage();
-	Level& level = *baseObject->level;
+	Level& level = *GameManager::inst->level;
 	int sequenceCount = sequencesToDraw.size();
 
 	// Drawing

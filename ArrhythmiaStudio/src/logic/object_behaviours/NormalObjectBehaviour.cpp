@@ -5,12 +5,12 @@
 #include "../GameManager.h"
 #include "imgui/imgui.h"
 
-NormalObjectBehaviour::NormalObjectBehaviour(LevelObject* baseObject) : AnimateableColoredObjectBehaviour(baseObject), color(baseObject->level)
+NormalObjectBehaviour::NormalObjectBehaviour(LevelObject* baseObject) : AnimateableColoredObjectBehaviour(baseObject), color(Level::inst)
 {
 	Keyframe kf1(0.0f, 1.0f, EaseType_Linear);
 	ColorIndexKeyframe cikf0(0.0f, 0, EaseType_Linear);
 	opacity = Sequence(1, &kf1);
-	color = ColorIndexSequence(1, &cikf0, baseObject->level);
+	color = ColorIndexSequence(1, &cikf0, Level::inst);
 
 	renderer = new MeshRenderer();
 

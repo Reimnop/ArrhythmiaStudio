@@ -3,6 +3,7 @@
 #include <regex>
 
 #include "json.hpp"
+#include "ObjectSpawner.h"
 #include "../engine/SceneNode.h"
 
 using namespace nlohmann;
@@ -20,10 +21,10 @@ public:
 	SceneNode* node;
 	LevelObjectBehaviour* behaviour;
 
-	Level* level;
+	ObjectSpawner* spawner;
 
-	LevelObject(std::string type, Level* level);
-	LevelObject(json j, Level* level);
+	LevelObject(std::string type, ObjectSpawner* spawner);
+	LevelObject(json& j, ObjectSpawner* spawner);
 	~LevelObject();
 
 	// Only call after loading all objects

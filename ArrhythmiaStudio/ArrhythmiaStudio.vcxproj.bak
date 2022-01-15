@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{c89a783e-173e-4816-ac3f-83714cd7ab6a}</ProjectGuid>
+    <RootNamespace>ArrhythmiaStudio</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Arrhythmia Studio</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v142</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;STB_IMAGE_IMPLEMENTATION;PROJECT_NAME=$(ProjectName);_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLFW_INCLUDE_NONE;NOMINMAX</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)include\ffmpeg;$(ProjectDir)include\ffmpegcpp;$(ProjectDir)include\msdfgen;$(ProjectDir)include\msdf-atlas-gen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib;discord_game_sdk.dll.lib;log4cxx.lib;freetype.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;STB_IMAGE_IMPLEMENTATION;PROJECT_NAME=$(ProjectName);NDEBUG;_CONSOLE;GLFW_INCLUDE_NONE;GLM_FORCE_SSE42;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)include\ffmpeg;$(ProjectDir)include\ffmpegcpp;$(ProjectDir)include\msdfgen;$(ProjectDir)include\msdf-atlas-gen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib;discord_game_sdk.dll.lib;log4cxx.lib;freetype.lib</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(ProjectDir)Assets" "$(OutDir)Assets" /e /i /y
+xcopy "$(ProjectDir)bass.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)avcodec-58.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)avdevice-58.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)avfilter-7.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)avformat-58.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)avutil-56.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)swresample-3.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)swscale-5.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)discord_game_sdk.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)log4cxx.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)libaprutil-1.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)libapr-1.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)libexpat.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
+</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Arguments.h" />
+    <ClInclude Include="src\logic\EditorSettings.h" />
+    <ClInclude Include="src\engine\rendering\drawers\BatchedDrawer.h" />
+    <ClInclude Include="src\engine\rendering\drawers\BatchedVertex.h" />
+    <ClInclude Include="src\engine\rendering\drawers\Drawer.h" />
+    <ClInclude Include="src\engine\rendering\drawers\TextDrawer.h" />
+    <ClInclude Include="src\logic\animation\Color.h" />
+    <ClInclude Include="src\logic\animation\ColorIndexKeyframe.h" />
+    <ClInclude Include="src\logic\animation\ColorIndexSequence.h" />
+    <ClInclude Include="src\logic\animation\ColorKeyframe.h" />
+    <ClInclude Include="src\logic\animation\ColorSequence.h" />
+    <ClInclude Include="src\logic\animation\Easing.h" />
+    <ClInclude Include="src\logic\animation\Keyframe.h" />
+    <ClInclude Include="src\logic\animation\Sequence.h" />
+    <ClInclude Include="src\engine\AudioClip.h" />
+    <ClInclude Include="src\logic\ColorSlot.h" />
+    <ClInclude Include="src\logic\data\ColorIndexKeyframeInfo.h" />
+    <ClInclude Include="src\logic\data\ColorIndexKeyframeTimeEditInfo.h" />
+    <ClInclude Include="src\logic\data\ColorKeyframeInfo.h" />
+    <ClInclude Include="src\logic\data\ColorKeyframeTimeEditInfo.h" />
+    <ClInclude Include="src\logic\DiscordManager.h" />
+    <ClInclude Include="src\logic\DocManager.h" />
+    <ClInclude Include="src\logic\DocPage.h" />
+    <ClInclude Include="src\logic\editor_windows\EditorWindow.h" />
+    <ClInclude Include="src\logic\editor_windows\Events.h" />
+    <ClInclude Include="src\logic\editor_windows\Properties.h" />
+    <ClInclude Include="src\logic\editor_windows\Themes.h" />
+    <ClInclude Include="src\logic\editor_windows\Timeline.h" />
+    <ClInclude Include="src\logic\editor_windows\Viewport.h" />
+    <ClInclude Include="src\logic\factories\LevelEventFactory.h" />
+    <ClInclude Include="src\logic\GameManager.h" />
+    <ClInclude Include="src\logic\Level.h" />
+    <ClInclude Include="src\logic\LevelObject.h" />
+    <ClInclude Include="src\logic\level_events\AnimateableLevelEvent.h" />
+    <ClInclude Include="src\logic\level_events\BloomLevelEvent.h" />
+    <ClInclude Include="src\logic\level_events\CameraLevelEvent.h" />
+    <ClInclude Include="src\logic\level_events\LevelEvent.h" />
+    <ClInclude Include="src\logic\data\KeyframeInfo.h" />
+    <ClInclude Include="src\logic\data\KeyframeTimeEditInfo.h" />
+    <ClInclude Include="src\logic\level_events\TypedLevelEvent.h" />
+    <ClInclude Include="src\logic\ObjectSpawner.h" />
+    <ClInclude Include="src\logic\object_behaviours\AnimateableColoredObjectBehaviour.h" />
+    <ClInclude Include="src\logic\object_behaviours\EmptyObjectBehaviour.h" />
+    <ClInclude Include="src\logic\object_behaviours\LevelObjectBehaviour.h" />
+    <ClInclude Include="src\logic\object_behaviours\AnimateableObjectBehaviour.h" />
+    <ClInclude Include="src\logic\object_behaviours\NormalObjectBehaviour.h" />
+    <ClInclude Include="src\engine\Scene.h" />
+    <ClInclude Include="src\engine\SceneNode.h" />
+    <ClInclude Include="src\logic\factories\ObjectBehaviourFactory.h" />
+    <ClInclude Include="src\logic\factories\ShapeFactory.h" />
+    <ClInclude Include="src\logic\object_behaviours\TextObjectBehaviour.h" />
+    <ClInclude Include="src\logic\Selection.h" />
+    <ClInclude Include="src\logic\Shape.h" />
+    <ClInclude Include="src\engine\Transform.h" />
+    <ClInclude Include="src\logic\VideoExporter.h" />
+    <ClInclude Include="src\MainWindow.h" />
+    <ClInclude Include="src\engine\Camera.h" />
+    <ClInclude Include="src\engine\rendering\ComputeShader.h" />
+    <ClInclude Include="src\engine\rendering\DrawData.h" />
+    <ClInclude Include="src\engine\rendering\FramebufferStack.h" />
+    <ClInclude Include="src\engine\rendering\GlobalConstants.h" />
+    <ClInclude Include="src\engine\rendering\ImGuiController.h" />
+    <ClInclude Include="src\engine\rendering\Material.h" />
+    <ClInclude Include="src\engine\rendering\MaterialProperty.h" />
+    <ClInclude Include="src\engine\rendering\MaterialPropertyType.h" />
+    <ClInclude Include="src\engine\rendering\Mesh.h" />
+    <ClInclude Include="src\engine\rendering\MeshRenderer.h" />
+    <ClInclude Include="src\engine\rendering\BatchedDrawData.h" />
+    <ClInclude Include="src\engine\rendering\post_processing\Bloom.h" />
+    <ClInclude Include="src\engine\rendering\post_processing\PostProcessor.h" />
+    <ClInclude Include="src\engine\rendering\post_processing\Tonemapping.h" />
+    <ClInclude Include="src\engine\rendering\RenderCommand.h" />
+    <ClInclude Include="src\engine\rendering\Renderer.h" />
+    <ClInclude Include="src\engine\rendering\RendererComponent.h" />
+    <ClInclude Include="src\engine\rendering\Shader.h" />
+    <ClInclude Include="src\engine\rendering\TextRenderer.h" />
+    <ClInclude Include="src\engine\rendering\Texture2D.h" />
+    <ClInclude Include="src\engine\rendering\TextDrawData.h" />
+    <ClInclude Include="src\engine\rendering\text\AtlasInfo.h" />
+    <ClInclude Include="src\engine\rendering\text\Bounds.h" />
+    <ClInclude Include="src\engine\rendering\text\Font.h" />
+    <ClInclude Include="src\engine\rendering\text\Glyph.h" />
+    <ClInclude Include="src\engine\rendering\text\Metrics.h" />
+    <ClInclude Include="src\engine\rendering\text\SampleTextRenderer.h" />
+    <ClInclude Include="src\engine\rendering\text\TextMeshGenerator.h" />
+    <ClInclude Include="src\engine\rendering\text\TextVertex.h" />
+    <ClInclude Include="src\engine\rendering\VertexAttrib.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Documentation\general_usage.md" />
+    <None Include="Assets\Documentation\testing.md" />
+    <None Include="Assets\Shaders\fxaa.comp" />
+    <None Include="Assets\Shaders\PostProcessing\bloom-blur-horizontal.comp" />
+    <None Include="Assets\Shaders\PostProcessing\bloom-blur-vertical.comp" />
+    <None Include="Assets\Shaders\PostProcessing\bloom-combine.comp" />
+    <None Include="Assets\Shaders\PostProcessing\bloom-threshold.comp" />
+    <None Include="Assets\Shaders\PostProcessing\bloom-upsample.comp" />
+    <None Include="Assets\Shaders\PostProcessing\tonemapping.comp" />
+    <None Include="Assets\Shaders\text.frag" />
+    <None Include="Assets\Shaders\text.vert" />
+    <None Include="Assets\Shaders\unlit.frag" />
+    <None Include="Assets\Shaders\unlit.vert" />
+    <None Include="Assets\Shaders\waveform.comp" />
+    <None Include="Assets\Shapes\circle.shp" />
+    <None Include="Assets\Shapes\circle_quarter.shp" />
+    <None Include="Assets\Shapes\hexagon.shp" />
+    <None Include="Assets\Shapes\hollow_circle.shp" />
+    <None Include="Assets\Shapes\hollow_circle_quarter.shp" />
+    <None Include="Assets\Shapes\hollow_hexagon.shp" />
+    <None Include="Assets\Shapes\hollow_pentagon.shp" />
+    <None Include="Assets\Shapes\hollow_square.shp" />
+    <None Include="Assets\Shapes\pentagon.shp" />
+    <None Include="Assets\Shapes\right_angled_triangle.shp" />
+    <None Include="Assets\Shapes\square.shp" />
+    <None Include="Assets\Shapes\triangle.shp" />
+    <None Include="avcodec-58.dll" />
+    <None Include="avdevice-58.dll" />
+    <None Include="avfilter-7.dll" />
+    <None Include="avformat-58.dll" />
+    <None Include="avutil-56.dll" />
+    <None Include="bass.dll" />
+    <None Include="discord_game_sdk.dll" />
+    <None Include="include\glm\detail\func_common.inl" />
+    <None Include="include\glm\detail\func_common_simd.inl" />
+    <None Include="include\glm\detail\func_exponential.inl" />
+    <None Include="include\glm\detail\func_exponential_simd.inl" />
+    <None Include="include\glm\detail\func_geometric.inl" />
+    <None Include="include\glm\detail\func_geometric_simd.inl" />
+    <None Include="include\glm\detail\func_integer.inl" />
+    <None Include="include\glm\detail\func_integer_simd.inl" />
+    <None Include="include\glm\detail\func_matrix.inl" />
+    <None Include="include\glm\detail\func_matrix_simd.inl" />
+    <None Include="include\glm\detail\func_packing.inl" />
+    <None Include="include\glm\detail\func_packing_simd.inl" />
+    <None Include="include\glm\detail\func_trigonometric.inl" />
+    <None Include="include\glm\detail\func_trigonometric_simd.inl" />
+    <None Include="include\glm\detail\func_vector_relational.inl" />
+    <None Include="include\glm\detail\func_vector_relational_simd.inl" />
+    <None Include="include\glm\detail\type_half.inl" />
+    <None Include="include\glm\detail\type_mat2x2.inl" />
+    <None Include="include\glm\detail\type_mat2x3.inl" />
+    <None Include="include\glm\detail\type_mat2x4.inl" />
+    <None Include="include\glm\detail\type_mat3x2.inl" />
+    <None Include="include\glm\detail\type_mat3x3.inl" />
+    <None Include="include\glm\detail\type_mat3x4.inl" />
+    <None Include="include\glm\detail\type_mat4x2.inl" />
+    <None Include="include\glm\detail\type_mat4x3.inl" />
+    <None Include="include\glm\detail\type_mat4x4.inl" />
+    <None Include="include\glm\detail\type_mat4x4_simd.inl" />
+    <None Include="include\glm\detail\type_quat.inl" />
+    <None Include="include\glm\detail\type_quat_simd.inl" />
+    <None Include="include\glm\detail\type_vec1.inl" />
+    <None Include="include\glm\detail\type_vec2.inl" />
+    <None Include="include\glm\detail\type_vec3.inl" />
+    <None Include="include\glm\detail\type_vec4.inl" />
+    <None Include="include\glm\detail\type_vec4_simd.inl" />
+    <None Include="include\glm\ext\matrix_clip_space.inl" />
+    <None Include="include\glm\ext\matrix_common.inl" />
+    <None Include="include\glm\ext\matrix_projection.inl" />
+    <None Include="include\glm\ext\matrix_relational.inl" />
+    <None Include="include\glm\ext\matrix_transform.inl" />
+    <None Include="include\glm\ext\quaternion_common.inl" />
+    <None Include="include\glm\ext\quaternion_common_simd.inl" />
+    <None Include="include\glm\ext\quaternion_exponential.inl" />
+    <None Include="include\glm\ext\quaternion_geometric.inl" />
+    <None Include="include\glm\ext\quaternion_relational.inl" />
+    <None Include="include\glm\ext\quaternion_transform.inl" />
+    <None Include="include\glm\ext\quaternion_trigonometric.inl" />
+    <None Include="include\glm\ext\scalar_common.inl" />
+    <None Include="include\glm\ext\scalar_constants.inl" />
+    <None Include="include\glm\ext\scalar_integer.inl" />
+    <None Include="include\glm\ext\scalar_packing.inl" />
+    <None Include="include\glm\ext\scalar_relational.inl" />
+    <None Include="include\glm\ext\scalar_ulp.inl" />
+    <None Include="include\glm\ext\vector_common.inl" />
+    <None Include="include\glm\ext\vector_integer.inl" />
+    <None Include="include\glm\ext\vector_packing.inl" />
+    <None Include="include\glm\ext\vector_relational.inl" />
+    <None Include="include\glm\ext\vector_ulp.inl" />
+    <None Include="include\glm\gtc\bitfield.inl" />
+    <None Include="include\glm\gtc\color_space.inl" />
+    <None Include="include\glm\gtc\constants.inl" />
+    <None Include="include\glm\gtc\epsilon.inl" />
+    <None Include="include\glm\gtc\integer.inl" />
+    <None Include="include\glm\gtc\matrix_access.inl" />
+    <None Include="include\glm\gtc\matrix_inverse.inl" />
+    <None Include="include\glm\gtc\matrix_transform.inl" />
+    <None Include="include\glm\gtc\noise.inl" />
+    <None Include="include\glm\gtc\packing.inl" />
+    <None Include="include\glm\gtc\quaternion.inl" />
+    <None Include="include\glm\gtc\quaternion_simd.inl" />
+    <None Include="include\glm\gtc\random.inl" />
+    <None Include="include\glm\gtc\reciprocal.inl" />
+    <None Include="include\glm\gtc\round.inl" />
+    <None Include="include\glm\gtc\type_precision.inl" />
+    <None Include="include\glm\gtc\type_ptr.inl" />
+    <None Include="include\glm\gtc\ulp.inl" />
+    <None Include="include\glm\gtx\associated_min_max.inl" />
+    <None Include="include\glm\gtx\bit.inl" />
+    <None Include="include\glm\gtx\closest_point.inl" />
+    <None Include="include\glm\gtx\color_encoding.inl" />
+    <None Include="include\glm\gtx\color_space.inl" />
+    <None Include="include\glm\gtx\color_space_YCoCg.inl" />
+    <None Include="include\glm\gtx\common.inl" />
+    <None Include="include\glm\gtx\compatibility.inl" />
+    <None Include="include\glm\gtx\component_wise.inl" />
+    <None Include="include\glm\gtx\dual_quaternion.inl" />
+    <None Include="include\glm\gtx\easing.inl" />
+    <None Include="include\glm\gtx\euler_angles.inl" />
+    <None Include="include\glm\gtx\extend.inl" />
+    <None Include="include\glm\gtx\extended_min_max.inl" />
+    <None Include="include\glm\gtx\exterior_product.inl" />
+    <None Include="include\glm\gtx\fast_exponential.inl" />
+    <None Include="include\glm\gtx\fast_square_root.inl" />
+    <None Include="include\glm\gtx\fast_trigonometry.inl" />
+    <None Include="include\glm\gtx\float_notmalize.inl" />
+    <None Include="include\glm\gtx\functions.inl" />
+    <None Include="include\glm\gtx\gradient_paint.inl" />
+    <None Include="include\glm\gtx\handed_coordinate_space.inl" />
+    <None Include="include\glm\gtx\hash.inl" />
+    <None Include="include\glm\gtx\integer.inl" />
+    <None Include="include\glm\gtx\intersect.inl" />
+    <None Include="include\glm\gtx\io.inl" />
+    <None Include="include\glm\gtx\log_base.inl" />
+    <None Include="include\glm\gtx\matrix_cross_product.inl" />
+    <None Include="include\glm\gtx\matrix_decompose.inl" />
+    <None Include="include\glm\gtx\matrix_factorisation.inl" />
+    <None Include="include\glm\gtx\matrix_interpolation.inl" />
+    <None Include="include\glm\gtx\matrix_major_storage.inl" />
+    <None Include="include\glm\gtx\matrix_operation.inl" />
+    <None Include="include\glm\gtx\matrix_query.inl" />
+    <None Include="include\glm\gtx\matrix_transform_2d.inl" />
+    <None Include="include\glm\gtx\mixed_product.inl" />
+    <None Include="include\glm\gtx\norm.inl" />
+    <None Include="include\glm\gtx\normal.inl" />
+    <None Include="include\glm\gtx\normalize_dot.inl" />
+    <None Include="include\glm\gtx\number_precision.inl" />
+    <None Include="include\glm\gtx\optimum_pow.inl" />
+    <None Include="include\glm\gtx\orthonormalize.inl" />
+    <None Include="include\glm\gtx\perpendicular.inl" />
+    <None Include="include\glm\gtx\polar_coordinates.inl" />
+    <None Include="include\glm\gtx\projection.inl" />
+    <None Include="include\glm\gtx\quaternion.inl" />
+    <None Include="include\glm\gtx\raw_data.inl" />
+    <None Include="include\glm\gtx\rotate_normalized_axis.inl" />
+    <None Include="include\glm\gtx\rotate_vector.inl" />
+    <None Include="include\glm\gtx\scalar_relational.inl" />
+    <None Include="include\glm\gtx\spline.inl" />
+    <None Include="include\glm\gtx\std_based_type.inl" />
+    <None Include="include\glm\gtx\string_cast.inl" />
+    <None Include="include\glm\gtx\texture.inl" />
+    <None Include="include\glm\gtx\transform.inl" />
+    <None Include="include\glm\gtx\transform2.inl" />
+    <None Include="include\glm\gtx\type_aligned.inl" />
+    <None Include="include\glm\gtx\type_trait.inl" />
+    <None Include="include\glm\gtx\vector_angle.inl" />
+    <None Include="include\glm\gtx\vector_query.inl" />
+    <None Include="include\glm\gtx\wrap.inl" />
+    <None Include="libapr-1.dll" />
+    <None Include="libaprutil-1.dll" />
+    <None Include="libexpat.dll" />
+    <None Include="log4cxx.cfg" />
+    <None Include="log4cxx.dll" />
+    <None Include="swresample-3.dll" />
+    <None Include="swscale-5.dll" />
+    <None Include="test_level\audio.ogg" />
+    <None Include="test_level\level.aslv" />
+    <None Include="test_level\song.ogg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="libs\avcodec.lib" />
+    <Library Include="libs\avdevice.lib" />
+    <Library Include="libs\avfilter.lib" />
+    <Library Include="libs\avformat.lib" />
+    <Library Include="libs\avutil.lib" />
+    <Library Include="libs\bass.lib" />
+    <Library Include="libs\discord_game_sdk.dll.lib" />
+    <Library Include="libs\freetype.lib" />
+    <Library Include="libs\glfw3.lib" />
+    <Library Include="libs\log4cxx.lib" />
+    <Library Include="libs\swresample.lib" />
+    <Library Include="libs\swscale.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\Documentation\doc_list.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Assets\Inconsolata-Bold.ttf" />
+    <Font Include="Assets\Inconsolata-Regular.ttf" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

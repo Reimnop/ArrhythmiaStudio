@@ -1,7 +1,6 @@
 #include "Font.h"
 
-#include <glad/glad.h>
-
+#include "glad/glad.h"
 #include "msdf-atlas-gen/msdf-atlas-gen.h"
 
 using namespace msdfgen;
@@ -13,9 +12,9 @@ Font::Font(std::filesystem::path path)
 	{
 		if (FontHandle* font = loadFont(ft, path.generic_string().c_str()))
 		{
-			std::vector<GlyphGeometry> glyphs;
+			std::vector<GlyphGeometry> glyphGeometries;
 
-			FontGeometry fontGeometry(&glyphs);
+			FontGeometry fontGeometry(&glyphGeometries);
 
 			Charset charset;
 			for (unicode_t i = 0x0000; i < 0xFFFF; i++)
@@ -26,7 +25,7 @@ Font::Font(std::filesystem::path path)
 			fontGeometry.loadCharset(font, 1.0, charset);
 
 			const double maxCornerAngle = 3.0;
-			for (GlyphGeometry& glyph : glyphs)
+			for (GlyphGeometry& glyph : glyphGeometries)
 				glyph.edgeColoring(&edgeColoringInkTrap, maxCornerAngle, 0);
 
 			TightAtlasPacker packer;
@@ -34,7 +33,7 @@ Font::Font(std::filesystem::path path)
 			packer.setMinimumScale(24.0);
 			packer.setPixelRange(2.0);
 			packer.setMiterLimit(1.0);
-			packer.pack(glyphs.data(), glyphs.size());
+			packer.pack(glyphGeometries.data(), glyphGeometries.size());
 			int width = 0, height = 0;
 			packer.getDimensions(width, height);
 
@@ -49,7 +48,7 @@ Font::Font(std::filesystem::path path)
 			generator.setAttributes(attributes);
 			generator.setThreadCount(4);
 
-			generator.generate(glyphs.data(), glyphs.size());
+			generator.generate(glyphGeometries.data(), glyphGeometries.size());
 
 			BitmapConstRef<byte, 4> atlasBitmap = generator.atlasStorage();
 
@@ -103,7 +102,7 @@ Font::Font(std::filesystem::path path)
 					glyph.atlasBounds = atlasBounds;
 				}
 
-				this->glyphs.emplace(glyph.unicode, glyph);
+				glyphs.emplace(glyph.unicode, glyph);
 			}
 
 			for (const std::pair<std::pair<int, int>, double>& kernPair : fontGeometry.getKerning()) 

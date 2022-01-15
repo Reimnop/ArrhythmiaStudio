@@ -1,8 +1,8 @@
 #include "VideoExporter.h"
 
 #include "GameManager.h"
-#include "../engine/AudioClip.h"
 #include "Level.h"
+#include "../engine/AudioClip.h"
 #include "../engine/rendering/Renderer.h"
 
 void VideoExporter::exportToVideo(path path) const

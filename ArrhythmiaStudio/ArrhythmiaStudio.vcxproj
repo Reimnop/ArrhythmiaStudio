@@ -70,7 +70,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib;discord_game_sdk.dll.lib;log4cxx.lib</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib;discord_game_sdk.dll.lib;log4cxx.lib;freetype.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -97,7 +97,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib;discord_game_sdk.dll.lib;log4cxx.lib</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib;discord_game_sdk.dll.lib;log4cxx.lib;freetype.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(ProjectDir)Assets" "$(OutDir)Assets" /e /i /y
@@ -129,6 +129,27 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClCompile Include="include\Codecs\PNGCodec.cpp" />
     <ClCompile Include="include\Codecs\VideoCodec.cpp" />
     <ClCompile Include="include\Codecs\VP9Codec.cpp" />
+    <ClCompile Include="include\core\contour-combiners.cpp" />
+    <ClCompile Include="include\core\Contour.cpp" />
+    <ClCompile Include="include\core\edge-coloring.cpp" />
+    <ClCompile Include="include\core\edge-segments.cpp" />
+    <ClCompile Include="include\core\edge-selectors.cpp" />
+    <ClCompile Include="include\core\EdgeHolder.cpp" />
+    <ClCompile Include="include\core\equation-solver.cpp" />
+    <ClCompile Include="include\core\msdf-error-correction.cpp" />
+    <ClCompile Include="include\core\MSDFErrorCorrection.cpp" />
+    <ClCompile Include="include\core\msdfgen.cpp" />
+    <ClCompile Include="include\core\Projection.cpp" />
+    <ClCompile Include="include\core\rasterization.cpp" />
+    <ClCompile Include="include\core\render-sdf.cpp" />
+    <ClCompile Include="include\core\save-bmp.cpp" />
+    <ClCompile Include="include\core\save-tiff.cpp" />
+    <ClCompile Include="include\core\Scanline.cpp" />
+    <ClCompile Include="include\core\sdf-error-estimation.cpp" />
+    <ClCompile Include="include\core\shape-description.cpp" />
+    <ClCompile Include="include\core\Shape.cpp" />
+    <ClCompile Include="include\core\SignedDistance.cpp" />
+    <ClCompile Include="include\core\Vector2.cpp" />
     <ClCompile Include="include\Demuxing\AudioInputStream.cpp" />
     <ClCompile Include="include\Demuxing\InputStream.cpp" />
     <ClCompile Include="include\Demuxing\StreamData.cpp" />
@@ -147,6 +168,10 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClCompile Include="include\discord\types.cpp" />
     <ClCompile Include="include\discord\user_manager.cpp" />
     <ClCompile Include="include\discord\voice_manager.cpp" />
+    <ClCompile Include="include\ext\import-font.cpp" />
+    <ClCompile Include="include\ext\import-svg.cpp" />
+    <ClCompile Include="include\ext\resolve-shape-geometry.cpp" />
+    <ClCompile Include="include\ext\save-png.cpp" />
     <ClCompile Include="include\FFmpegException.cpp" />
     <ClCompile Include="include\Frame Sinks\AudioEncoder.cpp" />
     <ClCompile Include="include\Frame Sinks\AudioFilter.cpp" />
@@ -166,6 +191,23 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClCompile Include="include\imgui\imgui_widgets.cpp" />
     <ClCompile Include="include\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="include\glad\glad.c" />
+    <ClCompile Include="include\msdf-atlas-gen\artery-font-export.cpp" />
+    <ClCompile Include="include\msdf-atlas-gen\bitmap-blit.cpp" />
+    <ClCompile Include="include\msdf-atlas-gen\charset-parser.cpp" />
+    <ClCompile Include="include\msdf-atlas-gen\Charset.cpp" />
+    <ClCompile Include="include\msdf-atlas-gen\csv-export.cpp" />
+    <ClCompile Include="include\msdf-atlas-gen\FontGeometry.cpp" />
+    <ClCompile Include="include\msdf-atlas-gen\glyph-generators.cpp" />
+    <ClCompile Include="include\msdf-atlas-gen\GlyphGeometry.cpp" />
+    <ClCompile Include="include\msdf-atlas-gen\image-encode.cpp" />
+    <ClCompile Include="include\msdf-atlas-gen\json-export.cpp" />
+    <ClCompile Include="include\msdf-atlas-gen\main.cpp" />
+    <ClCompile Include="include\msdf-atlas-gen\RectanglePacker.cpp" />
+    <ClCompile Include="include\msdf-atlas-gen\shadron-preview-generator.cpp" />
+    <ClCompile Include="include\msdf-atlas-gen\size-selectors.cpp" />
+    <ClCompile Include="include\msdf-atlas-gen\TightAtlasPacker.cpp" />
+    <ClCompile Include="include\msdf-atlas-gen\utf8.cpp" />
+    <ClCompile Include="include\msdf-atlas-gen\Workload.cpp" />
     <ClCompile Include="include\Muxing\AudioOutputStream.cpp" />
     <ClCompile Include="include\Muxing\Muxer.cpp" />
     <ClCompile Include="include\Muxing\OutputStream.cpp" />
@@ -181,6 +223,7 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClCompile Include="include\VideoFormatConverter.cpp" />
     <ClCompile Include="src\engine\rendering\drawers\BatchedDrawer.cpp" />
     <ClCompile Include="src\engine\rendering\drawers\TextDrawer.cpp" />
+    <ClCompile Include="src\lodepng.cpp" />
     <ClCompile Include="src\logic\animation\ColorIndexSequence.cpp" />
     <ClCompile Include="src\logic\animation\ColorSequence.cpp" />
     <ClCompile Include="src\logic\animation\Sequence.cpp" />
@@ -227,8 +270,20 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClCompile Include="src\engine\rendering\text\Font.cpp" />
     <ClCompile Include="src\engine\rendering\text\SampleTextRenderer.cpp" />
     <ClCompile Include="src\engine\rendering\text\TextMeshGenerator.cpp" />
+    <ClCompile Include="src\tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\artery-font\artery-font.h" />
+    <ClInclude Include="include\artery-font\crc32.h" />
+    <ClInclude Include="include\artery-font\crc32.hpp" />
+    <ClInclude Include="include\artery-font\enums.h" />
+    <ClInclude Include="include\artery-font\serialization.h" />
+    <ClInclude Include="include\artery-font\serialization.hpp" />
+    <ClInclude Include="include\artery-font\std-artery-font.h" />
+    <ClInclude Include="include\artery-font\stdio-serialization.h" />
+    <ClInclude Include="include\artery-font\stdio-serialization.hpp" />
+    <ClInclude Include="include\artery-font\structures.h" />
+    <ClInclude Include="include\artery-font\types.h" />
     <ClInclude Include="include\AudioFormatConverter.h" />
     <ClInclude Include="include\bass\bass.h" />
     <ClInclude Include="include\CodecDeducer.h" />
@@ -241,6 +296,36 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClInclude Include="include\Codecs\VideoCodec.h" />
     <ClInclude Include="include\Codecs\VP9Codec.h" />
     <ClInclude Include="include\ConvertedAudioProcessor.h" />
+    <ClInclude Include="include\core\arithmetics.hpp" />
+    <ClInclude Include="include\core\bitmap-interpolation.hpp" />
+    <ClInclude Include="include\core\Bitmap.h" />
+    <ClInclude Include="include\core\Bitmap.hpp" />
+    <ClInclude Include="include\core\BitmapRef.hpp" />
+    <ClInclude Include="include\core\contour-combiners.h" />
+    <ClInclude Include="include\core\Contour.h" />
+    <ClInclude Include="include\core\edge-coloring.h" />
+    <ClInclude Include="include\core\edge-segments.h" />
+    <ClInclude Include="include\core\edge-selectors.h" />
+    <ClInclude Include="include\core\EdgeColor.h" />
+    <ClInclude Include="include\core\EdgeHolder.h" />
+    <ClInclude Include="include\core\equation-solver.h" />
+    <ClInclude Include="include\core\generator-config.h" />
+    <ClInclude Include="include\core\msdf-error-correction.h" />
+    <ClInclude Include="include\core\MSDFErrorCorrection.h" />
+    <ClInclude Include="include\core\pixel-conversion.hpp" />
+    <ClInclude Include="include\core\Projection.h" />
+    <ClInclude Include="include\core\rasterization.h" />
+    <ClInclude Include="include\core\render-sdf.h" />
+    <ClInclude Include="include\core\save-bmp.h" />
+    <ClInclude Include="include\core\save-tiff.h" />
+    <ClInclude Include="include\core\Scanline.h" />
+    <ClInclude Include="include\core\sdf-error-estimation.h" />
+    <ClInclude Include="include\core\shape-description.h" />
+    <ClInclude Include="include\core\Shape.h" />
+    <ClInclude Include="include\core\ShapeDistanceFinder.h" />
+    <ClInclude Include="include\core\ShapeDistanceFinder.hpp" />
+    <ClInclude Include="include\core\SignedDistance.h" />
+    <ClInclude Include="include\core\Vector2.h" />
     <ClInclude Include="include\Demuxing\AudioInputStream.h" />
     <ClInclude Include="include\Demuxing\InputStream.h" />
     <ClInclude Include="include\Demuxing\StreamData.h" />
@@ -262,6 +347,10 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClInclude Include="include\discord\types.h" />
     <ClInclude Include="include\discord\user_manager.h" />
     <ClInclude Include="include\discord\voice_manager.h" />
+    <ClInclude Include="include\ext\import-font.h" />
+    <ClInclude Include="include\ext\import-svg.h" />
+    <ClInclude Include="include\ext\resolve-shape-geometry.h" />
+    <ClInclude Include="include\ext\save-png.h" />
     <ClInclude Include="include\ffmpeg.h" />
     <ClInclude Include="include\ffmpegcpp.h" />
     <ClInclude Include="include\FFmpegException.h" />
@@ -277,6 +366,55 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClInclude Include="include\Frame Sinks\VideoFilterInput.h" />
     <ClInclude Include="include\Frame Sinks\VideoFrameSink.h" />
     <ClInclude Include="include\FrameContainer.h" />
+    <ClInclude Include="include\freetype\config\ftconfig.h" />
+    <ClInclude Include="include\freetype\config\ftheader.h" />
+    <ClInclude Include="include\freetype\config\ftmodule.h" />
+    <ClInclude Include="include\freetype\config\ftoption.h" />
+    <ClInclude Include="include\freetype\config\ftstdlib.h" />
+    <ClInclude Include="include\freetype\freetype.h" />
+    <ClInclude Include="include\freetype\ftadvanc.h" />
+    <ClInclude Include="include\freetype\ftbbox.h" />
+    <ClInclude Include="include\freetype\ftbdf.h" />
+    <ClInclude Include="include\freetype\ftbitmap.h" />
+    <ClInclude Include="include\freetype\ftbzip2.h" />
+    <ClInclude Include="include\freetype\ftcache.h" />
+    <ClInclude Include="include\freetype\ftchapters.h" />
+    <ClInclude Include="include\freetype\ftcid.h" />
+    <ClInclude Include="include\freetype\ftdriver.h" />
+    <ClInclude Include="include\freetype\fterrdef.h" />
+    <ClInclude Include="include\freetype\fterrors.h" />
+    <ClInclude Include="include\freetype\ftfntfmt.h" />
+    <ClInclude Include="include\freetype\ftgasp.h" />
+    <ClInclude Include="include\freetype\ftglyph.h" />
+    <ClInclude Include="include\freetype\ftgxval.h" />
+    <ClInclude Include="include\freetype\ftgzip.h" />
+    <ClInclude Include="include\freetype\ftimage.h" />
+    <ClInclude Include="include\freetype\ftincrem.h" />
+    <ClInclude Include="include\freetype\ftlcdfil.h" />
+    <ClInclude Include="include\freetype\ftlist.h" />
+    <ClInclude Include="include\freetype\ftlzw.h" />
+    <ClInclude Include="include\freetype\ftmac.h" />
+    <ClInclude Include="include\freetype\ftmm.h" />
+    <ClInclude Include="include\freetype\ftmodapi.h" />
+    <ClInclude Include="include\freetype\ftmoderr.h" />
+    <ClInclude Include="include\freetype\ftotval.h" />
+    <ClInclude Include="include\freetype\ftoutln.h" />
+    <ClInclude Include="include\freetype\ftparams.h" />
+    <ClInclude Include="include\freetype\ftpfr.h" />
+    <ClInclude Include="include\freetype\ftrender.h" />
+    <ClInclude Include="include\freetype\ftsizes.h" />
+    <ClInclude Include="include\freetype\ftsnames.h" />
+    <ClInclude Include="include\freetype\ftstroke.h" />
+    <ClInclude Include="include\freetype\ftsynth.h" />
+    <ClInclude Include="include\freetype\ftsystem.h" />
+    <ClInclude Include="include\freetype\fttrigon.h" />
+    <ClInclude Include="include\freetype\fttypes.h" />
+    <ClInclude Include="include\freetype\ftwinfnt.h" />
+    <ClInclude Include="include\freetype\t1tables.h" />
+    <ClInclude Include="include\freetype\ttnameid.h" />
+    <ClInclude Include="include\freetype\tttables.h" />
+    <ClInclude Include="include\freetype\tttags.h" />
+    <ClInclude Include="include\ft2build.h" />
     <ClInclude Include="include\imgui\imgui_markdown.h" />
     <ClInclude Include="include\Info\AudioStreamInfo.h" />
     <ClInclude Include="include\Info\ContainerInfo.h" />
@@ -702,6 +840,7 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClInclude Include="include\imgui\imstb_truetype.h" />
     <ClInclude Include="include\imgui\imgui_stdlib.h" />
     <ClInclude Include="include\KHR\khrplatform.h" />
+    <ClInclude Include="include\lodepng.h" />
     <ClInclude Include="include\log4cxx\appender.h" />
     <ClInclude Include="include\log4cxx\appenderskeleton.h" />
     <ClInclude Include="include\log4cxx\asyncappender.h" />
@@ -877,6 +1016,40 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClInclude Include="include\log4cxx\writerappender.h" />
     <ClInclude Include="include\log4cxx\xml\domconfigurator.h" />
     <ClInclude Include="include\log4cxx\xml\xmllayout.h" />
+    <ClInclude Include="include\msdf-atlas-gen\artery-font-export.h" />
+    <ClInclude Include="include\msdf-atlas-gen\AtlasGenerator.h" />
+    <ClInclude Include="include\msdf-atlas-gen\AtlasStorage.h" />
+    <ClInclude Include="include\msdf-atlas-gen\bitmap-blit.h" />
+    <ClInclude Include="include\msdf-atlas-gen\BitmapAtlasStorage.h" />
+    <ClInclude Include="include\msdf-atlas-gen\BitmapAtlasStorage.hpp" />
+    <ClInclude Include="include\msdf-atlas-gen\Charset.h" />
+    <ClInclude Include="include\msdf-atlas-gen\csv-export.h" />
+    <ClInclude Include="include\msdf-atlas-gen\DynamicAtlas.h" />
+    <ClInclude Include="include\msdf-atlas-gen\DynamicAtlas.hpp" />
+    <ClInclude Include="include\msdf-atlas-gen\FontGeometry.h" />
+    <ClInclude Include="include\msdf-atlas-gen\glyph-generators.h" />
+    <ClInclude Include="include\msdf-atlas-gen\GlyphBox.h" />
+    <ClInclude Include="include\msdf-atlas-gen\GlyphGeometry.h" />
+    <ClInclude Include="include\msdf-atlas-gen\image-encode.h" />
+    <ClInclude Include="include\msdf-atlas-gen\image-save.h" />
+    <ClInclude Include="include\msdf-atlas-gen\image-save.hpp" />
+    <ClInclude Include="include\msdf-atlas-gen\ImmediateAtlasGenerator.h" />
+    <ClInclude Include="include\msdf-atlas-gen\ImmediateAtlasGenerator.hpp" />
+    <ClInclude Include="include\msdf-atlas-gen\json-export.h" />
+    <ClInclude Include="include\msdf-atlas-gen\msdf-atlas-gen.h" />
+    <ClInclude Include="include\msdf-atlas-gen\rectangle-packing.h" />
+    <ClInclude Include="include\msdf-atlas-gen\rectangle-packing.hpp" />
+    <ClInclude Include="include\msdf-atlas-gen\Rectangle.h" />
+    <ClInclude Include="include\msdf-atlas-gen\RectanglePacker.h" />
+    <ClInclude Include="include\msdf-atlas-gen\Remap.h" />
+    <ClInclude Include="include\msdf-atlas-gen\shadron-preview-generator.h" />
+    <ClInclude Include="include\msdf-atlas-gen\size-selectors.h" />
+    <ClInclude Include="include\msdf-atlas-gen\TightAtlasPacker.h" />
+    <ClInclude Include="include\msdf-atlas-gen\types.h" />
+    <ClInclude Include="include\msdf-atlas-gen\utf8.h" />
+    <ClInclude Include="include\msdf-atlas-gen\Workload.h" />
+    <ClInclude Include="include\msdfgen-ext.h" />
+    <ClInclude Include="include\msdfgen.h" />
     <ClInclude Include="include\Muxing\AudioOutputStream.h" />
     <ClInclude Include="include\Muxing\Muxer.h" />
     <ClInclude Include="include\Muxing\OutputStream.h" />
@@ -909,6 +1082,7 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClInclude Include="include\stb\stb_truetype.h" />
     <ClInclude Include="include\stb\stb_voxel_render.h" />
     <ClInclude Include="include\std.h" />
+    <ClInclude Include="include\tinyxml2.h" />
     <ClInclude Include="include\utils.h" />
     <ClInclude Include="include\VideoFormatConverter.h" />
     <ClInclude Include="src\Arguments.h" />
@@ -1002,10 +1176,6 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
   <ItemGroup>
     <None Include="Assets\Documentation\general_usage.md" />
     <None Include="Assets\Documentation\testing.md" />
-    <None Include="Assets\Impact.asfont" />
-    <None Include="Assets\Inconsolata.asfont" />
-    <None Include="Assets\PinyonScript.asfont" />
-    <None Include="Assets\PlayfairDisplay.asfont" />
     <None Include="Assets\Shaders\fxaa.comp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-blur-horizontal.comp" />
     <None Include="Assets\Shaders\PostProcessing\bloom-blur-vertical.comp" />
@@ -1192,6 +1362,7 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <Library Include="libs\avutil.lib" />
     <Library Include="libs\bass.lib" />
     <Library Include="libs\discord_game_sdk.dll.lib" />
+    <Library Include="libs\freetype.lib" />
     <Library Include="libs\glfw3.lib" />
     <Library Include="libs\log4cxx.lib" />
     <Library Include="libs\swresample.lib" />

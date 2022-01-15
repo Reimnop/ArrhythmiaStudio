@@ -1,94 +1,120 @@
 #include "Font.h"
 
-#include <fstream>
-#include <json.hpp>
 #include <glad/glad.h>
 
-using namespace nlohmann;
+#include "msdf-atlas-gen/msdf-atlas-gen.h"
+
+using namespace msdfgen;
+using namespace msdf_atlas;
 
 Font::Font(std::filesystem::path path)
 {
-	std::ifstream s(path, std::ios::binary);
-
-	// read json
-	int json_length = 0;
-	s.read((char*)&json_length, 4);
-	char* json_buf = new char[json_length + 1];
-	s.read(json_buf, json_length);
-	json_buf[json_length] = 0; // null termination
-
-	json j = json::parse(json_buf);
-
-	atlasInfo.size = j["atlas"]["size"].get<float>();
-	atlasInfo.width = j["atlas"]["width"].get<int>();
-	atlasInfo.height = j["atlas"]["height"].get<int>();
-
-	metrics.lineHeight = j["metrics"]["lineHeight"].get<float>();
-	metrics.ascender = j["metrics"]["ascender"].get<float>();
-	metrics.descender = j["metrics"]["descender"].get<float>();
-	metrics.underlineY = j["metrics"]["underlineY"].get<float>();
-	metrics.underlineThickness = j["metrics"]["underlineThickness"].get<float>();
-
-	for (const json& glyph_json : j["glyphs"])
+	if (FreetypeHandle* ft = initializeFreetype())
 	{
-		Glyph glyph = Glyph();
-		glyph.unicode = (wchar_t)glyph_json["unicode"].get<uint16_t>();
-		glyph.advance = glyph_json["advance"].get<float>();
-
-		if (glyph_json.contains("planeBounds") && glyph_json.contains("atlasBounds"))
+		if (FontHandle* font = loadFont(ft, path.generic_string().c_str()))
 		{
-			Bounds planeBounds = Bounds();
-			planeBounds.left = glyph_json["planeBounds"]["left"].get<float>();
-			planeBounds.bottom = glyph_json["planeBounds"]["bottom"].get<float>();
-			planeBounds.right = glyph_json["planeBounds"]["right"].get<float>();
-			planeBounds.top = glyph_json["planeBounds"]["top"].get<float>();
+			std::vector<GlyphGeometry> glyphs;
 
-			Bounds atlasBounds = Bounds();
-			atlasBounds.left = glyph_json["atlasBounds"]["left"].get<float>();
-			atlasBounds.bottom = glyph_json["atlasBounds"]["bottom"].get<float>();
-			atlasBounds.right = glyph_json["atlasBounds"]["right"].get<float>();
-			atlasBounds.top = glyph_json["atlasBounds"]["top"].get<float>();
+			FontGeometry fontGeometry(&glyphs);
 
-			glyph.isEmpty = false;
-			glyph.planeBounds = planeBounds;
-			glyph.atlasBounds = atlasBounds;
+			Charset charset;
+			for (unicode_t i = 0x0000; i < 0xFFFF; i++)
+			{
+				charset.add(i);
+			}
+
+			fontGeometry.loadCharset(font, 1.0, charset);
+
+			const double maxCornerAngle = 3.0;
+			for (GlyphGeometry& glyph : glyphs)
+				glyph.edgeColoring(&edgeColoringInkTrap, maxCornerAngle, 0);
+
+			TightAtlasPacker packer;
+			packer.setDimensionsConstraint(TightAtlasPacker::DimensionsConstraint::SQUARE);
+			packer.setMinimumScale(24.0);
+			packer.setPixelRange(2.0);
+			packer.setMiterLimit(1.0);
+			packer.pack(glyphs.data(), glyphs.size());
+			int width = 0, height = 0;
+			packer.getDimensions(width, height);
+
+			ImmediateAtlasGenerator<
+				float,
+				4,
+				mtsdfGenerator,
+				BitmapAtlasStorage<byte, 4>
+			> generator(width, height);
+
+			GeneratorAttributes attributes;
+			generator.setAttributes(attributes);
+			generator.setThreadCount(4);
+
+			generator.generate(glyphs.data(), glyphs.size());
+
+			BitmapConstRef<byte, 4> atlasBitmap = generator.atlasStorage();
+
+			glGenTextures(1, &texHandle);
+			glBindTexture(GL_TEXTURE_2D, texHandle);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, atlasBitmap.width, atlasBitmap.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, atlasBitmap.pixels);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glBindTexture(GL_TEXTURE_2D, 0);
+
+			atlasInfo.size = 1.0f;
+			atlasInfo.width = atlasBitmap.width;
+			atlasInfo.height = atlasBitmap.height;
+
+			const FontMetrics& fontMetrics = fontGeometry.getMetrics();
+			metrics.lineHeight = fontMetrics.lineHeight;
+			metrics.ascender = fontMetrics.ascenderY;
+			metrics.descender = fontMetrics.descenderY;
+			metrics.underlineY = fontMetrics.underlineY;
+			metrics.underlineThickness = fontMetrics.underlineThickness;
+
+			for (const GlyphGeometry& glyphGeometry : fontGeometry.getGlyphs())
+			{
+				Glyph glyph;
+				glyph.unicode = glyphGeometry.getCodepoint();
+				glyph.advance = glyphGeometry.getAdvance();
+
+				double pl = 0.0f, pb = 0.0f, pr = 0.0f, pt = 0.0f, al = 0.0f, ab = 0.0f, ar = 0.0f, at = 0.0f;
+				glyphGeometry.getQuadPlaneBounds(pl, pb, pr, pt);
+				glyphGeometry.getQuadAtlasBounds(al, ab, ar, at);
+
+				glyph.isEmpty = !((pl || pb || pr || pt) && (al || ab || ar || at));
+
+				if (!glyph.isEmpty) 
+				{
+					Bounds planeBounds;
+					planeBounds.left = pl;
+					planeBounds.bottom = pb;
+					planeBounds.right = pr;
+					planeBounds.top = pt;
+
+					Bounds atlasBounds;
+					atlasBounds.left = al;
+					atlasBounds.bottom = atlasBitmap.height - ab;
+					atlasBounds.right = ar;
+					atlasBounds.top = atlasBitmap.height - at;
+
+					glyph.planeBounds = planeBounds;
+					glyph.atlasBounds = atlasBounds;
+				}
+
+				this->glyphs.emplace(glyph.unicode, glyph);
+			}
+
+			for (const std::pair<std::pair<int, int>, double>& kernPair : fontGeometry.getKerning()) 
+			{
+				kerning.emplace(kernPair.first, kernPair.second);
+			}
+
+			destroyFont(font);
 		}
-		else
-		{
-			glyph.isEmpty = true;
-		}
-
-		glyphs.emplace(glyph.unicode, glyph);
+		deinitializeFreetype(ft);
 	}
-
-	for (const json& kerning : j["kerning"])
-	{
-		wchar_t unicode1 = (wchar_t)kerning["unicode1"].get<uint16_t>();
-		wchar_t unicode2 = (wchar_t)kerning["unicode2"].get<uint16_t>();
-		float advance = kerning["advance"].get<uint16_t>();
-
-		this->kerning.emplace(std::pair(unicode1, unicode2), advance);
-	}
-
-	// read atlas
-	int width = 0, height = 0;
-	s.read((char*)&width, 4);
-	s.read((char*)&height, 4);
-	void* data = malloc(width * height * 4);
-	s.read((char*)data, width * height * 4);
-
-	glGenTextures(1, &texHandle);
-	glBindTexture(GL_TEXTURE_2D, texHandle);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	free(data);
-	delete[] json_buf;
-	s.close();
 }
 
 Font::~Font()

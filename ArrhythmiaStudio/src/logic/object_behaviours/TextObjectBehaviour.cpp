@@ -10,7 +10,7 @@ TextObjectBehaviour::TextObjectBehaviour(LevelObject* baseObject) : AnimateableC
 {
 	if (!font)
 	{
-		font = new Font("Assets/Inconsolata.asfont");
+		font = new Font("Assets/Inconsolata-Regular.ttf");
 	}
 
 	Keyframe kf1(0.0f, 1.0f, EaseType_Linear);

@@ -1,4 +1,7 @@
-#include "TextMeshGenerator.h"
+﻿#include "TextMeshGenerator.h"
+
+#include "hb.h"
+#include "hb-ft.h"
 
 #include <regex>
 
@@ -9,59 +12,77 @@ TextMeshGenerator::TextMeshGenerator(Font* font)
 
 std::vector<TextVertex> TextMeshGenerator::genMesh(const std::wstring& text) const
 {
-	const AtlasInfo& info = font->getInfo();
-	const Metrics& metrics = font->getMetrics();
-
-	const size_t count = getVerticesCount(text);
-	if (!count)
-	{
-		return std::vector<TextVertex>();
-	}
-
-	std::vector<TextVertex> vertices;
-	vertices.reserve(count);
-
 	std::vector<std::wstring> lines = split(L"\r|\n|\r\n", text);
+	std::vector<TextVertex> vertices;
 
-	size_t vert_offset = 0;
-	float y_offset = (lines.size() - 1) * metrics.lineHeight * 0.5f;
-	for (const std::wstring& line : lines)
+	AtlasInfo info = font->getInfo();
+	Metrics metrics = font->getMetrics();
+
+	float line_y = lines.size() * metrics.lineHeight / 2.0f;
+	for (std::wstring& line : lines)
 	{
-		float x_offset = -getLineWidth(line) * 0.5f;
+		line_y -= metrics.lineHeight;
 
-		for (int i = 0; i < line.size(); i++)
+		hb_buffer_t* buf = hb_buffer_create();
+		hb_buffer_add_utf16(buf, reinterpret_cast<const uint16_t*>(line.c_str()), line.size(), 0, -1);
+		hb_buffer_set_direction(buf, HB_DIRECTION_LTR);
+		hb_buffer_set_script(buf, HB_SCRIPT_LATIN);
+		hb_buffer_set_language(buf, hb_language_from_string("en", -1));
+
+		hb_shape(font->getHbFont(), buf, NULL, 0);
+
+		unsigned int glyph_count;
+		hb_glyph_info_t* glyph_info = hb_buffer_get_glyph_infos(buf, &glyph_count);
+		hb_glyph_position_t* glyph_pos = hb_buffer_get_glyph_positions(buf, &glyph_count);
+
+		std::vector<TextVertex> lineVertices;
+
+		hb_position_t cursor_x = 0;
+		hb_position_t cursor_y = 0;
+		for (int i = 0; i < glyph_count; i++) 
 		{
-			wchar_t c = line[i];
+			hb_codepoint_t glyphid = glyph_info[i].codepoint;
+			hb_position_t x_offset = glyph_pos[i].x_offset;
+			hb_position_t y_offset = glyph_pos[i].y_offset;
+			hb_position_t x_advance = glyph_pos[i].x_advance;
+			hb_position_t y_advance = glyph_pos[i].y_advance;
 
-			Glyph g;
-			if (!font->tryGetGlyph(c, &g))
+			Glyph glyph;
+			font->tryGetGlyph(glyphid, &glyph);
+
+			Bounds planeBounds = glyph.planeBounds;
+			Bounds atlasBounds = glyph.atlasBounds;
+
+			if (!glyph.isEmpty)
 			{
-				font->tryGetGlyph(L'?', &g);
+				float ws_x = cursor_x + x_offset;
+				float ws_y = cursor_y + y_offset;
+
+				ws_x /= 1024.0f;
+				ws_y /= 1024.0f;
+				ws_y += line_y;
+
+				lineVertices.emplace_back(ws_x + planeBounds.right, ws_y + planeBounds.top, 0.0f, atlasBounds.right / info.width, (info.height - atlasBounds.top) / info.height);
+				lineVertices.emplace_back(ws_x + planeBounds.left, ws_y + planeBounds.top, 0.0f, atlasBounds.left / info.width, (info.height - atlasBounds.top) / info.height);
+				lineVertices.emplace_back(ws_x + planeBounds.left, ws_y + planeBounds.bottom, 0.0f, atlasBounds.left / info.width, (info.height - atlasBounds.bottom) / info.height);
+				lineVertices.emplace_back(ws_x + planeBounds.right, ws_y + planeBounds.top, 0.0f, atlasBounds.right / info.width, (info.height - atlasBounds.top) / info.height);
+				lineVertices.emplace_back(ws_x + planeBounds.left, ws_y + planeBounds.bottom, 0.0f, atlasBounds.left / info.width, (info.height - atlasBounds.bottom) / info.height);
+				lineVertices.emplace_back(ws_x + planeBounds.right, ws_y + planeBounds.bottom, 0.0f, atlasBounds.right / info.width, (info.height - atlasBounds.bottom) / info.height);
 			}
 
-			if (!g.isEmpty)
-			{
-				const Bounds& planeBounds = g.planeBounds;
-				const Bounds& atlasBounds = g.atlasBounds;
-
-				vertices.emplace_back(x_offset + planeBounds.right, y_offset + planeBounds.top, 0.0f, atlasBounds.right / info.width, (info.height - atlasBounds.top) / info.height);
-				vertices.emplace_back(x_offset + planeBounds.left, y_offset + planeBounds.top, 0.0f, atlasBounds.left / info.width, (info.height - atlasBounds.top) / info.height);
-				vertices.emplace_back(x_offset + planeBounds.left, y_offset + planeBounds.bottom, 0.0f, atlasBounds.left / info.width, (info.height - atlasBounds.bottom) / info.height);
-				vertices.emplace_back(x_offset + planeBounds.right, y_offset + planeBounds.top, 0.0f, atlasBounds.right / info.width, (info.height - atlasBounds.top) / info.height);
-				vertices.emplace_back(x_offset + planeBounds.left, y_offset + planeBounds.bottom, 0.0f, atlasBounds.left / info.width, (info.height - atlasBounds.bottom) / info.height);
-				vertices.emplace_back(x_offset + planeBounds.right, y_offset + planeBounds.bottom, 0.0f, atlasBounds.right / info.width, (info.height - atlasBounds.bottom) / info.height);
-
-				vert_offset += 6;
-			}
-
-			x_offset += g.advance;
-			if (i < line.size() - 1)
-			{
-				x_offset += font->getKerning(line[i], line[i + 1]);
-			}
+			cursor_x += x_advance;
+			cursor_y += y_advance;
 		}
-		
-		y_offset -= metrics.lineHeight;
+
+		// Readjust to center
+		for (TextVertex& vertex : lineVertices)
+		{
+			vertex.position.x -= cursor_x / 2048.0f;
+		}
+
+		vertices.insert(vertices.end(), lineVertices.begin(), lineVertices.end());
+
+		hb_buffer_destroy(buf);
 	}
 
 	return vertices;
@@ -74,52 +95,4 @@ std::vector<std::wstring> TextMeshGenerator::split(std::wstring in_pattern, cons
 	std::wregex pattern(in_pattern);
 	std::copy(std::wsregex_token_iterator(content.begin(), content.end(), pattern, -1), std::wsregex_token_iterator(), std::back_inserter(split_content));
 	return split_content;
-}
-
-size_t TextMeshGenerator::getVerticesCount(const std::wstring& text) const
-{
-	size_t res = 0;
-	for (const char c : text)
-	{
-		if (c != '\r' && c != '\n')
-		{
-			Glyph g;
-			if (!font->tryGetGlyph(c, &g))
-			{
-				font->tryGetGlyph(L'?', &g);
-			}
-
-			if (!g.isEmpty)
-			{
-				res += 6;
-			}
-		}
-	}
-
-	return res;
-}
-
-float TextMeshGenerator::getLineWidth(const std::wstring& text) const
-{
-	float res = 0.0f;
-	for (int i = 0; i < text.size(); i++)
-	{
-		wchar_t c = text[i];
-		if (c != '\r' && c != '\n')
-		{
-			Glyph g;
-			if (!font->tryGetGlyph(c, &g))
-			{
-				font->tryGetGlyph((wchar_t)'?', &g);
-			}
-
-			res += g.advance;
-			if (i < text.size() - 1)
-			{
-				res += font->getKerning(text[i], text[i + 1]);
-			}
-		}
-	}
-
-	return res;
 }

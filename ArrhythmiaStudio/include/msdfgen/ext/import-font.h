@@ -2,6 +2,8 @@
 #pragma once
 
 #include <cstdlib>
+
+#include "freetype.h"
 #include "../core/Shape.h"
 
 namespace msdfgen {

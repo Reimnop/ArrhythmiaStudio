@@ -59,7 +59,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;STB_IMAGE_IMPLEMENTATION;PROJECT_NAME=$(ProjectName);_DEBUG;_CONSOLE;%(PreprocessorDefinitions);GLFW_INCLUDE_NONE;NOMINMAX</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)include\ffmpeg;$(ProjectDir)include\ffmpegcpp;$(ProjectDir)include\msdfgen;$(ProjectDir)include\msdf-atlas-gen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)include\ffmpeg;$(ProjectDir)include\ffmpegcpp;$(ProjectDir)include\msdfgen;$(ProjectDir)include\msdf-atlas-gen;$(ProjectDir)include\harfbuzz;$(ProjectDir)include\freetype;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
@@ -70,7 +70,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib;discord_game_sdk.dll.lib;log4cxx.lib;freetype.lib</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib;discord_game_sdk.dll.lib;log4cxx.lib;freetype.lib;harfbuzz.lib;harfbuzz-subset.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -82,7 +82,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;STB_IMAGE_IMPLEMENTATION;PROJECT_NAME=$(ProjectName);NDEBUG;_CONSOLE;GLFW_INCLUDE_NONE;GLM_FORCE_SSE42;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)include\ffmpeg;$(ProjectDir)include\ffmpegcpp;$(ProjectDir)include\msdfgen;$(ProjectDir)include\msdf-atlas-gen;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)include;$(ProjectDir)include\ffmpeg;$(ProjectDir)include\ffmpegcpp;$(ProjectDir)include\msdfgen;$(ProjectDir)include\msdf-atlas-gen;$(ProjectDir)include\harfbuzz;$(ProjectDir)include\freetype;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
       <PreprocessToFile>false</PreprocessToFile>
       <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
@@ -97,7 +97,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib;discord_game_sdk.dll.lib;log4cxx.lib;freetype.lib</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib;discord_game_sdk.dll.lib;log4cxx.lib;freetype.lib;harfbuzz.lib;harfbuzz-subset.lib</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>xcopy "$(ProjectDir)Assets" "$(OutDir)Assets" /e /i /y
@@ -114,6 +114,8 @@ xcopy "$(ProjectDir)log4cxx.dll" "$(OutDir)" /y
 xcopy "$(ProjectDir)libaprutil-1.dll" "$(OutDir)" /y
 xcopy "$(ProjectDir)libapr-1.dll" "$(OutDir)" /y
 xcopy "$(ProjectDir)libexpat.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)harfbuzz.dll" "$(OutDir)" /y
+xcopy "$(ProjectDir)harfbuzz-subset.dll" "$(OutDir)" /y
 xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
 </Command>
     </PostBuildEvent>
@@ -641,6 +643,45 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClInclude Include="include\glm\vec3.hpp" />
     <ClInclude Include="include\glm\vec4.hpp" />
     <ClInclude Include="include\glm\vector_relational.hpp" />
+    <ClInclude Include="include\harfbuzz\hb-aat-layout.h" />
+    <ClInclude Include="include\harfbuzz\hb-aat.h" />
+    <ClInclude Include="include\harfbuzz\hb-blob.h" />
+    <ClInclude Include="include\harfbuzz\hb-buffer.h" />
+    <ClInclude Include="include\harfbuzz\hb-common.h" />
+    <ClInclude Include="include\harfbuzz\hb-coretext.h" />
+    <ClInclude Include="include\harfbuzz\hb-deprecated.h" />
+    <ClInclude Include="include\harfbuzz\hb-directwrite.h" />
+    <ClInclude Include="include\harfbuzz\hb-draw.h" />
+    <ClInclude Include="include\harfbuzz\hb-face.h" />
+    <ClInclude Include="include\harfbuzz\hb-font.h" />
+    <ClInclude Include="include\harfbuzz\hb-ft.h" />
+    <ClInclude Include="include\harfbuzz\hb-gdi.h" />
+    <ClInclude Include="include\harfbuzz\hb-glib.h" />
+    <ClInclude Include="include\harfbuzz\hb-gobject-structs.h" />
+    <ClInclude Include="include\harfbuzz\hb-gobject.h" />
+    <ClInclude Include="include\harfbuzz\hb-graphite2.h" />
+    <ClInclude Include="include\harfbuzz\hb-icu.h" />
+    <ClInclude Include="include\harfbuzz\hb-map.h" />
+    <ClInclude Include="include\harfbuzz\hb-ot-color.h" />
+    <ClInclude Include="include\harfbuzz\hb-ot-deprecated.h" />
+    <ClInclude Include="include\harfbuzz\hb-ot-font.h" />
+    <ClInclude Include="include\harfbuzz\hb-ot-layout.h" />
+    <ClInclude Include="include\harfbuzz\hb-ot-math.h" />
+    <ClInclude Include="include\harfbuzz\hb-ot-meta.h" />
+    <ClInclude Include="include\harfbuzz\hb-ot-metrics.h" />
+    <ClInclude Include="include\harfbuzz\hb-ot-name.h" />
+    <ClInclude Include="include\harfbuzz\hb-ot-shape.h" />
+    <ClInclude Include="include\harfbuzz\hb-ot-var.h" />
+    <ClInclude Include="include\harfbuzz\hb-ot.h" />
+    <ClInclude Include="include\harfbuzz\hb-set.h" />
+    <ClInclude Include="include\harfbuzz\hb-shape-plan.h" />
+    <ClInclude Include="include\harfbuzz\hb-shape.h" />
+    <ClInclude Include="include\harfbuzz\hb-style.h" />
+    <ClInclude Include="include\harfbuzz\hb-subset.h" />
+    <ClInclude Include="include\harfbuzz\hb-unicode.h" />
+    <ClInclude Include="include\harfbuzz\hb-uniscribe.h" />
+    <ClInclude Include="include\harfbuzz\hb-version.h" />
+    <ClInclude Include="include\harfbuzz\hb.h" />
     <ClInclude Include="include\helper.h" />
     <ClInclude Include="include\imgui\imconfig.h" />
     <ClInclude Include="include\imgui\imgui.h" />
@@ -1053,6 +1094,8 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <None Include="avutil-56.dll" />
     <None Include="bass.dll" />
     <None Include="discord_game_sdk.dll" />
+    <None Include="harfbuzz-subset.dll" />
+    <None Include="harfbuzz.dll" />
     <None Include="include\glm\detail\func_common.inl" />
     <None Include="include\glm\detail\func_common_simd.inl" />
     <None Include="include\glm\detail\func_exponential.inl" />
@@ -1210,6 +1253,8 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <Library Include="libs\discord_game_sdk.dll.lib" />
     <Library Include="libs\freetype.lib" />
     <Library Include="libs\glfw3.lib" />
+    <Library Include="libs\harfbuzz-subset.lib" />
+    <Library Include="libs\harfbuzz.lib" />
     <Library Include="libs\log4cxx.lib" />
     <Library Include="libs\swresample.lib" />
     <Library Include="libs\swscale.lib" />

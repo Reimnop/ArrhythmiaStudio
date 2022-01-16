@@ -1,4 +1,4 @@
-#include "TextObjectBehaviour.h"
+﻿#include "TextObjectBehaviour.h"
 
 #include "utils.h"
 #include "../factories/ShapeFactory.h"

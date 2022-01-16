@@ -13,6 +13,4 @@ private:
 	Font* font;
 
 	std::vector<std::wstring> split(std::wstring in_pattern, const std::wstring& content) const;
-	size_t getVerticesCount(const std::wstring& text) const;
-	float getLineWidth(const std::wstring& text) const;
 };

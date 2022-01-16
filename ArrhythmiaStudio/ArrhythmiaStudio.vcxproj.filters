@@ -2712,6 +2712,123 @@
     <ClInclude Include="include\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-aat.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-aat-layout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-blob.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-buffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-coretext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-deprecated.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-directwrite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-draw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-face.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-ft.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-gdi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-glib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-gobject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-gobject-structs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-graphite2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-icu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-map.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-ot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-ot-color.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-ot-deprecated.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-ot-font.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-ot-layout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-ot-math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-ot-meta.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-ot-metrics.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-ot-name.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-ot-shape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-ot-var.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-set.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-shape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-shape-plan.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-style.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-subset.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-unicode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-uniscribe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\harfbuzz\hb-version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Shaders\unlit.frag" />
@@ -3165,6 +3282,8 @@
     <None Include="include\glm\gtx\wrap.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="harfbuzz.dll" />
+    <None Include="harfbuzz-subset.dll" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="libs\glfw3.lib" />
@@ -3179,6 +3298,8 @@
     <Library Include="libs\swscale.lib" />
     <Library Include="libs\log4cxx.lib" />
     <Library Include="libs\freetype.lib" />
+    <Library Include="libs\harfbuzz.lib" />
+    <Library Include="libs\harfbuzz-subset.lib" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\Documentation\doc_list.txt" />

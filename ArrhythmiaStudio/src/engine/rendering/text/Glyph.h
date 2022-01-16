@@ -4,7 +4,7 @@
 
 struct Glyph
 {
-	wchar_t unicode;
+	int index;
 	float advance;
 	bool isEmpty;
 	Bounds planeBounds;

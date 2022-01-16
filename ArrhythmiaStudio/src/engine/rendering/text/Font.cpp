@@ -23,17 +23,16 @@ Font::Font(std::filesystem::path path)
 
 			fontGeometry.loadGlyphset(font, 1.0, charset);
 
-			const double maxCornerAngle = 3.0;
 			for (GlyphGeometry& glyph : glyphGeometries)
 			{
-				glyph.edgeColoring(&edgeColoringInkTrap, maxCornerAngle, 0);
+				glyph.edgeColoring(&edgeColoringByDistance, 2.0, 0);
 			}
 
 			TightAtlasPacker packer;
 			packer.setDimensionsConstraint(TightAtlasPacker::DimensionsConstraint::SQUARE);
-			packer.setMinimumScale(24.0);
-			packer.setPixelRange(2.0);
-			packer.setMiterLimit(1.0);
+			packer.setMinimumScale(48.0);
+			packer.setPixelRange(8.0);
+			packer.setMiterLimit(4.0);
 			packer.pack(glyphGeometries.data(), glyphGeometries.size());
 			int width = 0, height = 0;
 			packer.getDimensions(width, height);

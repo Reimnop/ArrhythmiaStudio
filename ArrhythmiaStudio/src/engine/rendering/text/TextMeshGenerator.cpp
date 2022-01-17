@@ -28,7 +28,7 @@ std::vector<TextVertex> TextMeshGenerator::genMesh(const std::wstring& text) con
 		hb_buffer_set_script(buf, HB_SCRIPT_LATIN);
 		hb_buffer_set_language(buf, hb_language_from_string("en", -1));
 
-		hb_shape(font->getHbFont(), buf, NULL, 0);
+		hb_shape(font->getHbFont(), buf, nullptr, 0);
 
 		unsigned int glyph_count;
 		hb_glyph_info_t* glyph_info = hb_buffer_get_glyph_infos(buf, &glyph_count);

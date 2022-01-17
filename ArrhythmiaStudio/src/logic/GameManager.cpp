@@ -12,6 +12,7 @@
 #include "object_behaviours/EmptyObjectBehaviour.h"
 #include "object_behaviours/NormalObjectBehaviour.h"
 #include "object_behaviours/TextObjectBehaviour.h"
+#include "factories/FontFactory.h"
 #include "factories/ObjectBehaviourFactory.h"
 #include "factories/ShapeFactory.h"
 #include "factories/LevelEventFactory.h"
@@ -41,6 +42,12 @@ GameManager::GameManager(GLFWwindow* window)
 
 	discordManager = new DiscordManager();
 	docManager = new DocManager();
+
+	Font::initFt();
+
+	// Register fonts
+	FontFactory::registerFont("Assets/Fonts/Inconsolata-Regular.ttf", "inconsolata", "Inconsolata");
+	FontFactory::registerFont("Assets/Fonts/Anurati-Regular.otf", "anurati", "Anurati");
 
 	// Register object behaviours
 	ObjectBehaviourFactory::registerBehaviour<EmptyObjectBehaviour>("empty", "Empty");

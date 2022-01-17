@@ -11,7 +11,7 @@ SampleTextRenderer::SampleTextRenderer(std::filesystem::path fontPath)
 		shader = new Shader("Assets/Shaders/text.vert", "Assets/Shaders/text.frag");
 	}
 
-	font = new Font(fontPath);
+	font = new Font(fontPath, "SampleFont");
 	generator = new TextMeshGenerator(font);
 
 	std::vector<TextVertex> vertices = generator->genMesh(L"Hello world!");

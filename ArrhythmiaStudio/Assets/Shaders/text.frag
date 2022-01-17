@@ -5,8 +5,8 @@ layout(location = 0) out vec4 fragColor;
 layout(location = 1) uniform vec4 color;
 layout(location = 2) uniform sampler2D sdfTexture;
 
-layout(location = 3) uniform float width = 0.4;
-layout(location = 4) uniform float edge = 0.2;
+layout(location = 3) uniform float width = 0.425;
+layout(location = 4) uniform float edge = 0.175;
 
 layout(location = 0) in vec2 frag_TexCoord;
 

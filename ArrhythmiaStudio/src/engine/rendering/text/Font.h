@@ -5,20 +5,21 @@
 #include <helper.h>
 
 #include "ft2build.h"
+#include "freetype/freetype.h"
 #include "AtlasInfo.h"
 #include "Glyph.h"
 #include "Metrics.h"
 #include "hb.h"
-#include "freetype/freetype.h"
 
 class Font
 {
 public:
-	Font(std::filesystem::path path);
+	std::string name;
+
+	Font(std::filesystem::path path, std::string name);
 	~Font();
 
-	std::filesystem::path path;
-
+	static void initFt();
 	AtlasInfo getInfo() const;
 	Metrics getMetrics() const;
 	uint32_t getAtlasTextureHandle() const;
@@ -26,6 +27,8 @@ public:
 	float getKerning(int l, int r);
 	hb_font_t* getHbFont();
 private:
+	static inline FT_Library library;
+
 	AtlasInfo atlasInfo;
 	Metrics metrics;
 	std::unordered_map<int, Glyph> glyphs;
@@ -34,6 +37,5 @@ private:
 	uint32_t texHandle;
 	hb_font_t* hbFont;
 
-	FT_Library library;
 	FT_Face ftFace;
 };

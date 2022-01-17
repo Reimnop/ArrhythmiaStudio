@@ -1,10 +1,8 @@
 #include "TextRenderer.h"
 #include "TextDrawData.h"
 
-TextRenderer::TextRenderer(Font* font)
+TextRenderer::TextRenderer()
 {
-	this->font = font;
-
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, 0, nullptr, GL_DYNAMIC_DRAW);
@@ -30,6 +28,13 @@ TextRenderer::~TextRenderer()
 
 void TextRenderer::setText(const std::wstring& text)
 {
+	currentText = text;
+
+	if (!font)
+	{
+		return;
+	}
+
 	if (!text.length())
 	{
 		count = 0;
@@ -44,6 +49,12 @@ void TextRenderer::setText(const std::wstring& text)
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, count * sizeof(TextVertex), vertices.data(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void TextRenderer::setFont(Font* font)
+{
+	this->font = font;
+	setText(currentText);
 }
 
 bool TextRenderer::tryRender(glm::mat4 transform, RenderCommand** command)
@@ -70,5 +81,5 @@ bool TextRenderer::tryRender(glm::mat4 transform, RenderCommand** command)
 
 bool TextRenderer::canRender() const
 {
-	return count && color.w > 0.0f;
+	return font && count && color.w > 0.0f;
 }

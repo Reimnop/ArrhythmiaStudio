@@ -37,9 +37,9 @@ DocManager::DocManager()
 	// Init fonts
 	ImGuiIO& io = ImGui::GetIO();
 
-	h1Fnt = io.Fonts->AddFontFromFileTTF("Assets/Inconsolata-Bold.ttf", 24);
-	h2Fnt = io.Fonts->AddFontFromFileTTF("Assets/Inconsolata-Bold.ttf", 21);
-	h3Fnt = io.Fonts->AddFontFromFileTTF("Assets/Inconsolata-Bold.ttf", 18);
+	h1Fnt = io.Fonts->AddFontFromFileTTF("Assets/Fonts/Inconsolata-Bold.ttf", 24);
+	h2Fnt = io.Fonts->AddFontFromFileTTF("Assets/Fonts/Inconsolata-Bold.ttf", 21);
+	h3Fnt = io.Fonts->AddFontFromFileTTF("Assets/Fonts/Inconsolata-Bold.ttf", 18);
 
 	mdConfig = ImGui::MarkdownConfig();
 	mdConfig.linkCallback = cify([this](ImGui::MarkdownLinkCallbackData data) { linkCallback(data); });;

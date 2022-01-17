@@ -7,13 +7,8 @@
 using namespace msdfgen;
 using namespace msdf_atlas;
 
-Font::Font(std::filesystem::path path)
+Font::Font(std::filesystem::path path, std::string name)
 {
-	if (FT_Init_FreeType(&library))
-	{
-		throw std::runtime_error("Couldn't initialize FreeType!");
-	}
-	
 	if (FT_New_Face(library, path.generic_string().c_str(), 0, &ftFace))
 	{
 		throw std::runtime_error("Couldn't load font!");
@@ -41,21 +36,26 @@ Font::Font(std::filesystem::path path)
 
 	for (GlyphGeometry& glyph : glyphGeometries)
 	{
-		glyph.edgeColoring(&edgeColoringByDistance, 2.0, 0);
+		glyph.edgeColoring(&edgeColoringInkTrap, 2.0, 0);
 	}
 
 	TightAtlasPacker packer;
 	packer.setDimensionsConstraint(TightAtlasPacker::DimensionsConstraint::SQUARE);
 	packer.setMinimumScale(48.0);
-	packer.setPixelRange(8.0);
-	packer.setMiterLimit(4.0);
+	packer.setPixelRange(16.0);
+	packer.setMiterLimit(1.0);
 	packer.pack(glyphGeometries.data(), glyphGeometries.size());
 	int width = 0, height = 0;
 	packer.getDimensions(width, height);
 
 	ImmediateAtlasGenerator<float, 4, mtsdfGenerator, BitmapAtlasStorage<byte, 4>> generator(width, height);
 
+	ErrorCorrectionConfig ecc;
+	ecc.mode = ErrorCorrectionConfig::EDGE_PRIORITY;
+	ecc.distanceCheckMode = ErrorCorrectionConfig::CHECK_DISTANCE_AT_EDGE;
+
 	GeneratorAttributes attributes;
+	attributes.scanlinePass = true;
 	generator.setAttributes(attributes);
 	generator.setThreadCount(4);
 
@@ -123,7 +123,7 @@ Font::Font(std::filesystem::path path)
 
 	destroyFont(font);
 
-	this->path = path;
+	this->name = name;
 }
 
 Font::~Font()
@@ -132,7 +132,14 @@ Font::~Font()
 	hb_font_destroy(hbFont);
 
 	FT_Done_Face(ftFace);
-	FT_Done_FreeType(library);
+}
+
+void Font::initFt()
+{
+	if (FT_Init_FreeType(&library))
+	{
+		throw std::runtime_error("Couldn't initialize FreeType!");
+	}
 }
 
 AtlasInfo Font::getInfo() const

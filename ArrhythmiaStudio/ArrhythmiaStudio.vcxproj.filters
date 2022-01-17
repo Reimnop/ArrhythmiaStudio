@@ -2973,6 +2973,9 @@
     <ClInclude Include="include\freetype\ft2build.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\logic\factories\FontFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Shaders\unlit.frag" />
@@ -3452,8 +3455,9 @@
     <Text Include="Assets\Documentation\doc_list.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="Assets\Inconsolata-Bold.ttf" />
-    <Font Include="Assets\Inconsolata-Regular.ttf" />
+    <Font Include="Assets\Fonts\Inconsolata-Bold.ttf" />
+    <Font Include="Assets\Fonts\Inconsolata-Regular.ttf" />
+    <Font Include="Assets\Fonts\Anurati-Regular.otf" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\engine\rendering\drawers\BatchedDrawer.cpp">

@@ -75,7 +75,7 @@ Renderer::Renderer(GLFWwindow* window)
 	mainWindow = window;
 
 	camera = new Camera();
-	imGuiController = new ImGuiController(window, "Assets/Inconsolata-Regular.ttf");
+	imGuiController = new ImGuiController(window, "Assets/Fonts/Inconsolata-Regular.ttf");
 
 	bloom = new Bloom();
 	// tonemapping = new Tonemapping();

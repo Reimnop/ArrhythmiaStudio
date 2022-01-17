@@ -1047,6 +1047,7 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClInclude Include="src\logic\editor_windows\Themes.h" />
     <ClInclude Include="src\logic\editor_windows\Timeline.h" />
     <ClInclude Include="src\logic\editor_windows\Viewport.h" />
+    <ClInclude Include="src\logic\factories\FontFactory.h" />
     <ClInclude Include="src\logic\factories\LevelEventFactory.h" />
     <ClInclude Include="src\logic\GameManager.h" />
     <ClInclude Include="src\logic\Level.h" />
@@ -1312,8 +1313,9 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <Text Include="Assets\Documentation\doc_list.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Font Include="Assets\Inconsolata-Bold.ttf" />
-    <Font Include="Assets\Inconsolata-Regular.ttf" />
+    <Font Include="Assets\Fonts\Anurati-Regular.otf" />
+    <Font Include="Assets\Fonts\Inconsolata-Bold.ttf" />
+    <Font Include="Assets\Fonts\Inconsolata-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="include\discord\achievement_manager.cpp" />

@@ -1,24 +1,20 @@
 ﻿#include "TextObjectBehaviour.h"
 
 #include "utils.h"
-#include "../factories/ShapeFactory.h"
+#include "../factories/FontFactory.h"
 #include "../GameManager.h"
 #include "imgui/imgui.h"
 #include "imgui/imgui_stdlib.h"
 
 TextObjectBehaviour::TextObjectBehaviour(LevelObject* baseObject) : AnimateableColoredObjectBehaviour(baseObject), color(Level::inst)
 {
-	if (!font)
-	{
-		font = new Font("Assets/Inconsolata-Regular.ttf");
-	}
-
 	Keyframe kf1(0.0f, 1.0f, EaseType_Linear);
 	ColorIndexKeyframe cikf0(0.0f, 0, EaseType_Linear);
 	opacity = Sequence(1, &kf1);
 	color = ColorIndexSequence(1, &cikf0, Level::inst);
 
-	renderer = new TextRenderer(font);
+	renderer = new TextRenderer();
+	setFont("inconsolata");
 
 	baseObject->node->renderer = renderer;
 }
@@ -39,9 +35,16 @@ void TextObjectBehaviour::update(float time)
 	renderer->color.w = opacity.update(time - baseObject->startTime);
 }
 
+void TextObjectBehaviour::setFont(std::string font)
+{
+	this->font = font;
+	renderer->setFont(FontFactory::getFont(font));
+}
+
 void TextObjectBehaviour::readJson(json& j)
 {
 	text = j["text"].get<std::string>();
+	setFont(j["font"].get<std::string>());
 	renderer->setText(std::wstring(text.begin(), text.end()));
 
 	AnimateableObjectBehaviour::readJson(j);
@@ -52,6 +55,7 @@ void TextObjectBehaviour::readJson(json& j)
 void TextObjectBehaviour::writeJson(json& j)
 {
 	j["text"] = text;
+	j["font"] = font;
 
 	AnimateableObjectBehaviour::writeJson(j);
 	j["op"] = opacity.toJson();
@@ -65,6 +69,20 @@ void TextObjectBehaviour::drawEditor()
 	if (ImGui::IsItemEdited()) 
 	{
 		renderer->setText(std::wstring(text.begin(), text.end()));
+	}
+
+	if (ImGui::BeginCombo("Font", FontFactory::getFont(font)->name.c_str()))
+	{
+		std::vector<std::string> ids = FontFactory::getFontIds();
+		for (std::string id : ids)
+		{
+			if (ImGui::Selectable(FontFactory::getFont(id)->name.c_str(), font == id))
+			{
+				setFont(id);
+			}
+		}
+
+		ImGui::EndCombo();
 	}
 
 	AnimateableColoredObjectBehaviour::drawEditor();

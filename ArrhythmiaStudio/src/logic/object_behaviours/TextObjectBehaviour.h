@@ -16,6 +16,8 @@ public:
 
 	void update(float time) override;
 
+	void setFont(std::string font);
+
 	void readJson(json& j) override;
 	void writeJson(json& j) override;
 
@@ -24,10 +26,9 @@ protected:
 	void drawSequences() override;
 	void drawColorSequences() override;
 private:
-	static inline Font* font;
-
 	TextRenderer* renderer;
 	std::string text;
+	std::string font;
 
 	Sequence opacity;
 	ColorIndexSequence color;

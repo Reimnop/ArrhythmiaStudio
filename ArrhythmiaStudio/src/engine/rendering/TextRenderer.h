@@ -7,14 +7,17 @@
 class TextRenderer : public RendererComponent
 {
 public:
-	TextRenderer(Font* font);
+	TextRenderer();
 	~TextRenderer() override;
 
 	glm::vec4 color;
 
 	void setText(const std::wstring& text);
+	void setFont(Font* font);
 	bool tryRender(glm::mat4 transform, RenderCommand** command) override;
 private:
+	std::wstring currentText;
+
 	Font* font;
 	size_t count;
 

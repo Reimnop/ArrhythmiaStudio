@@ -3,7 +3,7 @@
 
 #include <cstdlib>
 
-#include "freetype.h"
+#include "freetype/freetype.h"
 #include "../core/Shape.h"
 
 namespace msdfgen {

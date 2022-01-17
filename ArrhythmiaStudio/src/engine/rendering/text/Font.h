@@ -9,6 +9,7 @@
 #include "Glyph.h"
 #include "Metrics.h"
 #include "hb.h"
+#include "freetype/freetype.h"
 
 class Font
 {
@@ -31,5 +32,8 @@ private:
 	std::unordered_map<std::pair<int, int>, float, pair_hash> kerning;
 
 	uint32_t texHandle;
-	hb_font_t* hb_font;
+	hb_font_t* hbFont;
+
+	FT_Library library;
+	FT_Face ftFace;
 };

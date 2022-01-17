@@ -70,7 +70,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib;discord_game_sdk.dll.lib;log4cxx.lib;freetype.lib;harfbuzz.lib;harfbuzz-subset.lib</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;bass.lib;opengl32.lib;User32.lib;Gdi32.lib;Shell32.lib;Comdlg32.lib;Ole32.lib;discord_game_sdk.dll.lib;log4cxx.lib;freetype-d.lib;harfbuzz-d.lib;harfbuzz-subset-d.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -114,8 +114,6 @@ xcopy "$(ProjectDir)log4cxx.dll" "$(OutDir)" /y
 xcopy "$(ProjectDir)libaprutil-1.dll" "$(OutDir)" /y
 xcopy "$(ProjectDir)libapr-1.dll" "$(OutDir)" /y
 xcopy "$(ProjectDir)libexpat.dll" "$(OutDir)" /y
-xcopy "$(ProjectDir)harfbuzz.dll" "$(OutDir)" /y
-xcopy "$(ProjectDir)harfbuzz-subset.dll" "$(OutDir)" /y
 xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
 </Command>
     </PostBuildEvent>
@@ -309,55 +307,103 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClInclude Include="include\ffmpeg\libswresample\version.h" />
     <ClInclude Include="include\ffmpeg\libswscale\swscale.h" />
     <ClInclude Include="include\ffmpeg\libswscale\version.h" />
-    <ClInclude Include="include\freetype\config\ftconfig.h" />
-    <ClInclude Include="include\freetype\config\ftheader.h" />
-    <ClInclude Include="include\freetype\config\ftmodule.h" />
-    <ClInclude Include="include\freetype\config\ftoption.h" />
-    <ClInclude Include="include\freetype\config\ftstdlib.h" />
-    <ClInclude Include="include\freetype\freetype.h" />
-    <ClInclude Include="include\freetype\ftadvanc.h" />
-    <ClInclude Include="include\freetype\ftbbox.h" />
-    <ClInclude Include="include\freetype\ftbdf.h" />
-    <ClInclude Include="include\freetype\ftbitmap.h" />
-    <ClInclude Include="include\freetype\ftbzip2.h" />
-    <ClInclude Include="include\freetype\ftcache.h" />
-    <ClInclude Include="include\freetype\ftchapters.h" />
-    <ClInclude Include="include\freetype\ftcid.h" />
-    <ClInclude Include="include\freetype\ftdriver.h" />
-    <ClInclude Include="include\freetype\fterrdef.h" />
-    <ClInclude Include="include\freetype\fterrors.h" />
-    <ClInclude Include="include\freetype\ftfntfmt.h" />
-    <ClInclude Include="include\freetype\ftgasp.h" />
-    <ClInclude Include="include\freetype\ftglyph.h" />
-    <ClInclude Include="include\freetype\ftgxval.h" />
-    <ClInclude Include="include\freetype\ftgzip.h" />
-    <ClInclude Include="include\freetype\ftimage.h" />
-    <ClInclude Include="include\freetype\ftincrem.h" />
-    <ClInclude Include="include\freetype\ftlcdfil.h" />
-    <ClInclude Include="include\freetype\ftlist.h" />
-    <ClInclude Include="include\freetype\ftlzw.h" />
-    <ClInclude Include="include\freetype\ftmac.h" />
-    <ClInclude Include="include\freetype\ftmm.h" />
-    <ClInclude Include="include\freetype\ftmodapi.h" />
-    <ClInclude Include="include\freetype\ftmoderr.h" />
-    <ClInclude Include="include\freetype\ftotval.h" />
-    <ClInclude Include="include\freetype\ftoutln.h" />
-    <ClInclude Include="include\freetype\ftparams.h" />
-    <ClInclude Include="include\freetype\ftpfr.h" />
-    <ClInclude Include="include\freetype\ftrender.h" />
-    <ClInclude Include="include\freetype\ftsizes.h" />
-    <ClInclude Include="include\freetype\ftsnames.h" />
-    <ClInclude Include="include\freetype\ftstroke.h" />
-    <ClInclude Include="include\freetype\ftsynth.h" />
-    <ClInclude Include="include\freetype\ftsystem.h" />
-    <ClInclude Include="include\freetype\fttrigon.h" />
-    <ClInclude Include="include\freetype\fttypes.h" />
-    <ClInclude Include="include\freetype\ftwinfnt.h" />
-    <ClInclude Include="include\freetype\t1tables.h" />
-    <ClInclude Include="include\freetype\ttnameid.h" />
-    <ClInclude Include="include\freetype\tttables.h" />
-    <ClInclude Include="include\freetype\tttags.h" />
-    <ClInclude Include="include\ft2build.h" />
+    <ClInclude Include="include\freetype\freetype\config\ftconfig.h" />
+    <ClInclude Include="include\freetype\freetype\config\ftheader.h" />
+    <ClInclude Include="include\freetype\freetype\config\ftmodule.h" />
+    <ClInclude Include="include\freetype\freetype\config\ftoption.h" />
+    <ClInclude Include="include\freetype\freetype\config\ftstdlib.h" />
+    <ClInclude Include="include\freetype\freetype\config\integer-types.h" />
+    <ClInclude Include="include\freetype\freetype\config\mac-support.h" />
+    <ClInclude Include="include\freetype\freetype\config\public-macros.h" />
+    <ClInclude Include="include\freetype\freetype\freetype.h" />
+    <ClInclude Include="include\freetype\freetype\ftadvanc.h" />
+    <ClInclude Include="include\freetype\freetype\ftbbox.h" />
+    <ClInclude Include="include\freetype\freetype\ftbdf.h" />
+    <ClInclude Include="include\freetype\freetype\ftbitmap.h" />
+    <ClInclude Include="include\freetype\freetype\ftbzip2.h" />
+    <ClInclude Include="include\freetype\freetype\ftcache.h" />
+    <ClInclude Include="include\freetype\freetype\ftchapters.h" />
+    <ClInclude Include="include\freetype\freetype\ftcid.h" />
+    <ClInclude Include="include\freetype\freetype\ftcolor.h" />
+    <ClInclude Include="include\freetype\freetype\ftdriver.h" />
+    <ClInclude Include="include\freetype\freetype\fterrdef.h" />
+    <ClInclude Include="include\freetype\freetype\fterrors.h" />
+    <ClInclude Include="include\freetype\freetype\ftfntfmt.h" />
+    <ClInclude Include="include\freetype\freetype\ftgasp.h" />
+    <ClInclude Include="include\freetype\freetype\ftglyph.h" />
+    <ClInclude Include="include\freetype\freetype\ftgxval.h" />
+    <ClInclude Include="include\freetype\freetype\ftgzip.h" />
+    <ClInclude Include="include\freetype\freetype\ftimage.h" />
+    <ClInclude Include="include\freetype\freetype\ftincrem.h" />
+    <ClInclude Include="include\freetype\freetype\ftlcdfil.h" />
+    <ClInclude Include="include\freetype\freetype\ftlist.h" />
+    <ClInclude Include="include\freetype\freetype\ftlogging.h" />
+    <ClInclude Include="include\freetype\freetype\ftlzw.h" />
+    <ClInclude Include="include\freetype\freetype\ftmac.h" />
+    <ClInclude Include="include\freetype\freetype\ftmm.h" />
+    <ClInclude Include="include\freetype\freetype\ftmodapi.h" />
+    <ClInclude Include="include\freetype\freetype\ftmoderr.h" />
+    <ClInclude Include="include\freetype\freetype\ftotval.h" />
+    <ClInclude Include="include\freetype\freetype\ftoutln.h" />
+    <ClInclude Include="include\freetype\freetype\ftparams.h" />
+    <ClInclude Include="include\freetype\freetype\ftpfr.h" />
+    <ClInclude Include="include\freetype\freetype\ftrender.h" />
+    <ClInclude Include="include\freetype\freetype\ftsizes.h" />
+    <ClInclude Include="include\freetype\freetype\ftsnames.h" />
+    <ClInclude Include="include\freetype\freetype\ftstroke.h" />
+    <ClInclude Include="include\freetype\freetype\ftsynth.h" />
+    <ClInclude Include="include\freetype\freetype\ftsystem.h" />
+    <ClInclude Include="include\freetype\freetype\fttrigon.h" />
+    <ClInclude Include="include\freetype\freetype\fttypes.h" />
+    <ClInclude Include="include\freetype\freetype\ftwinfnt.h" />
+    <ClInclude Include="include\freetype\freetype\internal\autohint.h" />
+    <ClInclude Include="include\freetype\freetype\internal\cffotypes.h" />
+    <ClInclude Include="include\freetype\freetype\internal\cfftypes.h" />
+    <ClInclude Include="include\freetype\freetype\internal\compiler-macros.h" />
+    <ClInclude Include="include\freetype\freetype\internal\ftcalc.h" />
+    <ClInclude Include="include\freetype\freetype\internal\ftdebug.h" />
+    <ClInclude Include="include\freetype\freetype\internal\ftdrv.h" />
+    <ClInclude Include="include\freetype\freetype\internal\ftgloadr.h" />
+    <ClInclude Include="include\freetype\freetype\internal\fthash.h" />
+    <ClInclude Include="include\freetype\freetype\internal\ftmemory.h" />
+    <ClInclude Include="include\freetype\freetype\internal\ftobjs.h" />
+    <ClInclude Include="include\freetype\freetype\internal\ftpsprop.h" />
+    <ClInclude Include="include\freetype\freetype\internal\ftrfork.h" />
+    <ClInclude Include="include\freetype\freetype\internal\ftserv.h" />
+    <ClInclude Include="include\freetype\freetype\internal\ftstream.h" />
+    <ClInclude Include="include\freetype\freetype\internal\fttrace.h" />
+    <ClInclude Include="include\freetype\freetype\internal\ftvalid.h" />
+    <ClInclude Include="include\freetype\freetype\internal\psaux.h" />
+    <ClInclude Include="include\freetype\freetype\internal\pshints.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svbdf.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svcfftl.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svcid.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svfntfmt.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svgldict.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svgxval.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svkern.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svmetric.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svmm.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svotval.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svpfr.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svpostnm.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svprop.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svpscmap.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svpsinfo.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svsfnt.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svttcmap.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svtteng.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svttglyf.h" />
+    <ClInclude Include="include\freetype\freetype\internal\services\svwinfnt.h" />
+    <ClInclude Include="include\freetype\freetype\internal\sfnt.h" />
+    <ClInclude Include="include\freetype\freetype\internal\t1types.h" />
+    <ClInclude Include="include\freetype\freetype\internal\tttypes.h" />
+    <ClInclude Include="include\freetype\freetype\internal\wofftypes.h" />
+    <ClInclude Include="include\freetype\freetype\t1tables.h" />
+    <ClInclude Include="include\freetype\freetype\ttnameid.h" />
+    <ClInclude Include="include\freetype\freetype\tttables.h" />
+    <ClInclude Include="include\freetype\freetype\tttags.h" />
+    <ClInclude Include="include\freetype\ft2build.h" />
     <ClInclude Include="include\glad\glad.h" />
     <ClInclude Include="include\GLFW\glfw3.h" />
     <ClInclude Include="include\GLFW\glfw3native.h" />
@@ -1251,8 +1297,11 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <Library Include="libs\avutil.lib" />
     <Library Include="libs\bass.lib" />
     <Library Include="libs\discord_game_sdk.dll.lib" />
+    <Library Include="libs\freetype-d.lib" />
     <Library Include="libs\freetype.lib" />
     <Library Include="libs\glfw3.lib" />
+    <Library Include="libs\harfbuzz-d.lib" />
+    <Library Include="libs\harfbuzz-subset-d.lib" />
     <Library Include="libs\harfbuzz-subset.lib" />
     <Library Include="libs\harfbuzz.lib" />
     <Library Include="libs\log4cxx.lib" />

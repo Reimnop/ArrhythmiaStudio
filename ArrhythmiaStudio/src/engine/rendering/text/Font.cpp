@@ -28,9 +28,9 @@ Font::Font(std::filesystem::path path, std::string name)
 	std::vector<GlyphGeometry> glyphGeometries;
 	FontGeometry fontGeometry(&glyphGeometries);
 
-	// Initialize UTF-8 charset
+	// Initialize UTF-16 charset
 	Charset charset;
-	for (unicode_t i = 0x00; i < 0xFF; i++)
+	for (unicode_t i = 0x0000; i < 0xFFFF; i++)
 	{
 		charset.add(i);
 	}

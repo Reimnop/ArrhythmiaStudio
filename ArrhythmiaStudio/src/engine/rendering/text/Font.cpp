@@ -14,12 +14,15 @@ Font::Font(std::filesystem::path path, std::string name)
 		throw std::runtime_error("Couldn't load font!");
 	}
 
+	if (FT_Set_Char_Size(ftFace, FONT_SIZE, FONT_SIZE, 0, 0))
+	{
+		throw std::runtime_error("Couldn't set font size!");
+	}
+
 	FontHandle* font = adoptFreetypeFont(ftFace);
 
 	// Initialize HarfBuzz
-	hb_face_t* hbFace = hb_ft_face_create_referenced(ftFace);
-	hbFont = hb_font_create(hbFace);
-	hb_face_destroy(hbFace);
+	hbFont = hb_ft_font_create(ftFace, nullptr);
 
 	// Initialize font geometry (array that contains glyph metrics)
 	std::vector<GlyphGeometry> glyphGeometries;

@@ -14,6 +14,8 @@
 class Font
 {
 public:
+	static inline constexpr long FONT_SIZE = 64;
+
 	std::string name;
 
 	Font(std::filesystem::path path, std::string name);

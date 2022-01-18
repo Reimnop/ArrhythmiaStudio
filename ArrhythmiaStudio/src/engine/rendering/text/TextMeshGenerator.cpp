@@ -57,8 +57,8 @@ std::vector<TextVertex> TextMeshGenerator::genMesh(const std::wstring& text) con
 				float ws_x = cursor_x + x_offset;
 				float ws_y = cursor_y + y_offset;
 
-				ws_x /= 1024.0f;
-				ws_y /= 1024.0f;
+				ws_x /= Font::FONT_SIZE;
+				ws_y /= Font::FONT_SIZE;
 				ws_y += line_y;
 
 				lineVertices.emplace_back(ws_x + planeBounds.right, ws_y + planeBounds.top, 0.0f, atlasBounds.right / info.width, (info.height - atlasBounds.top) / info.height);
@@ -76,7 +76,7 @@ std::vector<TextVertex> TextMeshGenerator::genMesh(const std::wstring& text) con
 		// Readjust to center
 		for (TextVertex& vertex : lineVertices)
 		{
-			vertex.position.x -= cursor_x / 2048.0f;
+			vertex.position.x -= cursor_x / (Font::FONT_SIZE * 2.0f);
 		}
 
 		vertices.insert(vertices.end(), lineVertices.begin(), lineVertices.end());

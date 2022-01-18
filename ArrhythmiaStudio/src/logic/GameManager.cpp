@@ -102,6 +102,7 @@ GameManager::GameManager(GLFWwindow* window)
 void GameManager::update()
 {
 	level->update();
+	discordManager->update();
 }
 
 void GameManager::onLayout()

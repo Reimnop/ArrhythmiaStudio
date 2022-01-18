@@ -2,6 +2,7 @@
 
 #include <fstream>
 
+#include "DiscordManager.h"
 #include "LevelObject.h"
 #include "editor_windows/Themes.h"
 #include "factories/LevelEventFactory.h"
@@ -38,6 +39,14 @@ Level::Level(std::string name, path songPath, path levelDir)
 
 	std::ofstream o(levelDir / "level.aslv");
 	o << toJson();
+
+	std::string stateStr = "Editing " + name;
+
+	discord::Activity activity = discord::Activity();
+	activity.SetState(stateStr.c_str());
+	activity.GetTimestamps().SetStart(std::time(nullptr));
+
+	DiscordManager::inst->updateActivity(activity);
 }
 
 Level::Level(path levelDir)
@@ -100,6 +109,14 @@ Level::Level(path levelDir)
 	{
 		colorSlots.push_back(new ColorSlot(colorSlotJ));
 	}
+
+	std::string stateStr = "Editing " + name;
+
+	discord::Activity activity = discord::Activity();
+	activity.SetState(stateStr.c_str());
+	activity.GetTimestamps().SetStart(std::time(nullptr));
+
+	DiscordManager::inst->updateActivity(activity);
 }
 
 Level::~Level()

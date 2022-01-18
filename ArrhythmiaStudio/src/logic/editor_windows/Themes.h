@@ -9,6 +9,8 @@
 #include "../data/ColorKeyframeInfo.h"
 #include "../data/ColorKeyframeTimeEditInfo.h"
 
+#include "../ColorSlot.h"
+
 class Themes : public EditorWindow
 {
 public:
@@ -16,6 +18,8 @@ public:
 
 	std::string getTitle() override;
 	void draw() override;
+
+	static void selectColorSlotEventHandler(std::optional<std::reference_wrapper<ColorSlot>> colorSlot);
 private:
 	static inline std::vector<std::tuple<std::reference_wrapper<ColorSequence>, std::string>> sequencesToDraw;
 	static inline std::optional<ColorKeyframeInfo> selectedKeyframe;

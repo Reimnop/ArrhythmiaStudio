@@ -1,13 +1,13 @@
 #pragma once
 
 #include <GLFW/glfw3.h>
-#include <vector>
-#include <functional>
+
+#include "event.h"
 
 class ImGuiController
 {
 public:
-	static std::vector<std::function<void()>> onLayout;
+	static inline Event<> onLayout;
 
 	ImGuiController(GLFWwindow* window, const char* fontPath);
 	~ImGuiController();

@@ -17,6 +17,8 @@ public:
 	~AnimateableColoredObjectBehaviour() override = default;
 
 	void drawEditor() override;
+
+	static void selectObjectEventHandler(std::optional<std::reference_wrapper<LevelObject>> object);
 private:
 	static inline std::vector<std::tuple<std::reference_wrapper<ColorIndexSequence>, std::string>> sequencesToDraw;
 	static inline std::optional<ColorIndexKeyframeInfo> selectedKeyframe;

@@ -72,6 +72,12 @@ void AnimateableColoredObjectBehaviour::drawEditor()
 	}
 }
 
+void AnimateableColoredObjectBehaviour::selectObjectEventHandler(std::optional<std::reference_wrapper<LevelObject>> object)
+{
+	// Deselect keyframe if user selects another object
+	selectedKeyframe.reset();
+}
+
 bool AnimateableColoredObjectBehaviour::beginColorKeyframeEditor()
 {
 	sequencesToDraw.clear();

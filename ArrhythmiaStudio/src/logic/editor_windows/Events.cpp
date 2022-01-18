@@ -12,30 +12,31 @@ void Events::draw()
 	GameManager* gameManager = GameManager::inst;
 	Level* level = gameManager->level;
 
+	Selection selection = level->getSelection();
 	if (ImGui::BeginChild("##events", ImVec2(0.0f, 120.0f), true))
 	{
 		// Deselect
 		if (ImGui::IsWindowFocused(ImGuiFocusedFlags_RootWindow) && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 		{
-			level->selection.selectedEvent.reset();
+			level->clearSelectedEvent();
 		}
 
 		for (auto &[type, levelEvent] : gameManager->level->levelEvents)
 		{
 			if (ImGui::Selectable(
 				levelEvent->getTitle().c_str(),
-				level->selection.selectedEvent.has_value() ? 
-				&level->selection.selectedEvent->get() == levelEvent : 
+				selection.selectedEvent.has_value() ?
+				&selection.selectedEvent->get() == levelEvent :
 				false))
 			{
-				level->selection.selectedEvent = *levelEvent;
+				level->setSelectedEvent(*levelEvent);
 			}
 		}
 	}
 	ImGui::EndChild();
 
-	if (level->selection.selectedEvent.has_value())
+	if (selection.selectedEvent.has_value())
 	{
-		level->selection.selectedEvent->get().drawEditor();
+		selection.selectedEvent->get().drawEditor();
 	}
 }

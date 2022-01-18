@@ -3,8 +3,11 @@
 #include <fstream>
 
 #include "LevelObject.h"
+#include "editor_windows/Themes.h"
 #include "factories/LevelEventFactory.h"
-#include "object_behaviours/LevelObjectBehaviour.h"
+#include "level_events/AnimateableLevelEvent.h"
+#include "object_behaviours/AnimateableObjectBehaviour.h"
+#include "object_behaviours/AnimateableColoredObjectBehaviour.h"
 
 Level::Level(std::string name, path songPath, path levelDir)
 {
@@ -109,6 +112,55 @@ Level::~Level()
 	delete spawner;
 
 	delete clip;
+}
+
+void Level::initEvents()
+{
+	onSelectObject += EventHandler<std::optional<std::reference_wrapper<LevelObject>>>(&AnimateableObjectBehaviour::selectObjectEventHandler);
+	onSelectObject += EventHandler<std::optional<std::reference_wrapper<LevelObject>>>(&AnimateableColoredObjectBehaviour::selectObjectEventHandler);
+	onSelectEvent += EventHandler<std::optional<std::reference_wrapper<TypedLevelEvent>>>(&AnimateableLevelEvent::selectLevelEventEventHandler);
+	onSelectColorSlot += EventHandler<std::optional<std::reference_wrapper<ColorSlot>>>(&Themes::selectColorSlotEventHandler);
+}
+
+void Level::clearSelectedObject()
+{
+	selection.selectedObject.reset();
+	onSelectObject.invoke(selection.selectedObject);
+}
+
+void Level::clearSelectedEvent()
+{
+	selection.selectedEvent.reset();
+	onSelectEvent.invoke(selection.selectedEvent);
+}
+
+void Level::clearSelectedColorSlot()
+{
+	selection.selectedColorSlot.reset();
+	onSelectColorSlot.invoke(selection.selectedColorSlot);
+}
+
+void Level::setSelectedObject(LevelObject& levelObject)
+{
+	selection.selectedObject = levelObject;
+	onSelectObject.invoke(selection.selectedObject);
+}
+
+void Level::setSelectedEvent(TypedLevelEvent& levelEvent)
+{
+	selection.selectedEvent = levelEvent;
+	onSelectEvent.invoke(selection.selectedEvent);
+}
+
+void Level::setSelectedColorSlot(ColorSlot& colorSlot)
+{
+	selection.selectedColorSlot = colorSlot;
+	onSelectColorSlot.invoke(selection.selectedColorSlot);
+}
+
+Selection Level::getSelection()
+{
+	return selection;
 }
 
 void Level::seek(float t)

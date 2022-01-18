@@ -38,7 +38,7 @@ GameManager::GameManager(GLFWwindow* window)
 
 	mainWindow = window;
 
-	ImGuiController::onLayout.push_back(std::bind(&GameManager::onLayout, this));
+	ImGuiController::onLayout += EventHandler<>(std::bind(&GameManager::onLayout, this));
 
 	discordManager = new DiscordManager();
 	docManager = new DocManager();
@@ -71,6 +71,8 @@ GameManager::GameManager(GLFWwindow* window)
 	ShapeFactory::registerShape("Assets/Shapes/hollow_hexagon.shp", "hollow_hexagon");
 	ShapeFactory::registerShape("Assets/Shapes/triangle.shp", "triangle");
 	ShapeFactory::registerShape("Assets/Shapes/right_angled_triangle.shp", "right_angled_triangle");
+
+	Level::initEvents();
 
 	// Initialize level based on arguments
 	std::string str;

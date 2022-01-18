@@ -11,9 +11,10 @@ void Properties::draw()
 {
 	Level& level = *GameManager::inst->level;
 
-	if (level.selection.selectedObject.has_value())
+	Selection selection = level.getSelection();
+	if (selection.selectedObject.has_value())
 	{
-		level.selection.selectedObject.value().get().drawEditor();
+		selection.selectedObject.value().get().drawEditor();
 	}
 	else
 	{

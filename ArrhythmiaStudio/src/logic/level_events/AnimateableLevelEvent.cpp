@@ -70,6 +70,12 @@ void AnimateableLevelEvent::drawEditor()
 	}
 }
 
+void AnimateableLevelEvent::selectLevelEventEventHandler(std::optional<std::reference_wrapper<TypedLevelEvent>> levelEvent)
+{
+	// Clear selected keyframe if the user selects another event
+	selectedKeyframe.reset();
+}
+
 bool AnimateableLevelEvent::beginKeyframeEditor()
 {
 	sequencesToDraw.clear();

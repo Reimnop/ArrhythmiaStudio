@@ -19,6 +19,8 @@ public:
 	void readJson(json& j) override;
 	void writeJson(json& j) override;
 	void drawEditor() override;
+
+	static void selectObjectEventHandler(std::optional<std::reference_wrapper<LevelObject>> object);
 private:
 	static inline std::vector<std::tuple<std::reference_wrapper<Sequence>, std::string>> sequencesToDraw;
 	static inline std::optional<KeyframeInfo> selectedKeyframe;

@@ -2,7 +2,7 @@
 #include <optional>
 #include <vector>
 
-#include "LevelEvent.h"
+#include "TypedLevelEvent.h"
 #include "../animation/Sequence.h"
 #include "../data/KeyframeInfo.h"
 #include "../data/KeyframeTimeEditInfo.h"
@@ -13,6 +13,8 @@ public:
 	AnimateableLevelEvent(Level* level) : LevelEvent(level) {}
 
 	void drawEditor() override;
+
+	static void selectLevelEventEventHandler(std::optional<std::reference_wrapper<TypedLevelEvent>> levelEvent);
 private:
 	static inline std::vector<std::tuple<std::reference_wrapper<Sequence>, std::string>> sequencesToDraw;
 	static inline std::optional<KeyframeInfo> selectedKeyframe;

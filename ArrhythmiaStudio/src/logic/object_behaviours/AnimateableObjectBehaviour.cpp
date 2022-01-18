@@ -115,6 +115,12 @@ void AnimateableObjectBehaviour::drawEditor()
 	}
 }
 
+void AnimateableObjectBehaviour::selectObjectEventHandler(std::optional<std::reference_wrapper<LevelObject>> object)
+{
+	// Deselect keyframe if user selects another object
+	selectedKeyframe.reset();
+}
+
 void AnimateableObjectBehaviour::drawSequences()
 {
 	sequenceEdit(positionX, "Position X");

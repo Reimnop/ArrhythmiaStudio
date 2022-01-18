@@ -137,6 +137,7 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClInclude Include="include\discord\types.h" />
     <ClInclude Include="include\discord\user_manager.h" />
     <ClInclude Include="include\discord\voice_manager.h" />
+    <ClInclude Include="include\event.h" />
     <ClInclude Include="include\ffmpegcpp\AudioFormatConverter.h" />
     <ClInclude Include="include\ffmpegcpp\CodecDeducer.h" />
     <ClInclude Include="include\ffmpegcpp\Codecs\AudioCodec.h" />
@@ -1016,7 +1017,7 @@ xcopy "$(ProjectDir)log4cxx.cfg" "$(OutDir)" /y
     <ClInclude Include="include\stb\stb_tilemap_editor.h" />
     <ClInclude Include="include\stb\stb_truetype.h" />
     <ClInclude Include="include\stb\stb_voxel_render.h" />
-    <ClInclude Include="include\std.h" />
+    <ClInclude Include="include\ffmpegcpp\std.h" />
     <ClInclude Include="include\utils.h" />
     <ClInclude Include="src\Arguments.h" />
     <ClInclude Include="src\logic\EditorSettings.h" />

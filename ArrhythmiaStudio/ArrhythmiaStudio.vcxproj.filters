@@ -2559,9 +2559,6 @@
     <ClInclude Include="include\json.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\std.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2974,6 +2971,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\logic\factories\FontFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\event.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ffmpegcpp\std.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

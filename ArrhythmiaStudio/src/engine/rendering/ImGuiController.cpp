@@ -4,8 +4,6 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-std::vector<std::function<void()>> ImGuiController::onLayout;
-
 ImGuiController::ImGuiController(GLFWwindow* window, const char* fontPath)
 {
 	const char* glslVersion = "#version 430";
@@ -39,11 +37,7 @@ void ImGuiController::update()
 	// Start global dockspace
 	ImGui::DockSpaceOverViewport();
 
-	// Call all onLayout
-	for (const std::function<void()>& layoutFunc : onLayout)
-	{
-		layoutFunc();
-	}
+	onLayout.invoke();
 }
 
 void ImGuiController::renderImGui()

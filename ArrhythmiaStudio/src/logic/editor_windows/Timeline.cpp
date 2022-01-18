@@ -311,6 +311,8 @@ void Timeline::drawTimeline()
 
 		// Object strips handling
 		{
+			Selection selection = level.getSelection();
+
 			std::optional<std::reference_wrapper<LevelObject>> objectHovering;
 			std::optional<std::reference_wrapper<LevelObject>> lastClickedObject;
 
@@ -365,12 +367,19 @@ void Timeline::drawTimeline()
 					objectName,
 					objectEditorBase + ImVec2(startPos, ROW_HEIGHT * object.row),
 					objectEditorBase + ImVec2(endPos, ROW_HEIGHT * (object.row + 1)),
-					(level.selection.selectedObject.has_value() ? &object == &level.selection.selectedObject.value().get() : false) || (objectHovering.has_value() ? &objectHovering.value().get() == &object : false));
+					(selection.selectedObject.has_value() ? &object == &selection.selectedObject.value().get() : false) || (objectHovering.has_value() ? &objectHovering.value().get() == &object : false));
 			}
 
 			if (ImGui::IsWindowFocused() && objectEditorRect.Contains(io.MousePos) && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 			{
-				level.selection.selectedObject = objectHovering;
+				if (objectHovering.has_value())
+				{
+					level.setSelectedObject(objectHovering.value());
+				}
+				else
+				{
+					level.clearSelectedObject();
+				}
 			}
 
 			// Object dragging action
@@ -382,7 +391,7 @@ void Timeline::drawTimeline()
 				ImGui::SetFocusID(objectDragID, &window);
 				ImGui::FocusWindow(&window);
 
-				level.selection.selectedObject = lastClickedObject;
+				level.setSelectedObject(lastClickedObject.value());
 			}
 
 			if (context.ActiveId == objectDragID && context.ActiveIdSource == ImGuiInputSource_Mouse && !io.MouseDown[0])
@@ -392,9 +401,9 @@ void Timeline::drawTimeline()
 
 			if (context.ActiveId == objectDragID)
 			{
-				assert(level.selection.selectedObject.has_value());
+				assert(selection.selectedObject.has_value());
 
-				LevelObject& object = level.selection.selectedObject.value();
+				LevelObject& object = selection.selectedObject.value();
 
 				float timeDelta = (io.MouseDelta.x / size.x) * (endTime - startTime);
 				timeDelta = std::clamp(timeDelta, -object.startTime, level.levelLength - object.endTime);
@@ -411,10 +420,10 @@ void Timeline::drawTimeline()
 			else // Other things to do when not dragging
 			{
 				// Object deletion
-				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE) && level.selection.selectedObject.has_value())
+				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE) && selection.selectedObject.has_value())
 				{
-					LevelObject& object = level.selection.selectedObject.value();
-					level.selection.selectedObject.reset();
+					LevelObject& object = selection.selectedObject.value();
+					level.clearSelectedObject();
 					level.spawner->deleteObject(&object);
 				}
 			}

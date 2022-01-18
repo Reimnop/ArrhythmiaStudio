@@ -49,7 +49,7 @@ DocManager::DocManager()
 	mdConfig.headingFormats[1] = { h2Fnt, true  };
 	mdConfig.headingFormats[2] = { h3Fnt, false };
 
-	ImGuiController::onLayout.push_back(std::bind(&DocManager::onLayout, this));
+	ImGuiController::onLayout += EventHandler<>([this] { onLayout(); });
 }
 
 void DocManager::onLayout()

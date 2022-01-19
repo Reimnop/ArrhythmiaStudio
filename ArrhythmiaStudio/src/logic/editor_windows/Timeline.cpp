@@ -69,6 +69,19 @@ void Timeline::draw()
 
 	ImGui::SameLine();
 
+    // Press space to play/pause
+    if (ImGui::IsKeyPressed(GLFW_KEY_SPACE) && ImGui::IsWindowFocused())
+    {
+        if (level.clip->isPlaying())
+        {
+            level.clip->pause();
+        }
+        else
+        {
+            level.clip->play();
+        }
+    }
+
 	// Draw play button
 	if (playButton(level.clip->isPlaying()))
 	{

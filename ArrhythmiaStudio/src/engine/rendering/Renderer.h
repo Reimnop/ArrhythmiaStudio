@@ -1,9 +1,9 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
 #include <vector>
 
+#include "GLFW/glfw3.h"
+#include "glm/glm.hpp"
 #include "../Scene.h"
 #include "../Camera.h"
 #include "ImGuiController.h"

@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Tonemapping.h"
 
 #include "glad/glad.h"

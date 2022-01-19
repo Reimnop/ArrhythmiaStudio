@@ -1,6 +1,7 @@
 #include "Material.h"
 
 #include <glad/glad.h>
+#include <cstring>
 
 #define MAT_GETTER(t_name, type) type Material::get##t_name(const char* name) { return std::any_cast<type>(materialData[propertyIndices[name]]); }
 #define MAT_SETTER(t_name, type) void Material::set##t_name(const char* name, type value) { materialData[propertyIndices[name]] = value; }

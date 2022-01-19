@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+#include <string>
 
 #include "MaterialProperty.h"
 

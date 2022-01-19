@@ -15,13 +15,9 @@ namespace ffmpegcpp
 
 		FFmpegException(std::string error, int returnValue);
 
-		virtual char const* what() const
-		{
-			return std::exception::what();
-		}
-
-
+        const char* what() const noexcept override;
 	private:
+        std::string errorStr;
 
 		char error[AV_ERROR_MAX_STRING_SIZE];
 	};

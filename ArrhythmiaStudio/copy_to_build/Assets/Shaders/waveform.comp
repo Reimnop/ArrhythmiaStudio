@@ -1,0 +1,47 @@
+#version 440
+
+layout(local_size_x = 8, local_size_y = 8) in;
+
+layout(rgba8, binding = 0) uniform image2D img_output;
+layout(std430, binding = 1) buffer audioBuffer {
+	float samples[];
+};
+
+layout(location = 0) uniform float startTime;
+layout(location = 1) uniform float endTime;
+layout(location = 2) uniform float frequency;
+
+int getSampleIndex(float t) {
+	float offset = startTime * frequency;
+	float sampleIndex = (endTime - startTime) * t * frequency + offset;
+	return int(clamp(sampleIndex, 0.0, samples.length() - 1.0));
+}
+
+float interpolate(float x, float y, float t) {
+	return clamp((t - x) / (y - x), 0.0, 1.0);
+}
+
+float wave(vec2 uv) {
+	const float AA = 0.005;
+
+	int index = getSampleIndex(uv.x);
+	
+	float a = abs(samples[index]);
+	float b = abs(samples[min(index + 1, samples.length())]);
+	
+	float offset = startTime * frequency;
+	float t = fract((endTime - startTime) * uv.x * frequency + offset);
+
+	float s = mix(a, b, t);
+	
+	return 1.0 - interpolate(0.0, AA + abs(b - a) * AA * 8.0, uv.y - s);
+}
+
+void main() {
+	ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy);
+	ivec2 size = imageSize(img_output);
+
+	vec2 coord = pixelCoords / vec2(size);
+	
+	imageStore(img_output, pixelCoords, vec4(0.4, 0.4, 0.4, wave(coord) * 0.7));
+}

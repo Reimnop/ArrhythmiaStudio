@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Bloom.h"
 
 #include "glad/glad.h"

@@ -5,7 +5,6 @@
 
 #include "log4cxx/logger.h"
 #include "DocManager.h"
-#include "DiscordManager.h"
 #include "Level.h"
 #include "editor_windows/EditorWindow.h"
 
@@ -27,7 +26,6 @@ private:
 
 	GLFWwindow* mainWindow;
 	DocManager* docManager;
-	DiscordManager* discordManager;
 
 	std::vector<EditorWindow*> editorWindows;
 

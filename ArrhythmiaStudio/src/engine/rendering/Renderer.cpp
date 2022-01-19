@@ -6,6 +6,8 @@
 #include "../../MainWindow.h"
 #include "drawers/BatchedDrawer.h"
 
+#include "glad/glad.h"
+
 Renderer* Renderer::inst;
 
 Renderer::Renderer(GLFWwindow* window)

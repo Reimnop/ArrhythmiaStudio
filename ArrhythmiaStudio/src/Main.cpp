@@ -1,8 +1,9 @@
 #include "Arguments.h"
 #include "helper.h"
 #include "MainWindow.h"
-
 #include "log4cxx/propertyconfigurator.h"
+
+#include <memory>
 
 int main(int argc, char** argv, char* environment[])
 {
@@ -16,12 +17,10 @@ int main(int argc, char** argv, char* environment[])
 	try 
 	{
 #endif
-		LOG4CXX_INFO(logger, STRINGIFY(Starting  PROJECT_NAME));
+		LOG4CXX_INFO(logger, STRINGIFY(Starting PROJECT_NAME));
 
-		MainWindow* window = new MainWindow();
-		window->run();
-
-		delete window;
+        std::unique_ptr<MainWindow> mainWindow = std::make_unique<MainWindow>();
+        mainWindow->run();
 #if NDEBUG
 	}
 	catch (const std::exception& e)

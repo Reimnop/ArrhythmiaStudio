@@ -18,13 +18,13 @@ public:
 	// The node's transform
 	Transform* transform;
 
-	SceneNode* parent;
+	SceneNode* parent = nullptr;
 	std::vector<SceneNode*> children;
 
 	std::unordered_set<SceneNode*> activeChildren;
 
 	// The node's renderer
-	RendererComponent* renderer;
+	RendererComponent* renderer = nullptr;
 
 	SceneNode(std::string name);
 	SceneNode(std::string name, SceneNode* parent);

@@ -1,3 +1,4 @@
+#include <iostream>
 #include "SceneNode.h"
 #include "Scene.h"
 
@@ -45,12 +46,12 @@ void SceneNode::setParent(SceneNode* newParent)
 		parent->activeChildren.erase(this);
 	}
 
-	if (!newParent)
+	if (newParent)
 	{
 		newParent = Scene::inst->rootNode;
 	}
 
-	if (newParent) 
+	if (newParent)
 	{
 		// Add to new parent
 		newParent->children.push_back(this);

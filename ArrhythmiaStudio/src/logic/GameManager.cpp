@@ -40,7 +40,6 @@ GameManager::GameManager(GLFWwindow* window)
 
 	ImGuiController::onLayout += EventHandler<>(std::bind(&GameManager::onLayout, this));
 
-	discordManager = new DiscordManager();
 	docManager = new DocManager();
 
 	Font::initFt();
@@ -102,7 +101,6 @@ GameManager::GameManager(GLFWwindow* window)
 void GameManager::update()
 {
 	level->update();
-	discordManager->update();
 }
 
 void GameManager::onLayout()

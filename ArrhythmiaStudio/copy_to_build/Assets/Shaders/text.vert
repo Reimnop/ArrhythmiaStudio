@@ -8,6 +8,6 @@ layout(location = 0) uniform mat4 mvp;
 layout(location = 0) out vec2 frag_TexCoord;
 
 void main() {
-	frag_TexCoord = aTexCoord;
-	gl_Position = mvp * vec4(aPos, 1.0);
+    frag_TexCoord = aTexCoord;
+    gl_Position = mvp * vec4(aPos, 1.0);
 }

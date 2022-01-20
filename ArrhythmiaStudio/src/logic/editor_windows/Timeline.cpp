@@ -324,8 +324,6 @@ void Timeline::drawTimeline()
 
 		// Object strips handling
 		{
-			Selection selection = level.getSelection();
-
 			std::optional<std::reference_wrapper<LevelObject>> objectHovering;
 			std::optional<std::reference_wrapper<LevelObject>> lastClickedObject;
 
@@ -380,19 +378,32 @@ void Timeline::drawTimeline()
 					objectName,
 					objectEditorBase + ImVec2(startPos, ROW_HEIGHT * object.row),
 					objectEditorBase + ImVec2(endPos, ROW_HEIGHT * (object.row + 1)),
-					(selection.selectedObject.has_value() ? &object == &selection.selectedObject.value().get() : false) || (objectHovering.has_value() ? &objectHovering.value().get() == &object : false));
+                    level.isObjectSelected(object) || objectHovering.has_value() && &objectHovering.value().get() == &object);
 			}
 
 			if (ImGui::IsWindowFocused() && objectEditorRect.Contains(io.MousePos) && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
 			{
-				if (objectHovering.has_value())
-				{
-					level.setSelectedObject(objectHovering.value());
-				}
-				else
-				{
-					level.clearSelectedObject();
-				}
+                if (ImGui::IsKeyDown(GLFW_KEY_LEFT_SHIFT))
+                {
+                    if (objectHovering.has_value())
+                    {
+                        if (!level.isObjectSelected(objectHovering.value()))
+                        {
+                            level.addSelectedObject(objectHovering.value());
+                        }
+                    }
+                }
+                else
+                {
+                    if (objectHovering.has_value())
+                    {
+                        level.setSelectedObject(objectHovering.value());
+                    }
+                    else
+                    {
+                        level.clearSelectedObject();
+                    }
+                }
 			}
 
 			// Object dragging action
@@ -403,8 +414,6 @@ void Timeline::drawTimeline()
 				ImGui::SetActiveID(objectDragID, &window);
 				ImGui::SetFocusID(objectDragID, &window);
 				ImGui::FocusWindow(&window);
-
-				level.setSelectedObject(lastClickedObject.value());
 			}
 
 			if (context.ActiveId == objectDragID && context.ActiveIdSource == ImGuiInputSource_Mouse && !io.MouseDown[0])
@@ -414,30 +423,53 @@ void Timeline::drawTimeline()
 
 			if (context.ActiveId == objectDragID)
 			{
-				assert(selection.selectedObject.has_value());
+                Selection selection = level.getSelection();
 
-				LevelObject& object = selection.selectedObject.value();
+				assert(selection.selectedObjects.size());
 
-				float timeDelta = (io.MouseDelta.x / size.x) * (endTime - startTime);
-				timeDelta = std::clamp(timeDelta, -object.startTime, level.levelLength - object.endTime);
+                float minObjectStartTime = INFINITY;
+                float maxObjectEndTime = 0.0f;
 
-				object.startTime += timeDelta;
-				object.endTime += timeDelta;
+                for (LevelObject* object : selection.selectedObjects)
+                {
+                    minObjectStartTime = std::min(minObjectStartTime, object->startTime);
+                    maxObjectEndTime = std::max(maxObjectEndTime, object->endTime);
+                }
 
-				level.spawner->removeActivateList(&object);
-				level.spawner->removeDeactivateList(&object);
-				level.spawner->insertActivateList(&object);
-				level.spawner->insertDeactivateList(&object);
+                for (LevelObject* object : selection.selectedObjects)
+                {
+                    float timeDelta = (io.MouseDelta.x / size.x) * (endTime - startTime);
+                    timeDelta = std::clamp(timeDelta, -minObjectStartTime, level.levelLength - maxObjectEndTime);
+
+                    object->startTime += timeDelta;
+                    object->endTime += timeDelta;
+
+                    level.spawner->removeActivateList(object);
+                    level.spawner->removeDeactivateList(object);
+                    level.spawner->insertActivateList(object);
+                    level.spawner->insertDeactivateList(object);
+                }
+
 				level.spawner->recalculateObjectsState();
 			}
 			else // Other things to do when not dragging
 			{
+                Selection selection = level.getSelection();
+
 				// Object deletion
-				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE) && selection.selectedObject.has_value())
+				if (ImGui::IsWindowFocused() && ImGui::IsKeyPressed(GLFW_KEY_DELETE) && !selection.selectedObjects.empty())
 				{
-					LevelObject& object = selection.selectedObject.value();
+                    for (LevelObject* object : selection.selectedObjects)
+                    {
+                        level.spawner->removeActivateList(object);
+                        level.spawner->removeDeactivateList(object);
+                        level.spawner->removeObject(object);
+
+                        delete object;
+                    }
+                    level.spawner->recalculateObjectsState();
+
 					level.clearSelectedObject();
-					level.spawner->deleteObject(&object);
 				}
 			}
 		}

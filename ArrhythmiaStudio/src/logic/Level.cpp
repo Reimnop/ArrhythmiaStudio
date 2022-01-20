@@ -124,38 +124,55 @@ void Level::initEvents()
 
 void Level::clearSelectedObject()
 {
-	selection.selectedObject.reset();
-	onSelectObject.invoke(selection.selectedObject);
+	selection.selectedObjects.clear();
+	onSelectObject.invoke(std::nullopt);
 }
 
 void Level::clearSelectedEvent()
 {
 	selection.selectedEvent.reset();
-	onSelectEvent.invoke(selection.selectedEvent);
+	onSelectEvent.invoke(std::nullopt);
 }
 
 void Level::clearSelectedColorSlot()
 {
 	selection.selectedColorSlot.reset();
-	onSelectColorSlot.invoke(selection.selectedColorSlot);
+	onSelectColorSlot.invoke(std::nullopt);
 }
 
 void Level::setSelectedObject(LevelObject& levelObject)
 {
-	selection.selectedObject = levelObject;
-	onSelectObject.invoke(selection.selectedObject);
+    clearSelectedObject();
+	selection.selectedObjects.emplace(&levelObject);
+	onSelectObject.invoke(levelObject);
 }
 
 void Level::setSelectedEvent(TypedLevelEvent& levelEvent)
 {
 	selection.selectedEvent = levelEvent;
-	onSelectEvent.invoke(selection.selectedEvent);
+	onSelectEvent.invoke(levelEvent);
 }
 
 void Level::setSelectedColorSlot(ColorSlot& colorSlot)
 {
+    clearSelectedColorSlot();
 	selection.selectedColorSlot = colorSlot;
-	onSelectColorSlot.invoke(selection.selectedColorSlot);
+	onSelectColorSlot.invoke(colorSlot);
+}
+
+void Level::addSelectedObject(LevelObject& levelObject)
+{
+    selection.selectedObjects.emplace(&levelObject);
+}
+
+void Level::removeSelectedObject(LevelObject& levelObject)
+{
+    selection.selectedObjects.erase(&levelObject);
+}
+
+bool Level::isObjectSelected(LevelObject &levelObject)
+{
+    return selection.selectedObjects.contains(&levelObject);
 }
 
 Selection Level::getSelection()

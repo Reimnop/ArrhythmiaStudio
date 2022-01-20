@@ -51,6 +51,10 @@ public:
 	void setSelectedEvent(TypedLevelEvent& levelEvent);
 	void setSelectedColorSlot(ColorSlot& colorSlot);
 
+    void addSelectedObject(LevelObject& levelObject);
+    void removeSelectedObject(LevelObject& levelObject);
+    bool isObjectSelected(LevelObject& levelObject);
+
 	Selection getSelection();
 
 	void seek(float t);

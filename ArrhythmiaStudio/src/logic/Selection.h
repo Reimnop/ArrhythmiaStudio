@@ -5,7 +5,7 @@
 
 struct Selection
 {
-	std::optional<std::reference_wrapper<LevelObject>> selectedObject;
+	std::unordered_set<LevelObject*> selectedObjects;
 	std::optional<std::reference_wrapper<TypedLevelEvent>> selectedEvent;
-	std::optional<std::reference_wrapper<ColorSlot>> selectedColorSlot;
+    std::optional<std::reference_wrapper<ColorSlot>> selectedColorSlot;
 };

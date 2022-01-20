@@ -12,9 +12,17 @@ void Properties::draw()
 	Level& level = *GameManager::inst->level;
 
 	Selection selection = level.getSelection();
-	if (selection.selectedObject.has_value())
+	if (!selection.selectedObjects.empty())
 	{
-		selection.selectedObject.value().get().drawEditor();
+		if (selection.selectedObjects.size() == 1)
+        {
+            LevelObject* obj = *selection.selectedObjects.begin();
+            obj->drawEditor();
+        }
+        else
+        {
+            ImGui::Text("Multiple objects selected");
+        }
 	}
 	else
 	{

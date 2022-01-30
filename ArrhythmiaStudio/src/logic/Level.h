@@ -8,6 +8,7 @@
 #include "../engine/AudioClip.h"
 #include "ColorSlot.h"
 #include "Selection.h"
+#include "Prefab.h"
 
 using namespace std::filesystem;
 
@@ -27,6 +28,7 @@ public:
 	
 	std::unordered_map<std::string, TypedLevelEvent*> levelEvents;
 	std::vector<ColorSlot*> colorSlots;
+    std::unordered_map<uint64_t, Prefab*> prefabs;
 	ObjectSpawner* spawner;
 
 	float time = 0.0f;

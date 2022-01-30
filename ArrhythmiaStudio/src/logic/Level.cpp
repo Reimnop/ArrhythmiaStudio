@@ -64,14 +64,21 @@ Level::Level(path levelDir)
 	json::array_t objsArr = j["objects"];
 	spawner = new ObjectSpawner(objsArr);
 
+    // Load prefabs
+    for (json& j : j["prefabs"])
+    {
+        Prefab* prefab = new Prefab(j);
+        prefabs.emplace(prefab->id, prefab);
+    }
+
 	// Prepare level events map
-	for (std::string id : LevelEventFactory::getEventIds())
+	for (std::string& id : LevelEventFactory::getEventIds())
 	{
 		levelEvents[id] = nullptr;
 	}
 
 	json::array_t eventsArr = j["events"];
-	for (json eventJ : eventsArr)
+	for (json& eventJ : eventsArr)
 	{
 		TypedLevelEvent* levelEvent = new TypedLevelEvent(this, eventJ);
 
@@ -96,7 +103,7 @@ Level::Level(path levelDir)
 	}
 
 	json::array_t colorSlotsArr = j["color_slots"];
-	for (json colorSlotJ : colorSlotsArr)
+	for (json& colorSlotJ : colorSlotsArr)
 	{
 		colorSlots.push_back(new ColorSlot(colorSlotJ));
 	}
@@ -109,8 +116,17 @@ Level::~Level()
 		delete levelEvent;
 	}
 
-	delete spawner;
+    for (ColorSlot* slot : colorSlots)
+    {
+        delete slot;
+    }
 
+    for (auto &[id, prefab] : prefabs)
+    {
+        delete prefab;
+    }
+
+	delete spawner;
 	delete clip;
 }
 
@@ -214,6 +230,12 @@ json Level::toJson()
 	j["bpm"] = bpm;
 	j["offset"] = offset;
 	j["objects"] = spawner->toJson();
+    json::array_t prefabsArr;
+    for (auto &[id, prefab] : prefabs)
+    {
+        prefabsArr.push_back(prefab->toJson());
+    }
+    j["prefabs"] = prefabsArr;
 	json::array_t eventArr;
 	eventArr.reserve(levelEvents.size());
 	for (auto &[type, levelEvent] : levelEvents)

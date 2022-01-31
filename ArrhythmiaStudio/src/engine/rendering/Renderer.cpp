@@ -194,7 +194,7 @@ void Renderer::recursivelyRenderNodes(SceneNode* node, glm::mat4 parentTransform
 		return;
 	}
 
-	const glm::mat4 nodeTransform = node->transform->getLocalMatrix();
+	const glm::mat4 nodeTransform = node->transform.getLocalMatrix();
 	const glm::mat4 globalTransform = parentTransform * nodeTransform;
 
 	if (node->renderer)

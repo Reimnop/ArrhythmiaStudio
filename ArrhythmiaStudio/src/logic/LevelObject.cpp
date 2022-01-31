@@ -18,7 +18,7 @@ LevelObject::LevelObject(std::string type, ObjectSpawner* spawner)
 	layer = 0;
 	row = 0;
 	this->spawner = spawner;
-	node = new SceneNode(name);
+	node = new SceneNode(name, spawner->getParent());
 	node->setActive(false);
 	ObjectBehaviourInfo info = ObjectBehaviourFactory::getFromId(type);
 	behaviour = info.createFunction(this);
@@ -38,7 +38,7 @@ LevelObject::LevelObject(json& j, ObjectSpawner* spawner)
 	layer = j["layer"].get<int>();
 	row = j["row"].get<int>();
 	this->spawner = spawner;
-	node = new SceneNode(name);
+	node = new SceneNode(name, spawner->getParent());
 	node->setActive(false);
 	ObjectBehaviourInfo info = ObjectBehaviourFactory::getFromId(type);
 	behaviour = info.createFunction(this);
@@ -101,7 +101,7 @@ void LevelObject::setParent(LevelObject* newParent)
 	else
 	{
 		parent = nullptr;
-		node->setParent(nullptr);
+		node->setParent(spawner->getParent());
 	}
 }
 

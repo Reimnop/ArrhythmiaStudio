@@ -8,6 +8,7 @@
 #include "level_events/AnimateableLevelEvent.h"
 #include "object_behaviours/AnimateableObjectBehaviour.h"
 #include "object_behaviours/AnimateableColoredObjectBehaviour.h"
+#include "../engine/Scene.h"
 
 Level::Level(std::string name, path songPath, path levelDir)
 {
@@ -62,7 +63,7 @@ Level::Level(path levelDir)
 	offset = j["offset"].get<float>();
 
 	json::array_t objsArr = j["objects"];
-	spawner = new ObjectSpawner(objsArr);
+	spawner = new ObjectSpawner(objsArr, Scene::inst->rootNode);
 
     // Load prefabs
     for (json& j : j["prefabs"])

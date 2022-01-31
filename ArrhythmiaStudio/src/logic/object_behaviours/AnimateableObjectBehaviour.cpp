@@ -22,7 +22,7 @@ void AnimateableObjectBehaviour::update(float time)
 {
 	float t = time - baseObject->startTime;
 
-	Transform& transform = *baseObject->node->transform;
+	Transform& transform = baseObject->node->transform;
 	transform.position.x = positionX.update(t);
 	transform.position.y = positionY.update(t);
 	transform.position.z = positionZ.update(t);

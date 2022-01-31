@@ -4,6 +4,7 @@
 #include <unordered_map>
 
 #include "json.hpp"
+#include "../engine/SceneNode.h"
 
 using namespace nlohmann;
 
@@ -11,8 +12,8 @@ class LevelObject;
 class ObjectSpawner
 {
 public:
-	ObjectSpawner() = default;
-	ObjectSpawner(json::array_t& j);
+	ObjectSpawner(SceneNode* parent) : parent(parent) { };
+	ObjectSpawner(json::array_t& j, SceneNode* parent);
 	~ObjectSpawner();
 
 	std::unordered_map<uint64_t, LevelObject*> levelObjects;
@@ -32,8 +33,12 @@ public:
 
 	void recalculateObjectsState();
 
+    SceneNode* getParent();
+
 	json::array_t toJson();
 private:
+    SceneNode* parent;
+
 	float currentTime = 0.0f;
 	float lastTime = 0.0f;
 

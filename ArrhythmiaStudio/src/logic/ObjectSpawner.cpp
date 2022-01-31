@@ -1,8 +1,10 @@
 #include "ObjectSpawner.h"
 #include "LevelObject.h"
 
-ObjectSpawner::ObjectSpawner(json::array_t& j)
+ObjectSpawner::ObjectSpawner(json::array_t& j, SceneNode* parent)
 {
+    this->parent = parent;
+
 	aliveObjects.clear();
 	for (json& objJ : j)
 	{
@@ -155,6 +157,11 @@ void ObjectSpawner::recalculateObjectsState()
 			obj->node->setActive(false);
 		}
 	}
+}
+
+SceneNode* ObjectSpawner::getParent()
+{
+    return parent;
 }
 
 void ObjectSpawner::updateForward()

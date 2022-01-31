@@ -16,7 +16,7 @@ public:
 	std::string name;
 
 	// The node's transform
-	Transform* transform;
+	Transform transform;
 
 	SceneNode* parent = nullptr;
 	std::vector<SceneNode*> children;
@@ -28,6 +28,7 @@ public:
 
 	SceneNode(std::string name);
 	SceneNode(std::string name, SceneNode* parent);
+    SceneNode(std::string name, bool isRoot);
 	~SceneNode();
 
 	void setParent(SceneNode* newParent);

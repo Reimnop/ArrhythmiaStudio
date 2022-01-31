@@ -5,7 +5,6 @@
 SceneNode::SceneNode(std::string name)
 {
 	this->name = name;
-	transform = new Transform();
 
 	setActive(true);
 	setParent(nullptr);
@@ -14,15 +13,23 @@ SceneNode::SceneNode(std::string name)
 SceneNode::SceneNode(std::string name, SceneNode* parent)
 {
 	this->name = name;
-	transform = new Transform();
 
 	setParent(parent);
+}
+
+SceneNode::SceneNode(std::string name, bool isRoot)
+{
+    this->name = name;
+
+    if (!isRoot)
+    {
+        setParent(nullptr);
+    }
 }
 
 SceneNode::~SceneNode()
 {
 	delete renderer;
-	delete transform;
 
 	// Remove from parent
 	std::vector<SceneNode*>::iterator it = std::remove(parent->children.begin(), parent->children.end(), this);
@@ -46,7 +53,7 @@ void SceneNode::setParent(SceneNode* newParent)
 		parent->activeChildren.erase(this);
 	}
 
-	if (newParent)
+	if (!newParent)
 	{
 		newParent = Scene::inst->rootNode;
 	}

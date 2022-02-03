@@ -14,8 +14,8 @@ include_directories(include/harfbuzz)
 file(GLOB_RECURSE SOURCES src/*.h src/*.cpp include/*.h include/*.cpp include/*.c)
 
 file(GLOB LIBRARIES libs/*.lib)
-file(GLOB LIBRARIES_DEBUG libs/debug/*.lib)
-file(GLOB LIBRARIES_RELEASE libs/release/*.lib)
+file(GLOB LIBRARIES_DEBUG libs/debug_libs/*.lib)
+file(GLOB LIBRARIES_RELEASE libs/release_libs/*.lib)
 
 add_compile_definitions(
         STB_IMAGE_IMPLEMENTATION

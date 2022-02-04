@@ -13,7 +13,8 @@ ImGuiController::ImGuiController(GLFWwindow* window, const char* fontPath)
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard | ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_ViewportsEnable;
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
-	io.Fonts->AddFontFromFileTTF(fontPath, 16.0f);
+
+	io.Fonts->AddFontFromFileTTF(fontPath, 16.0f, NULL, io.Fonts->GetGlyphRangesCyrillic());
 
 	setStyle();
 

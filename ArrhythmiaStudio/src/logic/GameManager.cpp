@@ -42,6 +42,7 @@ GameManager::GameManager(GLFWwindow* window)
 	ImGuiController::onLayout += EventHandler<>(std::bind(&GameManager::onLayout, this));
 
 	docManager = new DocumentationWindow();
+    prefabManager = new PrefabManagerWindow();
 
 	Font::initFt();
 
@@ -53,7 +54,7 @@ GameManager::GameManager(GLFWwindow* window)
 	ObjectBehaviourFactory::registerBehaviour<EmptyObjectBehaviour>("empty", "Empty");
 	ObjectBehaviourFactory::registerBehaviour<NormalObjectBehaviour>("normal", "Normal");
 	ObjectBehaviourFactory::registerBehaviour<TextObjectBehaviour>("text", "Text");
-    ObjectBehaviourFactory::registerBehaviour<PrefabInstanceObjectBehaviour>("prefab_instance", "Prefab Instance");
+    ObjectBehaviourFactory::registerBehaviour<PrefabInstanceObjectBehaviour>("prefab_instance", "Prefab instance");
 
 	// Register level events
 	LevelEventFactory::registerEvent<CameraLevelEvent>("camera", "Camera");
@@ -138,6 +139,15 @@ void GameManager::onLayout()
 
 			ImGui::EndMenu();
 		}
+        if (ImGui::BeginMenu("Edit"))
+        {
+            if (ImGui::MenuItem("Prefabs"))
+            {
+                prefabManager->isOpen = true;
+            }
+
+            ImGui::EndMenu();
+        }
 		if (ImGui::BeginMenu("Help"))
 		{
 			if (ImGui::MenuItem("Documentation"))

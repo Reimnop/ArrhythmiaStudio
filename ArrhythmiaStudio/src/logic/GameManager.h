@@ -7,6 +7,7 @@
 #include "DocumentationWindow.h"
 #include "Level.h"
 #include "editor_windows/EditorWindow.h"
+#include "PrefabManagerWindow.h"
 
 class MainWindow;
 
@@ -26,6 +27,7 @@ private:
 
 	GLFWwindow* mainWindow;
 	DocumentationWindow* docManager;
+    PrefabManagerWindow* prefabManager;
 
 	std::vector<EditorWindow*> editorWindows;
 

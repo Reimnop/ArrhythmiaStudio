@@ -16,8 +16,9 @@ public:
     void writeJson(json& j) override;
 
     void drawEditor() override;
-protected:
-    void drawSequences() override;
 private:
     void changePrefab(Prefab* prefab);
+
+    uint64_t prefabId = 0;
+    std::optional<std::unique_ptr<ObjectSpawner>> spawner;
 };

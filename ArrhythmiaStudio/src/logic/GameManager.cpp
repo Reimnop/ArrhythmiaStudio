@@ -23,6 +23,7 @@
 #include "editor_windows/Themes.h"
 #include "level_events/CameraLevelEvent.h"
 #include "level_events/BloomLevelEvent.h"
+#include "object_behaviours/PrefabInstanceObjectBehaviour.h"
 
 #define WELCOME_MSG Welcome to PROJECT_NAME!
 
@@ -52,6 +53,7 @@ GameManager::GameManager(GLFWwindow* window)
 	ObjectBehaviourFactory::registerBehaviour<EmptyObjectBehaviour>("empty", "Empty");
 	ObjectBehaviourFactory::registerBehaviour<NormalObjectBehaviour>("normal", "Normal");
 	ObjectBehaviourFactory::registerBehaviour<TextObjectBehaviour>("text", "Text");
+    ObjectBehaviourFactory::registerBehaviour<PrefabInstanceObjectBehaviour>("prefab_instance", "Prefab Instance");
 
 	// Register level events
 	LevelEventFactory::registerEvent<CameraLevelEvent>("camera", "Camera");

@@ -39,7 +39,7 @@ public:
 	std::string getName();
 
 	void fromJson(json j);
-	json toJson();
+	json toJson(float time = 0.0f);
 
 	void drawEditor();
 private:

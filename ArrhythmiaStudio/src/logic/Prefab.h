@@ -17,7 +17,7 @@ public:
     Prefab(const json& j);
 
     json toJson();
-    json getObjectsJson();
+    json::array_t getObjectsJson();
 private:
     json::array_t objects;
 };

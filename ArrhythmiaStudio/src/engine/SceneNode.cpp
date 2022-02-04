@@ -2,29 +2,25 @@
 #include "SceneNode.h"
 #include "Scene.h"
 
-SceneNode::SceneNode(std::string name)
+SceneNode::SceneNode(std::string name, SceneNode* root)
 {
 	this->name = name;
+    this->root = root;
 
 	setActive(true);
-	setParent(nullptr);
-}
 
-SceneNode::SceneNode(std::string name, SceneNode* parent)
-{
-	this->name = name;
-
-	setParent(parent);
-}
-
-SceneNode::SceneNode(std::string name, bool isRoot)
-{
-    this->name = name;
-
-    if (!isRoot)
+    if (root)
     {
         setParent(nullptr);
     }
+}
+
+SceneNode::SceneNode(std::string name, SceneNode* parent, SceneNode* root)
+{
+	this->name = name;
+    this->root = root;
+
+	setParent(parent);
 }
 
 SceneNode::~SceneNode()
@@ -55,7 +51,7 @@ void SceneNode::setParent(SceneNode* newParent)
 
 	if (!newParent)
 	{
-		newParent = Scene::inst->rootNode;
+		newParent = root;
 	}
 
 	if (newParent)

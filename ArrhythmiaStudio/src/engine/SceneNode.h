@@ -26,9 +26,8 @@ public:
 	// The node's renderer
 	RendererComponent* renderer = nullptr;
 
-	SceneNode(std::string name);
-	SceneNode(std::string name, SceneNode* parent);
-    SceneNode(std::string name, bool isRoot);
+	SceneNode(std::string name, SceneNode* root);
+	SceneNode(std::string name, SceneNode* parent, SceneNode* root);
 	~SceneNode();
 
 	void setParent(SceneNode* newParent);
@@ -37,4 +36,6 @@ public:
 	bool getActive() const;
 private:
 	bool active;
+
+    SceneNode* root;
 };

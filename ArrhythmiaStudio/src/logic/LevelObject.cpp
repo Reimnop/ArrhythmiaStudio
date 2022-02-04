@@ -61,8 +61,8 @@ LevelObject::~LevelObject()
 		_children[i]->setParent(nullptr);
 	}
 
-	delete node;
 	delete behaviour;
+	delete node;
 }
 
 void LevelObject::initializeParent()
@@ -132,7 +132,7 @@ void LevelObject::fromJson(json j)
 	behaviour->readJson(j);
 }
 
-json LevelObject::toJson()
+json LevelObject::toJson(float time)
 {
 	json j;
 	j["name"] = name;
@@ -142,8 +142,8 @@ json LevelObject::toJson()
 	{
 		j["parent"] = parent->id;
 	}
-	j["start"] = startTime;
-	j["end"] = endTime;
+	j["start"] = startTime - time;
+	j["end"] = endTime - time;
 	j["layer"] = layer;
 	j["row"] = row;
 	behaviour->writeJson(j);

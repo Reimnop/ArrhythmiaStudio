@@ -11,7 +11,7 @@ Scene::Scene()
 
 	inst = this;
 
-	rootNode = new SceneNode("Root Node", true);
+	rootNode = new SceneNode("Root Node", nullptr);
 }
 
 Scene::~Scene()

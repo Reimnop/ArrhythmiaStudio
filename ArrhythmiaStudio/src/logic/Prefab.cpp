@@ -1,7 +1,8 @@
 #include "Prefab.h"
 #include "utils.h"
 
-Prefab::Prefab(std::string name, std::unordered_set<LevelObject*>& objects) {
+Prefab::Prefab(std::string name, std::unordered_set<LevelObject*>& objects)
+{
     this->name = name;
     id = Utils::randomId();
     for (LevelObject* obj : objects) {
@@ -9,7 +10,8 @@ Prefab::Prefab(std::string name, std::unordered_set<LevelObject*>& objects) {
     }
 }
 
-Prefab::Prefab(const json& j) {
+Prefab::Prefab(const json& j)
+{
     name = j["name"].get<std::string>();
     id = j["id"].get<uint64_t>();
     for (const json& obj : j["objects"]) {
@@ -17,7 +19,8 @@ Prefab::Prefab(const json& j) {
     }
 }
 
-json Prefab::toJson() {
+json Prefab::toJson()
+{
     json j;
     j["name"] = name;
     j["id"] = id;
@@ -25,6 +28,7 @@ json Prefab::toJson() {
     return j;
 }
 
-json Prefab::getObjectsJson() {
+json::array_t Prefab::getObjectsJson()
+{
     return objects;
 }

@@ -140,6 +140,14 @@ void Timeline::draw()
 
 	drawTimeline();
 
+    // TODO: remove debug code
+    Selection selection = level.getSelection();
+    if (ImGui::IsKeyPressed(GLFW_KEY_P, false) && !selection.selectedObjects.empty())
+    {
+        Prefab* prefab = new Prefab("My new prefab", selection.selectedObjects);
+        level.prefabs[prefab->id] = prefab;
+    }
+
 	// Compute timeline waveform
 	if (timelineSize != oldTimelineSize)
 	{

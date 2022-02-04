@@ -12,11 +12,11 @@ public:
 
 	glm::vec4 color;
 
-	void setText(const std::wstring& text);
+	void setText(const std::string& text);
 	void setFont(Font* font);
 	bool tryRender(glm::mat4 transform, RenderCommand** command) override;
 private:
-	std::wstring currentText;
+	std::string currentText;
 
 	Font* font;
 	size_t count;

@@ -26,7 +26,7 @@ TextRenderer::~TextRenderer()
 	glDeleteBuffers(1, &vbo);
 }
 
-void TextRenderer::setText(const std::wstring& text)
+void TextRenderer::setText(const std::string& text)
 {
 	currentText = text;
 

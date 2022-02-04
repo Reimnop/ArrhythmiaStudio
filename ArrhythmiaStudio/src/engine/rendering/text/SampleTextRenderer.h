@@ -11,7 +11,7 @@ public:
 	SampleTextRenderer(std::filesystem::path fontPath);
 	~SampleTextRenderer();
 
-	void setText(std::wstring text);
+	void setText(std::string text);
 	void draw(glm::mat4 mvp);
 private:
 	static Shader* shader;

@@ -45,7 +45,7 @@ void TextObjectBehaviour::readJson(json& j)
 {
 	text = j["text"].get<std::string>();
 	setFont(j["font"].get<std::string>());
-	renderer->setText(std::wstring(text.begin(), text.end()));
+	renderer->setText(text);
 
 	AnimateableObjectBehaviour::readJson(j);
 	opacity.fromJson(j["op"]);
@@ -68,7 +68,7 @@ void TextObjectBehaviour::drawEditor()
 
 	if (ImGui::IsItemEdited()) 
 	{
-		renderer->setText(std::wstring(text.begin(), text.end()));
+		renderer->setText(text);
 	}
 
 	if (ImGui::BeginCombo("Font", FontFactory::getFont(font)->name.c_str()))

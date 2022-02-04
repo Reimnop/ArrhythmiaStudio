@@ -14,7 +14,7 @@ SampleTextRenderer::SampleTextRenderer(std::filesystem::path fontPath)
 	font = new Font(fontPath, "SampleFont");
 	generator = new TextMeshGenerator(font);
 
-	std::vector<TextVertex> vertices = generator->genMesh(L"Hello world!");
+	std::vector<TextVertex> vertices = generator->genMesh("Hello world!");
 	count = vertices.size();
 
 	glGenBuffers(1, &vbo);
@@ -40,7 +40,7 @@ SampleTextRenderer::~SampleTextRenderer()
 	delete generator;
 }
 
-void SampleTextRenderer::setText(std::wstring text)
+void SampleTextRenderer::setText(std::string text)
 {
 	std::vector<TextVertex> vertices = generator->genMesh(text);
 	count = vertices.size();

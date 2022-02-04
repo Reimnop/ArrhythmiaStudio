@@ -9,21 +9,21 @@ TextMeshGenerator::TextMeshGenerator(Font* font)
 	this->font = font;
 }
 
-std::vector<TextVertex> TextMeshGenerator::genMesh(const std::wstring& text) const
+std::vector<TextVertex> TextMeshGenerator::genMesh(const std::string& text) const
 {
-	std::vector<std::wstring> lines = split(L"\r|\n|\r\n", text);
+	std::vector<std::string> lines = split("\r|\n|\r\n", text);
 	std::vector<TextVertex> vertices;
 
 	AtlasInfo info = font->getInfo();
 	Metrics metrics = font->getMetrics();
 
 	float line_y = lines.size() * metrics.lineHeight / 2.0f;
-	for (std::wstring& line : lines)
+	for (std::string& line : lines)
 	{
 		line_y -= metrics.lineHeight;
 
 		hb_buffer_t* buf = hb_buffer_create();
-		hb_buffer_add_utf16(buf, reinterpret_cast<const uint16_t*>(line.c_str()), line.size(), 0, -1);
+		hb_buffer_add_utf8(buf, line.c_str(), -1, 0, -1);
 		hb_buffer_set_direction(buf, HB_DIRECTION_LTR);
 		hb_buffer_set_script(buf, HB_SCRIPT_LATIN);
 		hb_buffer_set_language(buf, hb_language_from_string("en", -1));
@@ -87,11 +87,11 @@ std::vector<TextVertex> TextMeshGenerator::genMesh(const std::wstring& text) con
 	return vertices;
 }
 
-std::vector<std::wstring> TextMeshGenerator::split(std::wstring in_pattern, const std::wstring& content) const
+std::vector<std::string> TextMeshGenerator::split(std::string in_pattern, const std::string& content) const
 {
-	std::vector<std::wstring> split_content;
+	std::vector<std::string> split_content;
 
-	std::wregex pattern(in_pattern);
-	std::copy(std::wsregex_token_iterator(content.begin(), content.end(), pattern, -1), std::wsregex_token_iterator(), std::back_inserter(split_content));
+	std::regex pattern(in_pattern);
+	std::copy(std::sregex_token_iterator(content.begin(), content.end(), pattern, -1), std::sregex_token_iterator(), std::back_inserter(split_content));
 	return split_content;
 }

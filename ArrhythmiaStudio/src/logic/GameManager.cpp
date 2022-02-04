@@ -41,7 +41,7 @@ GameManager::GameManager(GLFWwindow* window)
 
 	ImGuiController::onLayout += EventHandler<>(std::bind(&GameManager::onLayout, this));
 
-	docManager = new DocManager();
+	docManager = new DocumentationWindow();
 
 	Font::initFt();
 

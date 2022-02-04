@@ -1,4 +1,4 @@
-#include "DocManager.h"
+#include "DocumentationWindow.h"
 #include "../engine/rendering/ImGuiController.h"
 
 #include <fstream>
@@ -6,9 +6,9 @@
 #include <shellapi.h>
 #include <helper.h>
 
-DocManager* DocManager::inst;
+DocumentationWindow* DocumentationWindow::inst;
 
-DocManager::DocManager()
+DocumentationWindow::DocumentationWindow()
 {
 	if (inst)
 	{
@@ -52,7 +52,7 @@ DocManager::DocManager()
 	ImGuiController::onLayout += EventHandler<>([this] { onLayout(); });
 }
 
-void DocManager::onLayout()
+void DocumentationWindow::onLayout()
 {
 	if (isOpen) 
 	{
@@ -85,12 +85,12 @@ void DocManager::onLayout()
 	}
 }
 
-void DocManager::markdown(std::string str)
+void DocumentationWindow::markdown(std::string str)
 {
 	ImGui::Markdown(str.c_str(), str.length(), mdConfig);
 }
 
-DocPage DocManager::pageFromFile(std::filesystem::path path)
+DocPage DocumentationWindow::pageFromFile(std::filesystem::path path)
 {
 	std::ifstream s(path);
 
@@ -109,7 +109,7 @@ DocPage DocManager::pageFromFile(std::filesystem::path path)
 	return page;
 }
 
-void DocManager::linkCallback(ImGui::MarkdownLinkCallbackData data)
+void DocumentationWindow::linkCallback(ImGui::MarkdownLinkCallbackData data)
 {
 	std::string url(data.link, data.linkLength);
 	if (!data.isImage)
@@ -118,7 +118,7 @@ void DocManager::linkCallback(ImGui::MarkdownLinkCallbackData data)
 	}
 }
 
-ImGui::MarkdownImageData DocManager::imageCallback(ImGui::MarkdownLinkCallbackData data)
+ImGui::MarkdownImageData DocumentationWindow::imageCallback(ImGui::MarkdownLinkCallbackData data)
 {
 	std::string name(data.link, data.linkLength);
 
@@ -143,7 +143,7 @@ ImGui::MarkdownImageData DocManager::imageCallback(ImGui::MarkdownLinkCallbackDa
 	return imageData;
 }
 
-void DocManager::formatCallback(const ImGui::MarkdownFormatInfo& markdownFormatInfo, bool start)
+void DocumentationWindow::formatCallback(const ImGui::MarkdownFormatInfo& markdownFormatInfo, bool start)
 {
 	ImGui::defaultMarkdownFormatCallback(markdownFormatInfo, start);
 

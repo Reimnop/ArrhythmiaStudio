@@ -10,14 +10,14 @@
 #include "DocPage.h"
 #include "../engine/rendering/Texture2D.h"
 
-class DocManager
+class DocumentationWindow
 {
 public:
-	static DocManager* inst;
+	static DocumentationWindow* inst;
 
 	bool isOpen = false;
 
-	DocManager();
+	DocumentationWindow();
 private:
 	ImFont* h1Fnt;
 	ImFont* h2Fnt;

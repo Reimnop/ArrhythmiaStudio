@@ -1,12 +1,20 @@
 #include "Prefab.h"
 #include "utils.h"
 
-Prefab::Prefab(std::string name, std::unordered_set<LevelObject*>& objects)
+Prefab::Prefab(std::string& name, std::unordered_set<LevelObject*>& objects)
 {
     this->name = name;
     id = Utils::randomId();
-    for (LevelObject* obj : objects) {
-        this->objects.push_back(obj->toJson());
+
+    float minTime = INFINITY;
+    for (LevelObject* obj : objects)
+    {
+        minTime = std::min(minTime, obj->startTime);
+    }
+
+    for (LevelObject* obj : objects)
+    {
+        this->objects.push_back(obj->toJson(minTime));
     }
 }
 

@@ -6,7 +6,36 @@
 
 PrefabManagerWindow::PrefabManagerWindow()
 {
+    if (!inst)
+    {
+        inst = this;
+    }
+
     ImGuiController::onLayout += EventHandler<>([this] { onLayout(); });
+}
+
+void PrefabManagerWindow::newPrefabPopup()
+{
+    if (ImGui::BeginPopupModal("New prefab"))
+    {
+        ImGui::InputText("Name", &tempPrefabName);
+
+        if (ImGui::Button("OK"))
+        {
+            Level& level = *Level::inst;
+            Selection selection = level.getSelection();
+            Prefab* prefab = new Prefab(tempPrefabName, selection.selectedObjects);
+            level.prefabs[prefab->id] = prefab;
+            ImGui::CloseCurrentPopup();
+        }
+
+        ImGui::End();
+    }
+}
+
+void PrefabManagerWindow::openNewPrefabPopup()
+{
+    ImGui::OpenPopup("New prefab");
 }
 
 void PrefabManagerWindow::onLayout()

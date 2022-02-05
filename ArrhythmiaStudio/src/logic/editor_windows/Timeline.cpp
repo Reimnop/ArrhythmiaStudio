@@ -140,14 +140,6 @@ void Timeline::draw()
 
 	drawTimeline();
 
-    // TODO: remove debug code
-    Selection selection = level.getSelection();
-    if (ImGui::IsKeyPressed(GLFW_KEY_P, false) && !selection.selectedObjects.empty())
-    {
-        Prefab* prefab = new Prefab("My new prefab", selection.selectedObjects);
-        level.prefabs[prefab->id] = prefab;
-    }
-
 	// Compute timeline waveform
 	if (timelineSize != oldTimelineSize)
 	{
@@ -227,7 +219,9 @@ void Timeline::drawTimeline()
 		level.seek(newTime);
 	}
 
-	// New object creation
+    bool openNewPrefabPopup = false;
+
+	// Timeline context menu
 	if (ImGui::BeginPopup("##timeline-context"))
 	{
 		if (ImGui::BeginMenu("New object"))
@@ -249,8 +243,24 @@ void Timeline::drawTimeline()
 			ImGui::EndMenu();
 		}
 
+        Selection selection = level.getSelection();
+        if (!selection.selectedObjects.empty())
+        {
+            if (ImGui::MenuItem("Pack"))
+            {
+                openNewPrefabPopup = true;
+            }
+        }
+
 		ImGui::EndPopup();
 	}
+
+    PrefabManagerWindow& prefabManager = *PrefabManagerWindow::inst;
+    prefabManager.newPrefabPopup();
+    if (openNewPrefabPopup)
+    {
+        prefabManager.openNewPrefabPopup();
+    }
 
 	if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right) && objectEditorRect.Contains(io.MousePos))
 	{

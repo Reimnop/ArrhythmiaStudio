@@ -10,7 +10,6 @@ include_directories(include/msdf-atlas-gen)
 include_directories(include/msdfgen)
 include_directories(include/freetype)
 include_directories(include/harfbuzz)
-include_directories(include/bson)
 
 file(GLOB_RECURSE SOURCES src/*.h src/*.cpp include/*.h include/*.cpp include/*.c)
 

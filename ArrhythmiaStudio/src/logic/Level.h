@@ -62,7 +62,8 @@ public:
 	void seek(float t);
 	void update();
 
-	json toJson();
+	json toJsonMain();
+    json toJsonMeta();
 	void save();
 private:
 	static inline log4cxx::LoggerPtr logger = log4cxx::Logger::getLogger("Level");

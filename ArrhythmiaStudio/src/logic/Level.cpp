@@ -37,8 +37,10 @@ Level::Level(std::string name, path songPath, path levelDir)
 		colorSlots.push_back(new ColorSlot());
 	}
 
-	std::ofstream o(levelDir / "level.aslv");
-	o << toJson();
+    std::ofstream oMain(levelDir / "level.aslv");
+    oMain << toJsonMain();
+    std::ofstream oMeta(levelDir / "meta.json");
+    oMeta << toJsonMeta();
 }
 
 Level::Level(path levelDir)
@@ -54,19 +56,25 @@ Level::Level(path levelDir)
 	clip = new AudioClip(levelDir / "song.ogg");
 	levelLength = clip->getLength();
 
-	std::ifstream i(levelDir / "level.aslv");
-	json j;
-	i >> j;
+    json jMain, jMeta;
 
-	name = j["name"].get<std::string>();
-	bpm = j["bpm"].get<float>();
-	offset = j["offset"].get<float>();
+    {
+        std::ifstream iMain(levelDir / "level.aslv");
+        iMain >> jMain;
 
-	json::array_t objsArr = j["objects"];
+        std::ifstream iMeta(levelDir / "meta.json");
+        iMeta >> jMeta;
+    }
+
+	name = jMeta["name"].get<std::string>();
+	bpm = jMeta["bpm"].get<float>();
+	offset = jMeta["offset"].get<float>();
+
+	json::array_t objsArr = jMain["objects"];
 	spawner = new ObjectSpawner(objsArr, Scene::inst->rootNode);
 
     // Load prefabs
-    for (json& j : j["prefabs"])
+    for (json& j : jMain["prefabs"])
     {
         Prefab* prefab = new Prefab(j);
         prefabs.emplace(prefab->id, prefab);
@@ -78,7 +86,7 @@ Level::Level(path levelDir)
 		levelEvents[id] = nullptr;
 	}
 
-	json::array_t eventsArr = j["events"];
+	json::array_t eventsArr = jMain["events"];
 	for (json& eventJ : eventsArr)
 	{
 		TypedLevelEvent* levelEvent = new TypedLevelEvent(this, eventJ);
@@ -103,7 +111,7 @@ Level::Level(path levelDir)
 		}
 	}
 
-	json::array_t colorSlotsArr = j["color_slots"];
+	json::array_t colorSlotsArr = jMain["color_slots"];
 	for (json& colorSlotJ : colorSlotsArr)
 	{
 		colorSlots.push_back(new ColorSlot(colorSlotJ));
@@ -224,12 +232,9 @@ void Level::update()
 	spawner->update(time);
 }
 
-json Level::toJson()
+json Level::toJsonMain()
 {
 	json j;
-	j["name"] = name;
-	j["bpm"] = bpm;
-	j["offset"] = offset;
 	j["objects"] = spawner->toJson();
     json::array_t prefabsArr;
     for (auto &[id, prefab] : prefabs)
@@ -254,8 +259,19 @@ json Level::toJson()
 	return j;
 }
 
+json Level::toJsonMeta()
+{
+    json j;
+    j["name"] = name;
+    j["bpm"] = bpm;
+    j["offset"] = offset;
+    return j;
+}
+
 void Level::save()
 {
-	std::ofstream o(levelDir / "level.aslv");
-	o << toJson();
+	std::ofstream oMain(levelDir / "level.aslv");
+    oMain << toJsonMain();
+    std::ofstream oMeta(levelDir / "meta.json");
+    oMeta << toJsonMeta();
 }

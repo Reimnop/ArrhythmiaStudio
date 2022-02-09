@@ -98,10 +98,10 @@ namespace Launcher
 
         private void OpenLevel(string path)
         {
-            JObject levelJson = JObject.Parse(File.ReadAllText(Path.Combine(path, "level.aslv")));
+            JObject levelMetaJson = JObject.Parse(File.ReadAllText(Path.Combine(path, "meta.json")));
             LevelDetails details = new LevelDetails()
             {
-                LevelName = (string)levelJson["name"],
+                LevelName = (string)levelMetaJson["name"],
                 LevelPath = path,
                 LastOpened = DateTime.Now
             };

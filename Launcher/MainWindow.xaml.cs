@@ -109,7 +109,7 @@ namespace Launcher
             SaveRecent();
 
             Process process = new Process();
-            process.StartInfo.FileName = "Arrhythmia Studio.exe";
+            process.StartInfo.FileName = "ArrhythmiaStudio.exe";
             process.StartInfo.Arguments = $"-open \"{path}\"";
             process.Start();
         }
@@ -126,7 +126,7 @@ namespace Launcher
             SaveRecent();
 
             Process process = new Process();
-            process.StartInfo.FileName = "Arrhythmia Studio.exe";
+            process.StartInfo.FileName = "ArrhythmiaStudio.exe";
             process.StartInfo.Arguments = $"-new \"{levelName}\" -level-path \"{levelPath}\" -song-path \"{songPath}\"";
             process.Start();
         }

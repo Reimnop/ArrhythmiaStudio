@@ -26,6 +26,7 @@ Level::Level(std::string name, path songPath, path levelDir)
 
 	clip = new AudioClip(levelDir / "song.ogg");
 	levelLength = clip->getLength();
+    spawner = new ObjectSpawner(Scene::inst->rootNode);
 
 	for (std::string id : LevelEventFactory::getEventIds())
 	{

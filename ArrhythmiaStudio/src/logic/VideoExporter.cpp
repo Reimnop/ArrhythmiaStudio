@@ -81,7 +81,12 @@ void VideoExporter::exportToVideo(path path) const
 		}
 
 		videoStream.WriteFrame(colorBuffer.data(), renderer.viewportWidth * 4);
-		audioStream.WriteData(&clip.samples[i * samplesPerFrame * clip.channelsCount], samplesPerFrame);
+
+        // So I don't get segfault
+        uint64_t samplesLeft = clip.samplesCount - i * samplesPerFrame * clip.channelsCount;
+        if (samplesLeft > 0) {
+            audioStream.WriteData(&clip.samples[i * samplesPerFrame * clip.channelsCount], std::min(samplesPerFrame, (int)samplesLeft));
+        }
 	}
 
 	videoStream.Close();

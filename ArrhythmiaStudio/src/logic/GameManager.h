@@ -8,6 +8,7 @@
 #include "Level.h"
 #include "editor_windows/EditorWindow.h"
 #include "PrefabManagerWindow.h"
+#include "VideoExporterWindow.h"
 
 class MainWindow;
 
@@ -26,8 +27,10 @@ private:
 	static inline log4cxx::LoggerPtr logger = log4cxx::Logger::getLogger("GameManager");
 
 	GLFWwindow* mainWindow;
-	DocumentationWindow* docManager;
+
+    DocumentationWindow* docManager;
     PrefabManagerWindow* prefabManager;
+    VideoExporterWindow* videoExporterWindow;
 
 	std::vector<EditorWindow*> editorWindows;
 

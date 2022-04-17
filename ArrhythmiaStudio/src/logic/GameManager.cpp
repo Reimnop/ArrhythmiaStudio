@@ -7,7 +7,6 @@
 #include "../engine/rendering/ImGuiController.h"
 #include "../engine/rendering/Renderer.h"
 #include "imgui/imgui.h"
-#include "imgui/imgui_markdown.h"
 #include "imgui/imgui_internal.h"
 #include "object_behaviours/EmptyObjectBehaviour.h"
 #include "object_behaviours/NormalObjectBehaviour.h"
@@ -25,8 +24,6 @@
 #include "level_events/BloomLevelEvent.h"
 #include "object_behaviours/PrefabInstanceObjectBehaviour.h"
 
-#define WELCOME_MSG Welcome to PROJECT_NAME!
-
 GameManager* GameManager::inst;
 
 GameManager::GameManager(GLFWwindow* window)
@@ -43,6 +40,7 @@ GameManager::GameManager(GLFWwindow* window)
 
 	docManager = new DocumentationWindow();
     prefabManager = new PrefabManagerWindow();
+    videoExporterWindow = new VideoExporterWindow();
 
 	Font::initFt();
 
@@ -133,8 +131,7 @@ void GameManager::onLayout()
 
 			if (ImGui::MenuItem("Export to Video"))
 			{
-				VideoExporter exporter = VideoExporter(1920, 1080, 60, 0, 300, "h264_nvenc", "aac");
-				exporter.exportToVideo("test.mp4");
+				videoExporterWindow->isOpen = true;
 			}
 
 			ImGui::EndMenu();

@@ -63,20 +63,20 @@ void VideoExporter::exportToVideo(path path) const
 			// Swap top pixels to bottom pixels
 			for (int x = 0; x < renderer.viewportWidth; x++)
 			{
-				const int r_index_1 = (y1 * renderer.viewportWidth + x) * 4 + 0;
-				const int g_index_1 = (y1 * renderer.viewportWidth + x) * 4 + 1;
-				const int b_index_1 = (y1 * renderer.viewportWidth + x) * 4 + 2;
-				const int a_index_1 = (y1 * renderer.viewportWidth + x) * 4 + 3;
+				const int rIndex1 = (y1 * renderer.viewportWidth + x) * 4 + 0;
+				const int gIndex1 = (y1 * renderer.viewportWidth + x) * 4 + 1;
+				const int bIndex1 = (y1 * renderer.viewportWidth + x) * 4 + 2;
+				const int aIndex1 = (y1 * renderer.viewportWidth + x) * 4 + 3;
 
-				const int r_index_2 = (y2 * renderer.viewportWidth + x) * 4 + 0;
-				const int g_index_2 = (y2 * renderer.viewportWidth + x) * 4 + 1;
-				const int b_index_2 = (y2 * renderer.viewportWidth + x) * 4 + 2;
-				const int a_index_2 = (y2 * renderer.viewportWidth + x) * 4 + 3;
+				const int rIndex2 = (y2 * renderer.viewportWidth + x) * 4 + 0;
+				const int gIndex2 = (y2 * renderer.viewportWidth + x) * 4 + 1;
+				const int bIndex2 = (y2 * renderer.viewportWidth + x) * 4 + 2;
+				const int aIndex2 = (y2 * renderer.viewportWidth + x) * 4 + 3;
 
-				std::swap(colorBuffer[r_index_1], colorBuffer[r_index_2]);
-				std::swap(colorBuffer[g_index_1], colorBuffer[g_index_2]);
-				std::swap(colorBuffer[b_index_1], colorBuffer[b_index_2]);
-				std::swap(colorBuffer[a_index_1], colorBuffer[a_index_2]);
+				std::swap(colorBuffer[rIndex1], colorBuffer[rIndex2]);
+				std::swap(colorBuffer[gIndex1], colorBuffer[gIndex2]);
+				std::swap(colorBuffer[bIndex1], colorBuffer[bIndex2]);
+				std::swap(colorBuffer[aIndex1], colorBuffer[aIndex2]);
 			}
 		}
 

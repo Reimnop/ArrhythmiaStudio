@@ -6,16 +6,8 @@
 #include <shellapi.h>
 #include <helper.h>
 
-DocumentationWindow* DocumentationWindow::inst;
-
 DocumentationWindow::DocumentationWindow()
 {
-	if (inst)
-	{
-		return;
-	}
-	inst = this;
-
 	// Read doc pages
 	std::ifstream s("Assets/Documentation/doc_list.txt");
 

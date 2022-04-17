@@ -13,8 +13,6 @@
 class DocumentationWindow
 {
 public:
-	static DocumentationWindow* inst;
-
 	bool isOpen = false;
 
 	DocumentationWindow();

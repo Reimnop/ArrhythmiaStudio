@@ -59,7 +59,7 @@ namespace ffmpegcpp
 			{
 				if (!inputs[i]->PeekFrame(&frame))
 				{
-					throw new FFmpegException(string("No frame found for input ") + to_string(i));
+					throw FFmpegException(string("No frame found for input ") + to_string(i));
 				}
 
 				// get the meta data for this input stream
@@ -158,7 +158,7 @@ namespace ffmpegcpp
 		// not supported
 		else
 		{
-			throw new FFmpegException(std::string("Media type ") + av_get_media_type_string(metaData->type) + " is not supported by filters.");
+			throw FFmpegException(std::string("Media type ") + av_get_media_type_string(metaData->type) + " is not supported by filters.");
 		}
 	}
 
@@ -167,7 +167,7 @@ namespace ffmpegcpp
 		// this is a video input stream
 		if (mediaType == AVMEDIA_TYPE_VIDEO) return "buffer";
 		else if (mediaType == AVMEDIA_TYPE_AUDIO) return "abuffer";
-		else throw new FFmpegException(std::string("Media type ") + av_get_media_type_string(mediaType) + " is not supported by filters.");
+		else throw FFmpegException(std::string("Media type ") + av_get_media_type_string(mediaType) + " is not supported by filters.");
 	}
 
 	const char* Filter::GetBufferSinkName(AVMediaType mediaType)
@@ -175,7 +175,7 @@ namespace ffmpegcpp
 		// this is a video input stream
 		if (mediaType == AVMEDIA_TYPE_VIDEO) return "buffersink";
 		else if (mediaType == AVMEDIA_TYPE_AUDIO) return "abuffersink";
-		else throw new FFmpegException(std::string("Media type ") + av_get_media_type_string(mediaType) + " is not supported by filters.");
+		else throw FFmpegException(std::string("Media type ") + av_get_media_type_string(mediaType) + " is not supported by filters.");
 	}
 
 	void Filter::DrainInputQueues()

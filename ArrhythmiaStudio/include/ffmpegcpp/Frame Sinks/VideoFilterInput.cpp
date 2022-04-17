@@ -18,7 +18,7 @@ namespace ffmpegcpp
 	void VideoFilterInput::WriteFrame(AVFrame* frame)
 	{
 		AVFrame *tmp = av_frame_clone(frame);
-		if (!tmp) throw new FFmpegException("Failed to clone frame");
+		if (!tmp) throw FFmpegException("Failed to clone frame");
 		av_frame_unref(frame);
 
 		// store the frame into a fifo queue
@@ -28,7 +28,7 @@ namespace ffmpegcpp
 			if (ret < 0)
 			{
 				av_frame_free(&tmp);
-				throw new FFmpegException("Failed to allocate buffer for fifo queue", ret);
+				throw FFmpegException("Failed to allocate buffer for fifo queue", ret);
 			}
 		}
 

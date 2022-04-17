@@ -36,12 +36,12 @@ namespace ffmpegcpp
 		info.frameRate = fr;
 
 		AVCodecContext* codecContext = avcodec_alloc_context3(NULL);
-		if (!codecContext) throw new FFmpegException("Failed to allocate temporary codec context.");
+		if (!codecContext) throw FFmpegException("Failed to allocate temporary codec context.");
 		int ret = avcodec_parameters_to_context(codecContext, stream->codecpar);
 		if (ret < 0)
 		{
 			avcodec_free_context(&codecContext);
-			throw new FFmpegException("Failed to read parameters from stream");
+			throw FFmpegException("Failed to read parameters from stream");
 		}
 
 		codecContext->properties = stream->codec->properties;

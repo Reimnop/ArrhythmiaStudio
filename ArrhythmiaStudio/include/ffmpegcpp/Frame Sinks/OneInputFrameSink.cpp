@@ -17,7 +17,7 @@ namespace ffmpegcpp
 		++nStreamsGenerated;
 		if (nStreamsGenerated > 1)
 		{
-			throw new FFmpegException("This frame sink only supports one input");
+			throw FFmpegException("This frame sink only supports one input");
 		}
 		stream = new FrameSinkStream(writer, 0);
 		return stream;

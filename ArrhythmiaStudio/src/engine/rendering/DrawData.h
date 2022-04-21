@@ -4,7 +4,8 @@
 enum DrawDataType
 {
 	DrawDataType_Batched,
-	DrawDataType_Text
+	DrawDataType_Text,
+    DrawDataType_Textured
 };
 
 

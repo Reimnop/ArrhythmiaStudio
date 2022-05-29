@@ -19,7 +19,7 @@ public:
 
 	GameManager(GLFWwindow* window);
 
-	Level* level;
+	std::unique_ptr<Level> level;
 
 	// Runs every frame
 	void update();
@@ -28,11 +28,11 @@ private:
 
 	GLFWwindow* mainWindow;
 
-    DocumentationWindow* docManager;
-    PrefabManagerWindow* prefabManager;
-    VideoExporterWindow* videoExporterWindow;
+    std::unique_ptr<DocumentationWindow> docManager;
+    std::unique_ptr<PrefabManagerWindow> prefabManager;
+    std::unique_ptr<VideoExporterWindow> videoExporterWindow;
 
-	std::vector<EditorWindow*> editorWindows;
+	std::vector<std::unique_ptr<EditorWindow>> editorWindows;
 
 	void onLayout();
 };

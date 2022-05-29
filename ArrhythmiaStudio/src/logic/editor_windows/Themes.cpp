@@ -13,8 +13,8 @@ std::string Themes::getTitle()
 
 void Themes::draw()
 {
-	GameManager* gameManager = GameManager::inst;
-	Level* level = gameManager->level;
+	GameManager& gameManager = *GameManager::inst;
+	std::unique_ptr<Level>& level = gameManager.level;
 	Selection selection = level->getSelection();
 
 	if (ImGui::BeginChild("##color-slots", ImVec2(0.0f, 120.0f), true))
@@ -25,9 +25,9 @@ void Themes::draw()
 			selection.selectedColorSlot.reset();
 		}
 
-		for (size_t i = 0; i < gameManager->level->colorSlots.size(); i++)
+		for (size_t i = 0; i < gameManager.level->colorSlots.size(); i++)
 		{
-			ColorSlot& slot = *gameManager->level->colorSlots[i];
+			ColorSlot& slot = *gameManager.level->colorSlots[i];
 
 			std::string title = "Color slot " + std::to_string(i);
 
@@ -51,8 +51,8 @@ void Themes::draw()
 
 void Themes::drawEditor()
 {
-	GameManager* gameManager = GameManager::inst;
-	Level* level = gameManager->level;
+	GameManager& gameManager = *GameManager::inst;
+	std::unique_ptr<Level>& level = gameManager.level;
 	Selection selection = level->getSelection();
 
 	if (beginKeyframeEditor())

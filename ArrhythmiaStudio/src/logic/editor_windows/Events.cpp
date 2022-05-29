@@ -9,8 +9,8 @@ std::string Events::getTitle()
 
 void Events::draw()
 {
-	GameManager* gameManager = GameManager::inst;
-	Level* level = gameManager->level;
+	GameManager& gameManager = *GameManager::inst;
+	std::unique_ptr<Level>& level = gameManager.level;
 
 	Selection selection = level->getSelection();
 	if (ImGui::BeginChild("##events", ImVec2(0.0f, 120.0f), true))
@@ -21,7 +21,7 @@ void Events::draw()
 			level->clearSelectedEvent();
 		}
 
-		for (auto &[type, levelEvent] : gameManager->level->levelEvents)
+		for (auto &[type, levelEvent] : gameManager.level->levelEvents)
 		{
 			if (ImGui::Selectable(
 				levelEvent->getTitle().c_str(),

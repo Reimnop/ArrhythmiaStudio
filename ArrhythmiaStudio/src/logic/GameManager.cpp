@@ -36,11 +36,11 @@ GameManager::GameManager(GLFWwindow* window)
 
 	mainWindow = window;
 
-	ImGuiController::onLayout += EventHandler<>(std::bind(&GameManager::onLayout, this));
+	ImGuiController::onLayout += EventHandler<>([this] { onLayout(); });
 
-	docManager = new DocumentationWindow();
-    prefabManager = new PrefabManagerWindow();
-    videoExporterWindow = new VideoExporterWindow();
+	docManager = std::make_unique<DocumentationWindow>();
+    prefabManager = std::make_unique<PrefabManagerWindow>();
+    videoExporterWindow = std::make_unique<VideoExporterWindow>();
 
 	Font::initFt();
 
@@ -80,11 +80,11 @@ GameManager::GameManager(GLFWwindow* window)
 	{
 		std::string levelPath = Arguments::get("level-path");
 		std::string songPath = Arguments::get("song-path");
-		level = new Level(str, songPath, levelPath);
+		level = std::make_unique<Level>(str, songPath, levelPath);
 	}
 	else if (Arguments::tryGet("open", &str))
 	{
-		level = new Level(str);
+		level = std::make_unique<Level>(str);
 	}
 	else
 	{
@@ -92,11 +92,11 @@ GameManager::GameManager(GLFWwindow* window)
 		std::exit(EXIT_FAILURE);
 	}
 
-	editorWindows.push_back(new Viewport());
-	editorWindows.push_back(new Timeline());
-	editorWindows.push_back(new Properties());
-	editorWindows.push_back(new Events());
-	editorWindows.push_back(new Themes());
+	editorWindows.push_back(std::make_unique<Viewport>());
+	editorWindows.push_back(std::make_unique<Timeline>());
+	editorWindows.push_back(std::make_unique<Properties>());
+	editorWindows.push_back(std::make_unique<Events>());
+	editorWindows.push_back(std::make_unique<Themes>());
 }
 
 void GameManager::update()
@@ -166,7 +166,7 @@ void GameManager::onLayout()
 		ImGui::OpenPopup("About");
 	}
 
-	for (EditorWindow* window : editorWindows)
+	for (std::unique_ptr<EditorWindow>& window : editorWindows)
 	{
 		if (ImGui::Begin(window->getTitle().c_str())) 
 		{
